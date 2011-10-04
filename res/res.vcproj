@@ -148,6 +148,22 @@
 			RelativePath="IATA-EN.TXT"
 			>
 		</File>
+		<File
+			RelativePath=".\Lounge1.jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Lounge2.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Lounge3.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Lounge4.jpg"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
