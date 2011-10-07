@@ -174,12 +174,12 @@ void ConvertFile(CString LanguageSuffix)
 
 	// Ausgeben
 	CStdioFile output;
-	output.Open(path+"..\\..\\LFCore\\IATA_"+LanguageSuffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
+	output.Open(path+"..\\..\\FMCommDlg\\IATA_"+LanguageSuffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
 
 	output.WriteString("// Countries\n");
 	tmpStr.Format("#define CountryCount_%s %d\n", LanguageSuffix, CountryCount);
 	output.WriteString(tmpStr);
-	tmpStr.Format("LFCountry Countries_%s[CountryCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
+	tmpStr.Format("FMCountry Countries_%s[CountryCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
 	output.WriteString(tmpStr);
 	for (INT a=0; a<CountryCount; a++)
 	{
@@ -192,7 +192,7 @@ void ConvertFile(CString LanguageSuffix)
 	output.WriteString("// Airports\n");
 	tmpStr.Format("#define AirportCount_%s %d\n", LanguageSuffix, AirportCount);
 	output.WriteString(tmpStr);
-	tmpStr.Format("LFAirport Airports_%s[AirportCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
+	tmpStr.Format("FMAirport Airports_%s[AirportCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
 	output.WriteString(tmpStr);
 	for (UINT a=0; a<AirportCount; a++)
 	{

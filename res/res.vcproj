@@ -121,7 +121,15 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\About_Small.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Backdrop Settings.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop.png"
 			>
 		</File>
 		<File
@@ -141,11 +149,43 @@
 			>
 		</File>
 		<File
+			RelativePath=".\ExplorerGradient.bmp"
+			>
+		</File>
+		<File
 			RelativePath=".\IATA-DE.TXT"
 			>
 		</File>
 		<File
 			RelativePath="IATA-EN.TXT"
+			>
+		</File>
+		<File
+			RelativePath=".\Key.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Key_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Location_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\LocationGPS_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\LocationIndicator_16.png"
+			>
+		</File>
+		<File
+			RelativePath=".\LocationIndicator_8.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Logo alpha tiny.png"
 			>
 		</File>
 		<File
@@ -162,6 +202,14 @@
 		</File>
 		<File
 			RelativePath=".\Lounge4.jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Plane_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>
 	</Files>
