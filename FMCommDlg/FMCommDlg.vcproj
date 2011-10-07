@@ -68,6 +68,7 @@
 				PreprocessorDefinitions="_DEBUG"
 				Culture="1031"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -140,6 +141,7 @@
 				PreprocessorDefinitions="_DEBUG"
 				Culture="1031"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -214,6 +216,7 @@
 				PreprocessorDefinitions="NDEBUG"
 				Culture="0"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -288,6 +291,7 @@
 				PreprocessorDefinitions="NDEBUG"
 				Culture="0"
 				AdditionalIncludeDirectories="$(IntDir)"
+				ResourceOutputFileName="$(SolutionDir)/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
