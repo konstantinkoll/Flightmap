@@ -24,9 +24,9 @@ struct FMAirport
 };
 
 #ifdef FMCommDlg_EXPORTS
-#define FMCommDlg_API __declspec(dllexport)
+#define FMCommDlg_API
 #else
-#define FMCommDlg_API __declspec(dllimport)
+#define FMCommDlg_API
 #endif
 
 FMCommDlg_API UINT FMIATAGetCountryCount();
