@@ -125,6 +125,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\AppLogo.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Backdrop Settings.txt"
 			>
 		</File>
