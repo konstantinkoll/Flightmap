@@ -165,6 +165,18 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Hintergrund1.jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Hintergrund2.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Hintergrund3.png"
+			>
+		</File>
+		<File
 			RelativePath=".\IATA-DE.TXT"
 			>
 		</File>
