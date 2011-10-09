@@ -137,6 +137,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Docked1.jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Docked2.jpg"
+			>
+		</File>
+		<File
 			RelativePath=".\Earthmap_1024.jpg"
 			>
 		</File>
@@ -165,6 +173,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Installer1.jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Installer2.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Key.png"
 			>
 		</File>
@@ -190,22 +206,6 @@
 		</File>
 		<File
 			RelativePath=".\Logo alpha tiny.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Lounge1.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Lounge2.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Lounge3.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Lounge4.jpg"
 			>
 		</File>
 		<File
