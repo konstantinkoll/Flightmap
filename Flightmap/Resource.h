@@ -9,7 +9,8 @@
 #define IDB_BLUEMARBLE_2048             133
 #define IDB_BLUEMARBLE_4096             134
 #define IDB_BLUEMARBLE_8192             135
-#define IDB_DOCKED                      136
+#define IDB_NIGHT                       136
+#define IDB_DOCKED                      137
 
 // Next default values for new objects
 // 

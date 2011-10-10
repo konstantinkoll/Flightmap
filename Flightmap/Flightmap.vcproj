@@ -458,6 +458,22 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\BlueMarble_1024.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\BlueMarble_2048.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\BlueMarble_4096.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\BlueMarble_8192.jpg"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Docked2.jpg"
 				>
 			</File>
@@ -471,6 +487,10 @@
 			</File>
 			<File
 				RelativePath=".\res\GlobeIcons_RGB.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Night.jpg"
 				>
 			</File>
 		</Filter>
