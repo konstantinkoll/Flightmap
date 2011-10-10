@@ -174,14 +174,10 @@ BOOL FMApplication::InitInstance()
 
 	CWinAppEx::InitInstance();
 
-	InitShellManager();
-
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
-	SetRegistryKey(_T("Flightmap"));
-
-	LoadStdProfileSettings();
+	SetRegistryKey(_T(""));
 
 	// Falls abgelaufen, Fenster anzeigen
 	ResetNagCounter;

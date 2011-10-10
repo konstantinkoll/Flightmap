@@ -42,7 +42,6 @@ public:
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
 	BOOL m_GlobeShadows;
-	BOOL m_GlobeBlackBackground;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 

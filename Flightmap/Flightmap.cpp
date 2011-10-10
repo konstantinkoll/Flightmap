@@ -50,11 +50,11 @@ BOOL CFlightmapApp::InitInstance()
 	}
 
 	// Registry auslesen
+	SetRegistryBase();
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_GlobeShadows = GetInt(_T("GlobeShadows"), TRUE);
-	m_GlobeBlackBackground = GetInt(_T("GlobeBlackBackground"), FALSE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
@@ -81,7 +81,6 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 		WriteInt(_T("GlobeShadows"), m_GlobeShadows);
-		WriteInt(_T("GlobeBlackBackground"), m_GlobeBlackBackground);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
 		WriteInt(_T("TextureSize"), m_nTextureSize);
