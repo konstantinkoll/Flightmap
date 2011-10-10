@@ -445,6 +445,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Flightmap.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\FMCommDlg.rc"
 				>
 			</File>

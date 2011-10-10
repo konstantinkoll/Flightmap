@@ -47,7 +47,7 @@ typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam,
 
 #define TIMESTAMP CString Timestamp = _T(__DATE__); Timestamp.Append(_T(", ")); Timestamp.Append(_T(__TIME__));
 
-class AFX_EXT_CLASS FMApplication : public CWinAppEx
+class FMApplication : public CWinAppEx
 {
 public:
 	FMApplication();
