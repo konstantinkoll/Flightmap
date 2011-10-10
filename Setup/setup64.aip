@@ -373,6 +373,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="Flightmap_1.exe" SourcePath="Flightmap.ico" Index="0"/>
+    <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
@@ -448,6 +449,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="Flightmap" Directory_="SHORTCUTDIR" Name="Flight~1|Flightmap" Component_="Flightmap.exe" Target="[#Flightmap.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Flightmap_1" Directory_="DesktopFolder" Name="Flight~1|Flightmap" Component_="Flightmap.exe" Target="[#Flightmap.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="Uninstall_Flightmap" Directory_="SHORTCUTDIR" Name="Uninst~1|Uninstall Flightmap" Component_="AI_ExePath" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Hotkey="0" Icon_="SystemFolder_msiexec.exe" IconIndex="0" ShowCmd="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiTextStyleComponent">
     <ROW TextStyle="BlueText" FaceName="Arial" Size="12" Color="16711680" StyleBits="0" MsiKey="BlueText"/>
