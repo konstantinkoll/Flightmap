@@ -12,6 +12,7 @@
 //
 
 CMainWnd::CMainWnd()
+	: CGlasWindow(FALSE, FALSE)
 {
 	m_hIcon = NULL;
 	m_pWndMainView = NULL;

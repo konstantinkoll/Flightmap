@@ -9,7 +9,7 @@
 // CGlasWindow
 //
 
-CGlasWindow::CGlasWindow()
+CGlasWindow::CGlasWindow(BOOL HideIcon, BOOL HideCaption)
 	: CWnd()
 {
 	p_App = (FMApplication*)AfxGetApp();
@@ -17,6 +17,8 @@ CGlasWindow::CGlasWindow()
 	hTheme = NULL;
 	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
+	m_HideIcon = HideIcon;
+	m_HideCaption = HideCaption;
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }
 
@@ -161,7 +163,7 @@ void CGlasWindow::SetTheme()
 		{
 			WTA_OPTIONS opt;
 			opt.dwMask = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
-			opt.dwFlags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
+			opt.dwFlags = (m_HideCaption ? WTNCA_NODRAWCAPTION : 0) | (m_HideIcon ? WTNCA_NODRAWICON : 0);
 			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
 		}
 	}

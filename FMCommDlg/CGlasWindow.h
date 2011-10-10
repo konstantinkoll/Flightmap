@@ -19,7 +19,7 @@
 class CGlasWindow : public CWnd
 {
 public:
-	CGlasWindow();
+	CGlasWindow(BOOL HideIcon=TRUE, BOOL HideCaption=TRUE);
 
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -42,6 +42,8 @@ protected:
 	CList<CWnd*> m_GlasChildren;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;
+	BOOL m_HideIcon;
+	BOOL m_HideCaption;
 	MARGINS m_Margins;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
