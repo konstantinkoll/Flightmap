@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CLoungeView.h"
 #include "CMainWnd.h"
 #include "Flightmap.h"
 
@@ -13,6 +14,7 @@
 CMainWnd::CMainWnd()
 {
 	m_hIcon = NULL;
+	m_pWndMainView = NULL;
 }
 
 CMainWnd::~CMainWnd()
@@ -40,32 +42,44 @@ BOOL CMainWnd::Create()
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-	//if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-	//	return TRUE;
+	if (m_pWndMainView)
+		if (m_pWndMainView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+			return TRUE;
 
 	return CGlasWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainWnd::AdjustLayout()
 {
-	/*if (!IsWindow(m_wndJournalButton))
-		return;
-	if (!IsWindow(m_wndMainView))
+	if (!m_pWndMainView)
 		return;
 
 	CRect rect;
 	GetLayoutRect(rect);
 
-	const UINT JournalHeight = m_wndJournalButton.GetPreferredHeight();
-	const UINT JournalWidth = m_wndJournalButton.GetPreferredWidth();
-	m_wndJournalButton.SetWindowPos(NULL, rect.left+1, rect.top+(m_Margins.cyTopHeight-JournalHeight-2)/2, JournalWidth, JournalHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+}
 
-	const UINT HistoryHeight = m_wndHistory.GetPreferredHeight();
-	const UINT SearchWidth = max(150, (rect.Width()-JournalWidth)/4);
-	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-SearchWidth-14, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndSearch.SetWindowPos(NULL, rect.right-SearchWidth, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, SearchWidth, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+void CMainWnd::OpenMainView(BOOL Empty)
+{
+	if (m_pWndMainView)
+	{
+		m_pWndMainView->DestroyWindow();
+		delete m_pWndMainView;
+	}
 
-	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);*/
+	if (Empty)
+	{
+		m_pWndMainView = new CLoungeView();
+		((CLoungeView*)m_pWndMainView)->Create(this, 2);
+	}
+	else
+	{
+		m_pWndMainView = NULL;	// TODO
+	}
+
+	AdjustLayout();
+	SetFocus();
 }
 
 
@@ -83,14 +97,19 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	theApp.AddFrame(this);
 
-	AdjustLayout();
-	SetFocus();
+	OpenMainView(TRUE);
 
 	return 0;
 }
 
 void CMainWnd::OnDestroy()
 {
+	if (m_pWndMainView)
+	{
+		m_pWndMainView->DestroyWindow();
+		delete m_pWndMainView;
+	}
+
 	CGlasWindow::OnDestroy();
 	theApp.KillFrame(this);
 }
@@ -100,6 +119,6 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
 
-	//if (IsWindow(m_wndMainView))
-	//	m_wndMainView.SetFocus();
+	if (m_pWndMainView)
+		m_pWndMainView->SetFocus();
 }

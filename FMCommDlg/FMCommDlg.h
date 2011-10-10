@@ -4,6 +4,16 @@
 #include "..\FMCommDlg\License.h"
 
 
+#ifdef FMCommDlg_EXPORTS
+#define FMCommDlg_API
+#else
+#define FMCommDlg_API
+#endif
+
+
+FMCommDlg_API BOOL IsCtrlThemed();
+
+
 // IATA database
 
 struct FMCountry
@@ -27,11 +37,6 @@ struct FMAirport
 	FMGeoCoordinates Location;
 };
 
-#ifdef FMCommDlg_EXPORTS
-#define FMCommDlg_API
-#else
-#define FMCommDlg_API
-#endif
 
 FMCommDlg_API UINT FMIATAGetCountryCount();
 FMCommDlg_API UINT FMIATAGetAirportCount();

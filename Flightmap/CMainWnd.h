@@ -22,6 +22,9 @@ public:
 
 protected:
 	HICON m_hIcon;
+	CWnd* m_pWndMainView;
+
+	void OpenMainView(BOOL Empty);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

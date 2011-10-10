@@ -24,6 +24,17 @@ USING_NAMESPACE(CryptoPP)
 USING_NAMESPACE(std)
 
 
+FMCommDlg_API BOOL IsCtrlThemed()
+{
+	FMApplication* pApp = (FMApplication*)AfxGetApp();
+	if (pApp)
+		if (pApp->m_ThemeLibLoaded)
+			return pApp->zIsAppThemed();
+
+	return FALSE;
+}
+
+
 // IATA-Datenbank
 //
 
