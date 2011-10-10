@@ -1,4 +1,8 @@
 #pragma once
+#include "..\FMCommDlg\CGlasWindow.h"
+#include "..\FMCommDlg\FMApplication.h"
+#include "..\FMCommDlg\License.h"
+
 
 // IATA database
 
@@ -35,3 +39,26 @@ FMCommDlg_API FMCountry* FMIATAGetCountry(UINT ID);
 FMCommDlg_API INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer);
 FMCommDlg_API INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer);
 FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
+
+
+// Lizensierung
+
+struct FMLicenseVersion
+{
+	UINT Major;
+	UINT Minor;
+	UINT Release;
+};
+
+struct FMLicense
+{
+	WCHAR PurchaseID[256];
+	WCHAR ProductID[256];
+	WCHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
+	WCHAR Quantity[8];
+	WCHAR RegName[256];
+	FMLicenseVersion Version;
+};
+
+FMCommDlg_API BOOL FMIsLicensed(FMLicense* License=NULL, BOOL Reload=FALSE);
+FMCommDlg_API BOOL FMIsSharewareExpired();
