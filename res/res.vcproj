@@ -120,6 +120,42 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Ribbon"
+			>
+			<File
+				RelativePath=".\Ribbon\About_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\About_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Key_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Key_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Support_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Support_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Wallet_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Wallet_32.png"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\About_Tiny.ico"
 			>
