@@ -41,7 +41,6 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		h = (INT)(h*f);
 
 		g.DrawImage(m_pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
-
 	}
 	else
 	{

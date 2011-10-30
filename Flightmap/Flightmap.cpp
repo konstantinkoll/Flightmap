@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Flightmap.h"
+#include "CAboutDlg.h"
 #include "CMainWnd.h"
 
 
@@ -68,6 +69,8 @@ BOOL CFlightmapApp::InitInstance()
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);
 
+	OnAppAbout();
+
 	m_AppInitialized = TRUE;
 
 	return TRUE;
@@ -117,8 +120,6 @@ void CFlightmapApp::KillFrame(CGlasWindow* pVictim)
 
 void CFlightmapApp::OnAppAbout()
 {
-/*	CString AppName;
-	ENSURE(AppName.LoadString(IDR_APPLICATION));
-	TIMESTAMP;
-	LFAbout(AppName, Timestamp, IDB_ABOUTICON, m_pActiveWnd);*/
+	CAboutDlg dlg(m_pActiveWnd);
+	dlg.DoModal();
 }

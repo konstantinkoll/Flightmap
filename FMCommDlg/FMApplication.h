@@ -53,10 +53,8 @@ public:
 	FMApplication();
 	virtual ~FMApplication();
 
-	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
 	CImageList m_SystemImageListExtraLarge;
-	CImageList m_SystemImageListJumbo;
 	CFont m_DefaultFont;
 	CFont m_BoldFont;
 	CFont m_ItalicFont;

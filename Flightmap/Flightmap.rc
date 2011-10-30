@@ -11,7 +11,6 @@
 #include "targetver.h"
 #endif
 #include "afxres.h"
-#include "..\FMCommDlg\resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -114,29 +113,6 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Englisch (neutral) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDR_APPLICATION         "Flightmap"
-END
-
-#endif    // Englisch (neutral) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
 // Deutsch (Deutschland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
@@ -175,7 +151,6 @@ BEGIN
     "LANGUAGE 7, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#include ""l.DEU\\afxres.rc""          // Standardkomponenten\r\n"
-    "#include ""..\\FMCommDlg\\resource.h""\r\n"
     "#endif\r\n"
     "\0"
 END
@@ -183,6 +158,29 @@ END
 #endif    // APSTUDIO_INVOKED
 
 #endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_APPLICATION         "Flightmap"
+END
+
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

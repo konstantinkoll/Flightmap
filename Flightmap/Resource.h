@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by StoreManager.rc
+// Used by Flightmap.rc
 //
 #define IDR_APPLICATION                 128
 #define IDB_GLOBEICONS_RGB              130

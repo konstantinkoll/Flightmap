@@ -133,15 +133,10 @@ FMApplication::FMApplication()
 
 	// System image lists
 	IImageList* il;
-	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
-		m_SystemImageListSmall.Attach((HIMAGELIST)il);
 	if (SUCCEEDED(SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListLarge.Attach((HIMAGELIST)il);
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
-	if (OSVersion>=OS_Vista)
-		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (void**)&il)))
-			m_SystemImageListJumbo.Attach((HIMAGELIST)il);
 }
 
 FMApplication::~FMApplication()

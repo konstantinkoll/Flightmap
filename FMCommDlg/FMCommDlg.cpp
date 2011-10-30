@@ -24,6 +24,27 @@ USING_NAMESPACE(CryptoPP)
 USING_NAMESPACE(std)
 
 
+FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
+{
+	path.Reset();
+
+	INT l = rect.left;
+	INT t = rect.top;
+	INT w = rect.Width();
+	INT h = rect.Height();
+	INT d = rad<<1;
+
+	path.AddArc(l, t, d, d, 180, 90);
+	path.AddLine(l+rad, t, l+w-rad, t);
+	path.AddArc(l+w-d, t, d, d, 270, 90);
+	path.AddLine(l+w, t+rad, l+w, t+h-rad);
+	path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
+	path.AddLine(l+w-rad, t+h, l+rad, t+h);
+	path.AddArc(l, t+h-d, d, d, 90, 90);
+	path.AddLine(l, t+h-rad, l, t+rad);
+	path.CloseFigure();
+}
+
 FMCommDlg_API BOOL IsCtrlThemed()
 {
 	FMApplication* pApp = (FMApplication*)AfxGetApp();
@@ -310,4 +331,48 @@ FMCommDlg_API BOOL FMIsSharewareExpired()
 	FirstInstall.QuadPart += 30*DAY;
 
 	return Now.QuadPart>=FirstInstall.QuadPart;
+}
+
+
+// Update
+
+FMCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+{
+	if (Version)
+		Version->Empty();
+	if (Copyright)
+		Copyright->Empty();
+
+	CString modFilename;
+	if (GetModuleFileName(hModule, modFilename.GetBuffer(MAX_PATH), MAX_PATH)>0)
+	{
+		modFilename.ReleaseBuffer(MAX_PATH);
+		DWORD dwHandle = 0;
+		DWORD dwSize = GetFileVersionInfoSize(modFilename, &dwHandle);
+		if (dwSize>0)
+		{
+			LPBYTE lpInfo = new BYTE[dwSize];
+			ZeroMemory(lpInfo, dwSize);
+
+			if (GetFileVersionInfo(modFilename, 0, dwSize, lpInfo))
+			{
+				UINT valLen = 0;
+				LPVOID valPtr = NULL;
+				LPCWSTR valData = NULL;
+
+				if (Version)
+					if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
+					{
+						VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
+						Version->Format(_T("%d.%d.%d"), 
+							(pFinfo->dwProductVersionMS >> 16) & 0xFF,
+							(pFinfo->dwProductVersionMS) & 0xFF,
+							(pFinfo->dwProductVersionLS >> 16) & 0xFF);
+					}
+				if (Copyright)
+					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
+			}
+			delete[] lpInfo;
+		}
+	}
 }

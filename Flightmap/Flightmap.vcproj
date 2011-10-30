@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -157,7 +157,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -245,7 +245,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -333,7 +333,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -373,6 +373,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\CAboutDlg.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\CLoungeView.cpp"
 				>
@@ -427,6 +431,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CAboutDlg.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CLoungeView.h"
 				>

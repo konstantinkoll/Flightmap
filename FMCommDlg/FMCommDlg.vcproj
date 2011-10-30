@@ -333,11 +333,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGroupBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\FMCommDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMDialog.cpp"
 				>
 			</File>
 			<File
@@ -391,11 +399,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGroupBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FMCommDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMDialog.h"
 				>
 			</File>
 			<File
@@ -429,7 +445,11 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\Backdrop.png"
+				RelativePath=".\res\About_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Backdrop_Blue.png"
 				>
 			</File>
 			<File

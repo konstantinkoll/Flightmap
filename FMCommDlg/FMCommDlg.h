@@ -1,6 +1,9 @@
 #pragma once
+#include "..\FMCommDlg\CGdiPlusBitmap.h"
 #include "..\FMCommDlg\CGlasWindow.h"
+#include "..\FMCommDlg\CGroupBox.h"
 #include "..\FMCommDlg\FMApplication.h"
+#include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\License.h"
 
 
@@ -11,6 +14,7 @@
 #endif
 
 
+FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 FMCommDlg_API BOOL IsCtrlThemed();
 
 
@@ -67,3 +71,8 @@ struct FMLicense
 
 FMCommDlg_API BOOL FMIsLicensed(FMLicense* License=NULL, BOOL Reload=FALSE);
 FMCommDlg_API BOOL FMIsSharewareExpired();
+
+
+// Update
+
+FMCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
