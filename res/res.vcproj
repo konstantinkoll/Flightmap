@@ -249,6 +249,18 @@
 			>
 		</File>
 		<File
+			RelativePath=".\NRT_Registered.png"
+			>
+		</File>
+		<File
+			RelativePath=".\NRT_Unregistered.png"
+			>
+		</File>
+		<File
+			RelativePath=".\PDZVOR.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Plane_Tiny.ico"
 			>
 		</File>

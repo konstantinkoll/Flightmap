@@ -493,6 +493,18 @@
 				RelativePath=".\res\Night.jpg"
 				>
 			</File>
+			<File
+				RelativePath=".\res\NRT_Registered.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\NRT_Unregistered.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\PDZVOR.png"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\Flightmap32.manifest.xml"
