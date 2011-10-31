@@ -17,7 +17,6 @@ FMDialog::FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParent)
 {
 	m_nIDTemplate = nIDTemplate;
 	m_Design = Design;
-	p_App = (FMApplication*)AfxGetApp();
 	hIconS = hIconL = NULL;
 	hBackgroundBrush = NULL;
 	m_pBackdrop = m_pLogo = NULL;
@@ -64,60 +63,47 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	INT Line = layout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
-	switch (m_Design)
+	if (Themed && (!((FMApplication*)AfxGetApp())->m_ReduceVisuals) && (m_Design==FMDS_Blue))
 	{
-	case FMDS_Blue:
+		INT l = m_pBackdrop->m_pBitmap->GetWidth();
+		INT h = m_pBackdrop->m_pBitmap->GetHeight();
+
+		DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
+		l = (INT)(l*f);
+		h = (INT)(h*f);
+
+		g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+
+		SolidBrush brush1(Color(180, 255, 255, 255));
+		g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
+		brush1.SetColor(Color(224, 205, 250, 255));
+		g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
+		brush1.SetColor(Color(180, 183, 210, 240));
+		g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
+		brush1.SetColor(Color(224, 247, 250, 254));
+		g.FillRectangle(&brush1, 0, Line, m_BackBufferL, 1);
+		LinearGradientBrush brush2(Point(0, Line++), Point(0, rect.Height()), Color(120, 255, 255, 255), Color(32, 128, 192, 255));
+		g.FillRectangle(&brush2, 0, Line, m_BackBufferL, rect.Height()-Line);
+	}
+	else
+	{
+		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
+		if (Themed)
 		{
-			if (Themed)
-			{
-				INT l = m_pBackdrop->m_pBitmap->GetWidth();
-				INT h = m_pBackdrop->m_pBitmap->GetHeight();
-
-				DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
-				l = (INT)(l*f);
-				h = (INT)(h*f);
-
-				g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
-
-				SolidBrush brush1(Color(180, 255, 255, 255));
-				g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
-				brush1.SetColor(Color(224, 205, 250, 255));
-				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
-				brush1.SetColor(Color(180, 183, 210, 240));
-				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
-				brush1.SetColor(Color(224, 247, 250, 254));
-				g.FillRectangle(&brush1, 0, Line, m_BackBufferL, 1);
-				LinearGradientBrush brush2(Point(0, Line++), Point(0, rect.Height()), Color(120, 255, 255, 255), Color(32, 128, 192, 255));
-				g.FillRectangle(&brush2, 0, Line, m_BackBufferL, rect.Height()-Line);
-			}
-			else
-			{
-				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-			}
-
-			if (m_pLogo)
-				g.DrawImage(m_pLogo->m_pBitmap, 16, 16, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
-
-			break;
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
+			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
 		}
-	case FMDS_White:
+		else
 		{
-			dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
-			if (Themed)
-			{
-				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
-				dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
-			}
-			else
-			{
-				dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
-			}
-
-			break;
+			dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
 		}
 	}
+
+	// Logo
+	if (m_pLogo)
+		g.DrawImage(m_pLogo->m_pBitmap, 16, 16, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
 }
 
 void FMDialog::GetLayoutRect(LPRECT lpRect) const
@@ -156,15 +142,12 @@ BOOL FMDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-//	if (m_Design!=LFDS_UAC)
-	{
-		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-		hIconS = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
-		SetIcon(hIconS, FALSE);
-		hIconL = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
-		SetIcon(hIconL, TRUE);
-	}
+	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
+	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
+	hIconS = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+	SetIcon(hIconS, FALSE);
+	hIconL = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
+	SetIcon(hIconL, TRUE);
 
 	switch (m_Design)
 	{

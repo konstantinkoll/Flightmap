@@ -26,7 +26,6 @@ public:
 	UINT GetDesign() const;
 
 protected:
-	FMApplication* p_App;
 	CGdiPlusBitmapResource* m_pLogo;
 	UINT m_nIDTemplate;
 	UINT m_Design;

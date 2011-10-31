@@ -212,7 +212,7 @@ BOOL ReadCodedLicense(string& Message)
 	BOOL res = FALSE;
 
 	HKEY k;
-	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
+	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Flightmap", &k)==ERROR_SUCCESS)
 	{
 		CHAR tmpStr[4096];
 		DWORD sz = sizeof(tmpStr);

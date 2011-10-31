@@ -101,48 +101,44 @@ void CGroupBox::OnPaint()
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		switch (((FMDialog*)GetParent())->GetDesign())
+		if ((!((FMApplication*)AfxGetApp())->m_ReduceVisuals) && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
 		{
-		case FMDS_Blue:
-			{
-				rectBounds.right -= 3;
-				rectBounds.bottom -= 3;
+			rectBounds.right -= 3;
+			rectBounds.bottom -= 3;
 
-				Matrix m1;
-				m1.Translate(2.0, 2.0);
+			Matrix m1;
+			m1.Translate(2.0, 2.0);
 
-				Matrix m2;
-				m2.Translate(-1.0, -1.0);
+			Matrix m2;
+			m2.Translate(-1.0, -1.0);
 
-				GraphicsPath path;
-				CreateRoundRectangle(rectBounds, 2, path);
+			GraphicsPath path;
+			CreateRoundRectangle(rectBounds, 2, path);
 
-				Pen pen(Color(224, 196, 240, 248));
-				g.DrawPath(&pen, &path);
+			Pen pen(Color(224, 196, 240, 248));
+			g.DrawPath(&pen, &path);
 
-				path.Transform(&m1);
-				pen.SetColor(Color(128, 255, 255, 255));
-				g.DrawPath(&pen, &path);
+			path.Transform(&m1);
+			pen.SetColor(Color(128, 255, 255, 255));
+			g.DrawPath(&pen, &path);
 
-				path.Transform(&m2);
-				pen.SetColor(Color(64, 60, 96, 112));
-				g.DrawPath(&pen, &path);
+			path.Transform(&m2);
+			pen.SetColor(Color(64, 60, 96, 112));
+			g.DrawPath(&pen, &path);
 
-				clr = 0xCC6600;
-				break;
-			}
-		case FMDS_White:
-			{
-				rectBounds.right -= 1;
-				rectBounds.bottom -= 1;
+			clr = 0xCC6600;
+		}
+		else
+		{
+			rectBounds.right -= 1;
+			rectBounds.bottom -= 1;
 
-				GraphicsPath path;
-				CreateRoundRectangle(rectBounds, 2, path);
+			GraphicsPath path;
+			CreateRoundRectangle(rectBounds, 2, path);
 
-				Pen pen(Color(204, 204, 204));
-				g.DrawPath(&pen, &path);
-			}
-		default:
+			Pen pen(Color(204, 204, 204));
+			g.DrawPath(&pen, &path);
+
 			clr = 0x808080;
 		}
 	}

@@ -35,6 +35,8 @@ public:
 	CList<CGlasWindow*> m_MainFrames;
 	CString m_PathGoogleEarth;
 
+	BOOL m_UseNauticalMiles;
+
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 

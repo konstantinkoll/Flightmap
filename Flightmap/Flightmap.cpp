@@ -52,14 +52,17 @@ BOOL CFlightmapApp::InitInstance()
 
 	// Registry auslesen
 	SetRegistryBase();
+	m_UseNauticalMiles = GetInt(_T("UseNauticalMiles"), TRUE);
+	m_ReduceVisuals = GetInt(_T("ReduceVisuals"), FALSE);
+	m_nTextureSize = GetInt(_T("TextureSize"), 0);
+	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_GlobeShadows = GetInt(_T("GlobeShadows"), TRUE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
-	m_nTextureSize = GetInt(_T("TextureSize"), 0);
-	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
+
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
@@ -80,6 +83,8 @@ INT CFlightmapApp::ExitInstance()
 {
 	if (m_AppInitialized)
 	{
+		WriteInt(_T("UseNauticalMiles"), m_UseNauticalMiles);
+		WriteInt(_T("ReduceVisuals"), m_ReduceVisuals);
 		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
