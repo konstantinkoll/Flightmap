@@ -36,6 +36,8 @@ IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_EARTHMAP_1024       PNG                     "res\\Earthmap_1024.jpg"
 IDB_EARTHMAP_2048       PNG                     "res\\Earthmap_2048.jpg"
+IDB_NRT_REGISTERED      PNG                     "res\\NRT_Registered.png"
+IDB_NRT_UNREGISTERED    PNG                     "res\\NRT_Unregistered.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -58,6 +60,7 @@ IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
 IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
 IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Tiny.ico"
+IDD_REGISTER            ICON                    "res\\Wallet_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -255,15 +258,10 @@ BEGIN
     IDS_LICFILEFILTER       "Lizenzdateien"
     IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
     IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von Flightmap!"
-    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von Flightmap. Flightmap ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_XOFY_SINGULAR       "%d von %d"
     IDS_XOFY_PLURAL         "%d von %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
 END
 
@@ -450,6 +448,24 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
+IDD_REGISTER DIALOGEX 0, 0, 339, 237
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Unregistered version"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "Continue",IDOK,271,208,61,22
+    LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits!",IDC_TEXTROW1,7,7,325,8
+    LTEXT           "- Most importantly, maps created by Flightmap won't be defaced by magenta bars any more:",IDC_TEXTROW2,7,19,325,8
+    CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,12,30,128,118
+    CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,147,30,128,118
+    CTEXT           "Shareware version",IDC_CAPTION1,12,149,128,8
+    CTEXT           "Registered version",IDC_CAPTION2,147,149,128,8
+    LTEXT           "- Saving as .csv, .ics, .klm or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,325,8
+    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,325,8
+    LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,325,8
+    LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,325,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -498,6 +514,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 221
     END
+
+    IDD_REGISTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 332
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 230
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -516,15 +540,10 @@ BEGIN
     IDS_LICFILEFILTER       "License files"
     IDS_LICENSEVALID_CAPTION "License valid"
     IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing Flightmap! We appreciate your business."
-    IDS_NOLICENSE           "You are using an unregistered copy of Flightmap. Flightmap is shareware—if you decide to use it regulary, you are required to purchase a license key!"
     IDS_XOFY_SINGULAR       "%d of %d"
     IDS_XOFY_PLURAL         "%d of %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
 END
 

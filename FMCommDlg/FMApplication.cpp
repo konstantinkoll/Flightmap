@@ -121,9 +121,9 @@ FMApplication::FMApplication()
 	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_SmallFont.CreateFont(-(sz-2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_SmallFont.CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		(sz<=11) ? _T("Tahoma") : face);
+		_T("MSShellDlg"));
 	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
@@ -195,15 +195,14 @@ INT FMApplication::ExitInstance()
 	return 0;
 }
 
-BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
+BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 {
 	if ((Level & NAG_EXPIRED) ? FMIsSharewareExpired() : !FMIsLicensed())
 		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
 		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
+			FMRegisterDlg dlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow());
+			dlg.DoModal();
 
-			MessageBox(pWndParent ? pWndParent->GetSafeHwnd() : GetForegroundWindow(), tmpStr, _T("Flightmap"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
 			ResetNagCounter;
 
 			return TRUE;
@@ -214,7 +213,10 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 
 CString FMApplication::GetDefaultFontFace()
 {
-	return (OSVersion==OS_XP ? _T("Arial") : _T("Segoe UI"));
+	LOGFONT lf;
+	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0);
+
+	return lf.lfFaceName;
 }
 
 void FMApplication::SendMail(CString Subject)
@@ -242,8 +244,8 @@ void FMApplication::OnAppPurchase()
 
 void FMApplication::OnAppEnterLicenseKey()
 {
-//	FMLicenseDlg dlg(NULL);
-//	dlg.DoModal();
+	FMLicenseDlg dlg(m_pActiveWnd);
+	dlg.DoModal();
 }
 
 void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)

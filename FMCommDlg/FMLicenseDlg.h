@@ -17,7 +17,6 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	afx_msg void OnDestroy();
 	afx_msg void OnLoadLicense();
 	DECLARE_MESSAGE_MAP()
 };

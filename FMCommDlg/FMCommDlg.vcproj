@@ -337,6 +337,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CPictureCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
@@ -350,6 +354,10 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMRegisterDlg.cpp"
 				>
 			</File>
 			<File
@@ -407,6 +415,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CPictureCtrl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.h"
 				>
 			</File>
@@ -420,6 +432,10 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMRegisterDlg.h"
 				>
 			</File>
 			<File
@@ -509,11 +525,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\NRT_Registered.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\NRT_Unregistered.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Plane_Tiny.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\SortIndicators.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Wallet_Tiny.ico"
 				>
 			</File>
 		</Filter>

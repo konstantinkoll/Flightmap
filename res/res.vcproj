@@ -272,6 +272,10 @@
 			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>
+		<File
+			RelativePath=".\Wallet_Tiny.ico"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

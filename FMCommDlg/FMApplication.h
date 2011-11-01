@@ -87,7 +87,7 @@ public:
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
 
-	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL, BOOL Abort=FALSE);
+	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);

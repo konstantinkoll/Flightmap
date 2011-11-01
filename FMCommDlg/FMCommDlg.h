@@ -2,9 +2,11 @@
 #include "..\FMCommDlg\CGdiPlusBitmap.h"
 #include "..\FMCommDlg\CGlasWindow.h"
 #include "..\FMCommDlg\CGroupBox.h"
+#include "..\FMCommDlg\CPictureCtrl.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\FMLicenseDlg.h"
+#include "..\FMCommDlg\FMRegisterDlg.h"
 #include "..\FMCommDlg\License.h"
 
 
@@ -17,6 +19,7 @@
 
 FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 FMCommDlg_API BOOL IsCtrlThemed();
+FMCommDlg_API void DrawControlBorder(CWnd* pWnd);
 
 
 // IATA database

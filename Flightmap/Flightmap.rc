@@ -43,8 +43,6 @@ IDB_DOCKED              JPG                     "res\\Docked2.jpg"
 
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
 IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
-IDB_NRT_REGISTERED      PNG                     "res\\NRT_Registered.png"
-IDB_NRT_UNREGISTERED    PNG                     "res\\NRT_Unregistered.png"
 IDB_PDZVOR              PNG                     "res\\PDZVOR.png"
 
 /////////////////////////////////////////////////////////////////////////////

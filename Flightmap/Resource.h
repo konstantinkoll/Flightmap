@@ -11,9 +11,7 @@
 #define IDB_BLUEMARBLE_8192             135
 #define IDB_NIGHT                       136
 #define IDB_DOCKED                      137
-#define IDB_NRT_REGISTERED              138
-#define IDB_NRT_UNREGISTERED            139
-#define IDB_PDZVOR                      140
+#define IDB_PDZVOR                      138
 
 // Next default values for new objects
 // 

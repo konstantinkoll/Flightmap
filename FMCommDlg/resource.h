@@ -15,6 +15,8 @@
 #define IDB_EARTHMAP_2048               20006
 #define IDB_EXPLORERGRADIENT            20007
 #define IDB_SORTINDICATORS              20008
+#define IDB_NRT_REGISTERED              20009
+#define IDB_NRT_UNREGISTERED            20010
 #define IDS_PURCHASEURL                 20100
 #define IDS_UPDATEURL                   20101
 #define IDS_ERROR                       20102
@@ -22,12 +24,11 @@
 #define IDS_LICFILEFILTER               20104
 #define IDS_LICENSEVALID_CAPTION        20105
 #define IDS_LICENSEVALID_MSG            20106
-#define IDS_NOLICENSE                   20107
-#define IDS_XOFY_SINGULAR               20108
-#define IDS_XOFY_PLURAL                 20109
-#define IDS_UPDATE                      20110
-#define IDS_UPDATE_AVAILABLE            20111
-#define IDS_UPDATE_NOTAVAILABLE         20112
+#define IDS_XOFY_SINGULAR               20107
+#define IDS_XOFY_PLURAL                 20108
+#define IDS_UPDATE                      20109
+#define IDS_UPDATE_AVAILABLE            20110
+#define IDS_UPDATE_NOTAVAILABLE         20111
 #define IDC_GROUPBOX1                   20200
 #define IDC_GROUPBOX2                   20201
 #define IDC_GROUPBOX3                   20202
@@ -67,14 +68,25 @@
 #define IDC_PROGRESSBAR                 21301
 #define IDC_PROGRESSCOUNT               21302
 #define IDC_CAPTION                     21303
+#define IDD_REGISTER                    21400
+#define IDC_TEXTROW1                    21401
+#define IDC_TEXTROW2                    21402
+#define IDC_TEXTROW3                    21403
+#define IDC_TEXTROW4                    21404
+#define IDC_TEXTROW5                    21405
+#define IDC_TEXTROW6                    21406
+#define IDC_CAPTION1                    21407
+#define IDC_CAPTION2                    21408
+#define IDC_NRT_UNREGISTERED            21409
+#define IDC_NRT_REGISTERED              21410
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2010
+#define _APS_NEXT_RESOURCE_VALUE        2011
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2039
+#define _APS_NEXT_CONTROL_VALUE         2040
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
