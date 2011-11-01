@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CLoungeView.h"
+#include "Flightmap.h"
 #include "Resource.h"
 
 
@@ -31,7 +32,7 @@ BOOL CLoungeView::Create(CWnd* pParentWnd, UINT nID)
 void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	BOOL Themed = IsCtrlThemed();
-	if (Themed)
+	if (Themed && !theApp.m_ReduceVisuals)
 	{
 		INT l = m_pBackdrop->m_pBitmap->GetWidth();
 		INT h = m_pBackdrop->m_pBitmap->GetHeight();

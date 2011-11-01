@@ -4,6 +4,7 @@
 #include "..\FMCommDlg\CGroupBox.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMDialog.h"
+#include "..\FMCommDlg\FMLicenseDlg.h"
 #include "..\FMCommDlg\License.h"
 
 
@@ -51,7 +52,7 @@ FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
 
 
 // Lizensierung
-
+/*
 struct FMLicenseVersion
 {
 	UINT Major;
@@ -68,7 +69,7 @@ struct FMLicense
 	WCHAR RegName[256];
 	FMLicenseVersion Version;
 };
-
+*/
 FMCommDlg_API BOOL FMIsLicensed(FMLicense* License=NULL, BOOL Reload=FALSE);
 FMCommDlg_API BOOL FMIsSharewareExpired();
 

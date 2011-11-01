@@ -58,9 +58,7 @@ void CAboutDlg::CheckLicenseKey(FMLicense* License)
 	if (!License)
 		License = &l;
 
-	// Ggf. "Lizenzschlüssel eingeben" verschwinden lassen
-	if (FMIsLicensed(License))
-		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
+	FMDialog::CheckLicenseKey(License);
 
 	// Lizenzinformationen
 	GetDlgItem(IDC_NAME)->SetWindowText(License->RegName);

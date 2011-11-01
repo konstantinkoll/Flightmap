@@ -125,8 +125,6 @@ void CGroupBox::OnPaint()
 			path.Transform(&m2);
 			pen.SetColor(Color(64, 60, 96, 112));
 			g.DrawPath(&pen, &path);
-
-			clr = 0xCC6600;
 		}
 		else
 		{
@@ -138,9 +136,9 @@ void CGroupBox::OnPaint()
 
 			Pen pen(Color(204, 204, 204));
 			g.DrawPath(&pen, &path);
-
-			clr = 0x808080;
 		}
+
+		clr = 0xCC6600;
 	}
 
 	// Caption
@@ -152,7 +150,7 @@ void CGroupBox::OnPaint()
 	if (brush)
 		FillRect(dc, rectCaption, brush);
 
-	dc.SetTextColor(clr);
+	dc.SetTextColor(0xCC6600);
 	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

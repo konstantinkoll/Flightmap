@@ -349,6 +349,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMLicenseDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -412,6 +416,10 @@
 			</File>
 			<File
 				RelativePath=".\FMDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMLicenseDlg.h"
 				>
 			</File>
 			<File

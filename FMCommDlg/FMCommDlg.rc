@@ -164,19 +164,19 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,259,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 228
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
+    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,185
     LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „Flightmap.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,17,322,18
     LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,33,322,18
     PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
     LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,293,157,50,14,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,14,89,322,95,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,207,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,293,207,50,14,WS_GROUP
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
@@ -235,7 +235,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
+        BOTTOMMARGIN, 221
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -249,7 +249,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_PURCHASEURL         "http://flightmap.net/purchase.html"
-    IDS_UPDATEURL           "http://flight.net/download.html"
+    IDS_UPDATEURL           "http://flightmap.net/download.html"
     IDS_ERROR               "Fehler"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
@@ -425,19 +425,19 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,259,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 228
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Enter license key"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
+    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,185
     LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „Flightmap.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,17,322,18
     LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,33,322,18
     PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
     LTEXT           "License key:",IDC_STATIC,14,79,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,156,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,293,156,50,14,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,14,89,322,95,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,207,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,293,207,50,14,WS_GROUP
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 249, 82
@@ -496,7 +496,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 170
+        BOTTOMMARGIN, 221
     END
 END
 #endif    // APSTUDIO_INVOKED

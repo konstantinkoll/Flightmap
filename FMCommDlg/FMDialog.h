@@ -6,7 +6,23 @@
 #pragma once
 #include "CGdiPlusBitmap.h"
 #include "CGroupBox.h"
-#include "FMApplication.h"
+
+struct FMLicenseVersion
+{
+	UINT Major;
+	UINT Minor;
+	UINT Release;
+};
+
+struct FMLicense
+{
+	WCHAR PurchaseID[256];
+	WCHAR ProductID[256];
+	WCHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
+	WCHAR Quantity[8];
+	WCHAR RegName[256];
+	FMLicenseVersion Version;
+};
 
 
 // FMDialog
@@ -31,6 +47,7 @@ protected:
 	UINT m_Design;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
+	virtual void CheckLicenseKey(FMLicense* License=NULL);
 
 	CWnd* GetBottomWnd() const;
 
@@ -40,6 +57,8 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysColorChange();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 
 private:
