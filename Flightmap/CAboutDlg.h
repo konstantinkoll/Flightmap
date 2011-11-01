@@ -16,6 +16,9 @@ public:
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
+	BOOL m_UseStatuteMiles;
+	BOOL m_ReduceVisuals;
+
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 

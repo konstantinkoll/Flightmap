@@ -15,6 +15,9 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 CAboutDlg::CAboutDlg(CWnd* pParent)
 	: FMDialog(IDD_ABOUT, FMDS_Blue, pParent)
 {
+	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
+	m_ReduceVisuals = theApp.m_ReduceVisuals;
+
 	m_pLogo = new CGdiPlusBitmapResource();
 	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP, _T("PNG"), AfxGetResourceHandle()));
 
@@ -24,6 +27,9 @@ CAboutDlg::CAboutDlg(CWnd* pParent)
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	FMDialog::DoDataExchange(pDX);
+
+	DDX_Radio(pDX, IDC_NAUTICALMILES, m_UseStatuteMiles);
+	DDX_Check(pDX, IDC_REDUCEVISUALS, m_ReduceVisuals);
 
 	BOOL EnableAutoUpdate;
 	INT Interval;

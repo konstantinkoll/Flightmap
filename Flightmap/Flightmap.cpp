@@ -52,7 +52,7 @@ BOOL CFlightmapApp::InitInstance()
 
 	// Registry auslesen
 	SetRegistryBase();
-	m_UseNauticalMiles = GetInt(_T("UseNauticalMiles"), TRUE);
+	m_UseStatuteMiles = GetInt(_T("UseStatuteMiles"), FALSE);
 	m_ReduceVisuals = GetInt(_T("ReduceVisuals"), FALSE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
@@ -83,7 +83,7 @@ INT CFlightmapApp::ExitInstance()
 {
 	if (m_AppInitialized)
 	{
-		WriteInt(_T("UseNauticalMiles"), m_UseNauticalMiles);
+		WriteInt(_T("UseStatuteMiles"), m_UseStatuteMiles);
 		WriteInt(_T("ReduceVisuals"), m_ReduceVisuals);
 		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
@@ -126,5 +126,9 @@ void CFlightmapApp::KillFrame(CGlasWindow* pVictim)
 void CFlightmapApp::OnAppAbout()
 {
 	CAboutDlg dlg(m_pActiveWnd);
-	dlg.DoModal();
+	if (dlg.DoModal()==IDOK)
+	{
+		m_UseStatuteMiles = dlg.m_UseStatuteMiles;
+		m_ReduceVisuals = dlg.m_ReduceVisuals;
+	}
 }

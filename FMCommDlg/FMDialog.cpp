@@ -74,7 +74,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
-		SolidBrush brush1(Color(180, 255, 255, 255));
+		SolidBrush brush1(Color(168, 255, 255, 255));
 		g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
 		brush1.SetColor(Color(224, 205, 250, 255));
 		g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
