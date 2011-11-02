@@ -207,7 +207,7 @@ BEGIN
     CTEXT           "Shareware-Version",IDC_CAPTION1,11,149,128,8
     CTEXT           "Vollversion",IDC_CAPTION2,169,149,128,8
     LTEXT           "- Der Dateiexport in die Formaten .csv, .ics, .klm or .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,364,8
-    LTEXT           "- Auf Ausdrucken und PDF-Dateien erscheint nicht mehr der Text ""Unregistrierte Version""",IDC_TEXTROW4,7,169,364,8
+    LTEXT           "- Auf Ausdrucken und PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“",IDC_TEXTROW4,7,169,364,8
     LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_TEXTROW5,7,178,364,8
     LTEXT           "- Und zuletzt ermöglichen Sie uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_TEXTROW6,7,187,364,8
     CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
@@ -292,6 +292,7 @@ BEGIN
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
+    IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
 END
 
 STRINGTABLE 
@@ -380,7 +381,7 @@ BEGIN
     CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,155,81
     LTEXT           "Name:",IDC_STATIC,15,174,141,8
     LTEXT           "X",IDC_NAME,15,184,141,8
-    LTEXT           "Purchace date:",IDC_STATIC,15,197,84,8
+    LTEXT           "Purchase date:",IDC_STATIC,15,197,84,8
     LTEXT           "X",IDC_PURCHASEDATE,15,207,84,8
     LTEXT           "ID:",IDC_STATIC,105,197,50,8
     LTEXT           "X",IDC_ID,105,207,50,8
@@ -492,7 +493,7 @@ BEGIN
     CTEXT           "Shareware version",IDC_CAPTION1,11,149,128,8
     CTEXT           "Full version",IDC_CAPTION2,169,149,128,8
     LTEXT           "- Saving as .csv, .ics, .klm or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,335,8
-    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,335,8
+    LTEXT           "- You won't see the text „""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,335,8
     LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,335,8
     LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,335,8
     CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
@@ -577,6 +578,7 @@ BEGIN
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
     IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
+    IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
 END
 
 STRINGTABLE 

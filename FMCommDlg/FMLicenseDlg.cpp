@@ -51,6 +51,11 @@ void FMLicenseDlg::OnLoadLicense()
 	ENSURE(tmpStr.LoadString(IDS_LICFILEFILTER));
 	tmpStr += _T(" (*.lic)|*.lic||");
 
+	CString caption;
+	ENSURE(caption.LoadString(IDS_ERROR));
+	CString msg;
+	ENSURE(msg.LoadString(IDS_CANNOTLOADLICENSE));
+
 	CFileDialog dlg(TRUE, _T(".lic"), NULL, OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, tmpStr, this);
 	if (dlg.DoModal()==IDOK)
 	{
@@ -59,7 +64,7 @@ void FMLicenseDlg::OnLoadLicense()
 		CStdioFile f;
 		if (!f.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
 		{
-//			LFErrorBox(LFDriveNotReady);
+			MessageBox(msg, caption, MB_OK | MB_ICONERROR);
 		}
 		else
 		{
@@ -73,7 +78,7 @@ void FMLicenseDlg::OnLoadLicense()
 			}
 			catch(CFileException ex)
 			{
-//				LFErrorBox(LFDriveNotReady);
+				MessageBox(msg, caption, MB_OK | MB_ICONERROR);
 			}
 
 			f.Close();

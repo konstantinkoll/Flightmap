@@ -31,6 +31,7 @@
 #define IDS_UPDATE                      20109
 #define IDS_UPDATE_AVAILABLE            20110
 #define IDS_UPDATE_NOTAVAILABLE         20111
+#define IDS_CANNOTLOADLICENSE           20112
 #define IDC_GROUPBOX1                   20200
 #define IDC_GROUPBOX2                   20201
 #define IDC_GROUPBOX3                   20202
