@@ -192,6 +192,27 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
+IDD_REGISTER DIALOGEX 0, 0, 378, 228
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Unregistrierte Version"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,7,209,50,12
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,209,100,12
+    DEFPUSHBUTTON   "Fortsetzen",IDOK,321,209,50,12
+    LTEXT           "Dieses ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile!",IDC_TEXTROW1,7,7,364,8
+    LTEXT           "- Die von Flightmap erzeugten Karten haben keine magentafarbene Balken mehr:",IDC_TEXTROW2,7,19,364,8
+    CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
+    CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
+    CTEXT           "Shareware-Version",IDC_CAPTION1,11,149,128,8
+    CTEXT           "Vollversion",IDC_CAPTION2,169,149,128,8
+    LTEXT           "- Der Dateiexport in die Formaten .csv, .ics, .klm or .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,364,8
+    LTEXT           "- Auf Ausdrucken und PDF-Dateien erscheint nicht mehr der Text ""Unregistrierte Version""",IDC_TEXTROW4,7,169,364,8
+    LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_TEXTROW5,7,178,364,8
+    LTEXT           "- Und zuletzt ermöglichen Sie uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_TEXTROW6,7,187,364,8
+    CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -240,6 +261,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 221
     END
+
+    IDD_REGISTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 371
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 221
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -251,8 +280,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://flightmap.net/purchase.html"
-    IDS_UPDATEURL           "http://flightmap.net/download.html"
+    IDS_PURCHASEURL         "http://flightmap.net/purchase.htm"
+    IDS_UPDATEURL           "http://flightmap.net/download.htm"
     IDS_ERROR               "Fehler"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
@@ -448,22 +477,25 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 339, 237
+IDD_REGISTER DIALOGEX 0, 0, 349, 228
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Unregistered version"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "Continue",IDOK,271,208,61,22
-    LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits!",IDC_TEXTROW1,7,7,325,8
-    LTEXT           "- Most importantly, maps created by Flightmap won't be defaced by magenta bars any more:",IDC_TEXTROW2,7,19,325,8
-    CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,12,30,128,118
-    CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,147,30,128,118
-    CTEXT           "Shareware version",IDC_CAPTION1,12,149,128,8
-    CTEXT           "Registered version",IDC_CAPTION2,147,149,128,8
-    LTEXT           "- Saving as .csv, .ics, .klm or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,325,8
-    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,325,8
-    LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,325,8
-    LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,325,8
+    PUSHBUTTON      "&Purchase",IDC_PURCHASE,7,209,50,12
+    PUSHBUTTON      "&Enter license key...",IDC_ENTERLICENSEKEY,64,209,80,12
+    DEFPUSHBUTTON   "Continue",IDOK,292,209,50,12
+    LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits!",IDC_TEXTROW1,7,7,335,8
+    LTEXT           "- Most importantly, maps created by Flightmap won't be defaced by magenta bars any more:",IDC_TEXTROW2,7,19,335,8
+    CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
+    CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
+    CTEXT           "Shareware version",IDC_CAPTION1,11,149,128,8
+    CTEXT           "Full version",IDC_CAPTION2,169,149,128,8
+    LTEXT           "- Saving as .csv, .ics, .klm or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,335,8
+    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,335,8
+    LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,335,8
+    LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,335,8
+    CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
 END
 
 
@@ -518,9 +550,9 @@ BEGIN
     IDD_REGISTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 332
+        RIGHTMARGIN, 342
         TOPMARGIN, 7
-        BOTTOMMARGIN, 230
+        BOTTOMMARGIN, 221
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -533,8 +565,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://flightmap.net/purchase.html"
-    IDS_UPDATEURL           "http://flightmap.net/download.html"
+    IDS_PURCHASEURL         "http://flightmap.net/purchase.htm"
+    IDS_UPDATEURL           "http://flightmap.net/download.htm"
     IDS_ERROR               "Error"
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
     IDS_LICFILEFILTER       "License files"

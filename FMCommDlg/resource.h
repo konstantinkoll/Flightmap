@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by FMCommDlg.rc
 //
+#define IDOK2                           2
+#define IDOK3                           3
 #define IDR_APPLICATION                 128
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
@@ -79,6 +81,8 @@
 #define IDC_CAPTION2                    21408
 #define IDC_NRT_UNREGISTERED            21409
 #define IDC_NRT_REGISTERED              21410
+#define IDC_REGARROW                    21411
+#define IDC_PURCHASE                    21412
 
 // Next default values for new objects
 // 

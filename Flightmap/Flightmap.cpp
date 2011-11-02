@@ -68,6 +68,9 @@ BOOL CFlightmapApp::InitInstance()
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
 
+	if (!FMIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE);
+
 	CMainWnd* pFrame = new CMainWnd();
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);

@@ -28,7 +28,7 @@ void FMLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 		CString caption;
 		CString message;
-		if (FMIsLicensed(NULL, true))
+		if (FMIsLicensed(NULL, TRUE))
 		{
 			ENSURE(caption.LoadString(IDS_LICENSEVALID_CAPTION));
 			ENSURE(message.LoadString(IDS_LICENSEVALID_MSG));

@@ -174,10 +174,8 @@ BOOL FMApplication::InitInstance()
 
 	SetRegistryKey(_T(""));
 
-	// Falls abgelaufen, Fenster anzeigen
+	// Zähler zurücksetzen
 	ResetNagCounter;
-	if (!FMIsLicensed())
-		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE);
 
 	return TRUE;
 }
