@@ -373,7 +373,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,218,261,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,275,261,50,14,WS_GROUP
     CONTROL         "Distance units",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,66
-    LTEXT           "Distances are always displayed in kilometeres (km), and additionally in miles:",IDC_STATIC,14,103,142,25
+    LTEXT           "Distances are always displayed in kilometers (km), and additionally in miles:",IDC_STATIC,14,103,142,25
     CONTROL         "&Nautical miles (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,142,10
     CONTROL         "&Statute miles (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,142,10
     CONTROL         "Visual effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,155,66
