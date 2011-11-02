@@ -132,11 +132,187 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Add_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Add_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\AddDocument_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\AddDocument_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Close_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Close_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Copy_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Copy_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Cut_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Cut_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Delete_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Delete_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Globe_FitToWindow_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\GoogleEarth_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\GoogleEarth_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Inspect_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Inspect_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Key_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\Key_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\New_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\New_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\NewSample_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\NewSample_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Open_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Open_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Paste_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Paste_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Print_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Print_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PrintOptions_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PrintOptions_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PrintPreview_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PrintPreview_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PrintQuick_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PrintQuick_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Quit_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Quit_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Save_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Save_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SaveAs_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SaveAs_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SaveSelection_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SaveSelection_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SelectAll_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SelectAll_32.png"
 				>
 			</File>
 			<File
@@ -153,6 +329,22 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Wallet_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ZoomIn_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ZoomIn_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ZoomOut_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ZoomOut_32.png"
 				>
 			</File>
 		</Filter>
@@ -206,6 +398,10 @@
 		</File>
 		<File
 			RelativePath=".\Flightmap.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Google Earth.png"
 			>
 		</File>
 		<File
