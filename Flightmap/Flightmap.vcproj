@@ -498,6 +498,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenubarIcons.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Night.jpg"
 				>
 			</File>

@@ -1,4 +1,5 @@
 #pragma once
+#include "..\FMCommDlg\CDialogMenuBar.h"
 #include "..\FMCommDlg\CGdiPlusBitmap.h"
 #include "..\FMCommDlg\CGlasWindow.h"
 #include "..\FMCommDlg\CGroupBox.h"
@@ -55,24 +56,7 @@ FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
 
 
 // Lizensierung
-/*
-struct FMLicenseVersion
-{
-	UINT Major;
-	UINT Minor;
-	UINT Release;
-};
 
-struct FMLicense
-{
-	WCHAR PurchaseID[256];
-	WCHAR ProductID[256];
-	WCHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
-	WCHAR Quantity[8];
-	WCHAR RegName[256];
-	FMLicenseVersion Version;
-};
-*/
 FMCommDlg_API BOOL FMIsLicensed(FMLicense* License=NULL, BOOL Reload=FALSE);
 FMCommDlg_API BOOL FMIsSharewareExpired();
 

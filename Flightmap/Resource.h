@@ -12,6 +12,7 @@
 #define IDB_NIGHT                       136
 #define IDB_DOCKED                      137
 #define IDB_PDZVOR                      138
+#define IDB_MENUBARICONS                139
 
 // Next default values for new objects
 // 

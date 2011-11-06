@@ -52,13 +52,19 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 
 void CMainWnd::AdjustLayout()
 {
+	CGlasWindow::AdjustLayout();
+
 	if (!m_pWndMainView)
 		return;
 
 	CRect rect;
 	GetLayoutRect(rect);
 
-	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	INT top = rect.top+m_Margins.cyTopHeight;
+	if (m_pDialogMenuBar)
+		top += m_pDialogMenuBar->GetPreferredHeight();
+
+	m_pWndMainView->SetWindowPos(NULL, rect.left, top, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CMainWnd::OpenMainView(BOOL Empty)
@@ -95,6 +101,9 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	m_pDialogMenuBar = new CDialogMenuBar();
+	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS, 1);
 
 	theApp.AddFrame(this);
 

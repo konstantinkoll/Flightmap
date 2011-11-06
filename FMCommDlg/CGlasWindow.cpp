@@ -14,6 +14,7 @@ CGlasWindow::CGlasWindow(BOOL HideIcon, BOOL HideCaption)
 {
 	p_App = (FMApplication*)AfxGetApp();
 	p_PopupWindow = NULL;
+	m_pDialogMenuBar = NULL;
 	hTheme = NULL;
 	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
@@ -104,6 +105,13 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 
 void CGlasWindow::AdjustLayout()
 {
+	if (m_pDialogMenuBar)
+	{
+		CRect rect;
+		GetLayoutRect(rect);
+
+		m_pDialogMenuBar->SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.top+m_Margins.cyTopHeight+m_pDialogMenuBar->GetPreferredHeight(), SWP_NOACTIVATE | SWP_NOZORDER);
+	}
 }
 
 void CGlasWindow::PostNcDestroy()

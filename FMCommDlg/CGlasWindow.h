@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMApplication.h"
+#include "CDialogMenuBar.h"
 
 
 // CGlasWindow
@@ -18,6 +19,8 @@
 
 class CGlasWindow : public CWnd
 {
+friend class CDialogMenuBar;
+
 public:
 	CGlasWindow(BOOL HideIcon=TRUE, BOOL HideCaption=TRUE);
 
@@ -39,6 +42,7 @@ public:
 protected:
 	FMApplication* p_App;
 	CWnd* p_PopupWindow;
+	CDialogMenuBar* m_pDialogMenuBar;
 	CList<CWnd*> m_GlasChildren;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;

@@ -38,10 +38,14 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		INT h = m_pBackdrop->m_pBitmap->GetHeight();
 
 		DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
-		l = (INT)(l*f);
-		h = (INT)(h*f);
+		l = max(rect.Width(), (INT)(l*f));
+		h = max(rect.Height(), (INT)(h*f));
 
 		g.DrawImage(m_pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
+
+		SolidBrush brush(Color(0x14, 0x00, 0x00, 0x00));
+		for (INT a=0; a<5; a++)
+			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
 	}
 	else
 	{

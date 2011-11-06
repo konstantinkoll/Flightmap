@@ -75,7 +75,7 @@ BOOL CFlightmapApp::InitInstance()
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);
 
-	OnAppAbout();
+	//OnAppAbout();
 
 	m_AppInitialized = TRUE;
 
