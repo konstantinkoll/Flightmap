@@ -44,7 +44,6 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnIdleUpdateCmdUI();
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 

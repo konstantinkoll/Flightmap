@@ -67,7 +67,7 @@ void CDialogMenuBar::AddMenuLeft(UINT nID, UINT nCaptionResID)
 
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&m_MenuFont);
-	i.MinWidth = pDC->GetTextExtent(i.Name, wcslen(i.Name)).cx;
+	i.MinWidth = pDC->GetTextExtent(i.Name, (INT)wcslen(i.Name)).cx;
 	pDC->SelectObject(pOldFont);
 	ReleaseDC(pDC);
 
@@ -91,10 +91,18 @@ void CDialogMenuBar::AdjustLayout()
 	GetClientRect(rect);
 
 	INT Left = 0;
+	INT Spacer = (p_App->OSVersion==OS_XP) ? 10 : 6;
+	BOOL OnLeftSide = TRUE;
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
+		if ((m_Items.m_Items[a].CmdID) && OnLeftSide)
+		{
+			OnLeftSide = FALSE;
+			Left = rect.Width()-(m_Items.m_ItemCount-a)*(m_Items.m_Items[a].MinWidth+Spacer);
+		}
+
 		m_Items.m_Items[a].Left = Left;
-		m_Items.m_Items[a].Right = Left+m_Items.m_Items[a].MinWidth+10;
+		m_Items.m_Items[a].Right = Left+m_Items.m_Items[a].MinWidth+Spacer;
 		Left = m_Items.m_Items[a].Right;
 	}
 
@@ -121,7 +129,6 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
@@ -190,16 +197,35 @@ void CDialogMenuBar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
+		COLORREF clrText = GetSysColor(COLOR_MENUTEXT);
+
+		if (hTheme)
+		{
+			p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, MBI_PUSHED, rectItem, rectItem);
+		}
+		else
+			if (Themed)
+			{
+				dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
+				clrText = GetSysColor(COLOR_HIGHLIGHTTEXT);
+			}
+			else
+			{
+			}
 
 		if (m_Items.m_Items[a].CmdID)
 		{
 			CAfxDrawState ds;
 			m_Icons.PrepareDrawImage(ds);
-			m_Icons.Draw(&dc, rectItem.left, (rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
+			m_Icons.Draw(&dc, rectItem.left+(rectItem.Width()-16)/2, rectItem.top+(rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
 			m_Icons.EndDrawImage(ds);
 		}
 		else
 		{
+			if (p_App->OSVersion==OS_XP)
+				rectItem.bottom -= 2;
+
+			dc.SetTextColor(clrText);
 			dc.DrawText(m_Items.m_Items[a].Name, -1, rectItem, format);
 		}
 	}
@@ -257,50 +283,6 @@ void CDialogMenuBar::OnIdleUpdateCmdUI()
 
 	if (Update)
 		AdjustLayout();*/
-}
-
-void CDialogMenuBar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
-{
-/*	if ((pos.x<0) || (pos.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		pos.x = (rect.left+rect.right)/2;
-		pos.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&pos);
-	}
-
-	CMenu menu;
-	if (!menu.CreatePopupMenu())
-		return;
-
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			CString tmpStr;
-			btn->GetWindowText(tmpStr);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
-		}
-	}
-
-	if (menu.GetMenuItemCount())
-		menu.AppendMenu(MF_SEPARATOR);
-
-	for (POSITION p=m_ButtonsRight.GetTailPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsRight.GetPrev(p);
-		if (btn->IsWindowEnabled())
-		{
-			CString tmpStr;
-			btn->GetWindowText(tmpStr);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
-		}
-	}
-
-	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);*/
 }
 
 void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
