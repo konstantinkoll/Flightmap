@@ -328,6 +328,9 @@ BOOL CGlasWindow::OnNcActivate(BOOL bActive)
 
 			UpdateWindow();
 		}
+
+		if (m_pDialogMenuBar)
+			m_pDialogMenuBar->Invalidate();
 	}
 
 	return (bActive || !p_PopupWindow) ? CWnd::OnNcActivate(bActive) : TRUE;
@@ -353,7 +356,7 @@ void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	if (GetStyle() & WS_MAXIMIZEBOX)
 	{
 		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 
-			384+
+			(m_pDialogMenuBar ? max(384, m_pDialogMenuBar->GetMinWidth()+16) : 384)+
 			((m_Margins.cxLeftWidth>0) ? m_Margins.cxLeftWidth : 0)+
 			((m_Margins.cxRightWidth>0) ? m_Margins.cxRightWidth : 0));
 		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 

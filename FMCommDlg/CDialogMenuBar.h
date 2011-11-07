@@ -30,6 +30,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
+	INT GetMinWidth();
 	void AddMenuLeft(UINT nID, UINT nCaptionResID);
 	void AddMenuRight(UINT nCmdID, INT nIconID);
 	void AdjustLayout();

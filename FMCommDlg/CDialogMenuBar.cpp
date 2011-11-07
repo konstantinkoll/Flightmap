@@ -58,6 +58,16 @@ UINT CDialogMenuBar::GetPreferredHeight()
 	return m_MenuHeight;
 }
 
+INT CDialogMenuBar::GetMinWidth()
+{
+	INT Spacer = (p_App->OSVersion==OS_XP) ? 10 : 6;
+	INT MinWidth = 0;
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		MinWidth += m_Items.m_Items[a].MinWidth+Spacer;
+
+	return MinWidth;
+}
+
 void CDialogMenuBar::AddMenuLeft(UINT nID, UINT nCaptionResID)
 {
 	MenuBarItem i;
@@ -179,7 +189,7 @@ void CDialogMenuBar::OnPaint()
 	}
 	else
 	{
-		dc.FillSolidRect(rect, GetSysColor(Themed ? COLOR_BTNFACE : COLOR_MENUBAR));
+		dc.FillSolidRect(rect, GetSysColor(COLOR_MENUBAR));
 	}
 
 	// Items
@@ -197,9 +207,9 @@ void CDialogMenuBar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
-		COLORREF clrText = GetSysColor(COLOR_MENUTEXT);
+		COLORREF clrText = GetSysColor(((CGlasWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
 
-		if (hTheme)
+		/*if (hTheme)
 		{
 			p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, MBI_PUSHED, rectItem, rectItem);
 		}
@@ -211,7 +221,8 @@ void CDialogMenuBar::OnPaint()
 			}
 			else
 			{
-			}
+
+			}*/
 
 		if (m_Items.m_Items[a].CmdID)
 		{
