@@ -427,6 +427,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DynArray.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.h"
 				>
 			</File>

@@ -111,6 +111,11 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
+    IDM_FILE                "&Datei"
+    IDM_EDIT                "&Bearbeiten"
+    IDM_MAP                 "&Karte"
+    IDM_GLOBE               "&Globus"
+    IDM_STATISTICS          "&Statistik"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -183,6 +188,11 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
+    IDM_FILE                "&File"
+    IDM_EDIT                "&Edit"
+    IDM_MAP                 "&Map"
+    IDM_GLOBE               "&Globe"
+    IDM_STATISTICS          "&Statistics"
 END
 
 #endif    // Englisch (USA) resources

@@ -13,6 +13,11 @@
 #define IDB_DOCKED                      137
 #define IDB_PDZVOR                      138
 #define IDB_MENUBARICONS                139
+#define IDM_FILE                        1000
+#define IDM_EDIT                        1001
+#define IDM_MAP                         1002
+#define IDM_GLOBE                       1003
+#define IDM_STATISTICS                  1004
 
 // Next default values for new objects
 // 

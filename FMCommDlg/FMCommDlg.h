@@ -4,6 +4,7 @@
 #include "..\FMCommDlg\CGlasWindow.h"
 #include "..\FMCommDlg\CGroupBox.h"
 #include "..\FMCommDlg\CPictureCtrl.h"
+#include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\FMLicenseDlg.h"

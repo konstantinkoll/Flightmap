@@ -3,13 +3,23 @@
 //
 
 #pragma once
-//#include "CTaskButton.h"
 #include "FMApplication.h"
-#include <list>
+#include "DynArray.h"
 
 
 // CDialogMenuBar
 //
+
+struct MenuBarItem
+{
+	UINT PopupID;
+	UINT CmdID;
+	INT IconID;
+	INT Left;
+	INT Right;
+	INT MinWidth;
+	WCHAR Name[256];
+};
 
 class CDialogMenuBar : public CWnd
 {
@@ -20,7 +30,8 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
-//	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE);
+	void AddMenuLeft(UINT nID, UINT nCaptionResID);
+	void AddMenuRight(UINT nCmdID, INT nIconID);
 	void AdjustLayout();
 
 protected:
@@ -39,8 +50,10 @@ protected:
 
 private:
 	FMApplication* p_App;
-	CMFCToolBarImages Icons;
-//	CList<CTaskButton*> m_ButtonsLeft;
-//	CList<CTaskButton*> m_ButtonsRight;
+	CMFCToolBarImages m_Icons;
+	DynArray<MenuBarItem> m_Items;
 	HTHEME hTheme;
+	LOGFONT m_MenuLogFont;
+	CFont m_MenuFont;
+	INT m_MenuHeight;
 };

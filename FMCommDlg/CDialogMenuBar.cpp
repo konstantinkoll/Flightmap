@@ -17,13 +17,28 @@ CDialogMenuBar::CDialogMenuBar()
 {
 	p_App = (FMApplication*)AfxGetApp();
 	hTheme = NULL;
+
+	NONCLIENTMETRICS ncm;
+	ncm.cbSize = sizeof(NONCLIENTMETRICS)-sizeof(ncm.iPaddedBorderWidth); 
+	if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
+	{
+		m_MenuLogFont = ncm.lfMenuFont;
+		m_MenuHeight = max(ncm.iMenuHeight, 2*BORDER+16);
+	}
+	else
+	{
+		GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(m_MenuLogFont), &m_MenuLogFont);
+		m_MenuHeight = 2*BORDER+max(16, abs(m_MenuLogFont.lfHeight));
+	}
+
+	m_MenuFont.CreateFontIndirect(&m_MenuLogFont);
 }
 
 BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 {
-	Icons.SetImageSize(CSize(16, 16));
+	m_Icons.SetImageSize(CSize(16, 16));
 	if (ResID)
-		Icons.Load(ResID);
+		m_Icons.Load(ResID);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -40,110 +55,50 @@ BOOL CDialogMenuBar::OnCommand(WPARAM wParam, LPARAM lParam)
 
 UINT CDialogMenuBar::GetPreferredHeight()
 {
-	LOGFONT lf;
-	GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(lf), &lf);
-
-	return 2*BORDER+max(16, abs(lf.lfHeight));
+	return m_MenuHeight;
 }
 
-/*CTaskButton* CDialogMenuBar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight)
+void CDialogMenuBar::AddMenuLeft(UINT nID, UINT nCaptionResID)
 {
-	CString Caption;
-	CString Hint;
-	ENSURE(Caption.LoadString(nID));
+	MenuBarItem i;
+	ZeroMemory(&i, sizeof(i));
+	i.PopupID = nID;
+	ENSURE(LoadString(AfxGetResourceHandle(), nCaptionResID, i.Name, 256));
 
-	INT pos = Caption.Find(L'\n');
-	if (pos!=-1)
-	{
-		Hint = Caption.Left(pos);
-		Caption.Delete(0, pos+1);
+	CDC* pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(&m_MenuFont);
+	i.MinWidth = pDC->GetTextExtent(i.Name, wcslen(i.Name)).cx;
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
 
-		if (Hint.GetLength()>40)
-		{
-			pos = Hint.Find(L' ', Hint.GetLength()/2);
-			if (pos!=-1)
-				Hint.SetAt(pos, L'\n');
-		}
-	}
+	m_Items.AddItem(i);
+}
 
-	CTaskButton* btn = new CTaskButton();
-	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &Icons,
-		ForceIcon || AddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
-		this, nID);
-	btn->EnableWindow(FALSE);
+void CDialogMenuBar::AddMenuRight(UINT nCmdID, INT nIconID)
+{
+	MenuBarItem i;
+	ZeroMemory(&i, sizeof(i));
+	i.CmdID = nCmdID;
+	i.IconID = nIconID;
+	i.MinWidth = 16;
 
-	if (AddRight)
-	{
-		m_ButtonsRight.AddHead(btn);
-	}
-	else
-	{
-		m_ButtonsLeft.AddTail(btn);
-	}
-
-	return btn;
-}*/
+	m_Items.AddItem(i);
+}
 
 void CDialogMenuBar::AdjustLayout()
 {
-	SetRedraw(FALSE);
-
 	CRect rect;
 	GetClientRect(rect);
 
-/*	INT Row = BORDER-1;
-	INT h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
-
-	INT RPos = rect.right+2*BORDER-BORDERLEFT;
-	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
+	INT Left = 0;
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			INT l = btn->GetPreferredWidth();
-			RPos -= l+BORDER;
-			if (RPos>=BORDERLEFT)
-			{
-				btn->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				btn->ShowWindow(SW_SHOW);
-			}
-			else
-			{
-				btn->ShowWindow(SW_HIDE);
-			}
-		}
-		else
-		{
-			btn->ShowWindow(SW_HIDE);
-		}
+		m_Items.m_Items[a].Left = Left;
+		m_Items.m_Items[a].Right = Left+m_Items.m_Items[a].MinWidth+10;
+		Left = m_Items.m_Items[a].Right;
 	}
 
-	INT LPos = rect.left+BORDERLEFT-BORDER;
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			INT l = btn->GetPreferredWidth();
-			if (LPos+l+BORDERLEFT-BORDER<RPos)
-			{
-				btn->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				btn->ShowWindow(SW_SHOW);
-			}
-			else
-			{
-				btn->ShowWindow(SW_HIDE);
-			}
-			LPos += l+BORDERLEFT;
-		}
-		else
-		{
-			btn->ShowWindow(SW_HIDE);
-		}
-	}*/
-
-	SetRedraw(TRUE);
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+	Invalidate();
 }
 
 void CDialogMenuBar::SetTheme()
@@ -186,21 +141,6 @@ void CDialogMenuBar::OnDestroy()
 		p_App->zCloseThemeData(hTheme);
 
 	CWnd::OnDestroy();
-
-
-/*	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
-		btn->DestroyWindow();
-		delete btn;
-	}
-
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		btn->DestroyWindow();
-		delete btn;
-	}*/
 }
 
 BOOL CDialogMenuBar::OnEraseBkgnd(CDC* /*pDC*/)
@@ -223,6 +163,7 @@ void CDialogMenuBar::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
+	// Background
 	BOOL Themed = IsCtrlThemed();
 
 	if (hTheme)
@@ -234,9 +175,38 @@ void CDialogMenuBar::OnPaint()
 		dc.FillSolidRect(rect, GetSysColor(Themed ? COLOR_BTNFACE : COLOR_MENUBAR));
 	}
 
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
+	// Items
+	CFont* pOldFont = dc.SelectObject(&m_MenuFont);
 
+	UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+	if (GetFocus()!=this)
+	{
+		BOOL AlwaysUnderline = FALSE;
+		if (SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &AlwaysUnderline, 0))
+			if (!AlwaysUnderline)
+				format |= DT_HIDEPREFIX;
+	}
+
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+	{
+		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
+
+		if (m_Items.m_Items[a].CmdID)
+		{
+			CAfxDrawState ds;
+			m_Icons.PrepareDrawImage(ds);
+			m_Icons.Draw(&dc, rectItem.left, (rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
+			m_Icons.EndDrawImage(ds);
+		}
+		else
+		{
+			dc.DrawText(m_Items.m_Items[a].Name, -1, rectItem, format);
+		}
+	}
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldFont);
+	dc.SelectObject(pOldBitmap);
 }
 
 LRESULT CDialogMenuBar::OnThemeChanged()
