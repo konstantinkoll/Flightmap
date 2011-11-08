@@ -76,13 +76,13 @@ BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 				}
 			}
 
-	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
+/*	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
 		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
 		if (pWnd)
 			pWnd->SetFocus();
 		return TRUE;
-	}
+	}*/
 
 	return CWnd::PreTranslateMessage(pMsg);
 }
@@ -441,9 +441,14 @@ void CGlassWindow::OnClosePopup()
 {
 	if (p_PopupWindow)
 	{
-		p_PopupWindow->DestroyWindow();
-		delete p_PopupWindow;
-
+		CWnd* pVictim = p_PopupWindow;
 		p_PopupWindow = NULL;
+
+		pVictim->DestroyWindow();
+		delete pVictim;
+
+		SetFocus();
+		Invalidate();
+		UpdateWindow();				// Essential, as window's redraw flag may be false
 	}
 }

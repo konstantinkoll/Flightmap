@@ -69,7 +69,6 @@ public:
 	CDialogPopup();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd);

@@ -356,14 +356,6 @@ BOOL CDialogPopup::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-BOOL CDialogPopup::OnCommand(WPARAM wParam, LPARAM lParam) 
-{
-	if ((UINT)HIWORD(wParam)==WM_KILLFOCUS)
-		GetOwner()->PostMessage(WM_CLOSEPOPUP);
-
-	return CWnd::OnCommand(wParam, lParam);
-}
-
 void CDialogPopup::AdjustLayout()
 {
 /*	if (!IsWindow(m_wndList))
@@ -422,8 +414,9 @@ void CDialogPopup::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
-void CDialogPopup::OnSetFocus(CWnd* /*pOldWnd*/)
+void CDialogPopup::OnSetFocus(CWnd* pOldWnd)
 {
+	CWnd::OnSetFocus(pOldWnd);
 }
 
 void CDialogPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
