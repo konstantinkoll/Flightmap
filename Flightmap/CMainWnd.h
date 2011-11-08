@@ -9,7 +9,7 @@
 // CMainWnd
 //
 
-class CMainWnd : public CGlassWindow
+class CMainWnd : public CMainWindow
 {
 public:
 	CMainWnd();

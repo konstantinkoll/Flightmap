@@ -12,7 +12,7 @@
 //
 
 CMainWnd::CMainWnd()
-	: CGlassWindow(FALSE, FALSE)
+	: CMainWindow()
 {
 	m_hIcon = NULL;
 	m_pWndMainView = NULL;
@@ -37,7 +37,7 @@ BOOL CMainWnd::Create()
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -47,24 +47,24 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 		if (m_pWndMainView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
-	return CGlassWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CMainWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainWnd::AdjustLayout()
 {
-	CGlassWindow::AdjustLayout();
+	CMainWindow::AdjustLayout();
 
 	if (!m_pWndMainView)
 		return;
 
 	CRect rect;
-	GetLayoutRect(rect);
+	GetClientRect(rect);
 
-	INT top = rect.top+m_Margins.cyTopHeight;
+	INT top = rect.top;
 	if (m_pDialogMenuBar)
 		top += m_pDialogMenuBar->GetPreferredHeight();
 
-	m_pWndMainView->SetWindowPos(NULL, rect.left, top, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_pWndMainView->SetWindowPos(NULL, rect.left, top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CMainWnd::OpenMainView(BOOL Empty)
@@ -90,7 +90,7 @@ void CMainWnd::OpenMainView(BOOL Empty)
 }
 
 
-BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
+BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -99,7 +99,7 @@ END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
+	if (CMainWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	m_pDialogMenuBar = new CDialogMenuBar();
@@ -131,7 +131,7 @@ void CMainWnd::OnDestroy()
 		delete m_pWndMainView;
 	}
 
-	CGlassWindow::OnDestroy();
+	CMainWindow::OnDestroy();
 	theApp.KillFrame(this);
 }
 

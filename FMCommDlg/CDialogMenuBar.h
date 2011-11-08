@@ -4,7 +4,7 @@
 
 #pragma once
 #include "FMApplication.h"
-#include "CGlassWindow.h"
+#include "CMainWindow.h"
 #include "DynArray.h"
 
 

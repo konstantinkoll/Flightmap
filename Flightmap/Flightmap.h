@@ -29,10 +29,10 @@ public:
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
 
-	void AddFrame(CGlassWindow* pFrame);
-	void KillFrame(CGlassWindow* pVictim);
+	void AddFrame(CMainWindow* pFrame);
+	void KillFrame(CMainWindow* pVictim);
 
-	CList<CGlassWindow*> m_MainFrames;
+	CList<CMainWindow*> m_MainFrames;
 	CString m_PathGoogleEarth;
 
 	BOOL m_UseStatuteMiles;

@@ -185,7 +185,7 @@ void CDialogMenuBar::OnPaint()
 
 	if (hTheme)
 	{
-		p_App->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CGlassWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
+		p_App->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CMainWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
 	}
 	else
 	{
@@ -207,7 +207,7 @@ void CDialogMenuBar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
-		COLORREF clrText = GetSysColor(((CGlassWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
+		COLORREF clrText = GetSysColor(((CMainWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
 
 		if (hTheme)
 		{
@@ -322,7 +322,7 @@ BOOL CDialogPopup::Create(CWnd* pParentWnd)
 {
 	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 
-	CGlassWindow* pTopLevelParent = (CGlassWindow*)pParentWnd->GetTopLevelParent();
+	CMainWindow* pTopLevelParent = (CMainWindow*)pParentWnd->GetTopLevelParent();
 	pTopLevelParent->RegisterPopupWindow(this);
 
 	BOOL bDropShadow;
@@ -341,7 +341,6 @@ BOOL CDialogPopup::Create(CWnd* pParentWnd)
 void CDialogPopup::Track()
 {
 }
-
 
 BOOL CDialogPopup::PreTranslateMessage(MSG* pMsg)
 {
