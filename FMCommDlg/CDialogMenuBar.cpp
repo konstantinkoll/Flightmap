@@ -385,10 +385,10 @@ END_MESSAGE_MAP()
 
 BOOL CDialogPopup::OnEraseBkgnd(CDC* pDC)
 {
-	CRect rclient;
-	GetClientRect(rclient);
+	CRect rect;
+	GetClientRect(rect);
 
-	pDC->FillSolidRect(rclient, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_MENU));
+	pDC->FillSolidRect(rect, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_MENU));
 
 	return TRUE;
 }
