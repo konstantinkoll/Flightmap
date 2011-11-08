@@ -333,7 +333,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasWindow.cpp"
+				RelativePath=".\CGlassWindow.cpp"
 				>
 			</File>
 			<File
@@ -415,7 +415,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasWindow.h"
+				RelativePath=".\CGlassWindow.h"
 				>
 			</File>
 			<File

@@ -12,7 +12,7 @@
 //
 
 CMainWnd::CMainWnd()
-	: CGlasWindow(FALSE, FALSE)
+	: CGlassWindow(FALSE, FALSE)
 {
 	m_hIcon = NULL;
 	m_pWndMainView = NULL;
@@ -37,7 +37,7 @@ BOOL CMainWnd::Create()
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 
-	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -47,12 +47,12 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 		if (m_pWndMainView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
-	return CGlasWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CGlassWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainWnd::AdjustLayout()
 {
-	CGlasWindow::AdjustLayout();
+	CGlassWindow::AdjustLayout();
 
 	if (!m_pWndMainView)
 		return;
@@ -90,7 +90,7 @@ void CMainWnd::OpenMainView(BOOL Empty)
 }
 
 
-BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
+BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -99,7 +99,7 @@ END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
+	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	m_pDialogMenuBar = new CDialogMenuBar();
@@ -131,7 +131,7 @@ void CMainWnd::OnDestroy()
 		delete m_pWndMainView;
 	}
 
-	CGlasWindow::OnDestroy();
+	CGlassWindow::OnDestroy();
 	theApp.KillFrame(this);
 }
 

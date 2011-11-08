@@ -1,5 +1,5 @@
 
-// CGlasWindow: Schnittstelle der Klasse CGlasWindow
+// CGlassWindow: Schnittstelle der Klasse CGlassWindow
 //
 
 #pragma once
@@ -7,22 +7,21 @@
 #include "CDialogMenuBar.h"
 
 
-// CGlasWindow
+// CGlassWindow
 //
 
 #define GWD_DEFAULT            1
 #define GWD_THEMED             2
 #define GWD_AERO               3
 
-#define WM_OPENDROPDOWN        WM_USER+1
-#define WM_CLOSEDROPDOWN       WM_USER+2
+#define WM_CLOSEPOPUP          WM_USER+1
 
-class CGlasWindow : public CWnd
+class CGlassWindow : public CWnd
 {
 friend class CDialogMenuBar;
 
 public:
-	CGlasWindow(BOOL HideIcon=TRUE, BOOL HideCaption=TRUE);
+	CGlassWindow(BOOL HideIcon=TRUE, BOOL HideCaption=TRUE);
 
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -64,6 +63,7 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	afx_msg void OnClosePopup();
 	DECLARE_MESSAGE_MAP()
 
 private:

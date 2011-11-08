@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(CLoungeView, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_CTLCOLOR()
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -167,4 +168,12 @@ HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 
 	return hbr;
+}
+
+void CLoungeView::OnContextMenu(CWnd* pWnd, CPoint pos)
+{
+	CDialogPopup* pPopup = new CDialogPopup();
+	pPopup->Create(this);
+
+	pPopup->Track();
 }

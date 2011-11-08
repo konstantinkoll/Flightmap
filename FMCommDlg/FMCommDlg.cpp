@@ -90,7 +90,6 @@ FMCommDlg_API void DrawControlBorder(CWnd* pWnd)
 }
 
 
-
 // IATA-Datenbank
 //
 

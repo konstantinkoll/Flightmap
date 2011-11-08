@@ -185,7 +185,7 @@ void CDialogMenuBar::OnPaint()
 
 	if (hTheme)
 	{
-		p_App->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CGlasWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
+		p_App->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CGlassWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
 	}
 	else
 	{
@@ -207,9 +207,9 @@ void CDialogMenuBar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
-		COLORREF clrText = GetSysColor(((CGlasWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
+		COLORREF clrText = GetSysColor(((CGlassWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
 
-		/*if (hTheme)
+		if (hTheme)
 		{
 			p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, MBI_PUSHED, rectItem, rectItem);
 		}
@@ -222,7 +222,7 @@ void CDialogMenuBar::OnPaint()
 			else
 			{
 
-			}*/
+			}
 
 		if (m_Items.m_Items[a].CmdID)
 		{
@@ -307,4 +307,129 @@ void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
 			break;
 		}
 	}*/
+}
+
+
+// CDialogPopup
+//
+
+CDialogPopup::CDialogPopup()
+	: CWnd()
+{
+}
+
+BOOL CDialogPopup::Create(CWnd* pParentWnd)
+{
+	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+
+	CGlassWindow* pTopLevelParent = (CGlassWindow*)pParentWnd->GetTopLevelParent();
+	pTopLevelParent->RegisterPopupWindow(this);
+
+	BOOL bDropShadow;
+	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
+	if (bDropShadow)
+		nClassStyle |= CS_DROPSHADOW;
+
+	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
+	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, 0, 0, 100, 100, pParentWnd->GetSafeHwnd(), NULL);
+
+	SetOwner(pTopLevelParent);
+
+	return res;
+}
+
+void CDialogPopup::Track()
+{
+}
+
+
+BOOL CDialogPopup::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message==WM_KEYDOWN)
+		switch (pMsg->wParam)
+		{
+		case VK_ESCAPE:
+			GetOwner()->PostMessage(WM_CLOSEPOPUP);
+			return TRUE;
+		}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
+BOOL CDialogPopup::OnCommand(WPARAM wParam, LPARAM lParam) 
+{
+	if ((UINT)HIWORD(wParam)==WM_KILLFOCUS)
+		GetOwner()->PostMessage(WM_CLOSEPOPUP);
+
+	return CWnd::OnCommand(wParam, lParam);
+}
+
+void CDialogPopup::AdjustLayout()
+{
+/*	if (!IsWindow(m_wndList))
+		return;
+
+	CRect rect;
+	GetClientRect(rect);
+
+	if (IsWindow(m_wndBottomArea))
+	{
+		const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
+		m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		rect.bottom -= BottomHeight;
+	}
+
+	m_wndList.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.bottom, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndList.EnsureVisible(0, FALSE);*/
+}
+
+
+BEGIN_MESSAGE_MAP(CDialogPopup, CWnd)
+	ON_WM_ERASEBKGND()
+	ON_WM_NCPAINT()
+	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
+	ON_WM_ACTIVATEAPP()
+END_MESSAGE_MAP()
+
+BOOL CDialogPopup::OnEraseBkgnd(CDC* pDC)
+{
+	CRect rclient;
+	GetClientRect(rclient);
+
+	pDC->FillSolidRect(rclient, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_MENU));
+
+	return TRUE;
+}
+
+void CDialogPopup::OnNcPaint()
+{
+	CRect rect;
+	GetWindowRect(rect);
+
+	rect.bottom -= rect.top;
+	rect.right -= rect.left;
+	rect.left = rect.top = 0;
+
+	CWindowDC dc(this);
+
+	dc.FillSolidRect(rect, GetSysColor(COLOR_3DSHADOW));
+}
+
+void CDialogPopup::OnSize(UINT nType, INT cx, INT cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
+
+void CDialogPopup::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+}
+
+void CDialogPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
+{
+	CWnd::OnActivateApp(bActive, dwTask);
+
+	if (!bActive)
+		GetOwner()->PostMessage(WM_CLOSEPOPUP);
 }

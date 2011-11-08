@@ -102,19 +102,19 @@ INT CFlightmapApp::ExitInstance()
 }
 
 
-void CFlightmapApp::AddFrame(CGlasWindow* pFrame)
+void CFlightmapApp::AddFrame(CGlassWindow* pFrame)
 {
 	m_MainFrames.AddTail(pFrame);
 	m_pMainWnd = pFrame;
 	m_pActiveWnd = NULL;
 }
 
-void CFlightmapApp::KillFrame(CGlasWindow* pVictim)
+void CFlightmapApp::KillFrame(CGlassWindow* pVictim)
 {
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
 		POSITION pl = p;
-		CGlasWindow* pFrame = m_MainFrames.GetNext(p);
+		CGlassWindow* pFrame = m_MainFrames.GetNext(p);
 		if (pFrame==pVictim)
 		{
 			m_MainFrames.RemoveAt(pl);

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMApplication.h"
+#include "CGlassWindow.h"
 #include "DynArray.h"
 
 
@@ -56,4 +57,29 @@ private:
 	LOGFONT m_MenuLogFont;
 	CFont m_MenuFont;
 	INT m_MenuHeight;
+};
+
+
+// CDialogPopup
+//
+
+class CDialogPopup : public CWnd
+{
+public:
+	CDialogPopup();
+
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void AdjustLayout();
+
+	BOOL Create(CWnd* pParentWnd);
+	void Track();
+
+protected:
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnNcPaint();
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
+	DECLARE_MESSAGE_MAP()
 };

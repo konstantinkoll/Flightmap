@@ -1,7 +1,7 @@
 #pragma once
 #include "..\FMCommDlg\CDialogMenuBar.h"
 #include "..\FMCommDlg\CGdiPlusBitmap.h"
-#include "..\FMCommDlg\CGlasWindow.h"
+#include "..\FMCommDlg\CGlassWindow.h"
 #include "..\FMCommDlg\CGroupBox.h"
 #include "..\FMCommDlg\CPictureCtrl.h"
 #include "..\FMCommDlg\DynArray.h"
