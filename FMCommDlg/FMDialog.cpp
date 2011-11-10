@@ -89,10 +89,21 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
 		if (Themed)
 		{
-			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
-			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
+			if (m_Design==FMDS_Blue)
+			{
+				dc.FillSolidRect(0, Line, m_BackBufferL, 3, 0xFFFFFF);
+				Line += 3;
+
+				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF1E1DA);
+				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF4EAE3);
+				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF9F0EC);
+				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFBF5F1);
+			}
+			else
+			{
+				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
+				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
+			}
 		}
 		else
 		{
@@ -102,7 +113,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	// Logo
 	if (m_pLogo)
-		g.DrawImage(m_pLogo->m_pBitmap, 16, 16, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
+		g.DrawImage(m_pLogo->m_pBitmap, 11, 13, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
 }
 
 void FMDialog::CheckLicenseKey(FMLicense* License)
@@ -249,7 +260,7 @@ HBRUSH FMDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 	{
-		CRect rc; 
+		CRect rc;
 		pWnd->GetWindowRect(&rc);
 		ScreenToClient(&rc);
 
