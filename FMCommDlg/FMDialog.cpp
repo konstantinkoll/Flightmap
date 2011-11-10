@@ -113,7 +113,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	// Logo
 	if (m_pLogo)
-		g.DrawImage(m_pLogo->m_pBitmap, 11, 13, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
+		g.DrawImage(m_pLogo->m_pBitmap, 7, 14, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
 }
 
 void FMDialog::CheckLicenseKey(FMLicense* License)

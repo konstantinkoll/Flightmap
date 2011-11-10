@@ -50,11 +50,13 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	else
 	{
 		dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
+		dc.FillSolidRect(rect.left, rect.top, rect.Width(), 1, GetSysColor(COLOR_SCROLLBAR));
 	}
 
-	//INT l = m_pLogo->m_pBitmap->GetWidth();
-	//INT h = m_pLogo->m_pBitmap->GetHeight();
-	//g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-8, 8, l, h);
+	INT l = m_pLogo->m_pBitmap->GetWidth();
+	INT h = m_pLogo->m_pBitmap->GetHeight();
+	if ((rect.Width()>=l+16) && (rect.Height()>=h+16))
+		g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-8, rect.Height()-h-9, l, h);
 }
 
 
@@ -75,6 +77,7 @@ INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_pBackdrop = new CGdiPlusBitmapResource(IDB_DOCKED, _T("JPG"));
+	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP, _T("PNG"));
 
 	return 0;
 }
@@ -157,7 +160,7 @@ HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 	{
-		CRect rc; 
+		CRect rc;
 		pWnd->GetWindowRect(&rc);
 		ScreenToClient(&rc);
 
@@ -172,8 +175,8 @@ HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CLoungeView::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
-	CDialogPopup* pPopup = new CDialogPopup();
-	pPopup->Create(this);
+	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
+	pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
 
-	pPopup->Track();
+	pPopup->Track(pos);
 }

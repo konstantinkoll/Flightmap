@@ -30,7 +30,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 IDB_FLIGHTMAP           PNG                     "res\\Flightmap.png"
-IDB_LOGO                PNG                     "res\\Logo alpha tiny.png"
 IDB_BACKDROP_BLUE       PNG                     "res\\Backdrop_Blue.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"

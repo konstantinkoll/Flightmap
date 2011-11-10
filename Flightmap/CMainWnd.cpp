@@ -60,11 +60,10 @@ void CMainWnd::AdjustLayout()
 	CRect rect;
 	GetClientRect(rect);
 
-	INT top = rect.top;
 	if (m_pDialogMenuBar)
-		top += m_pDialogMenuBar->GetPreferredHeight();
+		rect.top += m_pDialogMenuBar->GetPreferredHeight();
 
-	m_pWndMainView->SetWindowPos(NULL, rect.left, top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CMainWnd::OpenMainView(BOOL Empty)

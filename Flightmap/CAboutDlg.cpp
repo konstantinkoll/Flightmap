@@ -92,8 +92,8 @@ void CAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
 	CRect r(rect);
-	r.top = 16;
-	r.left = 160;
+	r.top = 17;
+	r.left = 144;
 
 	CFont font1;
 	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
@@ -101,9 +101,10 @@ void CAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, theApp.GetDefaultFontFace());
 	CFont* pOldFont = dc.SelectObject(&font1);
 
+	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(_T("Flightmap"), r, 0);
+	dc.DrawText(_T("Flightmap"), r, fmt);
 	r.top += 45;
 
 	CFont font2;
@@ -118,14 +119,14 @@ void CAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 #define ISET _T(" (x32)")
 #endif
 
-	dc.DrawText(_T("Version ")+m_Version+ISET, r, 0);
-	r.top += 26;
+	dc.DrawText(_T("Version ")+m_Version+ISET, r, fmt);
+	r.top += 25;
 
 	TIMESTAMP;
-	dc.DrawText(_T("Built ")+Timestamp, r, 0);
-	r.top += 26;
+	dc.DrawText(_T("Built ")+Timestamp, r, fmt);
+	r.top += 25;
 
-	dc.DrawText(m_Copyright, r, 0);
+	dc.DrawText(m_Copyright, r, fmt);
 
 	dc.SelectObject(pOldFont);
 }
