@@ -502,6 +502,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuFile_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuFile_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Night.jpg"
 				>
 			</File>

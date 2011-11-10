@@ -13,6 +13,8 @@
 #define IDB_DOCKED                      137
 #define IDB_PDZVOR                      138
 #define IDB_MENUBARICONS                139
+#define IDB_MENUFILE_16                 140
+#define IDB_MENUFILE_32                 141
 #define IDM_FILE                        1000
 #define IDM_EDIT                        1001
 #define IDM_MAP                         1002

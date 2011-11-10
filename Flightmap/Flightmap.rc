@@ -30,6 +30,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 IDB_MENUBARICONS        BITMAP                  "res\\MenubarIcons.bmp"
+IDB_MENUFILE_16         BITMAP                  "res\\MenuFile_16.bmp"
+IDB_MENUFILE_32         BITMAP                  "res\\MenuFile_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

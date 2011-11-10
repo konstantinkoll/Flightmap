@@ -180,6 +180,30 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FileLabel_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FileLabel_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilePrepare_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilePrepare_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FileProperties_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FileProperties_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
 				>
 			</File>
@@ -217,6 +241,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\New_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\NewEmpty_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\NewEmpty_32.png"
 				>
 			</File>
 			<File
