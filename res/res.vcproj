@@ -501,6 +501,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Strip.jpg"
+			>
+		</File>
+		<File
+			RelativePath=".\Strip.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Wallet_Tiny.ico"
 			>
 		</File>
