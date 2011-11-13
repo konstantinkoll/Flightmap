@@ -103,6 +103,7 @@ void CMainWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 
 BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_NCACTIVATE()
 	ON_WM_ACTIVATE()
 	ON_WM_SIZE()
@@ -119,6 +120,17 @@ INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Active = (CWnd::GetActiveWindow()==this);
 
 	return 0;
+}
+
+void CMainWindow::OnDestroy()
+{
+	if (m_pDialogMenuBar)
+	{
+		m_pDialogMenuBar->DestroyWindow();
+		delete m_pDialogMenuBar;
+	}
+
+	CWnd::OnDestroy();
 }
 
 BOOL CMainWindow::OnNcActivate(BOOL bActive)

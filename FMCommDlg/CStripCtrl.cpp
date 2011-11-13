@@ -109,10 +109,7 @@ void CStripCtrl::OnTimer(UINT_PTR nIDEvent)
 {
 	if ((nIDEvent==1) && (p_Strip))
 	{
-		INT l = p_Strip->m_pBitmap->GetWidth();
-		INT h = p_Strip->m_pBitmap->GetHeight();
-
-		m_Offset = (m_Offset+1) % l;
+		m_Offset = (m_Offset+1) % p_Strip->m_pBitmap->GetWidth();
 		ScrollWindow(-1, 0);
 	}
 

@@ -34,6 +34,7 @@ protected:
 	BOOL m_Active;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnNcActivate(BOOL bActive);
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
