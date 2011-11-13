@@ -57,8 +57,11 @@ BOOL FMProgressDlg::OnInitDialog()
 
 		if (m_wndStrip.Create(this, IDC_PROGRESSSTRIP))
 		{
+			CRect rect;
+			GetClientRect(rect);
+
 			const INT AddWidth = 250;
-			INT StripWidth =  rectDialog.Width()+AddWidth;
+			INT StripWidth = rect.Width()+AddWidth;
 			INT StripHeight = ProgressStrip->m_pBitmap->GetHeight();
 			INT AddHeight = rectProgress.top+StripHeight;
 			m_wndStrip.SetWindowPos(NULL, 0, rectProgress.top, StripWidth, StripHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -70,7 +73,6 @@ BOOL FMProgressDlg::OnInitDialog()
 			SetWindowPos(NULL, rectDialog.left, rectDialog.top, rectDialog.Width(), rectDialog.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 			// Resize caption line
-			CRect rect;
 			GetDlgItem(IDC_PROGRESSCOUNT)->GetWindowRect(rect);
 			ScreenToClient(rect);
 			GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowPos(NULL, rect.left, rect.top+AddHeight, rect.Width()+AddWidth, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);

@@ -109,8 +109,22 @@ void CStripCtrl::OnTimer(UINT_PTR nIDEvent)
 {
 	if ((nIDEvent==1) && (p_Strip))
 	{
-		m_Offset = (m_Offset+1) % p_Strip->m_pBitmap->GetWidth();
+		INT l = p_Strip->m_pBitmap->GetWidth();
+		INT h = p_Strip->m_pBitmap->GetHeight();
+
+		m_Offset = (m_Offset+1) % l;
 		ScrollWindow(-1, 0);
+
+		if (p_Strip)
+		{
+			CPaintDC pDC(this);
+
+			CRect rect;
+			GetClientRect(rect);
+
+			Graphics g(pDC);
+			g.DrawImage(p_Strip->m_pBitmap, Rect(rect.right-1, 0, 1, h), (m_Offset+rect.right-1) % l, 0, 1, h, UnitPixel);
+		}
 	}
 
 	CWnd::OnTimer(nIDEvent);
