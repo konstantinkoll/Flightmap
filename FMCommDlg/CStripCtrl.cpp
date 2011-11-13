@@ -90,10 +90,10 @@ void CStripCtrl::OnPaint()
 		INT left = min(rect.Width(), l-m_Offset);
 
 		Graphics g(pDC);
-		g.DrawImage(p_Strip->m_pBitmap, Rect(0, 0, left, h), m_Offset, 0, left, h, Unit::UnitPixel);
+		g.DrawImage(p_Strip->m_pBitmap, Rect(0, 0, left, h), m_Offset, 0, left, h, UnitPixel);
 
 		if (m_Offset>l-rect.Width())
-			g.DrawImage(p_Strip->m_pBitmap, Rect(left, 0, rect.Width()-left, h), 0, 0, rect.Width()-left, h, Unit::UnitPixel);
+			g.DrawImage(p_Strip->m_pBitmap, Rect(left, 0, rect.Width()-left, h), 0, 0, rect.Width()-left, h, UnitPixel);
 	}
 	else
 	{

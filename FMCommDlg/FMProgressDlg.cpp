@@ -38,7 +38,7 @@ BOOL FMProgressDlg::OnInitDialog()
 	FMDialog::OnInitDialog();
 
 	// Strip
-	if (!((FMApplication*)AfxGetApp())->m_ReduceVisuals)
+	if ((!((FMApplication*)AfxGetApp())->m_ReduceVisuals) && IsCtrlThemed())
 	{
 		if (!ProgressStrip)
 		{
