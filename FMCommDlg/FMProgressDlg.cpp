@@ -83,7 +83,7 @@ BOOL FMProgressDlg::OnInitDialog()
 			GetDlgItem(IDCANCEL)->SetWindowPos(NULL, rect.left+AddWidth, rect.top+AddHeight, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 			// Resize progress bar
-			m_wndProgress.SetWindowPos(NULL, rectProgress.left, rectProgress.top+AddHeight, rectProgress.Width()+AddWidth, rectProgress.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+			m_wndProgress.SetWindowPos(NULL, rectProgress.left, rectProgress.top+AddHeight, rectProgress.Width()+AddWidth-1, rectProgress.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 		}
 	}
 
