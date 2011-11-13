@@ -345,6 +345,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStripCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
@@ -358,6 +362,10 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMProgressDlg.cpp"
 				>
 			</File>
 			<File
@@ -427,6 +435,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStripCtrl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DynArray.h"
 				>
 			</File>
@@ -444,6 +456,10 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMProgressDlg.h"
 				>
 			</File>
 			<File

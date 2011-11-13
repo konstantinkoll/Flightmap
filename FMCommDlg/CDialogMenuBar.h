@@ -60,25 +60,44 @@ private:
 };
 
 
-// CDialogPopup
+// CDialogMenuPopup
 //
 
-class CDialogPopup : public CWnd
+class CDialogMenuPopup : public CWnd
 {
 public:
-	CDialogPopup();
+	CDialogMenuPopup();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pParentWnd);
-	void Track();
+	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
+	void Track(CPoint pt);
 
 protected:
+	UINT m_LargeIconsID;
+	UINT m_SmallIconsID;
+	CMFCToolBarImages m_LargeIcons;
+	CMFCToolBarImages m_SmallIcons;
+
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 };
+
+
+// CDialogMenuItem
+//
+
+
+
+// CDialogMenuButton
+//
+
+#define CDMB_SMALL      0
+#define CDMB_MEDIUM     1
+#define CDMB_LARGE      2

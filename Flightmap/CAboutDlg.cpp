@@ -92,8 +92,8 @@ void CAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
 	CRect r(rect);
-	r.top = 17;
-	r.left = 144;
+	r.top = 15;
+	r.left = 148;
 
 	CFont font1;
 	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,

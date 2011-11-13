@@ -1,13 +1,15 @@
 #pragma once
 #include "..\FMCommDlg\CDialogMenuBar.h"
 #include "..\FMCommDlg\CGdiPlusBitmap.h"
-#include "..\FMCommDlg\CMainWindow.h"
 #include "..\FMCommDlg\CGroupBox.h"
+#include "..\FMCommDlg\CMainWindow.h"
 #include "..\FMCommDlg\CPictureCtrl.h"
+#include "..\FMCommDlg\CStripCtrl.h"
 #include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\FMLicenseDlg.h"
+#include "..\FMCommDlg\FMProgressDlg.h"
 #include "..\FMCommDlg\FMRegisterDlg.h"
 #include "..\FMCommDlg\License.h"
 

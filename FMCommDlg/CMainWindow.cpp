@@ -94,11 +94,10 @@ void CMainWindow::PostNcDestroy()
 	delete this;
 }
 
-CWnd* CMainWindow::RegisterPopupWindow(CWnd* pPopupWnd)
+void CMainWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 {
-	CWnd* old = p_PopupWindow;
-	p_PopupWindow = pPopupWnd;
-	return old;
+	if (!p_PopupWindow)
+		p_PopupWindow = pPopupWnd;
 }
 
 
@@ -140,7 +139,6 @@ void CMainWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 	if (!p_PopupWindow)
 		CWnd::OnActivate(nState, pWndOther, bMinimized);
 }
-
 
 void CMainWindow::OnSize(UINT nType, INT cx, INT cy)
 {

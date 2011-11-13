@@ -18,6 +18,7 @@
 #define IDB_SORTINDICATORS              20007
 #define IDB_NRT_REGISTERED              20008
 #define IDB_NRT_UNREGISTERED            20009
+#define IDB_PROGRESSSTRIP               20010
 #define IDS_PURCHASEURL                 20100
 #define IDS_UPDATEURL                   20101
 #define IDS_ERROR                       20102
@@ -69,7 +70,7 @@
 #define IDD_PROGRESS                    21300
 #define IDC_PROGRESSBAR                 21301
 #define IDC_PROGRESSCOUNT               21302
-#define IDC_CAPTION                     21303
+#define IDC_PROGRESSSTRIP               21303
 #define IDD_REGISTER                    21400
 #define IDC_TEXTROW1                    21401
 #define IDC_TEXTROW2                    21402

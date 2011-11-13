@@ -9,7 +9,6 @@
 // CDialogMenuBar
 //
 
-#define BORDERLEFT      16
 #define BORDER          3
 
 CDialogMenuBar::CDialogMenuBar()
@@ -310,16 +309,30 @@ void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
 }
 
 
-// CDialogPopup
+// CDialogMenuPopup
 //
 
-CDialogPopup::CDialogPopup()
+#define BORDERPOPUP     2
+
+CDialogMenuPopup::CDialogMenuPopup()
 	: CWnd()
 {
 }
 
-BOOL CDialogPopup::Create(CWnd* pParentWnd)
+BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIconsID)
 {
+	// Load icons
+	m_LargeIconsID = LargeIconsID;
+	m_LargeIcons.SetImageSize(CSize(32, 32));
+	if (LargeIconsID)
+		m_LargeIcons.Load(LargeIconsID);
+
+	m_SmallIconsID = SmallIconsID;
+	m_SmallIcons.SetImageSize(CSize(16, 16));
+	if (SmallIconsID)
+		m_SmallIcons.Load(SmallIconsID);
+
+	// Create
 	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 
 	CMainWindow* pTopLevelParent = (CMainWindow*)pParentWnd->GetTopLevelParent();
@@ -338,11 +351,11 @@ BOOL CDialogPopup::Create(CWnd* pParentWnd)
 	return res;
 }
 
-void CDialogPopup::Track()
+void CDialogMenuPopup::Track(CPoint pt)
 {
 }
 
-BOOL CDialogPopup::PreTranslateMessage(MSG* pMsg)
+BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message==WM_KEYDOWN)
 		switch (pMsg->wParam)
@@ -355,7 +368,7 @@ BOOL CDialogPopup::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CDialogPopup::AdjustLayout()
+void CDialogMenuPopup::AdjustLayout()
 {
 /*	if (!IsWindow(m_wndList))
 		return;
@@ -375,25 +388,26 @@ void CDialogPopup::AdjustLayout()
 }
 
 
-BEGIN_MESSAGE_MAP(CDialogPopup, CWnd)
+BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_ACTIVATEAPP()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
-BOOL CDialogPopup::OnEraseBkgnd(CDC* pDC)
+BOOL CDialogMenuPopup::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rect;
 	GetClientRect(rect);
 
-	pDC->FillSolidRect(rect, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_MENU));
+	FillRect(*pDC, rect, OnCtlColor(pDC, this, CTLCOLOR_STATIC));
 
 	return TRUE;
 }
 
-void CDialogPopup::OnNcPaint()
+void CDialogMenuPopup::OnNcPaint()
 {
 	CRect rect;
 	GetWindowRect(rect);
@@ -407,21 +421,46 @@ void CDialogPopup::OnNcPaint()
 	dc.FillSolidRect(rect, GetSysColor(COLOR_3DSHADOW));
 }
 
-void CDialogPopup::OnSize(UINT nType, INT cx, INT cy)
+void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CDialogPopup::OnSetFocus(CWnd* pOldWnd)
+void CDialogMenuPopup::OnSetFocus(CWnd* pOldWnd)
 {
 	CWnd::OnSetFocus(pOldWnd);
 }
 
-void CDialogPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
+void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
 {
 	CWnd::OnActivateApp(bActive, dwTask);
 
 	if (!bActive)
 		GetOwner()->PostMessage(WM_CLOSEPOPUP);
 }
+
+HBRUSH CDialogMenuPopup::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+	{
+		pDC->SetBkMode(TRANSPARENT);
+		pDC->SetDCBrushColor(IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_MENU));
+		hbr = (HBRUSH)GetStockObject(DC_BRUSH);
+	}
+
+	return hbr;
+}
+
+
+// CDialogMenuItem
+//
+
+
+
+
+// CDialogMenuButton
+//

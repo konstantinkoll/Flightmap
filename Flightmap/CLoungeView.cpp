@@ -46,17 +46,19 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		SolidBrush brush(Color(0x14, 0x00, 0x00, 0x00));
 		for (INT a=0; a<5; a++)
 			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
+
+		l = m_pLogo->m_pBitmap->GetWidth();
+		h = m_pLogo->m_pBitmap->GetHeight();
+		if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
+			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
 	}
 	else
 	{
 		dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
-		dc.FillSolidRect(rect.left, rect.top, rect.Width(), 1, GetSysColor(COLOR_SCROLLBAR));
-	}
 
-	INT l = m_pLogo->m_pBitmap->GetWidth();
-	INT h = m_pLogo->m_pBitmap->GetHeight();
-	if ((rect.Width()>=l+16) && (rect.Height()>=h+16))
-		g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-8, rect.Height()-h-9, l, h);
+		if ((theApp.OSVersion==OS_XP) || (!Themed))
+			dc.FillSolidRect(rect.left, rect.top, rect.Width(), 1, GetSysColor(COLOR_SCROLLBAR));
+	}
 }
 
 
@@ -173,7 +175,7 @@ HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-void CLoungeView::OnContextMenu(CWnd* pWnd, CPoint pos)
+void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 	pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);

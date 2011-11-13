@@ -25,7 +25,7 @@ public:
 	virtual void PostNcDestroy();
 
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd=NULL, UINT nID=0);
-	CWnd* RegisterPopupWindow(CWnd* pPopupWnd);
+	void RegisterPopupWindow(CWnd* pPopupWnd);
 
 protected:
 	FMApplication* p_App;

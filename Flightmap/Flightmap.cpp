@@ -75,7 +75,10 @@ BOOL CFlightmapApp::InitInstance()
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);
 
-	//OnAppAbout();
+	OnAppAbout();
+
+	FMProgressDlg dlg(NULL, NULL, NULL);
+	dlg.DoModal();
 
 	m_AppInitialized = TRUE;
 

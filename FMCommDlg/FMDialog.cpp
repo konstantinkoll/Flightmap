@@ -93,17 +93,12 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			{
 				dc.FillSolidRect(0, Line, m_BackBufferL, 3, 0xFFFFFF);
 				Line += 3;
+			}
 
-				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF1E1DA);
-				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF4EAE3);
-				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF9F0EC);
-				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFBF5F1);
-			}
-			else
-			{
-				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
-			}
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF1E1DA);
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF4EAE3);
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF9F0EC);
+			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFBF5F1);
 		}
 		else
 		{
@@ -113,7 +108,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	// Logo
 	if (m_pLogo)
-		g.DrawImage(m_pLogo->m_pBitmap, 7, 14, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
+		g.DrawImage(m_pLogo->m_pBitmap, 9, 14, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
 }
 
 void FMDialog::CheckLicenseKey(FMLicense* License)
