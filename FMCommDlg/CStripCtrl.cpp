@@ -51,6 +51,10 @@ void CStripCtrl::SetBitmap(CGdiPlusBitmap* pStrip)
 
 	if (pStrip)
 	{
+		SYSTEMTIME st;
+		GetSystemTime(&st);
+		srand(st.wMilliseconds);
+
 		m_Offset = rand() % pStrip->m_pBitmap->GetWidth();
 		SetTimer(1, 17, NULL);
 	}
@@ -106,7 +110,7 @@ void CStripCtrl::OnTimer(UINT_PTR nIDEvent)
 	if ((nIDEvent==1) && (p_Strip))
 	{
 		m_Offset = (m_Offset+1) % p_Strip->m_pBitmap->GetWidth();
-		Invalidate();
+		ScrollWindow(-1, 0);
 	}
 
 	CWnd::OnTimer(nIDEvent);
