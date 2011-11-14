@@ -47,7 +47,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)\cryptlib"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;FMCommDlg_EXPORTS"
@@ -194,7 +193,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
