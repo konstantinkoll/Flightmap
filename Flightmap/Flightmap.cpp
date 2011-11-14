@@ -34,7 +34,8 @@ CFlightmapApp theApp;
 
 BOOL CFlightmapApp::InitInstance()
 {
-	FMApplication::InitInstance();
+	if (!FMApplication::InitInstance())
+		return FALSE;
 
 	// Pfad zu Google Earth
 	HKEY hKey;

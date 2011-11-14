@@ -182,7 +182,6 @@ BOOL FMApplication::InitInstance()
 
 INT FMApplication::ExitInstance()
 {
-	CWinAppEx::ExitInstance();
 	GdiplusShutdown(m_gdiplusToken);
 
 	if (hModThemes)
@@ -190,7 +189,7 @@ INT FMApplication::ExitInstance()
 	if (hModAero)
 		FreeLibrary(hModAero);
 
-	return 0;
+	return CWinAppEx::ExitInstance();
 }
 
 BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)

@@ -291,7 +291,7 @@ BOOL GetLicense(FMLicense* License)
 	}
 
 	ParseInput(Recovered, License);
-	return true;
+	return TRUE;
 }
 
 FMCommDlg_API BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
