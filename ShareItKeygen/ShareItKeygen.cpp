@@ -24,20 +24,20 @@ class ShareITData
 {
 public:
 	bool utf8;
-	std::string purchaseId;
-	std::string runningNo;
-	std::string purchaseDate;
-	std::string productId;
-	std::string quantity;
-	std::string regName;
-	std::string language;
+	string purchaseId;
+	string runningNo;
+	string purchaseDate;
+	string productId;
+	string quantity;
+	string regName;
+	string language;
 };
 
 ShareITData parseInput(char* filename)
 {
-	std::string line;
+	string line;
 
-	std::ifstream input(filename);
+	ifstream input(filename);
 
 	ShareITData result;
 	result.utf8 = false;
@@ -47,12 +47,12 @@ ShareITData parseInput(char* filename)
 		{
 			getline(input, line);
 
-			std::string::size_type delimiterPos = line.find_first_of("=");
+			string::size_type delimiterPos = line.find_first_of("=");
 
-			if (std::string::npos!=delimiterPos)
+			if (string::npos!=delimiterPos)
 			{
-				std::string name = line.substr(0, delimiterPos);
-				std::string value = line.substr(delimiterPos+1);
+				string name = line.substr(0, delimiterPos);
+				string value = line.substr(delimiterPos+1);
 
 				if ((name=="ENCODING") && (value=="UTF8"))
 				{
@@ -118,24 +118,24 @@ int main(int argc, char* argv[])
 	ss << LICENSE_QUANTITY << "="<< input.quantity << endl;
 	ss << LICENSE_VERSION << "="<< VERSION << endl;
 	ss << LICENSE_NAME << "="<< input.regName << endl;
-	std::string message = ss.str();
+	string message = ss.str();
 
 	////////////////////////////////////////////////
 	// Sign and Encode
 	RSASS<PSSR, SHA256>::Signer signer(privateKey);
 
-	std::string signature;
+	string signature;
 	StringSource(message, true, new SignerFilter(rng, signer, new StringSink(signature)));
 
-	std::string result;
+	string result;
 	StringSource(message+signature, true, new Base64Encoder(new StringSink(result)));
 
-	std::ofstream keyMetadataOutput(argv[2]);
-	keyMetadataOutput << "text/plain:liquidFOLDERS.lic" << std::endl;
+	ofstream keyMetadataOutput(argv[2]);
+	keyMetadataOutput << "text/plain:liquidFOLDERS.lic" << endl;
 	keyMetadataOutput.close();
 
-	std::ofstream keyOutput(argv[3]);
-	keyOutput << result << std::endl;
+	ofstream keyOutput(argv[3]);
+	keyOutput << result << endl;
 	keyOutput.close();
 
 	return ERC_SUCCESS_BIN;

@@ -20,8 +20,8 @@
 #include "base64.h"
 #pragma warning(pop)
 
-USING_NAMESPACE(CryptoPP)
-USING_NAMESPACE(std)
+using namespace CryptoPP;
+using namespace std;
 
 
 FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
