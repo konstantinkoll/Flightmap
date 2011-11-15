@@ -2,10 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Flightmap"
-	ProjectGUID="{A177AF89-CA3B-4E93-9785-7F45AB6A379E}"
-	RootNamespace="Flightmap"
-	Keyword="MFCProj"
+	Name="ConvertGlobe"
+	ProjectGUID="{68FBA521-2143-68B1-35AB-42987BAC24FF}"
+	RootNamespace="ConvertGlobe"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -25,7 +25,8 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="1"
+			UseOfATL="1"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,22 +42,18 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="false"
-				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\FMCommDlg&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -64,19 +61,16 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
+				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -84,7 +78,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="Flightmap32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -108,7 +101,8 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="1"
+			UseOfATL="1"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -124,22 +118,19 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="false"
 				TargetEnvironment="3"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\FMCommDlg&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -147,19 +138,16 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
+				LinkTimeCodeGeneration="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -167,7 +155,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="Flightmap64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -191,8 +178,8 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			UseOfATL="0"
-			CharacterSet="1"
+			UseOfATL="1"
+			CharacterSet="0"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -209,24 +196,20 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="false"
-				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\FMCommDlg&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				WholeProgramOptimization="false"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
-				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -234,21 +217,18 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -256,7 +236,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="Flightmap32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -280,7 +259,8 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="1"
+			UseOfATL="1"
+			CharacterSet="0"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -297,24 +277,21 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="false"
 				TargetEnvironment="3"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\FMCommDlg&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				WholeProgramOptimization="false"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
-				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -322,21 +299,18 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
-				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -344,7 +318,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="Flightmap64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -372,19 +345,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CAboutDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CLoungeView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CMainWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Flightmap.cpp"
+				RelativePath=".\ConvertGlobe.cpp"
 				>
 			</File>
 			<File
@@ -427,34 +388,10 @@
 		<Filter
 			Name="Headerdateien"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			UniqueIdentifier="{93BCF671-3247-AC98-CC51-1487AC4267FA}"
 			>
 			<File
-				RelativePath=".\CAboutDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CLoungeView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMainWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Flightmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Globe_High.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Globe_Low.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\ConvertGlobe.h"
 				>
 			</File>
 			<File
@@ -466,72 +403,6 @@
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="Ressourcendateien"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-			<File
-				RelativePath=".\res\BlueMarble_1024.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_2048.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_4096.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_8192.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Docked2.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\Flightmap.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GlobeIcons_Alpha.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GlobeIcons_RGB.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenubarIcons.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuFile_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuFile_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Night.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\PDZVOR.png"
-				>
-			</File>
-		</Filter>
-		<File
-			RelativePath=".\Flightmap32.manifest.xml"
-			>
-		</File>
-		<File
-			RelativePath=".\Flightmap64.manifest.xml"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
