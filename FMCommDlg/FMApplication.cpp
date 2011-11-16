@@ -142,10 +142,9 @@ FMApplication::FMApplication()
 FMApplication::~FMApplication()
 {
 	if (hModThemes)
-	{
 		FreeLibrary(hModThemes);
-		hModThemes = NULL;
-	}
+	if (hModAero)
+		FreeLibrary(hModAero);
 }
 
 
@@ -167,7 +166,8 @@ BOOL FMApplication::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES | ICC_DATE_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-	CWinAppEx::InitInstance();
+	if (!CWinAppEx::InitInstance())
+		return FALSE;
 
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());

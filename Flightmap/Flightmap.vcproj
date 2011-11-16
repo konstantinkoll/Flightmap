@@ -504,6 +504,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Gray_8192.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\MenubarIcons.bmp"
 				>
 			</File>
@@ -516,7 +520,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Night.jpg"
+				RelativePath=".\res\Night_8192.jpg"
 				>
 			</File>
 			<File
