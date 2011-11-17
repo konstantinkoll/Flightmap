@@ -163,6 +163,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\air.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\airx.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\AppLogo.ico"
 			>
 		</File>
@@ -196,6 +204,14 @@
 		</File>
 		<File
 			RelativePath=".\Hintergrund4.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Hintergrund5.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Hintergrund5.png"
 			>
 		</File>
 		<File

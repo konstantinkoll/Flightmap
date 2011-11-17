@@ -385,6 +385,22 @@
 			>
 		</File>
 		<File
+			RelativePath=".\air.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\air.png"
+			>
+		</File>
+		<File
+			RelativePath=".\airx.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\airx.png"
+			>
+		</File>
+		<File
 			RelativePath=".\AppLogo.ico"
 			>
 		</File>
