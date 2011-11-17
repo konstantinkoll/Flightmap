@@ -80,7 +80,7 @@ void ConvertFile(CString Suffix)
 
 	// Ausgeben
 	CStdioFile output;
-	output.Open(path+"..\\..\\Flightmap\\Globe_"+Suffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
+	output.Open(path+"..\\..\\StoreManager\\Globe_"+Suffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
 
 	tmpStr.Format("static UINT Globe%sCount = %d;\n", Suffix, PolyCount*3);
 	output.WriteString(tmpStr);
@@ -107,10 +107,16 @@ void ConvertFile(CString Suffix)
 
 		for (UINT b=1; b<3; b++)
 		{
-			if ((U[b-1]>0.75f) && (U[b]<0.25f))
-				U[b] += 1.0f;
 			if ((U[b-1]<0.25f) && (U[b]>0.75f))
+			{
 				U[b] -= 1.0f;
+				continue;
+			}
+			if ((U[b-1]>0.75f) && (U[b]<0.25f))
+			{
+				U[b] += 1.0f;
+				continue;
+			}
 		}
 
 		for (UINT b=0; b<3; b++)
