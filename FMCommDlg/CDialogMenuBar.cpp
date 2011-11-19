@@ -526,3 +526,8 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_IconID = IconID;
 	m_PreferredSize = PreferredSize;
 }
+
+INT CDialogMenuCommand::GetMinGutter()
+{
+	return (m_IconID==-1) ? 0 : (m_PreferredSize==CDMB_SMALL) ? 16+BORDER : 32+BORDER;
+}

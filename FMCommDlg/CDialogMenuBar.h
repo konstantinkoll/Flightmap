@@ -136,6 +136,8 @@ class CDialogMenuCommand : public CDialogMenuItem
 public:
 	CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize);
 
+	virtual INT GetMinGutter();
+
 protected:
 	UINT m_CmdID;
 	INT m_IconID;
