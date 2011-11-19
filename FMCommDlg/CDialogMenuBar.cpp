@@ -359,6 +359,14 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 
 void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem)
 {
+	ASSERT(pItem);
+
+	MenuPopupItem i;
+	ZeroMemory(&i, sizeof(i));
+	i.pItem = pItem;
+	i.Enabled = pItem->IsEnabled();
+
+	m_Items.AddItem(i);
 }
 
 void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize)
@@ -404,6 +412,7 @@ void CDialogMenuPopup::AdjustLayout()
 
 
 BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
+	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
@@ -411,6 +420,14 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_ACTIVATEAPP()
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
+
+void CDialogMenuPopup::OnDestroy()
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		delete m_Items.m_Items[a].pItem;
+
+	CWnd::OnDestroy();
+}
 
 BOOL CDialogMenuPopup::OnEraseBkgnd(CDC* pDC)
 {
@@ -494,7 +511,7 @@ INT CDialogMenuItem::GetMinGutter()
 	return 0;
 }
 
-BOOL CDialogMenuItem::IsActive()
+BOOL CDialogMenuItem::IsEnabled()
 {
 	return FALSE;
 }

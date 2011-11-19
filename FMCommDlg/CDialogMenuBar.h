@@ -75,6 +75,13 @@ private:
 
 class CDialogMenuItem;
 
+struct MenuPopupItem
+{
+	CDialogMenuItem* pItem;
+	RECT Rect;
+	BOOL Enabled;
+};
+
 class CDialogMenuPopup : public CWnd
 {
 public:
@@ -88,6 +95,7 @@ public:
 	void Track(CPoint pt);
 
 protected:
+	DynArray<MenuPopupItem> m_Items;
 	UINT m_LargeIconsID;
 	UINT m_SmallIconsID;
 	CMFCToolBarImages m_LargeIcons;
@@ -95,6 +103,7 @@ protected:
 
 	void AddItem(CDialogMenuItem* pItem);
 
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
@@ -116,7 +125,7 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
-	virtual BOOL IsActive();
+	virtual BOOL IsEnabled();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect);
 	virtual void OnSelect();
