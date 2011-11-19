@@ -106,6 +106,7 @@ BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_NCACTIVATE()
 	ON_WM_ACTIVATE()
+	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
@@ -150,6 +151,16 @@ void CMainWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 {
 	if (!p_PopupWindow)
 		CWnd::OnActivate(nState, pWndOther, bMinimized);
+}
+
+LRESULT CMainWindow::OnThemeChanged()
+{
+	if (m_pDialogMenuBar)
+		m_pDialogMenuBar->SetTheme();
+
+	AdjustLayout();
+
+	return TRUE;
 }
 
 void CMainWindow::OnSize(UINT nType, INT cx, INT cy)

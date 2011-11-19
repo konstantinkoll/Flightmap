@@ -11,6 +11,10 @@
 // CDialogMenuBar
 //
 
+#define CDMB_SMALL      0
+#define CDMB_MEDIUM     1
+#define CDMB_LARGE      2
+
 struct MenuBarItem
 {
 	UINT PopupID;
@@ -24,6 +28,8 @@ struct MenuBarItem
 
 class CDialogMenuBar : public CWnd
 {
+friend class CMainWindow;
+
 public:
 	CDialogMenuBar();
 
@@ -55,13 +61,19 @@ private:
 	DynArray<MenuBarItem> m_Items;
 	HTHEME hTheme;
 	LOGFONT m_MenuLogFont;
+	LOGFONT m_NormalLogFont;
+	LOGFONT m_CaptionLogFont;
 	CFont m_MenuFont;
+	CFont m_NormalFont;
+	CFont m_CaptionFont;
 	INT m_MenuHeight;
 };
 
 
 // CDialogMenuPopup
 //
+
+class CDialogMenuItem;
 
 class CDialogMenuPopup : public CWnd
 {
@@ -72,6 +84,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
+	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL);
 	void Track(CPoint pt);
 
 protected:
@@ -79,6 +92,8 @@ protected:
 	UINT m_SmallIconsID;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
+
+	void AddItem(CDialogMenuItem* pItem);
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
@@ -93,11 +108,38 @@ protected:
 // CDialogMenuItem
 //
 
+class CDialogMenuItem
+{
+public:
+	CDialogMenuItem(CDialogMenuPopup* pParentPopup);
+
+	virtual INT GetMinHeight();
+	virtual INT GetMinWidth();
+	virtual INT GetMinGutter();
+	virtual BOOL IsActive();
+
+	virtual void OnPaint(CDC* pDC, LPRECT rect);
+	virtual void OnSelect();
+	virtual void OnDeselect();
+	virtual void OnClick(CPoint point);
+
+protected:
+	CDialogMenuPopup* p_ParentPopup;
+};
 
 
-// CDialogMenuButton
+// CDialogMenuCommand
 //
 
-#define CDMB_SMALL      0
-#define CDMB_MEDIUM     1
-#define CDMB_LARGE      2
+class CDialogMenuCommand : public CDialogMenuItem
+{
+public:
+	CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize);
+
+protected:
+	UINT m_CmdID;
+	INT m_IconID;
+	UINT m_PreferredSize;
+	CString m_Caption;
+	CString m_Hint;
+};

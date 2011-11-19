@@ -16,21 +16,6 @@ CDialogMenuBar::CDialogMenuBar()
 {
 	p_App = (FMApplication*)AfxGetApp();
 	hTheme = NULL;
-
-	NONCLIENTMETRICS ncm;
-	ncm.cbSize = sizeof(NONCLIENTMETRICS)-sizeof(ncm.iPaddedBorderWidth); 
-	if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
-	{
-		m_MenuLogFont = ncm.lfMenuFont;
-		m_MenuHeight = max(ncm.iMenuHeight, 2*BORDER+16);
-	}
-	else
-	{
-		GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(m_MenuLogFont), &m_MenuLogFont);
-		m_MenuHeight = 2*BORDER+max(16, abs(m_MenuLogFont.lfHeight));
-	}
-
-	m_MenuFont.CreateFontIndirect(&m_MenuLogFont);
 }
 
 BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
@@ -120,6 +105,7 @@ void CDialogMenuBar::AdjustLayout()
 
 void CDialogMenuBar::SetTheme()
 {
+	// Themes
 	if (p_App->m_ThemeLibLoaded)
 	{
 		if (hTheme)
@@ -127,6 +113,35 @@ void CDialogMenuBar::SetTheme()
 
 		hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_MENU);
 	}
+
+	// Default font
+	NONCLIENTMETRICS ncm;
+	ncm.cbSize = sizeof(NONCLIENTMETRICS)-sizeof(ncm.iPaddedBorderWidth); 
+	if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
+	{
+		m_MenuLogFont = m_NormalLogFont = ncm.lfMenuFont;
+		m_MenuHeight = max(ncm.iMenuHeight, 2*BORDER+16);
+	}
+	else
+	{
+		GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(m_MenuLogFont), &m_MenuLogFont);
+		m_NormalLogFont = m_MenuLogFont;
+		m_MenuHeight = 2*BORDER+max(16, abs(m_MenuLogFont.lfHeight));
+	}
+
+	m_MenuFont.DeleteObject();
+	m_MenuFont.CreateFontIndirect(&m_MenuLogFont);
+
+	// Special fonts
+	m_NormalLogFont.lfHeight = -max(abs(m_NormalLogFont.lfHeight), 11);
+	wcscpy_s(m_NormalLogFont.lfFaceName, 32, p_App->GetDefaultFontFace());
+	m_NormalFont.DeleteObject();
+	m_NormalFont.CreateFontIndirect(&m_NormalLogFont);
+
+	m_CaptionLogFont = m_NormalLogFont;
+	m_CaptionLogFont.lfWeight = FW_BOLD;
+	m_CaptionFont.DeleteObject();
+	m_CaptionFont.CreateFontIndirect(&m_CaptionLogFont);
 }
 
 
@@ -135,7 +150,6 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_SETFOCUS()
@@ -245,14 +259,6 @@ void CDialogMenuBar::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-LRESULT CDialogMenuBar::OnThemeChanged()
-{
-	SetTheme();
-	AdjustLayout();
-
-	return TRUE;
-}
-
 void CDialogMenuBar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
@@ -349,6 +355,15 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 	SetOwner(pTopLevelParent);
 
 	return res;
+}
+
+void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem)
+{
+}
+
+void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize)
+{
+	AddItem(new CDialogMenuCommand(this, CmdID, IconID, PreferredSize));
 }
 
 void CDialogMenuPopup::Track(CPoint pt)
@@ -459,8 +474,55 @@ HBRUSH CDialogMenuPopup::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 // CDialogMenuItem
 //
 
+CDialogMenuItem::CDialogMenuItem(CDialogMenuPopup* pParentPopup)
+{
+	p_ParentPopup = pParentPopup;
+}
+
+INT CDialogMenuItem::GetMinHeight()
+{
+	return 0;
+}
+
+INT CDialogMenuItem::GetMinWidth()
+{
+	return 0;
+}
+
+INT CDialogMenuItem::GetMinGutter()
+{
+	return 0;
+}
+
+BOOL CDialogMenuItem::IsActive()
+{
+	return FALSE;
+}
+
+void CDialogMenuItem::OnPaint(CDC* /*pDC*/, LPRECT /*rect*/)
+{
+}
+
+void CDialogMenuItem::OnSelect()
+{
+}
+
+void CDialogMenuItem::OnDeselect()
+{
+}
+
+void CDialogMenuItem::OnClick(CPoint /*point*/)
+{
+}
 
 
-
-// CDialogMenuButton
+// CDialogMenuCommand
 //
+
+CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize)
+	: CDialogMenuItem(pParentPopup)
+{
+	m_CmdID = CmdID;
+	m_IconID = IconID;
+	m_PreferredSize = PreferredSize;
+}

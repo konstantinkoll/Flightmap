@@ -37,6 +37,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnNcActivate(BOOL bActive);
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnClosePopup();
