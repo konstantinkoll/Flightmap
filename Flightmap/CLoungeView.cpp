@@ -179,6 +179,16 @@ void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 	pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+	pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
+	pPopup->AddCommand(IDM_FILE_OPEN, 2, CDMB_MEDIUM);
+	pPopup->AddCommand(IDM_FILE_SAVE, 3, CDMB_MEDIUM);
+	pPopup->AddCommand(IDM_FILE_SAVEAS, 4, CDMB_MEDIUM);
+	pPopup->AddSeparator();
+	pPopup->AddCommand(IDM_FILE_PRINT, 5, CDMB_MEDIUM);
+	pPopup->AddCommand(IDM_FILE_PREPARE, 9, CDMB_MEDIUM);
+	pPopup->AddSeparator();
+	pPopup->AddCommand(IDM_FILE_CLOSE, 13, CDMB_MEDIUM);
+	pPopup->AddCommand(ID_APP_EXIT, 14, CDMB_SMALL);
 
 	pPopup->Track(pos);
 }

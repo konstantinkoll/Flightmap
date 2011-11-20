@@ -43,7 +43,7 @@ IDB_BLUEMARBLE_2048     JPG                     "res\\BlueMarble_2048.jpg"
 IDB_BLUEMARBLE_4096     JPG                     "res\\BlueMarble_4096.jpg"
 IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
 IDB_NIGHT_8192          JPG                     "res\\Night_8192.jpg"
-IDB_DOCKED              JPG                     "res\\Docked2.jpg"
+IDB_DOCKED              JPG                     "res\\Docked.jpg"
 
 /////////////////////////////////////////////////////////////////////////////
 //

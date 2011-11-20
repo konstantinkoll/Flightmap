@@ -57,9 +57,9 @@ protected:
 
 private:
 	FMApplication* p_App;
-	CMFCToolBarImages m_Icons;
 	DynArray<MenuBarItem> m_Items;
 	HTHEME hTheme;
+	CMFCToolBarImages m_Icons;
 	LOGFONT m_MenuLogFont;
 	LOGFONT m_NormalLogFont;
 	LOGFONT m_CaptionLogFont;
@@ -84,6 +84,8 @@ struct MenuPopupItem
 
 class CDialogMenuPopup : public CWnd
 {
+friend class CDialogMenuCommand;
+
 public:
 	CDialogMenuPopup();
 
@@ -92,12 +94,16 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
 	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL);
+	void AddSeparator();
 	void Track(CPoint pt);
 
 protected:
 	DynArray<MenuPopupItem> m_Items;
 	UINT m_LargeIconsID;
 	UINT m_SmallIconsID;
+	INT m_Gutter;
+	INT m_Width;
+	INT m_Height;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
 
@@ -106,6 +112,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
+	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
@@ -125,12 +132,15 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
+	virtual INT GetBorder();
 	virtual BOOL IsEnabled();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect);
 	virtual void OnSelect();
 	virtual void OnDeselect();
+	virtual void OnMouseMove(CPoint point);
 	virtual void OnClick(CPoint point);
+	virtual void OnHover(CPoint point);
 
 protected:
 	CDialogMenuPopup* p_ParentPopup;
@@ -145,7 +155,12 @@ class CDialogMenuCommand : public CDialogMenuItem
 public:
 	CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize);
 
+	virtual INT GetMinHeight();
+	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
+
+	virtual void OnPaint(CDC* pDC, LPRECT rect);
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
 
 protected:
 	UINT m_CmdID;
@@ -153,4 +168,17 @@ protected:
 	UINT m_PreferredSize;
 	CString m_Caption;
 	CString m_Hint;
+};
+
+
+// CDialogMenuSeparator
+//
+
+class CDialogMenuSeparator : public CDialogMenuItem
+{
+public:
+	CDialogMenuSeparator(CDialogMenuPopup* pParentPopup);
+
+	virtual INT GetMinHeight();
+	virtual INT GetBorder();
 };

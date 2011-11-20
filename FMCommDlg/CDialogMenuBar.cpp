@@ -323,6 +323,9 @@ void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
 CDialogMenuPopup::CDialogMenuPopup()
 	: CWnd()
 {
+	m_Gutter = 0;
+	m_Width = m_Height = 2*BORDERPOPUP;
+	m_LargeIconsID = m_SmallIconsID = 0;
 }
 
 BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIconsID)
@@ -350,7 +353,7 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 		nClassStyle |= CS_DROPSHADOW;
 
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
-	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, 0, 0, 100, 100, pParentWnd->GetSafeHwnd(), NULL);
+	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, 0, 0, 16, 16, pParentWnd->GetSafeHwnd(), NULL);
 
 	SetOwner(pTopLevelParent);
 
@@ -361,12 +364,18 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem)
 {
 	ASSERT(pItem);
 
+	// Hinzufügen
 	MenuPopupItem i;
 	ZeroMemory(&i, sizeof(i));
 	i.pItem = pItem;
 	i.Enabled = pItem->IsEnabled();
 
 	m_Items.AddItem(i);
+
+	// Maße
+	m_Gutter = max(m_Gutter, pItem->GetMinGutter());
+	m_Width = max(m_Width, pItem->GetBorder()*2+pItem->GetMinWidth());
+	m_Height += pItem->GetMinHeight();
 }
 
 void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize)
@@ -374,8 +383,14 @@ void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize)
 	AddItem(new CDialogMenuCommand(this, CmdID, IconID, PreferredSize));
 }
 
+void CDialogMenuPopup::AddSeparator()
+{
+	AddItem(new CDialogMenuSeparator(this));
+}
+
 void CDialogMenuPopup::Track(CPoint pt)
 {
+	SetWindowPos(NULL, pt.x, pt.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 }
 
 BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
@@ -393,21 +408,20 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 
 void CDialogMenuPopup::AdjustLayout()
 {
-/*	if (!IsWindow(m_wndList))
-		return;
-
 	CRect rect;
 	GetClientRect(rect);
 
-	if (IsWindow(m_wndBottomArea))
+	INT y = BORDERPOPUP;
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
-		const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
-		m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-		rect.bottom -= BottomHeight;
+		m_Items.m_Items[a].Rect.top = y;
+		y = m_Items.m_Items[a].Rect.bottom = y+m_Items.m_Items[a].pItem->GetMinHeight();
+
+		m_Items.m_Items[a].Rect.left = m_Items.m_Items[a].pItem->GetBorder();
+		m_Items.m_Items[a].Rect.right = rect.Width()-m_Items.m_Items[a].pItem->GetBorder();
 	}
 
-	m_wndList.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.bottom, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndList.EnsureVisible(0, FALSE);*/
+	Invalidate();
 }
 
 
@@ -415,6 +429,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_NCPAINT()
+	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_ACTIVATEAPP()
@@ -451,6 +466,38 @@ void CDialogMenuPopup::OnNcPaint()
 	CWindowDC dc(this);
 
 	dc.FillSolidRect(rect, GetSysColor(COLOR_3DSHADOW));
+}
+
+void CDialogMenuPopup::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap buffer;
+	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+
+	// Background
+	BOOL Themed = IsCtrlThemed();
+	dc.FillSolidRect(rect, 0xFFFFFF);
+
+	// Items
+	//CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
+
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+	{
+		m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect);
+	}
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	//dc.SelectObject(pOldFont);
+	dc.SelectObject(pOldBitmap);
 }
 
 void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
@@ -511,6 +558,11 @@ INT CDialogMenuItem::GetMinGutter()
 	return 0;
 }
 
+INT CDialogMenuItem::GetBorder()
+{
+	return BORDERPOPUP;
+}
+
 BOOL CDialogMenuItem::IsEnabled()
 {
 	return FALSE;
@@ -528,7 +580,15 @@ void CDialogMenuItem::OnDeselect()
 {
 }
 
+void CDialogMenuItem::OnMouseMove(CPoint /*point*/)
+{
+}
+
 void CDialogMenuItem::OnClick(CPoint /*point*/)
+{
+}
+
+void CDialogMenuItem::OnHover(CPoint /*point*/)
 {
 }
 
@@ -544,7 +604,62 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_PreferredSize = PreferredSize;
 }
 
+INT CDialogMenuCommand::GetMinHeight()
+{
+	INT h = 0;
+
+	if (m_IconID!=-1)
+		h = max(h, (m_PreferredSize==CDMB_SMALL) ? 16 : 32);
+
+	return 2*BORDER+h;
+}
+
+INT CDialogMenuCommand::GetMinWidth()
+{
+	INT l = 0;
+
+	return 2*BORDER+GetMinGutter()+l;
+}
+
 INT CDialogMenuCommand::GetMinGutter()
 {
 	return (m_IconID==-1) ? 0 : (m_PreferredSize==CDMB_SMALL) ? 16+BORDER : 32+BORDER;
+}
+
+void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect)
+{
+	pDC->FillSolidRect(rect, 0x000000);
+
+	// Icon
+	if (m_IconID!=-1)
+		OnDrawIcon(pDC, CPoint(rect->left+BORDER+(p_ParentPopup->m_Gutter-(m_PreferredSize==CDMB_SMALL ? 16 : 32))/2, rect->top+(rect->bottom-rect->top-(m_PreferredSize==CDMB_SMALL ? 16 : 32))/2));
+}
+
+void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt)
+{
+	CMFCToolBarImages* pIcons = (m_PreferredSize==CDMB_SMALL) ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons;
+
+	CAfxDrawState ds;
+	pIcons->PrepareDrawImage(ds);
+	pIcons->Draw(pDC, pt.x, pt.y, m_IconID);
+	pIcons->EndDrawImage(ds);
+}
+
+
+// CDialogMenuSeparator
+//
+
+CDialogMenuSeparator::CDialogMenuSeparator(CDialogMenuPopup* pParentPopup)
+	: CDialogMenuItem(pParentPopup)
+{
+}
+
+INT CDialogMenuSeparator::GetMinHeight()
+{
+	return 2*BORDERPOPUP+1;
+}
+
+INT CDialogMenuSeparator::GetBorder()
+{
+	return 0;
 }

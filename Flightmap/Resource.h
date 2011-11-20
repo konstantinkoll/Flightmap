@@ -16,11 +16,18 @@
 #define IDB_MENUBARICONS                140
 #define IDB_MENUFILE_16                 141
 #define IDB_MENUFILE_32                 142
-#define IDM_FILE                        1000
-#define IDM_EDIT                        1001
-#define IDM_MAP                         1002
-#define IDM_GLOBE                       1003
-#define IDM_STATISTICS                  1004
+#define IDM_FILE                        3000
+#define IDM_EDIT                        3001
+#define IDM_MAP                         3002
+#define IDM_GLOBE                       3003
+#define IDM_STATISTICS                  3004
+#define IDM_FILE_NEW                    3100
+#define IDM_FILE_OPEN                   3101
+#define IDM_FILE_SAVE                   3102
+#define IDM_FILE_SAVEAS                 3103
+#define IDM_FILE_PRINT                  3104
+#define IDM_FILE_PREPARE                3105
+#define IDM_FILE_CLOSE                  3106
 
 // Next default values for new objects
 // 

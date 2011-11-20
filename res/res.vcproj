@@ -236,14 +236,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\New_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\New_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\NewEmpty_16.png"
 				>
 			</File>
@@ -413,11 +405,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Docked1.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Docked2.jpg"
+			RelativePath=".\Docked.jpg"
 			>
 		</File>
 		<File
