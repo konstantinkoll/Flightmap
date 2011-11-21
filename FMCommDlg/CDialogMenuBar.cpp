@@ -354,7 +354,7 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 		nClassStyle |= CS_DROPSHADOW;
 
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
-	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, 0, 0, 16, 16, pParentWnd->GetSafeHwnd(), NULL);
+	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, -100, -100, 16, 16, pParentWnd->GetSafeHwnd(), NULL);
 
 	SetOwner(pTopLevelParent);
 
