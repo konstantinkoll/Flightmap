@@ -50,7 +50,6 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -101,10 +100,13 @@ public:
 	void AddCaption(UINT ResID);
 	void Track(CPoint pt);
 	INT GetGutter();
+	INT GetBlueAreaStart();
 	CFont* SelectNormalFont(CDC* pDC);
 	CFont* SelectCaptionFont(CDC* pDC);
+	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Focused=TRUE);
 
 protected:
+	FMApplication* p_App;
 	DynArray<MenuPopupItem> m_Items;
 	UINT m_LargeIconsID;
 	UINT m_SmallIconsID;
@@ -113,20 +115,27 @@ protected:
 	INT m_Height;
 	INT m_BlueAreaStart;
 	INT m_FirstRowOffset;
+	INT m_Selected;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
 
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	HTHEME hThemeButton;
+	HTHEME hThemeList;
 };
 
 

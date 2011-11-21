@@ -111,7 +111,7 @@ void CDialogMenuBar::SetTheme()
 		if (hTheme)
 			p_App->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_MENU);
+		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_MENU);
 	}
 
 	// Default font
@@ -324,9 +324,13 @@ void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
 CDialogMenuPopup::CDialogMenuPopup()
 	: CWnd()
 {
+	p_App = (FMApplication*)AfxGetApp();
+
 	m_Gutter = m_BlueAreaStart = m_FirstRowOffset = 0;
 	m_Width = m_Height = 2*BORDERPOPUP;
 	m_LargeIconsID = m_SmallIconsID = 0;
+	m_Selected = -1;
+	hThemeButton = hThemeList = NULL;
 }
 
 BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIconsID)
@@ -456,6 +460,11 @@ __forceinline INT CDialogMenuPopup::GetGutter()
 	return m_Gutter;
 }
 
+__forceinline INT CDialogMenuPopup::GetBlueAreaStart()
+{
+	return m_BlueAreaStart;
+}
+
 __forceinline CFont* CDialogMenuPopup::SelectNormalFont(CDC* pDC)
 {
 	return pDC->SelectObject(&((CMainWindow*)GetTopLevelParent())->m_pDialogMenuBar->m_NormalFont);
@@ -466,19 +475,58 @@ __forceinline CFont* CDialogMenuPopup::SelectCaptionFont(CDC* pDC)
 	return pDC->SelectObject(&((CMainWindow*)GetTopLevelParent())->m_pDialogMenuBar->m_CaptionFont);
 }
 
+void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Focused)
+{
+	if (hThemeList)
+	{
+		p_App->zDrawThemeBackground(hThemeList, *pDC, LVP_LISTITEM, Focused ? LISS_HOTSELECTED : LISS_HOT, rect, rect);
+	}
+	else
+	{
+		pDC->FillSolidRect(rect, GetSysColor(COLOR_HIGHLIGHT));
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
+	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
+	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
+INT CDialogMenuPopup::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	if (p_App->m_ThemeLibLoaded)
+	{
+		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (p_App->OSVersion>=OS_Vista)
+		{
+			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		}
+	}
+
+
+
+	return 0;
+}
+
 void CDialogMenuPopup::OnDestroy()
 {
+	if (hThemeButton)
+		p_App->zCloseThemeData(hThemeButton);
+	if (hThemeList)
+		p_App->zCloseThemeData(hThemeList);
+
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		delete m_Items.m_Items[a].pItem;
 
@@ -534,17 +582,35 @@ void CDialogMenuPopup::OnPaint()
 
 	// Items
 	CFont* pOldFont = SelectNormalFont(&dc);
-
+m_Selected=1;
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
-		dc.SetTextColor(0x6E1500);
+		BOOL Selected = (m_Selected==(INT)a) && (m_Items.m_Items[a].Enabled);
+		dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
 
-		m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, FALSE, Themed);
+		m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, m_Selected==(INT)a, Themed);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
+}
+
+LRESULT CDialogMenuPopup::OnThemeChanged()
+{
+	if (p_App->m_ThemeLibLoaded)
+	{
+		if (hThemeButton)
+			p_App->zCloseThemeData(hThemeButton);
+		if (hThemeList)
+			p_App->zCloseThemeData(hThemeList);
+
+		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (p_App->OSVersion>=OS_Vista)
+			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+	}
+
+	return TRUE;
 }
 
 void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
@@ -699,8 +765,12 @@ INT CDialogMenuCommand::GetMinGutter()
 	return (m_IconID==-1) ? 0 : m_IconSize.cx+BORDER;
 }
 
-void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed)
+void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL /*Themed*/)
 {
+	// Hintergrund
+	if (Selected)
+		p_ParentPopup->DrawSelectedBackground(pDC, rect);
+
 	// Icon
 	if (m_IconID!=-1)
 		OnDrawIcon(pDC, CPoint(rect->left+BORDER+(p_ParentPopup->GetGutter()-BORDER-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2));
@@ -862,12 +932,18 @@ void CDialogMenuSeparator::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, BOO
 
 	if (!m_ForBlueArea)
 	{
+		INT left = rect->left+p_ParentPopup->GetGutter()+BORDERPOPUP+BORDER;
 		if (Themed)
 		{
-			pDC->FillSolidRect(rect->left+p_ParentPopup->GetGutter()+BORDERPOPUP+BORDER, rect->top+1, l-p_ParentPopup->GetGutter()-2*BORDERPOPUP-BORDER, 1, 0xC5C5C5);
+			pDC->FillSolidRect(left, rect->top+1, l-left-BORDERPOPUP, 1, 0xC5C5C5);
 		}
 		else
 		{
+			pDC->FillSolidRect(left, rect->top+1, l-left-BORDERPOPUP, 1, GetSysColor(COLOR_3DSHADOW));
+
+			INT BlueAreaStart = p_ParentPopup->GetBlueAreaStart();
+			if ((BlueAreaStart) && (rect->top>=BlueAreaStart))
+				pDC->FillSolidRect(left, rect->top+2, l-left-BORDERPOPUP, 1, GetSysColor(COLOR_3DHIGHLIGHT));
 		}
 	}
 	else
@@ -939,7 +1015,7 @@ void CDialogMenuCaption::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, BOOL 
 	CRect rectText(rect);
 	rectText.DeflateRect(BORDER+BORDERPOPUP, Themed ? 1 : 0);
 
-	pDC->SetTextColor(0x6E1500);
+	pDC->SetTextColor(Themed ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT));
 	pDC->DrawText(m_Caption, rectText, DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 	pDC->SelectObject(pOldFont);
