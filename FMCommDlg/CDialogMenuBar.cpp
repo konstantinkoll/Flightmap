@@ -633,7 +633,7 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 {
 	m_CmdID = CmdID;
 	m_IconID = IconID;
-	m_IconSize.cx = m_IconSize.cy = (m_IconID==-1) ? 0 : (m_PreferredSize==CDMB_SMALL) ? 16 : 32;
+	m_IconSize.cx = m_IconSize.cy = (IconID==-1) ? 0 : (PreferredSize==CDMB_SMALL) ? 16 : 32;
 	m_PreferredSize = PreferredSize;
 
 	ENSURE(m_Caption.LoadString(CmdID));
@@ -696,7 +696,7 @@ INT CDialogMenuCommand::GetMinWidth()
 
 INT CDialogMenuCommand::GetMinGutter()
 {
-	return (m_IconID==-1) ? 0 : (m_PreferredSize==CDMB_SMALL) ? 16+BORDER : 32+BORDER;
+	return (m_IconID==-1) ? 0 : m_IconSize.cx+BORDER;
 }
 
 void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed)
@@ -780,7 +780,7 @@ INT CDialogMenuFileType::GetMinGutter()
 void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt)
 {
 	CImageList* pIcons = (m_PreferredSize==CDMB_SMALL) ? &((FMApplication*)AfxGetApp())->m_SystemImageListSmall : &((FMApplication*)AfxGetApp())->m_SystemImageListLarge;
-	pIcons->Draw(pDC, m_IconID, pt, ILD_NORMAL);
+	pIcons->DrawEx(pDC, m_IconID, pt, m_IconSize, CLR_NONE, CLR_NONE, ILD_NORMAL);
 }
 
 
