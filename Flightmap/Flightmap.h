@@ -3,9 +3,11 @@
 //
 
 #pragma once
+#include "Database.h"
 #include "FMCommDlg.h"
 #include "resource.h"
 #include <hash_map>
+
 
 // Globe textures
 
