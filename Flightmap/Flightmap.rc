@@ -114,11 +114,31 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
+    IDS_SAMPLEITINERARIES   "Beispiele"
+    IDS_RECENTFILES         "Zuletzt verwendete Flugpl‰ne"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE                "&Datei"
     IDM_EDIT                "&Bearbeiten"
     IDM_MAP                 "&Karte"
     IDM_GLOBE               "&Globus"
     IDM_STATISTICS          "&Statistik"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_NEW            "&Neu"
+    IDM_FILE_NEWSAMPLE1     "&Atlantik-‹berquerung\n÷ffnet einen Beispiel-Flugplan\nmit Atlantik-‹berquerung"
+    IDM_FILE_NEWSAMPLE2     "&Pazifik-‹berquerung\n÷ffnet einen Beispiel-Flugplan\nmit Pazifik-‹berquerung"
+    IDM_FILE_OPEN           "÷&ffnen"
+    IDM_FILE_SAVE           "&Speichern"
+    IDM_FILE_SAVEAS         "Speichern &unter"
+    IDM_FILE_PRINT          "&Drucken"
+    IDM_FILE_PREPARE        "Vorberei&ten"
+    IDM_FILE_CLOSE          "S&chlieﬂen"
+    IDM_FILE_QUIT           "&Beenden"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -191,11 +211,31 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
+    IDS_SAMPLEITINERARIES   "Sample itineraries"
+    IDS_RECENTFILES         "Recently used itineraries"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE                "&File"
     IDM_EDIT                "&Edit"
     IDM_MAP                 "&Map"
     IDM_GLOBE               "&Globe"
     IDM_STATISTICS          "&Statistics"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_NEW            "&New"
+    IDM_FILE_NEWSAMPLE1     "&Atlantic crossing\nOpens a sample itinerary\ncrossing the Atlantic Ocean"
+    IDM_FILE_NEWSAMPLE2     "&Pacific crossing\nOpens a sample itinerary\ncrossing the Pacific Ocean"
+    IDM_FILE_OPEN           "&Open"
+    IDM_FILE_SAVE           "&Save"
+    IDM_FILE_SAVEAS         "Save &as"
+    IDM_FILE_PRINT          "&Print"
+    IDM_FILE_PREPARE        "Pr&epare"
+    IDM_FILE_CLOSE          "&Close"
+    IDM_FILE_QUIT           "&Quit"
 END
 
 #endif    // Englisch (USA) resources

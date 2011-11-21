@@ -15,6 +15,7 @@
 class CMainWindow : public CWnd
 {
 friend class CDialogMenuBar;
+friend class CDialogMenuPopup;
 
 public:
 	CMainWindow();

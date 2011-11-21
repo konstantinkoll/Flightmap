@@ -179,7 +179,7 @@ void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 	pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
-	pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
+/*	pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
 	pPopup->AddCommand(IDM_FILE_OPEN, 2, CDMB_MEDIUM);
 	pPopup->AddCommand(IDM_FILE_SAVE, 3, CDMB_MEDIUM);
 	pPopup->AddCommand(IDM_FILE_SAVEAS, 4, CDMB_MEDIUM);
@@ -188,7 +188,18 @@ void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	pPopup->AddCommand(IDM_FILE_PREPARE, 9, CDMB_MEDIUM);
 	pPopup->AddSeparator();
 	pPopup->AddCommand(IDM_FILE_CLOSE, 13, CDMB_MEDIUM);
-	pPopup->AddCommand(ID_APP_EXIT, 14, CDMB_SMALL);
+	pPopup->AddSeparator(TRUE);
+	pPopup->AddCommand(IDM_FILE_QUIT, 14, CDMB_SMALL);*/
+
+	pPopup->AddCaption(IDS_SAMPLEITINERARIES);
+	pPopup->AddCommand(IDM_FILE_NEWSAMPLE1, 1, CDMB_LARGE);
+	pPopup->AddCommand(IDM_FILE_NEWSAMPLE2, 1, CDMB_LARGE);
+	pPopup->AddCaption(IDS_RECENTFILES);
+	pPopup->AddFileType(IDM_FILE_NEWSAMPLE1, _T(".bmp"), CDMB_LARGE);
+	pPopup->AddFileType(IDM_FILE_NEWSAMPLE1, _T(".docx"), CDMB_LARGE);
+	pPopup->AddFileType(IDM_FILE_NEWSAMPLE1, _T(".air"), CDMB_LARGE);
+	pPopup->AddFileType(IDM_FILE_NEWSAMPLE1, _T(".airx"), CDMB_LARGE);
+	pPopup->AddFile(IDM_FILE_NEWSAMPLE1, _T("C:\\Flightmap.zip"), CDMB_LARGE);
 
 	pPopup->Track(pos);
 }

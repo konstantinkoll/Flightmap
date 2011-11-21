@@ -29,6 +29,7 @@ struct MenuBarItem
 class CDialogMenuBar : public CWnd
 {
 friend class CMainWindow;
+friend class CDialogMenuPopup;
 
 public:
 	CDialogMenuBar();
@@ -94,8 +95,14 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
 	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL);
-	void AddSeparator();
+	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL);
+	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
+	void AddSeparator(BOOL ForBlueArea=FALSE);
+	void AddCaption(UINT ResID);
 	void Track(CPoint pt);
+	INT GetGutter();
+	CFont* SelectNormalFont(CDC* pDC);
+	CFont* SelectCaptionFont(CDC* pDC);
 
 protected:
 	DynArray<MenuPopupItem> m_Items;
@@ -104,10 +111,12 @@ protected:
 	INT m_Gutter;
 	INT m_Width;
 	INT m_Height;
+	INT m_BlueAreaStart;
+	INT m_FirstRowOffset;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
 
-	void AddItem(CDialogMenuItem* pItem);
+	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -135,7 +144,7 @@ public:
 	virtual INT GetBorder();
 	virtual BOOL IsEnabled();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect);
+	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed);
 	virtual void OnSelect();
 	virtual void OnDeselect();
 	virtual void OnMouseMove(CPoint point);
@@ -159,15 +168,44 @@ public:
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect);
+	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
 
 protected:
 	UINT m_CmdID;
 	INT m_IconID;
+	CSize m_IconSize;
 	UINT m_PreferredSize;
 	CString m_Caption;
 	CString m_Hint;
+};
+
+
+// CDialogMenuFileType
+//
+
+class CDialogMenuFileType : public CDialogMenuCommand
+{
+public:
+	CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT CmdID, CString FileType, UINT PreferredSize);
+
+	virtual INT GetMinHeight();
+	virtual INT GetMinGutter();
+
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
+
+private:
+	CImageList* p_Icons;
+};
+
+
+// CDialogMenuFile
+//
+
+class CDialogMenuFile : public CDialogMenuFileType
+{
+public:
+	CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CString Path, UINT PreferredSize);
 };
 
 
@@ -177,8 +215,32 @@ protected:
 class CDialogMenuSeparator : public CDialogMenuItem
 {
 public:
-	CDialogMenuSeparator(CDialogMenuPopup* pParentPopup);
+	CDialogMenuSeparator(CDialogMenuPopup* pParentPopup, BOOL ForBlueArea);
 
 	virtual INT GetMinHeight();
 	virtual INT GetBorder();
+
+	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed);
+
+private:
+	BOOL m_ForBlueArea;
+};
+
+
+// CDialogMenuCaption
+//
+
+class CDialogMenuCaption : public CDialogMenuItem
+{
+public:
+	CDialogMenuCaption(CDialogMenuPopup* pParentPopup, UINT ResID);
+
+	virtual INT GetMinHeight();
+	virtual INT GetMinWidth();
+	virtual INT GetBorder();
+
+	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed);
+
+private:
+	CString m_Caption;
 };

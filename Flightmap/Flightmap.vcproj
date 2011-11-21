@@ -442,6 +442,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Database.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Flightmap.h"
 				>
 			</File>
