@@ -8,6 +8,20 @@
 #include "DynArray.h"
 
 
+// CDialogCmdUI
+//
+
+class CDialogCmdUI : public CCmdUI
+{
+public:
+	CDialogCmdUI();
+
+	virtual void Enable(BOOL bOn=TRUE);
+
+	BOOL m_Enabled;
+};
+
+
 // CDialogMenuBar
 //
 
@@ -80,6 +94,7 @@ struct MenuPopupItem
 	CDialogMenuItem* pItem;
 	RECT Rect;
 	BOOL Enabled;
+	BOOL Selectable;
 };
 
 class CDialogMenuPopup : public CWnd
@@ -123,6 +138,7 @@ protected:
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
+	void SelectItem(INT idx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -134,9 +150,9 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -158,12 +174,13 @@ public:
 	virtual INT GetMinGutter();
 	virtual INT GetBorder();
 	virtual BOOL IsEnabled();
+	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed);
-	virtual void OnSelect();
 	virtual void OnDeselect();
+	virtual void OnButtonDown(CPoint point);
+	virtual void OnButtonUp(CPoint point);
 	virtual void OnMouseMove(CPoint point);
-	virtual void OnClick(CPoint point);
 	virtual void OnHover(CPoint point);
 
 protected:
@@ -182,9 +199,13 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
+	virtual BOOL IsEnabled();
+	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
+	virtual void OnDeselect();
+	virtual void OnButtonUp(CPoint point);
 
 protected:
 	UINT m_CmdID;

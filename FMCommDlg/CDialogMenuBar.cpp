@@ -6,6 +6,22 @@
 #include "FMCommDlg.h"
 
 
+// CDialogCmdUI
+//
+
+CDialogCmdUI::CDialogCmdUI()
+	: CCmdUI()
+{
+	m_Enabled = FALSE;
+}
+
+void CDialogCmdUI::Enable(BOOL bOn)
+{
+	m_Enabled = bOn;
+	m_bEnableChanged = TRUE;
+}
+
+
 // CDialogMenuBar
 //
 
@@ -394,6 +410,7 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	ZeroMemory(&i, sizeof(i));
 	i.pItem = pItem;
 	i.Enabled = pItem->IsEnabled();
+	i.Selectable = pItem->IsSelectable();
 
 	m_Items.AddItem(i);
 
@@ -446,6 +463,21 @@ void CDialogMenuPopup::InvalidateItem(INT idx)
 {
 	if (idx!=-1)
 		InvalidateRect(&m_Items.m_Items[idx].Rect);
+}
+
+void CDialogMenuPopup::SelectItem(INT idx)
+{
+	if (idx!=m_SelectedItem)
+	{
+		if (m_SelectedItem!=-1)
+		{
+			m_Items.m_Items[m_SelectedItem].pItem->OnDeselect();
+			InvalidateItem(m_SelectedItem);
+		}
+
+		m_SelectedItem = idx;
+		InvalidateItem(m_SelectedItem);
+	}
 }
 
 void CDialogMenuPopup::Track(CPoint point)
@@ -515,7 +547,8 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
-	ON_WM_SETFOCUS()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
@@ -604,7 +637,7 @@ void CDialogMenuPopup::OnPaint()
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
-		BOOL Selected = (m_SelectedItem==(INT)a) && (m_Items.m_Items[a].Enabled);
+		BOOL Selected = (m_SelectedItem==(INT)a) && (m_Items.m_Items[a].Selectable);
 		dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
 
 		m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, m_SelectedItem==(INT)a, Themed);
@@ -648,88 +681,20 @@ void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 
-	if (m_SelectedItem!=Item)
-	{
-		InvalidateItem(m_SelectedItem);
-		m_SelectedItem = Item;
-		InvalidateItem(m_SelectedItem);
-	}
+	SelectItem(Item);
 }
 
 void CDialogMenuPopup::OnMouseLeave()
 {
-	InvalidateItem(m_SelectedItem);
-
+	SelectItem(-1);
 	m_Hover = FALSE;
-	m_SelectedItem = -1;
 }
 
-void CDialogMenuPopup::OnMouseHover(UINT nFlags, CPoint point)
+void CDialogMenuPopup::OnMouseHover(UINT /*nFlags*/, CPoint point)
 {
-	/*if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if ((m_HotItem!=-1) && (!IsEditing()))
-			if (m_HotItem==m_EditLabel)
-			{
-				m_TooltipCtrl.Deactivate();
-				EditLabel(m_EditLabel);
-			}
-			else
-				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
-				{
-					FormatData fd;
-					CHAR Path[4];
-					HICON hIcon = NULL;
-					CSize sz;
-
-					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
-					switch (i->Type & LFTypeMask)
-					{
-					case LFTypeFile:
-						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview))
-						{
-							CDC* pDC = GetWindowDC();
-							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
-							ReleaseDC(pDC);
-						}
-						if (hIcon)
-						{
-							sz.cx = sz.cy = 128;
-						}
-						else
-						{
-							theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
-						}
-						break;
-					case LFTypeVolume:
-						strcpy_s(Path, 4, " :\\");
-						Path[0] = i->CoreAttributes.FileID[0];
-						theApp.m_FileFormats.Lookup(Path, fd);
-						break;
-					default:
-						fd.FormatName[0] = L'\0';
-						fd.SysIconIndex = -1;
-					}
-
-					if (!hIcon)
-					{
-						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
-
-						INT cx = 48;
-						INT cy = 48;
-						ImageList_GetIconSize(theApp.m_SystemImageListExtraLarge, &cx, &cy);
-						sz.cx = cx;
-						sz.cy = cy;
-					}
-
-					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));
-				}
-	}
-	else
-	{
-		m_TooltipCtrl.Deactivate();
-	}*/
+	INT Item = ItemAtPosition(point);
+	if (Item!=-1)
+		m_Items.m_Items[Item].pItem->OnHover(point);
 
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -739,15 +704,24 @@ void CDialogMenuPopup::OnMouseHover(UINT nFlags, CPoint point)
 	TrackMouseEvent(&tme);
 }
 
+void CDialogMenuPopup::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+{
+	INT Item = ItemAtPosition(point);
+	if (Item!=-1)
+		m_Items.m_Items[Item].pItem->OnButtonDown(point);
+}
+
+void CDialogMenuPopup::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	INT Item = ItemAtPosition(point);
+	if (Item!=-1)
+		m_Items.m_Items[Item].pItem->OnButtonUp(point);
+}
+
 void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
-}
-
-void CDialogMenuPopup::OnSetFocus(CWnd* pOldWnd)
-{
-	CWnd::OnSetFocus(pOldWnd);
 }
 
 void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
@@ -792,11 +766,12 @@ BOOL CDialogMenuItem::IsEnabled()
 	return FALSE;
 }
 
-void CDialogMenuItem::OnPaint(CDC* /*pDC*/, LPRECT /*rect*/, BOOL /*Selected*/, BOOL /*Themed*/)
+BOOL CDialogMenuItem::IsSelectable()
 {
+	return FALSE;
 }
 
-void CDialogMenuItem::OnSelect()
+void CDialogMenuItem::OnPaint(CDC* /*pDC*/, LPRECT /*rect*/, BOOL /*Selected*/, BOOL /*Themed*/)
 {
 }
 
@@ -804,11 +779,15 @@ void CDialogMenuItem::OnDeselect()
 {
 }
 
-void CDialogMenuItem::OnMouseMove(CPoint /*point*/)
+void CDialogMenuItem::OnButtonDown(CPoint /*point*/)
 {
 }
 
-void CDialogMenuItem::OnClick(CPoint /*point*/)
+void CDialogMenuItem::OnButtonUp(CPoint /*point*/)
+{
+}
+
+void CDialogMenuItem::OnMouseMove(CPoint /*point*/)
 {
 }
 
@@ -891,6 +870,20 @@ INT CDialogMenuCommand::GetMinGutter()
 	return (m_IconID==-1) ? 0 : m_IconSize.cx+BORDER;
 }
 
+BOOL CDialogMenuCommand::IsEnabled()
+{
+	CDialogCmdUI cmdUI;
+	cmdUI.m_nID = m_CmdID;
+	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
+
+	return cmdUI.m_Enabled;
+}
+
+BOOL CDialogMenuCommand::IsSelectable()
+{
+	return TRUE;
+}
+
 void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL /*Themed*/)
 {
 	// Hintergrund
@@ -932,6 +925,16 @@ void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt)
 	pIcons->PrepareDrawImage(ds);
 	pIcons->Draw(pDC, pt.x, pt.y, m_IconID);
 	pIcons->EndDrawImage(ds);
+}
+
+void CDialogMenuCommand::OnDeselect()
+{
+}
+
+void CDialogMenuCommand::OnButtonUp(CPoint /*point*/)
+{
+	p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
 }
 
 

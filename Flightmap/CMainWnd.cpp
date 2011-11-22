@@ -94,6 +94,9 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_CLOSE()
+
+	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_OPEN, OnUpdateFileCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -141,4 +144,22 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 
 	if (m_pWndMainView)
 		m_pWndMainView->SetFocus();
+}
+
+
+// File commands
+
+void CMainWnd::OnFileOpen()
+{
+	CFileDialog dlg(TRUE, _T(".airx"), NULL, 0, _T(".airx|Flightmap itinerary|.air|Flightmap itinerary||"), this);
+	dlg.DoModal();
+}
+
+void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	default:
+		pCmdUI->Enable(TRUE);
+	}
 }
