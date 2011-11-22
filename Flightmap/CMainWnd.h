@@ -31,6 +31,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileQuit();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };
