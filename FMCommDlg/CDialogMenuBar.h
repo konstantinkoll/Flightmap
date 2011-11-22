@@ -98,7 +98,7 @@ public:
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
-	void Track(CPoint pt);
+	void Track(CPoint point);
 	INT GetGutter();
 	INT GetBlueAreaStart();
 	CFont* SelectNormalFont(CDC* pDC);
@@ -115,11 +115,14 @@ protected:
 	INT m_Height;
 	INT m_BlueAreaStart;
 	INT m_FirstRowOffset;
-	INT m_Selected;
+	INT m_SelectedItem;
+	BOOL m_Hover;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
 
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
+	INT ItemAtPosition(CPoint point);
+	void InvalidateItem(INT idx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -128,6 +131,9 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);

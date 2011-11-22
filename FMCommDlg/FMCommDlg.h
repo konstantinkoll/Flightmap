@@ -13,6 +13,7 @@
 #include "..\FMCommDlg\FMRegisterDlg.h"
 #include "..\FMCommDlg\License.h"
 
+#define FMHOVERTIME     850
 
 #ifdef FMCommDlg_EXPORTS
 #define FMCommDlg_API
