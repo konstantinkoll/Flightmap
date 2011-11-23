@@ -600,8 +600,7 @@ void CDialogMenuPopup::OnNcPaint()
 	rect.left = rect.top = 0;
 
 	CWindowDC dc(this);
-
-	dc.FillSolidRect(rect, GetSysColor(COLOR_3DSHADOW));
+	dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 }
 
 void CDialogMenuPopup::OnPaint()
