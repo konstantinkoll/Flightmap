@@ -118,7 +118,7 @@ public:
 	INT GetBlueAreaStart();
 	CFont* SelectNormalFont(CDC* pDC);
 	CFont* SelectCaptionFont(CDC* pDC);
-	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Focused=TRUE);
+	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled=TRUE, BOOL Focused=TRUE);
 
 protected:
 	FMApplication* p_App;
@@ -214,6 +214,7 @@ protected:
 	UINT m_PreferredSize;
 	CString m_Caption;
 	CString m_Hint;
+	BOOL m_Enabled;
 };
 
 

@@ -409,8 +409,9 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	MenuPopupItem i;
 	ZeroMemory(&i, sizeof(i));
 	i.pItem = pItem;
-	i.Enabled = pItem->IsEnabled();
 	i.Selectable = pItem->IsSelectable();
+	if (i.Selectable)
+		i.Enabled = pItem->IsEnabled();
 
 	m_Items.AddItem(i);
 
@@ -523,11 +524,11 @@ __forceinline CFont* CDialogMenuPopup::SelectCaptionFont(CDC* pDC)
 	return pDC->SelectObject(&((CMainWindow*)GetTopLevelParent())->m_pDialogMenuBar->m_CaptionFont);
 }
 
-void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Focused)
+void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled, BOOL Focused)
 {
 	if (hThemeList)
 	{
-		p_App->zDrawThemeBackground(hThemeList, *pDC, LVP_LISTITEM, Focused ? LISS_HOTSELECTED : LISS_HOT, rect, rect);
+		p_App->zDrawThemeBackground(hThemeList, *pDC, LVP_LISTITEM, !Enabled ? LISS_SELECTEDNOTFOCUS : Focused ? LISS_HOTSELECTED : LISS_HOT, rect, rect);
 	}
 	else
 	{
@@ -707,14 +708,16 @@ void CDialogMenuPopup::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	INT Item = ItemAtPosition(point);
 	if (Item!=-1)
-		m_Items.m_Items[Item].pItem->OnButtonDown(point);
+		if (m_Items.m_Items[Item].Enabled)
+			m_Items.m_Items[Item].pItem->OnButtonDown(point);
 }
 
 void CDialogMenuPopup::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	INT Item = ItemAtPosition(point);
 	if (Item!=-1)
-		m_Items.m_Items[Item].pItem->OnButtonUp(point);
+		if (m_Items.m_Items[Item].Enabled)
+			m_Items.m_Items[Item].pItem->OnButtonUp(point);
 }
 
 void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
@@ -805,6 +808,7 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_IconID = IconID;
 	m_IconSize.cx = m_IconSize.cy = (IconID==-1) ? 0 : (PreferredSize==CDMB_SMALL) ? 16 : 32;
 	m_PreferredSize = PreferredSize;
+	m_Enabled = FALSE;
 
 	ENSURE(m_Caption.LoadString(CmdID));
 
@@ -875,7 +879,7 @@ BOOL CDialogMenuCommand::IsEnabled()
 	cmdUI.m_nID = m_CmdID;
 	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
 
-	return cmdUI.m_Enabled;
+	return m_Enabled = cmdUI.m_Enabled;
 }
 
 BOOL CDialogMenuCommand::IsSelectable()
@@ -887,7 +891,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, BOOL /*Th
 {
 	// Hintergrund
 	if (Selected)
-		p_ParentPopup->DrawSelectedBackground(pDC, rect);
+		p_ParentPopup->DrawSelectedBackground(pDC, rect, m_Enabled);
 
 	// Icon
 	if (m_IconID!=-1)
