@@ -345,7 +345,7 @@ CDialogMenuPopup::CDialogMenuPopup()
 	m_Gutter = m_BlueAreaStart = m_FirstRowOffset = 0;
 	m_Width = m_Height = 2*BORDERPOPUP;
 	m_LargeIconsID = m_SmallIconsID = 0;
-	m_SelectedItem = -1;
+	m_SelectedItem = m_LastSelectedItem = -1;
 	m_Hover = FALSE;
 	hThemeButton = hThemeList = NULL;
 }
@@ -475,15 +475,17 @@ void CDialogMenuPopup::SelectItem(INT idx)
 {
 	if (idx!=m_SelectedItem)
 	{
-		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
-			if (a!=m_SelectedItem)
-				m_Items.m_Items[a].pItem->OnDeselect();
-
-		if (m_SelectedItem!=-1)
-			InvalidateItem(m_SelectedItem);
+		InvalidateItem(m_LastSelectedItem);
 
 		m_SelectedItem = idx;
+		if (idx!=-1)
+			m_LastSelectedItem = idx;
+
 		InvalidateItem(m_SelectedItem);
+
+		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
+			if (a!=m_LastSelectedItem)
+				m_Items.m_Items[a].pItem->OnDeselect();
 	}
 }
 
@@ -993,8 +995,6 @@ void CDialogMenuCommand::OnDeselect()
 		m_pSubmenu->DestroyWindow();
 		delete m_pSubmenu;
 		m_pSubmenu = NULL;
-
-		p_ParentPopup->Invalidate();
 	}
 }
 

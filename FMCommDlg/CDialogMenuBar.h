@@ -133,6 +133,7 @@ protected:
 	INT m_BlueAreaStart;
 	INT m_FirstRowOffset;
 	INT m_SelectedItem;
+	INT m_LastSelectedItem;
 	BOOL m_Hover;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
