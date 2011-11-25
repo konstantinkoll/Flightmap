@@ -93,7 +93,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
-	ON_WM_CLOSE()
+	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -147,6 +147,44 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 		m_pWndMainView->SetFocus();
 }
 
+LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
+{
+	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
+
+	switch ((UINT)wParam)
+	{
+	case IDM_FILE:
+		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+		pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
+		pPopup->AddSubmenu(IDM_FILE_OPEN, 2, CDMB_MEDIUM, TRUE);
+		pPopup->AddCommand(IDM_FILE_SAVE, 3, CDMB_MEDIUM);
+		pPopup->AddSubmenu(IDM_FILE_SAVEAS, 4, CDMB_MEDIUM, TRUE);
+		pPopup->AddSeparator();
+		pPopup->AddSubmenu(IDM_FILE_PRINT, 5, CDMB_MEDIUM, TRUE);
+		pPopup->AddSubmenu(IDM_FILE_PREPARE, 9, CDMB_MEDIUM);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_FILE_CLOSE, 13, CDMB_MEDIUM);
+		pPopup->AddSeparator(TRUE);
+		pPopup->AddCommand(IDM_FILE_QUIT, 14, CDMB_SMALL);
+		break;
+	case IDM_FILE_OPEN:
+		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+		pPopup->AddCaption(IDS_SAMPLEITINERARIES);
+		pPopup->AddCommand(IDM_FILE_NEWSAMPLE1, 1, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_NEWSAMPLE2, 1, CDMB_LARGE);
+		pPopup->AddCaption(IDS_RECENTFILES);
+		break;
+	}
+
+	if (!pPopup->HasItems())
+	{
+		delete pPopup;
+		pPopup = NULL;
+	}
+
+	return (LRESULT)pPopup;
+}
+
 
 // File commands
 
@@ -165,6 +203,11 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_FILE_SAVE:
+	case IDM_FILE_SAVEAS:
+	case IDM_FILE_CLOSE:
+		pCmdUI->Enable(FALSE);
+		break;
 	default:
 		pCmdUI->Enable(TRUE);
 	}

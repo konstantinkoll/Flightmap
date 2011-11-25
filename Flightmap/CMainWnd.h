@@ -29,6 +29,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileQuit();
