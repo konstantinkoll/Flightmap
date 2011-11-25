@@ -475,12 +475,12 @@ void CDialogMenuPopup::SelectItem(INT idx)
 {
 	if (idx!=m_SelectedItem)
 	{
+		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
+			if (a!=m_SelectedItem)
+				m_Items.m_Items[a].pItem->OnDeselect();
+
 		if (m_SelectedItem!=-1)
-		{
-			if (idx!=-1)
-				m_Items.m_Items[m_SelectedItem].pItem->OnDeselect();
 			InvalidateItem(m_SelectedItem);
-		}
 
 		m_SelectedItem = idx;
 		InvalidateItem(m_SelectedItem);
@@ -615,6 +615,9 @@ void CDialogMenuPopup::OnNcPaint()
 
 void CDialogMenuPopup::OnPaint()
 {
+	CRect rectUpdate;
+	GetUpdateRect(rectUpdate);
+
 	CPaintDC pDC(this);
 
 	CRect rect;
@@ -643,14 +646,16 @@ void CDialogMenuPopup::OnPaint()
 
 	// Items
 	CFont* pOldFont = SelectNormalFont(&dc);
+	CRect rectIntersect;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-	{
-		BOOL Selected = (m_SelectedItem==(INT)a) && (m_Items.m_Items[a].Selectable);
-		dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+		if (IntersectRect(&rectIntersect, &m_Items.m_Items[a].Rect, rectUpdate))
+		{
+			BOOL Selected = (m_SelectedItem==(INT)a) && (m_Items.m_Items[a].Selectable);
+			dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
 
-		m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, m_SelectedItem==(INT)a, hThemeList ? 2 : Themed ? 1 : 0);
-	}
+			m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, m_SelectedItem==(INT)a, hThemeList ? 2 : Themed ? 1 : 0);
+		}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
@@ -988,6 +993,8 @@ void CDialogMenuCommand::OnDeselect()
 		m_pSubmenu->DestroyWindow();
 		delete m_pSubmenu;
 		m_pSubmenu = NULL;
+
+		p_ParentPopup->Invalidate();
 	}
 }
 
