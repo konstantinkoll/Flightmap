@@ -158,7 +158,7 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
+	afx_msg INT OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
 	DECLARE_MESSAGE_MAP()
 
 private:
