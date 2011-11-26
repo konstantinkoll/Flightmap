@@ -348,6 +348,7 @@ CDialogMenuPopup::CDialogMenuPopup()
 	m_SelectedItem = m_LastSelectedItem = -1;
 	m_Hover = FALSE;
 	hThemeButton = hThemeList = NULL;
+	p_Submenu = NULL;
 }
 
 BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIconsID)
@@ -493,6 +494,19 @@ void CDialogMenuPopup::Track(CPoint point)
 {
 	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 	SetFocus();
+}
+
+void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup)
+{
+	p_Submenu = pPopup;
+
+	if ((m_SelectedItem!=-1) && (pPopup))
+	{
+		CRect rect(m_Items.m_Items[m_SelectedItem].Rect);
+		ClientToScreen(rect);
+
+		pPopup->Track(CPoint(rect.right-BORDERPOPUP, rect.top));
+	}
 }
 
 void CDialogMenuPopup::AdjustLayout()
@@ -771,11 +785,7 @@ LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 	if (rect.PtInRect(pt))
 		return TRUE;
 
-	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		if (m_Items.m_Items[a].pItem->OnPtInRect(wParam))
-			return TRUE;
-
-	return FALSE;
+	return p_Submenu ? p_Submenu->OnPtInRect(wParam) : FALSE;
 }
 
 void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
@@ -844,11 +854,6 @@ void CDialogMenuItem::OnButtonDown(CPoint /*point*/)
 void CDialogMenuItem::OnButtonUp(CPoint /*point*/)
 {
 }
-BOOL CDialogMenuItem::OnPtInRect(WPARAM /*wParam*/)
-{
-	return FALSE;
-}
-
 void CDialogMenuItem::OnMouseMove(CPoint /*point*/)
 {
 }
@@ -891,6 +896,8 @@ CDialogMenuCommand::~CDialogMenuCommand()
 {
 	if (m_pSubmenu)
 	{
+		p_ParentPopup->TrackSubmenu(NULL);
+
 		m_pSubmenu->DestroyWindow();
 		delete m_pSubmenu;
 	}
@@ -1016,6 +1023,8 @@ void CDialogMenuCommand::OnDeselect()
 {
 	if (m_pSubmenu)
 	{
+		p_ParentPopup->TrackSubmenu(NULL);
+
 		m_pSubmenu->DestroyWindow();
 		delete m_pSubmenu;
 		m_pSubmenu = NULL;
@@ -1030,7 +1039,7 @@ void CDialogMenuCommand::OnButtonUp(CPoint /*point*/)
 		{
 			m_pSubmenu = (CDialogMenuPopup*)p_ParentPopup->GetOwner()->SendMessage(WM_REQUESTSUBMENU, (WPARAM)m_CmdID);
 			if (m_pSubmenu)
-				m_pSubmenu->Track(CPoint(0, 0));
+				p_ParentPopup->TrackSubmenu(m_pSubmenu);
 		}
 	}
 	else
@@ -1039,11 +1048,6 @@ void CDialogMenuCommand::OnButtonUp(CPoint /*point*/)
 			p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
 			p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
 		}
-}
-
-BOOL CDialogMenuCommand::OnPtInRect(WPARAM wParam)
-{
-	return m_pSubmenu ? m_pSubmenu->OnPtInRect(wParam) : FALSE;
 }
 
 void CDialogMenuCommand::OnHover(CPoint point)

@@ -137,11 +137,13 @@ protected:
 	BOOL m_Hover;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
+	CDialogMenuPopup* p_Submenu;
 
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
 	void SelectItem(INT idx);
+	void TrackSubmenu(CDialogMenuPopup* pPopup);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -187,7 +189,6 @@ public:
 	virtual void OnDeselect();
 	virtual void OnButtonDown(CPoint point);
 	virtual void OnButtonUp(CPoint point);
-	virtual BOOL OnPtInRect(WPARAM wParam);
 	virtual void OnMouseMove(CPoint point);
 	virtual void OnMouseLeave();
 	virtual void OnHover(CPoint point);
@@ -215,7 +216,6 @@ public:
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
 	virtual void OnDeselect();
-	virtual BOOL OnPtInRect(WPARAM wParam);
 	virtual void OnButtonUp(CPoint point);
 	virtual void OnHover(CPoint point);
 
