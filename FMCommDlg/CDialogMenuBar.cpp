@@ -492,6 +492,7 @@ void CDialogMenuPopup::SelectItem(INT idx)
 void CDialogMenuPopup::Track(CPoint point)
 {
 	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+	SetFocus();
 }
 
 void CDialogMenuPopup::AdjustLayout()
@@ -558,6 +559,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_PAINT()
 	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
+	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -758,6 +760,24 @@ void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
+LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
+{
+	CRect rect;
+	GetClientRect(rect);
+	ClientToScreen(rect);
+
+	CPoint pt(LOWORD(wParam), HIWORD(wParam));
+
+	if (rect.PtInRect(pt))
+		return TRUE;
+
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if (m_Items.m_Items[a].pItem->OnPtInRect(wParam))
+			return TRUE;
+
+	return FALSE;
+}
+
 void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwTask)
 {
 	CWnd::OnActivateApp(bActive, dwTask);
@@ -823,6 +843,10 @@ void CDialogMenuItem::OnButtonDown(CPoint /*point*/)
 
 void CDialogMenuItem::OnButtonUp(CPoint /*point*/)
 {
+}
+BOOL CDialogMenuItem::OnPtInRect(WPARAM /*wParam*/)
+{
+	return FALSE;
 }
 
 void CDialogMenuItem::OnMouseMove(CPoint /*point*/)
@@ -1015,6 +1039,11 @@ void CDialogMenuCommand::OnButtonUp(CPoint /*point*/)
 			p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
 			p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
 		}
+}
+
+BOOL CDialogMenuCommand::OnPtInRect(WPARAM wParam)
+{
+	return m_pSubmenu ? m_pSubmenu->OnPtInRect(wParam) : FALSE;
 }
 
 void CDialogMenuCommand::OnHover(CPoint point)

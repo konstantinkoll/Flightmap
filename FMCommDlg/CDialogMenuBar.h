@@ -150,6 +150,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -186,6 +187,7 @@ public:
 	virtual void OnDeselect();
 	virtual void OnButtonDown(CPoint point);
 	virtual void OnButtonUp(CPoint point);
+	virtual BOOL OnPtInRect(WPARAM wParam);
 	virtual void OnMouseMove(CPoint point);
 	virtual void OnMouseLeave();
 	virtual void OnHover(CPoint point);
@@ -213,6 +215,7 @@ public:
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
 	virtual void OnDeselect();
+	virtual BOOL OnPtInRect(WPARAM wParam);
 	virtual void OnButtonUp(CPoint point);
 	virtual void OnHover(CPoint point);
 

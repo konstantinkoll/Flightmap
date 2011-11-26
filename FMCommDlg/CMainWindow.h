@@ -10,8 +10,9 @@
 // CMainWindow
 //
 
-#define WM_CLOSEPOPUP          WM_USER+1
-#define WM_REQUESTSUBMENU      WM_USER+2
+#define WM_REQUESTSUBMENU      WM_USER+1
+#define WM_PTINRECT            WM_USER+2
+#define WM_CLOSEPOPUP          WM_USER+3
 
 class CMainWindow : public CWnd
 {

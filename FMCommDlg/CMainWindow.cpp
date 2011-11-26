@@ -27,45 +27,29 @@ BOOL CMainWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindo
 BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 {
 	if (p_PopupWindow)
-		if (IsWindow(p_PopupWindow->GetSafeHwnd()))
-			if (GetCapture()!=p_PopupWindow->GetOwner())
+		switch (pMsg->message)
+		{
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_RBUTTONUP:
+		case WM_MBUTTONUP:
+		case WM_NCLBUTTONDOWN:
+		case WM_NCRBUTTONDOWN:
+		case WM_NCMBUTTONDOWN:
+		case WM_NCLBUTTONUP:
+		case WM_NCRBUTTONUP:
+		case WM_NCMBUTTONUP:
+			if (IsWindow(p_PopupWindow->GetSafeHwnd()))
 			{
-				CRect rect;
-				p_PopupWindow->GetClientRect(rect);
-				p_PopupWindow->ClientToScreen(rect);
-
 				CPoint pt;
 				GetCursorPos(&pt);
 
-				switch (pMsg->message)
-				{
-				case WM_LBUTTONDOWN:
-				case WM_RBUTTONDOWN:
-				case WM_MBUTTONDOWN:
-				case WM_LBUTTONUP:
-				case WM_RBUTTONUP:
-				case WM_MBUTTONUP:
-				case WM_NCLBUTTONDOWN:
-				case WM_NCRBUTTONDOWN:
-				case WM_NCMBUTTONDOWN:
-				case WM_NCLBUTTONUP:
-				case WM_NCRBUTTONUP:
-				case WM_NCMBUTTONUP:
-					if (!rect.PtInRect(pt))
-					{
-						p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEPOPUP);
-						return TRUE;
-					}
-				}
+				if (!p_PopupWindow->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
+					p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEPOPUP);
 			}
-
-/*	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
-	{
-		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
-		if (pWnd)
-			pWnd->SetFocus();
-		return TRUE;
-	}*/
+		}
 
 	return CWnd::PreTranslateMessage(pMsg);
 }
