@@ -580,6 +580,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEACTIVATE()
+	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
 INT CDialogMenuPopup::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -788,6 +789,14 @@ LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 INT CDialogMenuPopup::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
 {
 	return p_Submenu ? MA_NOACTIVATE : CWnd::OnMouseActivate(pDesktopWnd, nHitTest, message);
+}
+
+void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwThreaID)
+{
+	CWnd::OnActivateApp(bActive, dwTask);
+
+	if (!bActive)
+		GetOwner()->PostMessage(WM_CLOSEPOPUP);
 }
 
 
