@@ -188,11 +188,11 @@ public:
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDeselect();
-	virtual void OnButtonDown(CPoint point);
-	virtual void OnButtonUp(CPoint point);
-	virtual void OnMouseMove(CPoint point);
-	virtual void OnMouseLeave();
-	virtual void OnHover(CPoint point);
+	virtual BOOL OnButtonDown(CPoint point);
+	virtual BOOL OnButtonUp(CPoint point);
+	virtual BOOL OnMouseMove(CPoint point);
+	virtual BOOL OnMouseLeave();
+	virtual BOOL OnHover(CPoint point);
 
 protected:
 	CDialogMenuPopup* p_ParentPopup;
@@ -217,12 +217,15 @@ public:
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
 	virtual void OnDeselect();
-	virtual void OnButtonUp(CPoint point);
-	virtual void OnHover(CPoint point);
+	virtual BOOL OnButtonUp(CPoint point);
+	virtual BOOL OnMouseMove(CPoint point);
+	virtual BOOL OnMouseLeave();
+	virtual BOOL OnHover(CPoint point);
 
 protected:
 	UINT m_CmdID;
 	INT m_IconID;
+	INT m_Width;
 	CSize m_IconSize;
 	UINT m_PreferredSize;
 	BOOL m_Submenu;
@@ -232,7 +235,11 @@ protected:
 	CString m_Hint;
 
 private:
+	BOOL PtOnSubmenuArrow(CPoint point);
+	BOOL TrackSubmenu();
+
 	CDialogMenuPopup* m_pSubmenu;
+	BOOL m_HoverOverCommand;
 };
 
 
