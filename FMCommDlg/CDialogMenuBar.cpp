@@ -1025,7 +1025,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 			rectRight.left = rect->right-ARROWWIDTH-2*BORDER;
 			rectLeft.right = rectRight.left+1;
 
-			p_ParentPopup->DrawSelectedBackground(pDC, rectLeft, m_Enabled, (m_pSubmenu!=NULL) || m_HoverOverCommand);
+			p_ParentPopup->DrawSelectedBackground(pDC, rectLeft, m_Enabled, m_HoverOverCommand);
 			p_ParentPopup->DrawSelectedBackground(pDC, rectRight, m_Enabled, (m_pSubmenu!=NULL) || !m_HoverOverCommand);
 		}
 		else
