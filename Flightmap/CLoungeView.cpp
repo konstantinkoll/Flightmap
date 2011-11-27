@@ -177,6 +177,16 @@ HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
+	if ((pos.x<0) || (pos.y<0))
+	{
+		CRect rect;
+		GetClientRect(rect);
+
+		pos.x = (rect.left+rect.right)/2;
+		pos.y = (rect.top+rect.bottom)/2;
+		ClientToScreen(&pos);
+	}
+
 	/*CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 	pPopup->Create(GetOwner(), IDB_MENUFILE_32, IDB_MENUFILE_16);
 	pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
