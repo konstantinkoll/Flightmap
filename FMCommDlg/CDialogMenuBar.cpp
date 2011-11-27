@@ -954,7 +954,7 @@ INT CDialogMenuCommand::GetMinWidth()
 
 	m_Hint.Replace('\n', ' ');
 
-	return 2*BORDER+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h);
+	return 3*BORDER+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h);
 }
 
 INT CDialogMenuCommand::GetMinGutter()
@@ -995,6 +995,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	// Text
 	CRect rectText(rect);
 	rectText.left += p_ParentPopup->GetGutter();
+	rectText.right -= BORDER;
 	rectText.DeflateRect(BORDER, BORDER);
 
 	if (m_PreferredSize==CDMB_LARGE)

@@ -185,6 +185,13 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_FILE_SAVEAS_OTHER, 4, CDMB_LARGE);
 		break;
+	case IDM_FILE_PRINT:
+		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+		pPopup->AddCaption(IDS_PRINTPREVIEW);
+		pPopup->AddCommand(IDM_FILE_PRINT, 5, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PRINT_QUICK, 6, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PRINT_PREVIEW, 7, CDMB_LARGE);
+		break;
 	}
 
 	if (!pPopup->HasItems())

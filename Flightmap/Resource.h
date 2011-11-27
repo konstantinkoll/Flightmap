@@ -19,6 +19,7 @@
 #define IDS_SAMPLEITINERARIES           1000
 #define IDS_RECENTFILES                 1001
 #define IDS_SAVECOPY                    1002
+#define IDS_PRINTPREVIEW                1003
 #define IDM_FILE                        3000
 #define IDM_EDIT                        3001
 #define IDM_MAP                         3002
@@ -36,9 +37,11 @@
 #define IDM_FILE_SAVEAS_TXT             3109
 #define IDM_FILE_SAVEAS_OTHER           3110
 #define IDM_FILE_PRINT                  3111
-#define IDM_FILE_PREPARE                3112
-#define IDM_FILE_CLOSE                  3113
-#define IDM_FILE_QUIT                   3114
+#define IDM_FILE_PRINT_QUICK            3112
+#define IDM_FILE_PRINT_PREVIEW          3113
+#define IDM_FILE_PREPARE                3114
+#define IDM_FILE_CLOSE                  3115
+#define IDM_FILE_QUIT                   3116
 
 // Next default values for new objects
 // 
