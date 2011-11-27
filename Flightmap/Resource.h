@@ -20,6 +20,7 @@
 #define IDS_RECENTFILES                 1001
 #define IDS_SAVECOPY                    1002
 #define IDS_PRINTPREVIEW                1003
+#define IDS_PREPAREDISTRIBUTION         1004
 #define IDM_FILE                        3000
 #define IDM_EDIT                        3001
 #define IDM_MAP                         3002
@@ -40,8 +41,11 @@
 #define IDM_FILE_PRINT_QUICK            3112
 #define IDM_FILE_PRINT_PREVIEW          3113
 #define IDM_FILE_PREPARE                3114
-#define IDM_FILE_CLOSE                  3115
-#define IDM_FILE_QUIT                   3116
+#define IDM_FILE_PREPARE_PROPERTIES     3115
+#define IDM_FILE_PREPARE_INSPECT        3116
+#define IDM_FILE_PREPARE_ATTACHMENTS    3117
+#define IDM_FILE_CLOSE                  3118
+#define IDM_FILE_QUIT                   3119
 
 // Next default values for new objects
 // 

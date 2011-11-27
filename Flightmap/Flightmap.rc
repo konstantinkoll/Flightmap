@@ -118,6 +118,7 @@ BEGIN
     IDS_RECENTFILES         "Zuletzt verwendete Flugpläne"
     IDS_SAVECOPY            "Kopie des Flugplans speichern"
     IDS_PRINTPREVIEW        "Flugplan in der Vorschau anzeigen und drucken"
+    IDS_PREPAREDISTRIBUTION "Flugplan für die Verteilung vorbereiten"
 END
 
 STRINGTABLE 
@@ -146,6 +147,9 @@ BEGIN
     IDM_FILE_PRINT_QUICK    "Schnelld&ruck\nDen Flugplan direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
     IDM_FILE_PRINT_PREVIEW  "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
     IDM_FILE_PREPARE        "Vorberei&ten"
+    IDM_FILE_PREPARE_PROPERTIES "&Eigenschaften\nDateieigenschaften wie Titel, Autor und\nSchlüsselwörter anzeigen und bearbeiten."
+    IDM_FILE_PREPARE_INSPECT "Flugplan &prüfen\nDen Flugplan auf ausgeblendete Metadaten\noder persönliche Informationen prüfen."
+    IDM_FILE_PREPARE_ATTACHMENTS "An&hänge\nAngehängte Dateien anzeigen\nund bearbeiten."
     IDM_FILE_CLOSE          "S&chließen"
     IDM_FILE_QUIT           "&Beenden"
 END
@@ -224,6 +228,7 @@ BEGIN
     IDS_RECENTFILES         "Recently used itineraries"
     IDS_SAVECOPY            "Save a copy of the itinerary"
     IDS_PRINTPREVIEW        "Preview and print the itinerary"
+    IDS_PREPAREDISTRIBUTION "Prepare the itinerary for distribution"
 END
 
 STRINGTABLE 
@@ -247,11 +252,14 @@ BEGIN
     IDM_FILE_SAVEAS_ICS     "&Calendar items\nSave a copy of the itinerary for\nMicrosoft Outlook and other applications."
     IDM_FILE_SAVEAS_CSV     "Comma Separated &Values\nSave a copy of the itinerary for\nMicrosoft Excel and other applications."
     IDM_FILE_SAVEAS_TXT     "&Text document\nSave a copy of the itinerary\nas plain text file."
-    IDM_FILE_SAVEAS_OTHER   "&Other formats\nOpen the Save As dialog box to\nselect from all possible file types."
+    IDM_FILE_SAVEAS_OTHER   "&Other formats\nOpen the ""Save as"" dialog box to\nselect from all possible file types."
     IDM_FILE_PRINT          "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
     IDM_FILE_PRINT_QUICK    "&Quick print\nSend the itinerary directly to the default\nprinter without making changes."
     IDM_FILE_PRINT_PREVIEW  "Print Pre&view\nPreview and make changes to the page\nbefore printing."
     IDM_FILE_PREPARE        "Pr&epare"
+    IDM_FILE_PREPARE_PROPERTIES "&Properties\nView and edit file properties, such\nas title, author and keywords."
+    IDM_FILE_PREPARE_INSPECT "&Inspect itinerary\nCheck the itinerary for hidden metadata\nor personal information."
+    IDM_FILE_PREPARE_ATTACHMENTS "&Attachments\nView and edit attached files,\nsuch as photos or GPS tracks."
     IDM_FILE_CLOSE          "&Close"
     IDM_FILE_QUIT           "&Quit"
 END

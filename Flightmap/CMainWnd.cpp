@@ -192,6 +192,12 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_FILE_PRINT_QUICK, 6, CDMB_LARGE);
 		pPopup->AddCommand(IDM_FILE_PRINT_PREVIEW, 7, CDMB_LARGE);
 		break;
+	case IDM_FILE_PREPARE:
+		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+		pPopup->AddCaption(IDS_PREPAREDISTRIBUTION);
+		pPopup->AddCommand(IDM_FILE_PREPARE_PROPERTIES, 10, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PREPARE_INSPECT, 11, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PREPARE_ATTACHMENTS, 12, CDMB_LARGE);
 	}
 
 	if (!pPopup->HasItems())
