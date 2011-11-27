@@ -954,7 +954,7 @@ INT CDialogMenuCommand::GetMinWidth()
 
 	m_Hint.Replace('\n', ' ');
 
-	return 3*BORDER+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h);
+	return 3*BORDER+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h)+(m_Submenu ? 4+2*BORDER : 0);
 }
 
 INT CDialogMenuCommand::GetMinGutter()
@@ -992,10 +992,26 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	if (m_IconID!=-1)
 		OnDrawIcon(pDC, CPoint(rect->left+BORDER+(p_ParentPopup->GetGutter()-BORDER-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2));
 
+	// Pfeil
+	if (m_Submenu)
+	{
+		CRect rectArrow(rect);
+		rectArrow.left = rectArrow.right-6-2*BORDER;
+		rectArrow.DeflateRect(BORDER, BORDER);
+
+		const INT mid = (rectArrow.top+rectArrow.bottom)/2;
+		const INT h = 4;
+		for (INT a=0; a<h; a++)
+		{
+			pDC->FillSolidRect(rectArrow.left, mid-a, h-a, 1, pDC->GetTextColor());
+			pDC->FillSolidRect(rectArrow.left, mid+a, h-a, 1, pDC->GetTextColor());
+		}
+	}
+
 	// Text
 	CRect rectText(rect);
 	rectText.left += p_ParentPopup->GetGutter();
-	rectText.right -= BORDER;
+	rectText.right -= m_Submenu ? BORDER : 3*BORDER+16;
 	rectText.DeflateRect(BORDER, BORDER);
 
 	if (m_PreferredSize==CDMB_LARGE)
