@@ -174,6 +174,17 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_FILE_NEWSAMPLE2, 1, CDMB_LARGE);
 		pPopup->AddCaption(IDS_RECENTFILES);
 		break;
+	case IDM_FILE_SAVEAS:
+		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+		pPopup->AddCaption(IDS_SAVECOPY);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_AIRX, _T(".airx"), CDMB_LARGE);
+		pPopup->AddSeparator();
+		pPopup->AddFileType(IDM_FILE_SAVEAS_ICS, _T(".ics"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_CSV, _T(".csv"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_TXT, _T(".txt"), CDMB_LARGE);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_FILE_SAVEAS_OTHER, 4, CDMB_LARGE);
+		break;
 	}
 
 	if (!pPopup->HasItems())
@@ -206,7 +217,7 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_CLOSE:
-		pCmdUI->Enable(FALSE);
+		pCmdUI->Enable(TRUE);
 		break;
 	default:
 		pCmdUI->Enable(TRUE);

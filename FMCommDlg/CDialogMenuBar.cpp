@@ -418,7 +418,8 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 
 	// Maße
 	m_Gutter = max(m_Gutter, pItem->GetMinGutter());
-	m_Width = max(m_Width, pItem->GetBorder()*2+pItem->GetMinWidth());
+	INT w = pItem->GetBorder()*2+pItem->GetMinWidth();
+	m_Width = max(m_Width, w);
 	m_Height += pItem->GetMinHeight();
 }
 
@@ -791,9 +792,9 @@ INT CDialogMenuPopup::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT mes
 	return p_Submenu ? MA_NOACTIVATE : CWnd::OnMouseActivate(pDesktopWnd, nHitTest, message);
 }
 
-void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwThreaID)
+void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
-	CWnd::OnActivateApp(bActive, dwTask);
+	CWnd::OnActivateApp(bActive, dwThreadID);
 
 	if (!bActive)
 		GetOwner()->PostMessage(WM_CLOSEPOPUP);
@@ -951,6 +952,8 @@ INT CDialogMenuCommand::GetMinWidth()
 	pDC->SelectObject(pOldFont);
 	p_ParentPopup->ReleaseDC(pDC);
 
+	m_Hint.Replace('\n', ' ');
+
 	return 2*BORDER+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h);
 }
 
@@ -989,7 +992,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	if (m_IconID!=-1)
 		OnDrawIcon(pDC, CPoint(rect->left+BORDER+(p_ParentPopup->GetGutter()-BORDER-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2));
 
-	// Caption
+	// Text
 	CRect rectText(rect);
 	rectText.left += p_ParentPopup->GetGutter();
 	rectText.DeflateRect(BORDER, BORDER);
@@ -1004,7 +1007,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		if (pOldFont)
 			pDC->SelectObject(pOldFont);
 
-		pDC->DrawText(m_Hint, rectText, DT_NOPREFIX | DT_LEFT | DT_END_ELLIPSIS);
+		pDC->DrawText(m_Hint, rectText, DT_NOPREFIX | DT_LEFT | DT_END_ELLIPSIS | DT_WORDBREAK);
 	}
 	else
 	{
@@ -1078,7 +1081,9 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo(FileType, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
 	{
-		m_Caption = sfi.szTypeName;
+		if (sfi.iIcon!=3)
+			m_Caption.Format(_T("&%s (%s)"), sfi.szTypeName, FileType);
+
 		m_IconID = sfi.iIcon;
 	}
 }
