@@ -580,6 +580,8 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_KEYDOWN()
+	ON_WM_CONTEXTMENU()
 	ON_WM_MOUSEACTIVATE()
 	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
@@ -699,6 +701,23 @@ LRESULT CDialogMenuPopup::OnThemeChanged()
 	return TRUE;
 }
 
+void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
+
+LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
+{
+	CRect rect;
+	GetClientRect(rect);
+	ClientToScreen(rect);
+
+	CPoint pt(LOWORD(wParam), HIWORD(wParam));
+
+	return rect.PtInRect(pt) ? TRUE : p_Submenu ? p_Submenu->OnPtInRect(wParam) : FALSE;
+}
+
 void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	INT Item = ItemAtPosition(point);
@@ -775,21 +794,62 @@ void CDialogMenuPopup::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	}
 }
 
-void CDialogMenuPopup::OnSize(UINT nType, INT cx, INT cy)
+void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	CWnd::OnSize(nType, cx, cy);
-	AdjustLayout();
+	INT idx = m_SelectedItem;
+	if (idx!=-1)
+		if (m_Items.m_Items[idx].pItem->OnKeyDown(nChar))
+			return;
+
+	switch (nChar)
+	{
+	case VK_HOME:
+		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
+			if (m_Items.m_Items[a].Selectable)
+			{
+				SelectItem(a);
+				break;
+			}
+		return;
+	case VK_END:
+		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
+			if (m_Items.m_Items[a].Selectable)
+			{
+				SelectItem(a);
+				break;
+			}
+		return;
+	case VK_UP:
+		for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		{
+			if (--idx<0)
+				idx = m_Items.m_ItemCount-1;
+			if (m_Items.m_Items[idx].Selectable)
+			{
+				SelectItem(idx);
+				break;
+			}
+		}
+		return;
+	case VK_DOWN:
+		for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		{
+			if (++idx>=(INT)m_Items.m_ItemCount)
+				idx = 0;
+			if (m_Items.m_Items[idx].Selectable)
+			{
+				SelectItem(idx);
+				break;
+			}
+		}
+		return;
+	}
+
+	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
+void CDialogMenuPopup::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
 {
-	CRect rect;
-	GetClientRect(rect);
-	ClientToScreen(rect);
-
-	CPoint pt(LOWORD(wParam), HIWORD(wParam));
-
-	return rect.PtInRect(pt) ? TRUE : p_Submenu ? p_Submenu->OnPtInRect(wParam) : FALSE;
 }
 
 INT CDialogMenuPopup::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
@@ -877,6 +937,11 @@ BOOL CDialogMenuItem::OnMouseLeave()
 }
 
 BOOL CDialogMenuItem::OnHover(CPoint /*point*/)
+{
+	return FALSE;
+}
+
+BOOL CDialogMenuItem::OnKeyDown(UINT /*nChar*/)
 {
 	return FALSE;
 }
@@ -1137,6 +1202,24 @@ BOOL CDialogMenuCommand::OnHover(CPoint point)
 	m_HoverOverCommand = !PtOnSubmenuArrow(point);
 
 	return m_Submenu ? TrackSubmenu() : FALSE;
+}
+
+BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
+{
+	if (m_Submenu)
+		switch (nChar)
+		{
+		case VK_RIGHT:
+			return TrackSubmenu();
+		case VK_LEFT:
+			if (m_pSubmenu)
+			{
+				OnDeselect();
+				return TRUE;
+			}
+		}
+
+	return FALSE;
 }
 
 
