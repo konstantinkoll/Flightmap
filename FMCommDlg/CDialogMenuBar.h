@@ -241,6 +241,7 @@ protected:
 private:
 	BOOL PtOnSubmenuArrow(CPoint point);
 	BOOL TrackSubmenu();
+	void Execute();
 
 	CDialogMenuPopup* m_pSubmenu;
 	BOOL m_HoverOverCommand;

@@ -1005,6 +1005,12 @@ BOOL CDialogMenuCommand::TrackSubmenu()
 	return FALSE;
 }
 
+void CDialogMenuCommand::Execute()
+{
+	p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
+}
+
 INT CDialogMenuCommand::GetMinHeight()
 {
 	CDC* pDC = p_ParentPopup->GetWindowDC();
@@ -1176,8 +1182,7 @@ BOOL CDialogMenuCommand::OnButtonUp(CPoint point)
 		}
 		else
 		{
-			p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
-			p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
+			Execute();
 		}
 
 	return FALSE;
@@ -1206,18 +1211,30 @@ BOOL CDialogMenuCommand::OnHover(CPoint point)
 
 BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
 {
-	if (m_Submenu)
-		switch (nChar)
-		{
-		case VK_RIGHT:
-			return TrackSubmenu();
-		case VK_LEFT:
-			if (m_pSubmenu)
-			{
-				OnDeselect();
+	switch (nChar)
+	{
+	case VK_RETURN:
+	case VK_EXECUTE:
+		if (!m_Split)
+			if (TrackSubmenu())
 				return TRUE;
-			}
+
+		if (m_Enabled)
+		{
+			Execute();
+			return TRUE;
 		}
+		break;
+	case VK_RIGHT:
+		return m_Submenu ? TrackSubmenu() : FALSE;
+	case VK_LEFT:
+		if (m_pSubmenu)
+		{
+			OnDeselect();
+			return TRUE;
+		}
+		break;
+	}
 
 	return FALSE;
 }
