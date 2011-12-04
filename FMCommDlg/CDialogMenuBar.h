@@ -8,6 +8,9 @@
 #include "DynArray.h"
 
 
+#define WM_MENULEFT      WM_USER+4
+#define WM_MENURIGHT     WM_USER+5
+
 // CDialogCmdUI
 //
 
@@ -137,7 +140,8 @@ protected:
 	BOOL m_Hover;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
-	CDialogMenuPopup* p_Submenu;
+	CDialogMenuPopup* p_SubMenu;
+	CWnd* p_ParentMenu;
 
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 	INT ItemAtPosition(CPoint point);
@@ -153,6 +157,8 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
+	afx_msg LRESULT OnMenuLeft(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMenuRight(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -167,6 +173,7 @@ protected:
 private:
 	HTHEME hThemeButton;
 	HTHEME hThemeList;
+	BOOL m_EnableHover;
 
 	void FixShadow();
 };

@@ -346,9 +346,9 @@ CDialogMenuPopup::CDialogMenuPopup()
 	m_Width = m_Height = 2*BORDERPOPUP;
 	m_LargeIconsID = m_SmallIconsID = 0;
 	m_SelectedItem = m_LastSelectedItem = -1;
-	m_Hover = FALSE;
+	m_EnableHover = m_Hover = FALSE;
 	hThemeButton = hThemeList = NULL;
-	p_Submenu = NULL;
+	p_ParentMenu = p_SubMenu = NULL;
 }
 
 BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIconsID)
@@ -499,13 +499,14 @@ void CDialogMenuPopup::Track(CPoint point)
 
 void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup)
 {
-	p_Submenu = pPopup;
+	p_SubMenu = pPopup;
 
 	if ((m_SelectedItem!=-1) && (pPopup))
 	{
 		CRect rect(m_Items.m_Items[m_SelectedItem].Rect);
 		ClientToScreen(rect);
 
+		pPopup->p_ParentMenu = this;
 		pPopup->Track(CPoint(rect.right-BORDERPOPUP, rect.top));
 	}
 }
@@ -575,6 +576,8 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
+	ON_MESSAGE(WM_MENULEFT, OnMenuLeft)
+	ON_MESSAGE(WM_MENURIGHT, OnMenuRight)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -715,7 +718,26 @@ LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 
 	CPoint pt(LOWORD(wParam), HIWORD(wParam));
 
-	return rect.PtInRect(pt) ? TRUE : p_Submenu ? p_Submenu->OnPtInRect(wParam) : FALSE;
+	return rect.PtInRect(pt) ? TRUE : p_SubMenu ? p_SubMenu->OnPtInRect(wParam) : FALSE;
+}
+
+LRESULT CDialogMenuPopup::OnMenuLeft(WPARAM wParam, LPARAM lParam)
+{
+	if ((m_SelectedItem!=-1) && (p_SubMenu))
+		m_Items.m_Items[m_SelectedItem].pItem->OnDeselect();
+
+	if (p_ParentMenu)
+		p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
+
+	return NULL;
+}
+
+LRESULT CDialogMenuPopup::OnMenuRight(WPARAM wParam, LPARAM lParam)
+{
+	if (p_ParentMenu)
+		p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
+
+	return NULL;
 }
 
 void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
@@ -733,6 +755,9 @@ void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
+
+	if ((Item!=m_SelectedItem) && (Item!=-1))
+		m_EnableHover = TRUE;
 
 	SelectItem(Item);
 
@@ -757,11 +782,13 @@ void CDialogMenuPopup::OnMouseLeave()
 void CDialogMenuPopup::OnMouseHover(UINT /*nFlags*/, CPoint point)
 {
 	INT Item = ItemAtPosition(point);
-	if (Item!=-1)
+	if ((Item!=-1) && (m_EnableHover))
 	{
 		point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
 		if (m_Items.m_Items[Item].pItem->OnHover(point))
 			InvalidateItem(Item);
+
+		m_EnableHover = FALSE;
 	}
 
 	TRACKMOUSEEVENT tme;
@@ -843,6 +870,11 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 		}
 		return;
+	case VK_LEFT:
+	case VK_RIGHT:
+		if (p_ParentMenu)
+			p_ParentMenu->SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
+		return;
 	}
 
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -854,7 +886,7 @@ void CDialogMenuPopup::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
 
 INT CDialogMenuPopup::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
 {
-	return p_Submenu ? MA_NOACTIVATE : CWnd::OnMouseActivate(pDesktopWnd, nHitTest, message);
+	return p_SubMenu ? MA_NOACTIVATE : CWnd::OnMouseActivate(pDesktopWnd, nHitTest, message);
 }
 
 void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwThreadID)
@@ -1170,6 +1202,8 @@ void CDialogMenuCommand::OnDeselect()
 		m_pSubmenu->DestroyWindow();
 		delete m_pSubmenu;
 		m_pSubmenu = NULL;
+
+		p_ParentPopup->SetFocus();
 	}
 }
 
@@ -1227,13 +1261,6 @@ BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
 		break;
 	case VK_RIGHT:
 		return m_Submenu ? TrackSubmenu() : FALSE;
-	case VK_LEFT:
-		if (m_pSubmenu)
-		{
-			OnDeselect();
-			return TRUE;
-		}
-		break;
 	}
 
 	return FALSE;
