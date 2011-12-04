@@ -756,19 +756,19 @@ void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 
-	if (!p_SubMenu)
+	if ((Item!=m_SelectedItem) && (Item!=-1))
+		m_EnableHover = TRUE;
+
+	if ((p_SubMenu) && (Item==-1))
+		Item = m_LastSelectedItem;
+
+	SelectItem(Item);
+
+	if (Item!=-1)
 	{
-		if ((Item!=m_SelectedItem) && (Item!=-1))
-			m_EnableHover = TRUE;
-
-		SelectItem(Item);
-
-		if (Item!=-1)
-		{
-			point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
-			if (m_Items.m_Items[Item].pItem->OnMouseMove(point))
-				InvalidateItem(Item);
-		}
+		point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
+		if (m_Items.m_Items[Item].pItem->OnMouseMove(point))
+			InvalidateItem(Item);
 	}
 }
 
