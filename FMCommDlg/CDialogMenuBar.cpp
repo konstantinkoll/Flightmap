@@ -860,7 +860,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		else
 		{
-//			p_App->PlayWarningSound();
+			p_App->PlayStandardSound();
 		}
 
 		return;

@@ -6,6 +6,8 @@
 #include "afxwinappex.h"
 #include "FMCommDlg.h"
 #include <commoncontrols.h>
+#include <io.h>
+#include <mmsystem.h>
 
 
 // FMApplication
@@ -20,6 +22,22 @@ BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
 END_MESSAGE_MAP()
+
+void PlayRegSound(CString Identifier)
+{
+	CString strFile;
+	CString strKey = _T("AppEvents\\Schemes\\");
+	strKey += Identifier;
+	strKey += _T("\\.current");
+
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
+
+	if (reg.Open(strKey))
+		if (reg.Read(_T(""), strFile))
+			if (!strFile.IsEmpty())
+				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+}
 
 
 // FMApplication-Erstellung
@@ -258,6 +276,27 @@ void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	default:
 		pCmdUI->Enable(TRUE);
 	}
+}
+
+
+void FMApplication::PlayStandardSound()
+{
+	PlayRegSound(L"Apps\\.Default\\.Default");
+}
+
+void FMApplication::PlayNavigateSound()
+{
+	PlayRegSound(L"Apps\\Explorer\\Navigating");
+}
+
+void FMApplication::PlayWarningSound()
+{
+	PlayRegSound(L"Apps\\Explorer\\SecurityBand");
+}
+
+void FMApplication::PlayTrashSound()
+{
+	PlayRegSound(L"Apps\\Explorer\\EmptyRecycleBin");
 }
 
 

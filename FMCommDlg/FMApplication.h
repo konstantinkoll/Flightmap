@@ -91,6 +91,10 @@ public:
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
+	static void PlayStandardSound();
+	static void PlayNavigateSound();
+	static void PlayWarningSound();
+	static void PlayTrashSound();
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();
