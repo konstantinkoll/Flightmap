@@ -756,26 +756,33 @@ void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 
-	if ((Item!=m_SelectedItem) && (Item!=-1))
-		m_EnableHover = TRUE;
-
-	SelectItem(Item);
-
-	if (Item!=-1)
+	if (!p_SubMenu)
 	{
-		point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
-		if (m_Items.m_Items[Item].pItem->OnMouseMove(point))
-			InvalidateItem(Item);
+		if ((Item!=m_SelectedItem) && (Item!=-1))
+			m_EnableHover = TRUE;
+
+		SelectItem(Item);
+
+		if (Item!=-1)
+		{
+			point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
+			if (m_Items.m_Items[Item].pItem->OnMouseMove(point))
+				InvalidateItem(Item);
+		}
 	}
 }
 
 void CDialogMenuPopup::OnMouseLeave()
 {
-	if (m_SelectedItem!=-1)
-		if (m_Items.m_Items[m_SelectedItem].pItem->OnMouseLeave())
-			InvalidateItem(m_SelectedItem);
+	if (!p_SubMenu)
+	{
+		if (m_SelectedItem!=-1)
+			if (m_Items.m_Items[m_SelectedItem].pItem->OnMouseLeave())
+				InvalidateItem(m_SelectedItem);
 
-	SelectItem(p_SubMenu ? m_LastSelectedItem : -1);
+		SelectItem(-1);
+	}
+
 	m_Hover = FALSE;
 }
 
