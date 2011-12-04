@@ -723,8 +723,8 @@ LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 
 LRESULT CDialogMenuPopup::OnMenuLeft(WPARAM wParam, LPARAM lParam)
 {
-	if ((m_SelectedItem!=-1) && (p_SubMenu))
-		m_Items.m_Items[m_SelectedItem].pItem->OnDeselect();
+	if ((m_LastSelectedItem!=-1) && (p_SubMenu))
+		m_Items.m_Items[m_LastSelectedItem].pItem->OnDeselect();
 
 	if (p_ParentMenu)
 		p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
@@ -775,7 +775,7 @@ void CDialogMenuPopup::OnMouseLeave()
 		if (m_Items.m_Items[m_SelectedItem].pItem->OnMouseLeave())
 			InvalidateItem(m_SelectedItem);
 
-	SelectItem(-1);
+	SelectItem(p_SubMenu ? m_LastSelectedItem : -1);
 	m_Hover = FALSE;
 }
 
