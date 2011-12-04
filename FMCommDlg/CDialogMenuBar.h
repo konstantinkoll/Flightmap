@@ -118,6 +118,7 @@ public:
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
+	void SetParentMenu(CWnd* pWnd);
 	void Track(CPoint point);
 	BOOL HasItems();
 	INT GetGutter();

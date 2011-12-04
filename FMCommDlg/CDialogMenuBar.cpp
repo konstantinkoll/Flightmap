@@ -492,6 +492,27 @@ void CDialogMenuPopup::SelectItem(INT idx)
 	}
 }
 
+void CDialogMenuPopup::SetParentMenu(CWnd* pWnd)
+{
+	p_ParentMenu = pWnd;
+
+	if (pWnd)
+		for (UINT a=0; a<m_Items.m_ItemCount; a++)
+			if (m_Items.m_Items[a].Enabled)
+			{
+				if (IsWindow(GetSafeHwnd()))
+				{
+					SelectItem(a);
+				}
+				else
+				{
+					m_SelectedItem = a;
+				}
+
+				break;
+			}
+}
+
 void CDialogMenuPopup::Track(CPoint point)
 {
 	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
@@ -507,7 +528,7 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup)
 		CRect rect(m_Items.m_Items[m_SelectedItem].Rect);
 		ClientToScreen(rect);
 
-		pPopup->p_ParentMenu = this;
+		pPopup->SetParentMenu(this);
 		pPopup->Track(CPoint(rect.right-BORDERPOPUP, rect.top));
 	}
 }
