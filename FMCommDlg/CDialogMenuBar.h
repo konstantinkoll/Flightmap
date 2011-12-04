@@ -98,6 +98,7 @@ struct MenuPopupItem
 	RECT Rect;
 	BOOL Enabled;
 	BOOL Selectable;
+	UINT Accelerator;
 };
 
 class CDialogMenuPopup : public CWnd
@@ -192,6 +193,7 @@ public:
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
 	virtual INT GetBorder();
+	virtual UINT GetAccelerator();
 	virtual BOOL IsEnabled();
 	virtual BOOL IsSelectable();
 
@@ -221,6 +223,7 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
+	virtual UINT GetAccelerator();
 	virtual BOOL IsEnabled();
 	virtual BOOL IsSelectable();
 

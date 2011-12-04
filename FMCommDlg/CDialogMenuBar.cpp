@@ -413,6 +413,7 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	i.Selectable = pItem->IsSelectable();
 	if (i.Selectable)
 		i.Enabled = pItem->IsEnabled();
+	i.Accelerator = toupper(pItem->GetAccelerator());
 
 	m_Items.AddItem(i);
 
@@ -835,54 +836,84 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if (m_Items.m_Items[idx].pItem->OnKeyDown(nChar))
 			return;
 
-	switch (nChar)
+	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
 	{
-	case VK_HOME:
-		for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
-			if (m_Items.m_Items[a].Selectable)
-			{
-				SelectItem(a);
-				break;
-			}
-		return;
-	case VK_END:
-		for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
-			if (m_Items.m_Items[a].Selectable)
-			{
-				SelectItem(a);
-				break;
-			}
-		return;
-	case VK_UP:
-		for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		{
-			if (--idx<0)
-				idx = m_Items.m_ItemCount-1;
-			if (m_Items.m_Items[idx].Selectable)
-			{
-				SelectItem(idx);
-				break;
-			}
-		}
-		return;
-	case VK_DOWN:
+		INT Cnt = 0;
+		INT Item = -1;
+
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
 			if (++idx>=(INT)m_Items.m_ItemCount)
 				idx = 0;
-			if (m_Items.m_Items[idx].Selectable)
-			{
-				SelectItem(idx);
-				break;
-			}
+			if ((m_Items.m_Items[idx].Selectable) && (nChar==m_Items.m_Items[idx].Accelerator))
+				if ((Cnt++)==0)
+					Item = idx;
 		}
-		return;
-	case VK_LEFT:
-	case VK_RIGHT:
-		if (p_ParentMenu)
-			p_ParentMenu->SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
+
+		if (Cnt>=1)
+		{
+			SelectItem(Item);
+
+			if (Cnt==1)
+				if (m_Items.m_Items[Item].Enabled)
+					m_Items.m_Items[Item].pItem->OnKeyDown(VK_EXECUTE);
+		}
+		else
+		{
+//			p_App->PlayWarningSound();
+		}
+
 		return;
 	}
+	else
+		switch (nChar)
+		{
+		case VK_HOME:
+			for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
+				if (m_Items.m_Items[a].Selectable)
+				{
+					SelectItem(a);
+					break;
+				}
+			return;
+		case VK_END:
+			for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
+				if (m_Items.m_Items[a].Selectable)
+				{
+					SelectItem(a);
+					break;
+				}
+			return;
+		case VK_UP:
+			for (UINT a=0; a<m_Items.m_ItemCount; a++)
+			{
+				if (--idx<0)
+					idx = m_Items.m_ItemCount-1;
+				if (m_Items.m_Items[idx].Selectable)
+				{
+					SelectItem(idx);
+					break;
+				}
+			}
+			return;
+		case VK_DOWN:
+			for (UINT a=0; a<m_Items.m_ItemCount; a++)
+			{
+				if (++idx>=(INT)m_Items.m_ItemCount)
+					idx = 0;
+				if (m_Items.m_Items[idx].Selectable)
+				{
+					SelectItem(idx);
+					break;
+				}
+			}
+			return;
+		case VK_LEFT:
+		case VK_RIGHT:
+			if (p_ParentMenu)
+				p_ParentMenu->SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
+			return;
+		}
 
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 }
@@ -935,6 +966,11 @@ INT CDialogMenuItem::GetMinGutter()
 INT CDialogMenuItem::GetBorder()
 {
 	return BORDERPOPUP;
+}
+
+UINT CDialogMenuItem::GetAccelerator()
+{
+	return 0;
 }
 
 BOOL CDialogMenuItem::IsEnabled()
@@ -1103,6 +1139,13 @@ INT CDialogMenuCommand::GetMinWidth()
 INT CDialogMenuCommand::GetMinGutter()
 {
 	return (m_IconID==-1) ? 0 : m_IconSize.cx+BORDER;
+}
+
+UINT CDialogMenuCommand::GetAccelerator()
+{
+	INT Pos = m_Caption.Find(L'&');
+
+	return (Pos==-1) ? 0 : m_Caption[Pos+1];
 }
 
 BOOL CDialogMenuCommand::IsEnabled()
