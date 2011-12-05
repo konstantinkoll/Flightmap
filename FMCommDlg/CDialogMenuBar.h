@@ -176,6 +176,7 @@ private:
 	HTHEME hThemeButton;
 	HTHEME hThemeList;
 	BOOL m_EnableHover;
+	CPoint m_LastMove;
 
 	void FixShadow();
 };
