@@ -187,7 +187,6 @@ void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ClientToScreen(&pos);
 	}
 
-#ifndef _DEBUG
 	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 	pPopup->Create(GetOwner(), IDB_MENUFILE_32, IDB_MENUFILE_16);
 	pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
@@ -196,7 +195,4 @@ void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	pPopup->AddCommand(IDM_FILE_QUIT, 14, CDMB_SMALL);
 
 	pPopup->Track(pos);
-#else
-	((CDialogMenuPopup*)GetOwner()->SendMessage(WM_REQUESTSUBMENU, IDM_FILE, (LPARAM)this))->Track(pos);
-#endif
 }
