@@ -451,7 +451,12 @@ void CDialogMenuBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	INT Item = ItemAtPosition(point);
 	if (Item!=-1)
 	{
-		m_UseDropdown = TRUE;
+		if (!m_UseDropdown)
+		{
+			m_UseDropdown = TRUE;
+			Invalidate();
+		}
+
 		SelectItem(Item);
 
 		if (!FOCUSED)
@@ -764,7 +769,7 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup)
 		ClientToScreen(rect);
 
 		pPopup->SetParentMenu(this);
-		pPopup->Track(CPoint(rect.right-BORDERPOPUP, rect.top));
+		pPopup->Track(CPoint(rect.right-BORDERPOPUP+1, rect.top));
 	}
 }
 
@@ -1058,7 +1063,10 @@ void CDialogMenuPopup::OnMouseHover(UINT /*nFlags*/, CPoint point)
 	{
 		point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
 		if (m_Items.m_Items[Item].pItem->OnHover(point))
+		{
+			InvalidateItem(Item);
 			SelectItem(Item);
+		}
 
 		m_EnableHover = FALSE;
 	}
