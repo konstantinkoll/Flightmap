@@ -26,34 +26,48 @@ BOOL CMainWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindo
 
 BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 {
-	if (p_PopupWindow)
-		switch (pMsg->message)
+	switch (pMsg->message)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
 		{
-		case WM_LBUTTONDOWN:
-		case WM_RBUTTONDOWN:
-		case WM_MBUTTONDOWN:
-		case WM_LBUTTONUP:
-		case WM_RBUTTONUP:
-		case WM_MBUTTONUP:
-		case WM_NCLBUTTONDOWN:
-		case WM_NCRBUTTONDOWN:
-		case WM_NCMBUTTONDOWN:
-		case WM_NCLBUTTONUP:
-		case WM_NCRBUTTONUP:
-		case WM_NCMBUTTONUP:
-			if (IsWindow(p_PopupWindow->GetSafeHwnd()))
-			{
-				CPoint pt;
-				GetCursorPos(&pt);
+			CPoint pt;
+			GetCursorPos(&pt);
 
-				if (m_pDialogMenuBar)
-					if (m_pDialogMenuBar->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
+			if (m_pDialogMenuBar)
+			{
+				if (m_pDialogMenuBar->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
+					break;
+
+				if (GetFocus()==m_pDialogMenuBar)
+				{
+					CRect rect;
+					m_pDialogMenuBar->GetClientRect(rect);
+					m_pDialogMenuBar->ClientToScreen(rect);
+
+					if (!rect.PtInRect(pt))
+						SetFocus();
+				}
+			}
+
+			if (p_PopupWindow)
+				if (IsWindow(p_PopupWindow->GetSafeHwnd()))
+					if (p_PopupWindow->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
 						break;
 
-				if (!p_PopupWindow->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
-					p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEPOPUP);
-			}
+			OnClosePopup();
 		}
+	}
 
 	return CWnd::PreTranslateMessage(pMsg);
 }
@@ -174,12 +188,11 @@ void CMainWindow::OnClosePopup()
 {
 	if (p_PopupWindow)
 	{
-		if (m_pDialogMenuBar ? !m_pDialogMenuBar->SendMessage(WM_CLOSEPOPUP) : TRUE)
-		{
-			p_PopupWindow->DestroyWindow();
-			delete p_PopupWindow;
-		}
+		if (m_pDialogMenuBar)
+			m_pDialogMenuBar->OnClosePopup();
 
+		p_PopupWindow->DestroyWindow();
+		delete p_PopupWindow;
 		p_PopupWindow = NULL;
 
 		SetFocus();

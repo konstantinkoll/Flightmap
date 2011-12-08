@@ -83,7 +83,7 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg LRESULT OnClosePopup(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnClosePopup();
 	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg LRESULT OnMenuLeft(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMenuRight(WPARAM wParam, LPARAM lParam);
@@ -95,6 +95,7 @@ protected:
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pKillWnd);
 	DECLARE_MESSAGE_MAP()
 
 private:

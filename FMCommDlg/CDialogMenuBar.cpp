@@ -230,7 +230,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
-	ON_MESSAGE(WM_CLOSEPOPUP, OnClosePopup)
+	ON_MESSAGE_VOID(WM_CLOSEPOPUP, OnClosePopup)
 	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
 	ON_MESSAGE(WM_MENULEFT, OnMenuLeft)
 	ON_MESSAGE(WM_MENURIGHT, OnMenuRight)
@@ -239,9 +239,9 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
-	ON_WM_ACTIVATEAPP()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 INT CDialogMenuBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -359,25 +359,19 @@ void CDialogMenuBar::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
-LRESULT CDialogMenuBar::OnClosePopup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void CDialogMenuBar::OnClosePopup()
 {
 	if (m_pPopup)
 	{
-		m_pPopup->DestroyWindow();
-		delete m_pPopup;
 		m_pPopup = NULL;
 
 		m_UseDropdown = FALSE;
 		m_SelectedItem = -1;
 		Invalidate();
-
-		return TRUE;
 	}
-
-	return FALSE;
 }
 
-LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
+LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM lParam)
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -385,7 +379,7 @@ LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 
 	CPoint pt(LOWORD(wParam), HIWORD(wParam));
 
-	return (m_pPopup!=NULL) && rect.PtInRect(pt);
+	return m_pPopup ? rect.PtInRect(pt) || m_pPopup->SendMessage(WM_PTINRECT, wParam, lParam) : FALSE;
 }
 
 LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
@@ -520,14 +514,6 @@ void CDialogMenuBar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
 {
 }
 
-void CDialogMenuBar::OnActivateApp(BOOL bActive, DWORD dwThreadID)
-{
-	CWnd::OnActivateApp(bActive, dwThreadID);
-
-//	if (!bActive)
-//		GetOwner()->PostMessage(WM_CLOSEPOPUP);
-}
-
 void CDialogMenuBar::OnIdleUpdateCmdUI()
 {
 /*	BOOL Update = FALSE;
@@ -567,6 +553,17 @@ void CDialogMenuBar::OnIdleUpdateCmdUI()
 void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	Invalidate();
+}
+
+void CDialogMenuBar::OnKillFocus(CWnd* /*pKillWnd*/)
+{
+	if (!m_pPopup)
+	{
+		m_SelectedItem = m_HoverItem = -1;
+		m_UseDropdown = FALSE;
+
+		Invalidate();
+	}
 }
 
 
