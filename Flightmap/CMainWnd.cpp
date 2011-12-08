@@ -108,11 +108,11 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar = new CDialogMenuBar();
 	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS, 1);
 
-	m_pDialogMenuBar->AddMenuLeft(0, IDM_FILE);
-	m_pDialogMenuBar->AddMenuLeft(1, IDM_EDIT);
-	m_pDialogMenuBar->AddMenuLeft(2, IDM_MAP);
-	m_pDialogMenuBar->AddMenuLeft(3, IDM_GLOBE);
-	m_pDialogMenuBar->AddMenuLeft(4, IDM_STATISTICS);
+	m_pDialogMenuBar->AddMenuLeft(IDM_FILE);
+	m_pDialogMenuBar->AddMenuLeft(IDM_EDIT);
+	m_pDialogMenuBar->AddMenuLeft(IDM_MAP);
+	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBE);
+	m_pDialogMenuBar->AddMenuLeft(IDM_STATISTICS);
 
 	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
 	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);
@@ -220,7 +220,7 @@ void CMainWnd::OnFileOpen()
 
 void CMainWnd::OnFileQuit()
 {
-	PostQuitMessage(0);
+	theApp.Quit();
 }
 
 void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)

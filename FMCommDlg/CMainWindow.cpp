@@ -170,8 +170,12 @@ void CMainWindow::OnClosePopup()
 {
 	if (p_PopupWindow)
 	{
-		p_PopupWindow->DestroyWindow();
-		delete p_PopupWindow;
+		if (m_pDialogMenuBar ? !m_pDialogMenuBar->SendMessage(WM_CLOSEPOPUP) : TRUE)
+		{
+			p_PopupWindow->DestroyWindow();
+			delete p_PopupWindow;
+		}
+
 		p_PopupWindow = NULL;
 
 		SetFocus();

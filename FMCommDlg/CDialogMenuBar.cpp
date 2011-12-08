@@ -26,12 +26,17 @@ void CDialogCmdUI::Enable(BOOL bOn)
 //
 
 #define BORDERBAR     3
+#define FOCUSED       ((GetFocus()==this) || m_Hover || m_UseDropdown)
 
 CDialogMenuBar::CDialogMenuBar()
 	: CWnd()
 {
 	p_App = (FMApplication*)AfxGetApp();
 	hTheme = NULL;
+	m_SelectedItem = -1;
+	m_LastMove.x = m_LastMove.y = -1;
+	m_Hover = m_UseDropdown = FALSE;
+	m_pPopup = NULL;
 }
 
 BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
@@ -42,15 +47,10 @@ BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
-}
-
-BOOL CDialogMenuBar::OnCommand(WPARAM wParam, LPARAM lParam)
-{
-	return (BOOL)GetOwner()->SendMessage(WM_COMMAND, wParam, lParam);
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 UINT CDialogMenuBar::GetPreferredHeight()
@@ -68,12 +68,12 @@ INT CDialogMenuBar::GetMinWidth()
 	return MinWidth;
 }
 
-void CDialogMenuBar::AddMenuLeft(UINT nID, UINT nCaptionResID)
+void CDialogMenuBar::AddMenuLeft(UINT nID)
 {
 	MenuBarItem i;
 	ZeroMemory(&i, sizeof(i));
 	i.PopupID = nID;
-	ENSURE(LoadString(AfxGetResourceHandle(), nCaptionResID, i.Name, 256));
+	ENSURE(LoadString(AfxGetResourceHandle(), nID, i.Name, 256));
 
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&m_MenuFont);
@@ -93,6 +93,69 @@ void CDialogMenuBar::AddMenuRight(UINT nCmdID, INT nIconID)
 	i.MinWidth = 16;
 
 	m_Items.AddItem(i);
+}
+
+INT CDialogMenuBar::ItemAtPosition(CPoint point)
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if ((point.x>=m_Items.m_Items[a].Left) && (point.x<m_Items.m_Items[a].Right))
+			return a;
+
+	return -1;
+}
+
+void CDialogMenuBar::InvalidateItem(INT idx)
+{
+	if (idx!=-1)
+	{
+		CRect rect;
+		GetClientRect(rect);
+
+		rect.left = m_Items.m_Items[idx].Left;
+		rect.right = m_Items.m_Items[idx].Right;
+
+		InvalidateRect(&rect);
+	}
+}
+
+void CDialogMenuBar::SelectItem(INT idx)
+{
+	if (idx!=m_SelectedItem)
+	{
+		if (m_pPopup)
+		{
+			m_pPopup->DestroyWindow();
+			delete m_pPopup;
+			m_pPopup = NULL;
+		}
+
+		InvalidateItem(m_SelectedItem);
+		m_SelectedItem = idx;
+		InvalidateItem(m_SelectedItem);
+
+		if (m_UseDropdown && (idx!=-1))
+		{
+			m_pPopup = (CDialogMenuPopup*)GetOwner()->SendMessage(WM_REQUESTSUBMENU, m_Items.m_Items[idx].PopupID);
+
+			if (m_pPopup)
+			{
+				m_pPopup->SetParentMenu(this);
+
+				CRect rect;
+				GetClientRect(rect);
+
+				rect.left = m_Items.m_Items[idx].Left;
+				rect.right = m_Items.m_Items[idx].Right;
+
+				ClientToScreen(rect);
+				m_pPopup->Track(CPoint(rect.left, rect.bottom));
+			}
+			else
+			{
+				SetFocus();
+			}
+		}
+	}
 }
 
 void CDialogMenuBar::AdjustLayout()
@@ -167,6 +230,15 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_MESSAGE(WM_CLOSEPOPUP, OnClosePopup)
+	ON_MESSAGE(WM_MENULEFT, OnMenuLeft)
+	ON_MESSAGE(WM_MENURIGHT, OnMenuRight)
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_KEYDOWN()
+	ON_WM_CONTEXTMENU()
+	ON_WM_ACTIVATEAPP()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
@@ -196,6 +268,9 @@ BOOL CDialogMenuBar::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CDialogMenuBar::OnPaint()
 {
+	CRect rectUpdate;
+	GetUpdateRect(rectUpdate);
+
 	CPaintDC pDC(this);
 
 	CRect rect;
@@ -210,8 +285,6 @@ void CDialogMenuBar::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	// Background
-	BOOL Themed = IsCtrlThemed();
-
 	if (hTheme)
 	{
 		p_App->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CMainWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
@@ -224,8 +297,9 @@ void CDialogMenuBar::OnPaint()
 	// Items
 	CFont* pOldFont = dc.SelectObject(&m_MenuFont);
 
+	BOOL Focused = FOCUSED;
 	UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	if (GetFocus()!=this)
+	if (!Focused)
 	{
 		BOOL AlwaysUnderline = FALSE;
 		if (SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &AlwaysUnderline, 0))
@@ -236,37 +310,38 @@ void CDialogMenuBar::OnPaint()
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
-		COLORREF clrText = GetSysColor(((CMainWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
 
-		if (hTheme)
+		CRect rectIntersect;
+		if (IntersectRect(&rectIntersect, rectItem, rectUpdate))
 		{
-			p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, MBI_PUSHED, rectItem, rectItem);
-		}
-		else
-			if (Themed)
+			COLORREF clrText = GetSysColor(((CMainWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
+
+			if (Focused && (m_SelectedItem==(INT)a))
+				if (hTheme)
+				{
+					p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, MBI_PUSHED, rectItem, rectItem);
+				}
+				else
+				{
+					dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
+					clrText = GetSysColor(COLOR_HIGHLIGHTTEXT);
+				}
+
+			if (m_Items.m_Items[a].CmdID)
 			{
-				dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
-				clrText = GetSysColor(COLOR_HIGHLIGHTTEXT);
+				CAfxDrawState ds;
+				m_Icons.PrepareDrawImage(ds);
+				m_Icons.Draw(&dc, rectItem.left+(rectItem.Width()-16)/2, rectItem.top+(rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
+				m_Icons.EndDrawImage(ds);
 			}
 			else
 			{
+				if (p_App->OSVersion==OS_XP)
+					rectItem.bottom -= 2;
 
+				dc.SetTextColor(clrText);
+				dc.DrawText(m_Items.m_Items[a].Name, -1, rectItem, format);
 			}
-
-		if (m_Items.m_Items[a].CmdID)
-		{
-			CAfxDrawState ds;
-			m_Icons.PrepareDrawImage(ds);
-			m_Icons.Draw(&dc, rectItem.left+(rectItem.Width()-16)/2, rectItem.top+(rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
-			m_Icons.EndDrawImage(ds);
-		}
-		else
-		{
-			if (p_App->OSVersion==OS_XP)
-				rectItem.bottom -= 2;
-
-			dc.SetTextColor(clrText);
-			dc.DrawText(m_Items.m_Items[a].Name, -1, rectItem, format);
 		}
 	}
 
@@ -279,6 +354,153 @@ void CDialogMenuBar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	INT idx = m_SelectedItem-1;
+	if (idx<0)
+		idx = m_Items.m_ItemCount-1;
+	SelectItem(idx);
+
+	return NULL;
+}
+
+LRESULT CDialogMenuBar::OnMenuRight(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	INT idx = m_SelectedItem+1;
+	if (idx>=(INT)m_Items.m_ItemCount)
+		idx = 0;
+	SelectItem(idx);
+
+	return NULL;
+}
+
+LRESULT CDialogMenuBar::OnClosePopup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (m_pPopup)
+	{
+		m_pPopup->DestroyWindow();
+		delete m_pPopup;
+		m_pPopup = NULL;
+
+		m_UseDropdown = FALSE;
+		m_SelectedItem = -1;
+		Invalidate();
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void CDialogMenuBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
+{
+	INT Item = ItemAtPosition(point);
+
+	if (!m_Hover)
+	{
+		m_Hover = TRUE;
+
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE;
+		tme.dwHoverTime = FMHOVERTIME;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
+
+	if ((m_LastMove.x!=point.x) || (m_LastMove.y!=point.y))
+	{
+		m_LastMove = point;
+
+		SelectItem(Item);
+	}
+}
+
+void CDialogMenuBar::OnMouseLeave()
+{
+	m_Hover = FALSE;
+	Invalidate();
+
+	m_LastMove.x = m_LastMove.y = -1;
+}
+
+void CDialogMenuBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+{
+	INT Item = ItemAtPosition(point);
+	if (Item!=-1)
+	{
+		m_UseDropdown = TRUE;
+		SelectItem(Item);
+
+		if (!FOCUSED)
+			SetFocus();
+	}
+}
+
+void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+/*	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
+	{
+		INT Cnt = 0;
+		INT Item = -1;
+
+		for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		{
+			if (++idx>=(INT)m_Items.m_ItemCount)
+				idx = 0;
+			if ((m_Items.m_Items[idx].Selectable) && (nChar==m_Items.m_Items[idx].Accelerator))
+				if ((Cnt++)==0)
+					Item = idx;
+		}
+
+		if (Cnt>=1)
+		{
+			SelectItem(Item);
+
+			if (Cnt==1)
+				if (m_Items.m_Items[Item].Enabled)
+					m_Items.m_Items[Item].pItem->OnKeyDown(VK_EXECUTE);
+		}
+		else
+		{
+			p_App->PlayStandardSound();
+		}
+
+		return;
+	}
+	else*/
+		switch (nChar)
+		{
+		case VK_HOME:
+			SelectItem(0);
+			return;
+		case VK_END:
+			SelectItem(m_Items.m_ItemCount-1);
+			return;
+		case VK_UP:
+		case VK_DOWN:
+			return;
+		case VK_LEFT:
+		case VK_RIGHT:
+			SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
+			return;
+		}
+
+	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CDialogMenuBar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
+{
+}
+
+void CDialogMenuBar::OnActivateApp(BOOL bActive, DWORD dwThreadID)
+{
+	CWnd::OnActivateApp(bActive, dwThreadID);
+
+//	if (!bActive)
+//		GetOwner()->PostMessage(WM_CLOSEPOPUP);
 }
 
 void CDialogMenuBar::OnIdleUpdateCmdUI()
@@ -319,15 +541,7 @@ void CDialogMenuBar::OnIdleUpdateCmdUI()
 
 void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-/*	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			btn->SetFocus();
-			break;
-		}
-	}*/
+	Invalidate();
 }
 
 
@@ -747,10 +961,12 @@ LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 LRESULT CDialogMenuPopup::OnMenuLeft(WPARAM wParam, LPARAM lParam)
 {
 	if ((m_LastSelectedItem!=-1) && (p_SubMenu))
+	{
 		m_Items.m_Items[m_LastSelectedItem].pItem->OnDeselect();
-
-	if (p_ParentMenu)
-		p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
+	}
+	else
+		if (p_ParentMenu)
+			p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
 
 	return NULL;
 }
@@ -822,7 +1038,7 @@ void CDialogMenuPopup::OnMouseHover(UINT /*nFlags*/, CPoint point)
 	{
 		point.Offset(-m_Items.m_Items[Item].Rect.left, -m_Items.m_Items[Item].Rect.top);
 		if (m_Items.m_Items[Item].pItem->OnHover(point))
-			InvalidateItem(Item);
+			SelectItem(Item);
 
 		m_EnableHover = FALSE;
 	}

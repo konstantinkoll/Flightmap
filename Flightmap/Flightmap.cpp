@@ -130,6 +130,21 @@ void CFlightmapApp::KillFrame(CMainWindow* pVictim)
 	}
 }
 
+void CFlightmapApp::Quit()
+{
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
+	{
+		POSITION pl = p;
+		CMainWindow* pFrame = m_MainFrames.GetNext(p);
+		m_MainFrames.RemoveAt(pl);
+
+		pFrame->SendMessage(WM_CLOSE);
+	}
+
+	m_pMainWnd = m_pActiveWnd = NULL;
+}
+
+
 void CFlightmapApp::OnAppAbout()
 {
 	CAboutDlg dlg(m_pActiveWnd);

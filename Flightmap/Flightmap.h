@@ -33,6 +33,7 @@ public:
 
 	void AddFrame(CMainWindow* pFrame);
 	void KillFrame(CMainWindow* pVictim);
+	void Quit();
 
 	CList<CMainWindow*> m_MainFrames;
 	CString m_PathGoogleEarth;

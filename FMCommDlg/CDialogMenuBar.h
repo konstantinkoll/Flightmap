@@ -7,9 +7,9 @@
 #include "CMainWindow.h"
 #include "DynArray.h"
 
-
 #define WM_MENULEFT      WM_USER+4
 #define WM_MENURIGHT     WM_USER+5
+
 
 // CDialogCmdUI
 //
@@ -51,31 +51,19 @@ friend class CDialogMenuPopup;
 public:
 	CDialogMenuBar();
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
 	INT GetMinWidth();
-	void AddMenuLeft(UINT nID, UINT nCaptionResID);
+	void AddMenuLeft(UINT nID);
 	void AddMenuRight(UINT nCmdID, INT nIconID);
 	void AdjustLayout();
 
 protected:
-	void SetTheme();
-
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnIdleUpdateCmdUI();
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	DECLARE_MESSAGE_MAP()
-
-private:
 	FMApplication* p_App;
 	DynArray<MenuBarItem> m_Items;
-	HTHEME hTheme;
+	INT m_SelectedItem;
+	BOOL m_Hover;
+	BOOL m_UseDropdown;
 	CMFCToolBarImages m_Icons;
 	LOGFONT m_MenuLogFont;
 	LOGFONT m_NormalLogFont;
@@ -83,7 +71,35 @@ private:
 	CFont m_MenuFont;
 	CFont m_NormalFont;
 	CFont m_CaptionFont;
+
+	INT ItemAtPosition(CPoint point);
+	void InvalidateItem(INT idx);
+	void SelectItem(INT idx);
+	void SetTheme();
+
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg LRESULT OnClosePopup(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMenuLeft(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMenuRight(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
+	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
+	afx_msg void OnIdleUpdateCmdUI();
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	DECLARE_MESSAGE_MAP()
+
+private:
+	HTHEME hTheme;
 	INT m_MenuHeight;
+	CPoint m_LastMove;
+	CDialogMenuPopup* m_pPopup;
 };
 
 
