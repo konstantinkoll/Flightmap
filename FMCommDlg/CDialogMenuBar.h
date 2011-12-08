@@ -62,6 +62,7 @@ protected:
 	FMApplication* p_App;
 	DynArray<MenuBarItem> m_Items;
 	INT m_SelectedItem;
+	INT m_HoverItem;
 	BOOL m_Hover;
 	BOOL m_UseDropdown;
 	CMFCToolBarImages m_Icons;
@@ -83,6 +84,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg LRESULT OnClosePopup(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg LRESULT OnMenuLeft(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMenuRight(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

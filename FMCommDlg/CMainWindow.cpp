@@ -46,6 +46,10 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 				CPoint pt;
 				GetCursorPos(&pt);
 
+				if (m_pDialogMenuBar)
+					if (m_pDialogMenuBar->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
+						break;
+
 				if (!p_PopupWindow->SendMessage(WM_PTINRECT, MAKEWPARAM(pt.x, pt.y)))
 					p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEPOPUP);
 			}

@@ -26,14 +26,14 @@ void CDialogCmdUI::Enable(BOOL bOn)
 //
 
 #define BORDERBAR     3
-#define FOCUSED       ((GetFocus()==this) || m_Hover || m_UseDropdown)
+#define FOCUSED       ((GetFocus()==this) || m_UseDropdown)
 
 CDialogMenuBar::CDialogMenuBar()
 	: CWnd()
 {
 	p_App = (FMApplication*)AfxGetApp();
 	hTheme = NULL;
-	m_SelectedItem = -1;
+	m_SelectedItem = m_HoverItem = -1;
 	m_LastMove.x = m_LastMove.y = -1;
 	m_Hover = m_UseDropdown = FALSE;
 	m_pPopup = NULL;
@@ -231,6 +231,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_CLOSEPOPUP, OnClosePopup)
+	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
 	ON_MESSAGE(WM_MENULEFT, OnMenuLeft)
 	ON_MESSAGE(WM_MENURIGHT, OnMenuRight)
 	ON_WM_MOUSEMOVE()
@@ -307,6 +308,8 @@ void CDialogMenuBar::OnPaint()
 				format |= DT_HIDEPREFIX;
 	}
 
+	INT Item = Focused ? m_SelectedItem : m_HoverItem;
+
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
 		CRect rectItem(m_Items.m_Items[a].Left, rect.top, m_Items.m_Items[a].Right, rect.bottom);
@@ -316,10 +319,10 @@ void CDialogMenuBar::OnPaint()
 		{
 			COLORREF clrText = GetSysColor(((CMainWindow*)GetParent())->m_Active ? COLOR_MENUTEXT : COLOR_3DSHADOW);
 
-			if (Focused && (m_SelectedItem==(INT)a))
+			if (Item==(INT)a)
 				if (hTheme)
 				{
-					p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, MBI_PUSHED, rectItem, rectItem);
+					p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, Focused ? MBI_PUSHED : MBI_HOT, rectItem, rectItem);
 				}
 				else
 				{
@@ -356,6 +359,35 @@ void CDialogMenuBar::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
+LRESULT CDialogMenuBar::OnClosePopup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (m_pPopup)
+	{
+		m_pPopup->DestroyWindow();
+		delete m_pPopup;
+		m_pPopup = NULL;
+
+		m_UseDropdown = FALSE;
+		m_SelectedItem = -1;
+		Invalidate();
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
+{
+	CRect rect;
+	GetClientRect(rect);
+	ClientToScreen(rect);
+
+	CPoint pt(LOWORD(wParam), HIWORD(wParam));
+
+	return (m_pPopup!=NULL) && rect.PtInRect(pt);
+}
+
 LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	INT idx = m_SelectedItem-1;
@@ -374,24 +406,6 @@ LRESULT CDialogMenuBar::OnMenuRight(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	SelectItem(idx);
 
 	return NULL;
-}
-
-LRESULT CDialogMenuBar::OnClosePopup(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	if (m_pPopup)
-	{
-		m_pPopup->DestroyWindow();
-		delete m_pPopup;
-		m_pPopup = NULL;
-
-		m_UseDropdown = FALSE;
-		m_SelectedItem = -1;
-		Invalidate();
-
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 void CDialogMenuBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
@@ -414,13 +428,19 @@ void CDialogMenuBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	{
 		m_LastMove = point;
 
-		SelectItem(Item);
+		InvalidateItem(m_HoverItem);
+		m_HoverItem = Item;
+		InvalidateItem(Item);
+
+		if (FOCUSED)
+			SelectItem(Item);
 	}
 }
 
 void CDialogMenuBar::OnMouseLeave()
 {
 	m_Hover = FALSE;
+	m_HoverItem = -1;
 	Invalidate();
 
 	m_LastMove.x = m_LastMove.y = -1;
