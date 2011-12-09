@@ -124,6 +124,8 @@ void CDialogMenuBar::SelectItem(INT idx)
 	{
 		if (m_pPopup)
 		{
+			((CMainWindow*)GetTopLevelParent())->p_PopupWindow = NULL;
+
 			m_pPopup->DestroyWindow();
 			delete m_pPopup;
 			m_pPopup = NULL;
