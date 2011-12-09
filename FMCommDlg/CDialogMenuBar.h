@@ -213,7 +213,7 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
-	virtual INT GetBorder();
+	virtual INT GetOuterBorder();
 	virtual UINT GetAccelerator();
 	virtual BOOL IsEnabled();
 	virtual BOOL IsSelectable();
@@ -269,6 +269,8 @@ protected:
 	CString m_Caption;
 	CString m_Hint;
 
+	INT GetInnerBorder();
+
 private:
 	BOOL PtOnSubmenuArrow(CPoint point);
 	BOOL TrackSubmenu();
@@ -316,7 +318,7 @@ public:
 	CDialogMenuSeparator(CDialogMenuPopup* pParentPopup, BOOL ForBlueArea);
 
 	virtual INT GetMinHeight();
-	virtual INT GetBorder();
+	virtual INT GetOuterBorder();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 
@@ -335,7 +337,7 @@ public:
 
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
-	virtual INT GetBorder();
+	virtual INT GetOuterBorder();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 
