@@ -25,7 +25,7 @@ void CDialogCmdUI::Enable(BOOL bOn)
 // CDialogMenuBar
 //
 
-#define BORDERBAR     3
+#define BORDERBAR     2
 #define FOCUSED       ((GetFocus()==this) || m_UseDropdown)
 
 CDialogMenuBar::CDialogMenuBar()
@@ -55,7 +55,7 @@ BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 
 UINT CDialogMenuBar::GetPreferredHeight()
 {
-	return m_MenuHeight;
+	return IsCtrlThemed() ? m_MenuHeight : m_MenuHeight+2;
 }
 
 INT CDialogMenuBar::GetMinWidth()
@@ -201,7 +201,7 @@ void CDialogMenuBar::SetTheme()
 	if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
 	{
 		m_MenuLogFont = m_NormalLogFont = ncm.lfMenuFont;
-		m_MenuHeight = 2*BORDERBAR+max(16, ncm.iMenuHeight);
+		m_MenuHeight = max(2*BORDERBAR+16, ncm.iMenuHeight);
 	}
 	else
 	{
