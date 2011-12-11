@@ -516,11 +516,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuEdit_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuEdit_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\MenuFile_16.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\res\MenuFile_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGoogleEarth_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGoogleEarth_32.bmp"
 				>
 			</File>
 			<File

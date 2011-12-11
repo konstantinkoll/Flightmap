@@ -16,6 +16,10 @@
 #define IDB_MENUBARICONS                140
 #define IDB_MENUFILE_16                 141
 #define IDB_MENUFILE_32                 142
+#define IDB_MENUEDIT_16                 143
+#define IDB_MENUEDIT_32                 144
+#define IDB_MENUGOOGLEEARTH_16          145
+#define IDB_MENUGOOGLEEARTH_32          146
 #define IDS_SAMPLEITINERARIES           1000
 #define IDS_RECENTFILES                 1001
 #define IDS_SAVECOPY                    1002
@@ -25,7 +29,8 @@
 #define IDM_EDIT                        3001
 #define IDM_MAP                         3002
 #define IDM_GLOBE                       3003
-#define IDM_STATISTICS                  3004
+#define IDM_GOOGLEEARTH                 3004
+#define IDM_STATISTICS                  3005
 #define IDM_FILE_NEW                    3100
 #define IDM_FILE_NEWSAMPLE1             3101
 #define IDM_FILE_NEWSAMPLE2             3102
@@ -46,6 +51,19 @@
 #define IDM_FILE_PREPARE_ATTACHMENTS    3117
 #define IDM_FILE_CLOSE                  3118
 #define IDM_FILE_QUIT                   3119
+#define IDM_EDIT_CUT                    3200
+#define IDM_EDIT_COPY                   3201
+#define IDM_EDIT_PASTE                  3202
+#define IDM_EDIT_INSERT_FLIGHT          3203
+#define IDM_EDIT_INSERT_ROUTE           3204
+#define IDM_EDIT_INSERT_ITINERARY       3205
+#define IDM_EDIT_DELETE                 3206
+#define IDM_EDIT_SELECTALL              3207
+#define IDM_EDIT_GOTO                   3208
+#define IDM_EDIT_GOTO_FIRST             3209
+#define IDM_EDIT_GOTO_LAST              3210
+#define IDM_GOOGLEEARTH_OPEN            3400
+#define IDM_GOOGLEEARTH_EXPORT          3401
 
 // Next default values for new objects
 // 

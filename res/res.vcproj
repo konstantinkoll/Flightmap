@@ -204,6 +204,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\First_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\First_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
 				>
 			</File>
@@ -220,6 +228,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Goto_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Goto_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Inspect_16.png"
 				>
 			</File>
@@ -233,6 +249,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Key_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Last_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Last_32.png"
 				>
 			</File>
 			<File
@@ -265,6 +289,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Paste_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Plane_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Plane_32.png"
 				>
 			</File>
 			<File
@@ -510,6 +542,10 @@
 		</File>
 		<File
 			RelativePath=".\PDZVOR.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Plane.png"
 			>
 		</File>
 		<File

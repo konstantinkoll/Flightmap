@@ -32,6 +32,10 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 IDB_MENUBARICONS        BITMAP                  "res\\MenubarIcons.bmp"
 IDB_MENUFILE_16         BITMAP                  "res\\MenuFile_16.bmp"
 IDB_MENUFILE_32         BITMAP                  "res\\MenuFile_32.bmp"
+IDB_MENUEDIT_16         BITMAP                  "res\\MenuEdit_16.bmp"
+IDB_MENUEDIT_32         BITMAP                  "res\\MenuEdit_32.bmp"
+IDB_MENUGOOGLEEARTH_16  BITMAP                  "res\\MenuGoogleEarth_16.bmp"
+IDB_MENUGOOGLEEARTH_32  BITMAP                  "res\\MenuGoogleEarth_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -127,6 +131,7 @@ BEGIN
     IDM_EDIT                "&Bearbeiten"
     IDM_MAP                 "&Karte"
     IDM_GLOBE               "&Globus"
+    IDM_GOOGLEEARTH         "Google &Earth"
     IDM_STATISTICS          "&Statistik"
 END
 
@@ -152,6 +157,19 @@ BEGIN
     IDM_FILE_PREPARE_ATTACHMENTS "An&hänge\nAngehängte Dateien anzeigen\nund bearbeiten."
     IDM_FILE_CLOSE          "S&chließen"
     IDM_FILE_QUIT           "&Beenden"
+    IDM_EDIT_CUT            "Auss&chneiden"
+    IDM_EDIT_COPY           "&Kopieren"
+    IDM_EDIT_PASTE          "&Einfügen"
+    IDM_EDIT_INSERT_FLIGHT  "Einzel&flug\nFügt einen einzelnen Flug an der\naktuellen Stelle in den Flugplan ein."
+    IDM_EDIT_INSERT_ROUTE   "&Umsteigeverbindung\nFügt mehrere zusammenhängende Flüge an der\naktuellen Stelle in den Flugplan ein."
+    IDM_EDIT_INSERT_ITINERARY "&Flugplan\nFügt einen bereits erstellten\nFlugplan an der aktuellen Stelle ein."
+    IDM_EDIT_DELETE         "&Löschen"
+    IDM_EDIT_SELECTALL      "&Alles auswählen"
+    IDM_EDIT_GOTO           "Gehe z&u Zeile..."
+    IDM_EDIT_GOTO_FIRST     "&Anfang"
+    IDM_EDIT_GOTO_LAST      "&Ende"
+    IDM_GOOGLEEARTH_OPEN    "In Google Earth ö&ffnen\nÖffnet den Flugplan\nin Google Earth."
+    IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
 END
 
 #endif    // Deutsch (neutral) resources
@@ -237,6 +255,7 @@ BEGIN
     IDM_EDIT                "&Edit"
     IDM_MAP                 "&Map"
     IDM_GLOBE               "&Globe"
+    IDM_GOOGLEEARTH         "Google &Earth"
     IDM_STATISTICS          "&Statistics"
 END
 
@@ -262,6 +281,8 @@ BEGIN
     IDM_FILE_PREPARE_ATTACHMENTS "&Attachments\nView and edit attached files,\nsuch as photos or GPS tracks."
     IDM_FILE_CLOSE          "&Close"
     IDM_FILE_QUIT           "&Quit"
+    IDM_GOOGLEEARTH_OPEN    "&Open on Google Earth\nOpen the itinerary\nin Google Earth."
+    IDM_GOOGLEEARTH_EXPORT  "E&xport\nExport the itinerary\nas Google Earth overlay."
 END
 
 #endif    // Englisch (USA) resources

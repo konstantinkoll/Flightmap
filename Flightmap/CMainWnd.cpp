@@ -112,6 +112,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuLeft(IDM_EDIT);
 	m_pDialogMenuBar->AddMenuLeft(IDM_MAP);
 	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBE);
+	m_pDialogMenuBar->AddMenuLeft(IDM_GOOGLEEARTH);
 	m_pDialogMenuBar->AddMenuLeft(IDM_STATISTICS);
 
 	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
@@ -198,6 +199,35 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_FILE_PREPARE_PROPERTIES, 10, CDMB_LARGE);
 		pPopup->AddCommand(IDM_FILE_PREPARE_INSPECT, 11, CDMB_LARGE);
 		pPopup->AddCommand(IDM_FILE_PREPARE_ATTACHMENTS, 12, CDMB_LARGE);
+		break;
+	case IDM_EDIT:
+		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
+		pPopup->AddCommand(IDM_EDIT_CUT, 0, CDMB_SMALL);
+		pPopup->AddCommand(IDM_EDIT_COPY, 1, CDMB_SMALL);
+		pPopup->AddSubmenu(IDM_EDIT_PASTE, 2, CDMB_SMALL, TRUE);
+		pPopup->AddCommand(IDM_EDIT_DELETE, 4, CDMB_SMALL);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_EDIT_SELECTALL, 5, CDMB_SMALL);
+		pPopup->AddSubmenu(IDM_EDIT_GOTO, 6, CDMB_SMALL, TRUE);
+		break;
+	case IDM_EDIT_PASTE:
+		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
+		pPopup->AddCommand(IDM_EDIT_INSERT_FLIGHT, 3, CDMB_LARGE);
+		pPopup->AddCommand(IDM_EDIT_INSERT_ROUTE, 3, CDMB_LARGE);
+		pPopup->AddFileType(IDM_EDIT_INSERT_ITINERARY, _T(".airx"), CDMB_LARGE);
+		break;
+	case IDM_EDIT_GOTO:
+		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
+		pPopup->AddCommand(IDM_EDIT_GOTO_FIRST, 7, CDMB_SMALL);
+		pPopup->AddCommand(IDM_EDIT_GOTO_LAST, 8, CDMB_SMALL);
+		break;
+	case IDM_GOOGLEEARTH:
+		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
+		pPopup->AddCommand(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE);
+		pPopup->AddSeparator(FALSE);
+		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE);
+		pPopup->AddSeparator(TRUE);
+		break;
 	}
 
 	if (!pPopup->HasItems())

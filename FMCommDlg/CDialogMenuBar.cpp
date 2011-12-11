@@ -1447,12 +1447,12 @@ INT CDialogMenuCommand::GetMinWidth()
 	CDC* pDC = p_ParentPopup->GetWindowDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
 
-	INT h = 0;
+	INT l = 0;
 	if (m_PreferredSize==CDMB_LARGE)
 	{
 		CRect rectHint(0, 0, 1000, 1000);
 		pDC->DrawText(m_Hint, rectHint, DT_NOPREFIX | DT_LEFT | DT_END_ELLIPSIS | DT_CALCRECT);
-		h = rectHint.Width();
+		l = rectHint.Width();
 
 		p_ParentPopup->SelectCaptionFont(pDC);
 	}
@@ -1465,7 +1465,7 @@ INT CDialogMenuCommand::GetMinWidth()
 
 	m_Hint.Replace('\n', ' ');
 
-	return 2*GetInnerBorder()+MARGIN+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h)+(m_Submenu ? ARROWWIDTH+2*GetInnerBorder() : 0);
+	return GetInnerBorder()+MARGIN+p_ParentPopup->GetGutter()+max(rectCaption.Width(), l)+(m_Submenu ? ARROWWIDTH+2*GetInnerBorder() : 0);
 }
 
 INT CDialogMenuCommand::GetMinGutter()
@@ -1549,7 +1549,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	// Text
 	CRect rectText(rect);
 	rectText.left += p_ParentPopup->GetGutter()+MARGIN;
-	rectText.right -= m_Submenu ? 4*GetInnerBorder()+ARROWWIDTH : 2*GetInnerBorder();
+	rectText.right -= m_Submenu ? 3*GetInnerBorder()+ARROWWIDTH : GetInnerBorder();
 	rectText.DeflateRect(0, GetInnerBorder());
 
 	if (m_PreferredSize==CDMB_LARGE)
