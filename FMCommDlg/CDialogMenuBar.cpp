@@ -73,6 +73,7 @@ void CDialogMenuBar::AddMenuLeft(UINT nID)
 	MenuBarItem i;
 	ZeroMemory(&i, sizeof(i));
 	i.PopupID = nID;
+	i.Enabled = TRUE;
 	ENSURE(LoadString(AfxGetResourceHandle(), nID, i.Name, 256));
 
 	CDC* pDC = GetDC();
@@ -188,12 +189,23 @@ void CDialogMenuBar::AdjustLayout()
 		if ((m_Items.m_Items[a].CmdID) && OnLeftSide)
 		{
 			OnLeftSide = FALSE;
-			Left = rect.Width()-(m_Items.m_ItemCount-a)*(m_Items.m_Items[a].MinWidth+Spacer);
+
+			Left = rect.Width();
+			for (UINT b=a; b<m_Items.m_ItemCount; b++)
+				if (m_Items.m_Items[b].Enabled)
+					Left -= m_Items.m_Items[a].MinWidth+Spacer;
 		}
 
-		m_Items.m_Items[a].Left = Left;
-		m_Items.m_Items[a].Right = Left+m_Items.m_Items[a].MinWidth+Spacer;
-		Left = m_Items.m_Items[a].Right;
+		if (m_Items.m_Items[a].Enabled)
+		{
+			m_Items.m_Items[a].Left = Left;
+			m_Items.m_Items[a].Right = Left+m_Items.m_Items[a].MinWidth+Spacer;
+			Left = m_Items.m_Items[a].Right;
+		}
+		else
+		{
+			m_Items.m_Items[a].Left = m_Items.m_Items[a].Right = 0;
+		}
 	}
 
 	Invalidate();
@@ -411,9 +423,17 @@ LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM lParam)
 
 LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	INT idx = m_SelectedItem-1;
-	if (idx<0)
-		idx = m_Items.m_ItemCount-1;
+	INT idx = m_SelectedItem;
+	for (UINT a=0; a<m_Items.m_ItemCount-1; a++)
+	{
+		idx--;
+		if (idx<0)
+			idx = m_Items.m_ItemCount-1;
+
+		if (m_Items.m_Items[idx].Enabled)
+			break;
+	}
+
 	SelectItem(idx);
 
 	return NULL;
@@ -421,9 +441,17 @@ LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 LRESULT CDialogMenuBar::OnMenuRight(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	INT idx = m_SelectedItem+1;
-	if (idx>=(INT)m_Items.m_ItemCount)
-		idx = 0;
+	INT idx = m_SelectedItem;
+	for (UINT a=0; a<m_Items.m_ItemCount-1; a++)
+	{
+		idx++;
+		if (idx>=(INT)m_Items.m_ItemCount)
+			idx = 0;
+
+		if (m_Items.m_Items[idx].Enabled)
+			break;
+	}
+
 	SelectItem(idx);
 
 	return NULL;
@@ -492,9 +520,9 @@ void CDialogMenuBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-/*	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
+	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
 	{
-		INT Cnt = 0;
+	/*	INT Cnt = 0;
 		INT Item = -1;
 
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
@@ -518,17 +546,27 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			p_App->PlayStandardSound();
 		}
-
+*/
 		return;
 	}
-	else*/
+	else
 		switch (nChar)
 		{
 		case VK_HOME:
-			SelectItem(0);
+			for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
+				if (m_Items.m_Items[a].Enabled)
+				{
+					SelectItem(a);
+					break;
+				}
 			return;
 		case VK_END:
-			SelectItem(m_Items.m_ItemCount-1);
+			for (INT a=(INT)m_Items.m_ItemCount; a>=0; a--)
+				if (m_Items.m_Items[a].Enabled)
+				{
+					SelectItem(a);
+					break;
+				}
 			return;
 		case VK_UP:
 		case VK_DOWN:
@@ -552,38 +590,26 @@ void CDialogMenuBar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
 
 void CDialogMenuBar::OnIdleUpdateCmdUI()
 {
-/*	BOOL Update = FALSE;
+	BOOL Update = FALSE;
 
-	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
-		BOOL Enabled = btn->IsWindowEnabled();
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if (m_Items.m_Items[a].CmdID)
+		{
+			BOOL Enabled = m_Items.m_Items[a].Enabled;
 
-		CCmdUI cmdUI;
-		cmdUI.m_nID = btn->GetDlgCtrlID();
-		cmdUI.m_pOther = btn;
-		cmdUI.DoUpdate(GetOwner(), TRUE);
+			CDialogCmdUI cmdUI;
+			cmdUI.m_nID = m_Items.m_Items[a].CmdID;
+			cmdUI.DoUpdate(GetOwner(), TRUE);
 
-		if (btn->IsWindowEnabled()!=Enabled)
-			Update = TRUE;
-	}
-
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		BOOL Enabled = btn->IsWindowEnabled();
-
-		CCmdUI cmdUI;
-		cmdUI.m_nID = btn->GetDlgCtrlID();
-		cmdUI.m_pOther = btn;
-		cmdUI.DoUpdate(GetOwner(), TRUE);
-
-		if (btn->IsWindowEnabled()!=Enabled)
-			Update = TRUE;
-	}
+			if (cmdUI.m_Enabled!=Enabled)
+			{
+				m_Items.m_Items[a].Enabled = cmdUI.m_Enabled;
+				Update = TRUE;
+			}
+		}
 
 	if (Update)
-		AdjustLayout();*/
+		AdjustLayout();
 }
 
 void CDialogMenuBar::OnSetFocus(CWnd* /*pOldWnd*/)

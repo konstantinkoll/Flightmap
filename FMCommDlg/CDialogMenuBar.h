@@ -36,6 +36,7 @@ struct MenuBarItem
 {
 	UINT PopupID;
 	UINT CmdID;
+	BOOL Enabled;
 	INT IconID;
 	INT Left;
 	INT Right;
