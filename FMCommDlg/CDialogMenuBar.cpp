@@ -1357,6 +1357,7 @@ BOOL CDialogMenuItem::OnKeyDown(UINT /*nChar*/)
 //
 
 #define ARROWWIDTH     4
+#define MARGIN         BORDER+3
 
 CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize, BOOL Submenu, BOOL Split)
 	: CDialogMenuItem(pParentPopup)
@@ -1464,7 +1465,7 @@ INT CDialogMenuCommand::GetMinWidth()
 
 	m_Hint.Replace('\n', ' ');
 
-	return 3*GetInnerBorder()+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h)+(m_Submenu ? ARROWWIDTH+2*GetInnerBorder() : 0);
+	return 2*GetInnerBorder()+MARGIN+p_ParentPopup->GetGutter()+max(rectCaption.Width(), h)+(m_Submenu ? ARROWWIDTH+2*GetInnerBorder() : 0);
 }
 
 INT CDialogMenuCommand::GetMinGutter()
@@ -1547,9 +1548,9 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 	// Text
 	CRect rectText(rect);
-	rectText.left += p_ParentPopup->GetGutter();
-	rectText.right -= m_Submenu ? 3*GetInnerBorder()+ARROWWIDTH : GetInnerBorder();
-	rectText.DeflateRect(GetInnerBorder(), GetInnerBorder());
+	rectText.left += p_ParentPopup->GetGutter()+MARGIN;
+	rectText.right -= m_Submenu ? 4*GetInnerBorder()+ARROWWIDTH : 2*GetInnerBorder();
+	rectText.DeflateRect(0, GetInnerBorder());
 
 	if (m_PreferredSize==CDMB_LARGE)
 	{
@@ -1778,7 +1779,7 @@ void CDialogMenuSeparator::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, UIN
 
 	if (!m_ForBlueArea)
 	{
-		INT left = rect->left+p_ParentPopup->GetGutter()+BORDERPOPUP+BORDER;
+		INT left = rect->left+p_ParentPopup->GetGutter()+BORDERPOPUP+MARGIN;
 		if (Themed)
 		{
 			pDC->FillSolidRect(left, rect->top+BORDERPOPUP, l-left-BORDERPOPUP, 1, 0xC5C5C5);
