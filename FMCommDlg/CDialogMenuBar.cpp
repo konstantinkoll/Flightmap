@@ -160,6 +160,21 @@ void CDialogMenuBar::SelectItem(INT idx)
 	}
 }
 
+void CDialogMenuBar::ExecuteItem(INT idx)
+{
+	if (idx!=-1)
+		if (m_Items.m_Items[idx].CmdID)
+		{
+			m_SelectedItem = m_HoverItem = -1;
+			m_UseDropdown = FALSE;
+
+			Invalidate();
+
+			GetOwner()->PostMessage(WM_CLOSEPOPUP);
+			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[idx].CmdID);
+		}
+}
+
 void CDialogMenuBar::AdjustLayout()
 {
 	CRect rect;
@@ -239,6 +254,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
@@ -469,6 +485,11 @@ void CDialogMenuBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	}
 }
 
+void CDialogMenuBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	ExecuteItem(ItemAtPosition(point));
+}
+
 void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 /*	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
@@ -515,6 +536,10 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case VK_LEFT:
 		case VK_RIGHT:
 			SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
+			return;
+		case VK_RETURN:
+		case VK_EXECUTE:
+			ExecuteItem(m_SelectedItem);
 			return;
 		}
 
