@@ -733,9 +733,9 @@ void CDialogMenuPopup::AddSubmenu(UINT CmdID, INT IconID, UINT PreferredSize, BO
 	AddItem(new CDialogMenuCommand(this, CmdID, IconID, PreferredSize, TRUE, IsSplit));
 }
 
-void CDialogMenuPopup::AddFileType(UINT CmdID, CString FileType, UINT PreferredSize)
+void CDialogMenuPopup::AddFileType(UINT CmdID, CString FileType, UINT PreferredSize, BOOL RetainCaption)
 {
-	AddItem(new CDialogMenuFileType(this, CmdID, FileType, PreferredSize));
+	AddItem(new CDialogMenuFileType(this, CmdID, FileType, PreferredSize, RetainCaption));
 }
 
 void CDialogMenuPopup::AddFile(UINT CmdID, CString Path, UINT PreferredSize)
@@ -1657,7 +1657,7 @@ BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
 // CDialogMenuFileType
 //
 
-CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT CmdID, CString FileType, UINT PreferredSize)
+CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT CmdID, CString FileType, UINT PreferredSize, BOOL RetainCaption)
 	: CDialogMenuCommand(pParentPopup, CmdID, -1, PreferredSize)
 {
 	p_Icons = (PreferredSize==CDMB_SMALL) ? &((FMApplication*)AfxGetApp())->m_SystemImageListSmall : &((FMApplication*)AfxGetApp())->m_SystemImageListLarge;
@@ -1672,8 +1672,15 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo(FileType, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
 	{
-		if (sfi.iIcon!=3)
-			m_Caption.Format(_T("&%s (%s)"), sfi.szTypeName, FileType);
+		if (!RetainCaption)
+			if (sfi.iIcon!=3)
+			{
+				m_Caption.Format(_T("&%s (%s)"), sfi.szTypeName, FileType);
+			}
+			else
+			{
+				m_Caption.Append(_T(" (")+FileType+_T(")"));
+			}
 
 		m_IconID = sfi.iIcon;
 	}
@@ -1705,7 +1712,7 @@ void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt)
 //
 
 CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CString Path, UINT PreferredSize)
-	: CDialogMenuFileType(pParentPopup, CmdID, Path, PreferredSize)
+	: CDialogMenuFileType(pParentPopup, CmdID, Path, PreferredSize, TRUE)
 {
 	// Filename
 	m_Caption = Path;

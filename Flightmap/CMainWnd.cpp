@@ -225,7 +225,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddCommand(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE);
 		pPopup->AddSeparator(FALSE);
-		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
 		break;
 	}
