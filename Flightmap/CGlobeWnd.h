@@ -1,19 +1,19 @@
 
-// CMainWnd.h: Schnittstelle der Klasse CMainWnd
+// CGlobeWnd.h: Schnittstelle der Klasse CGlobeWnd
 //
 
 #pragma once
 #include "FMCommDlg.h"
 
 
-// CMainWnd
+// CGlobeWnd
 //
 
-class CMainWnd : public CMainWindow
+class CGlobeWnd : public CMainWindow
 {
 public:
-	CMainWnd();
-	virtual ~CMainWnd();
+	CGlobeWnd();
+	virtual ~CGlobeWnd();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();

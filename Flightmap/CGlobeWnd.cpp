@@ -1,33 +1,32 @@
 
-// CMainWnd.cpp: Implementierung der Klasse CMainWnd
+// CGlobeWnd.cpp: Implementierung der Klasse CGlobeWnd
 //
 
 #include "stdafx.h"
 #include "CLoungeView.h"
-#include "CMainWnd.h"
 #include "CGlobeWnd.h"
 #include "Flightmap.h"
 
 
-// CMainWnd
+// CGlobeWnd
 //
 
-CMainWnd::CMainWnd()
+CGlobeWnd::CGlobeWnd()
 	: CMainWindow()
 {
 	m_hIcon = NULL;
 	m_pWndMainView = NULL;
 }
 
-CMainWnd::~CMainWnd()
+CGlobeWnd::~CGlobeWnd()
 {
 	if (m_hIcon)
 		DestroyIcon(m_hIcon);
 }
 
-BOOL CMainWnd::Create()
+BOOL CGlobeWnd::Create()
 {
-	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
+	m_hIcon = theApp.LoadIcon(IDR_GLOBE);
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
@@ -41,7 +40,7 @@ BOOL CMainWnd::Create()
 	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
-BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CGlobeWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
 	if (m_pWndMainView)
@@ -51,7 +50,7 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 	return CMainWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CMainWnd::AdjustLayout()
+void CGlobeWnd::AdjustLayout()
 {
 	CMainWindow::AdjustLayout();
 
@@ -67,7 +66,7 @@ void CMainWnd::AdjustLayout()
 	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CMainWnd::OpenMainView(BOOL Empty)
+void CGlobeWnd::OpenMainView(BOOL Empty)
 {
 	if (m_pWndMainView)
 	{
@@ -90,7 +89,7 @@ void CMainWnd::OpenMainView(BOOL Empty)
 }
 
 
-BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
+BEGIN_MESSAGE_MAP(CGlobeWnd, CMainWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -104,7 +103,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
 END_MESSAGE_MAP()
 
-INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMainWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -131,7 +130,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CMainWnd::OnDestroy()
+void CGlobeWnd::OnDestroy()
 {
 	if (m_pWndMainView)
 	{
@@ -143,7 +142,7 @@ void CMainWnd::OnDestroy()
 	theApp.KillFrame(this);
 }
 
-void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
+void CGlobeWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
@@ -152,7 +151,7 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 		m_pWndMainView->SetFocus();
 }
 
-LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
+LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 {
 	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 
@@ -268,18 +267,18 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 
 // File commands
 
-void CMainWnd::OnFileOpen()
+void CGlobeWnd::OnFileOpen()
 {
 	CFileDialog dlg(TRUE, _T(".airx"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, _T("Flightmap itinerary (*.airx; *.air)|*.airx; *.air||"), this);
 	dlg.DoModal();
 }
 
-void CMainWnd::OnFileQuit()
+void CGlobeWnd::OnFileQuit()
 {
 	theApp.Quit();
 }
 
-void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
+void CGlobeWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
@@ -296,14 +295,11 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 // Globe commands
 
-void CMainWnd::OnGlobeOpen()
+void CGlobeWnd::OnGlobeOpen()
 {
-	CGlobeWnd* pFrame = new CGlobeWnd();
-	pFrame->Create();
-	pFrame->ShowWindow(SW_SHOW);
 }
 
-void CMainWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
+void CGlobeWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{

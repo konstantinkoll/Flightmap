@@ -61,6 +61,7 @@ IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\Flightmap.ico"
+IDR_GLOBE               ICON                    "res\\Globe_Small.ico"
 IDD_ABOUT               ICON                    "res\\About_Tiny.ico"
 IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"

@@ -2,9 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by FMCommDlg.rc
 //
-#define IDOK2                           2
-#define IDOK3                           3
 #define IDR_APPLICATION                 128
+#define IDR_GLOBE                       129
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202

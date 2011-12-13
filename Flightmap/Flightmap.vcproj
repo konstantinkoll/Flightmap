@@ -376,6 +376,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGlobeWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CLoungeView.cpp"
 				>
 			</File>
@@ -431,6 +435,10 @@
 			>
 			<File
 				RelativePath=".\CAboutDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGlobeWnd.h"
 				>
 			</File>
 			<File
