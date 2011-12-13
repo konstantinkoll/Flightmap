@@ -18,8 +18,10 @@
 #define IDB_MENUFILE_32                 142
 #define IDB_MENUEDIT_16                 143
 #define IDB_MENUEDIT_32                 144
-#define IDB_MENUGOOGLEEARTH_16          145
-#define IDB_MENUGOOGLEEARTH_32          146
+#define IDB_MENUGLOBE_16                145
+#define IDB_MENUGLOBE_32                146
+#define IDB_MENUGOOGLEEARTH_16          147
+#define IDB_MENUGOOGLEEARTH_32          148
 #define IDS_SAMPLEITINERARIES           1000
 #define IDS_RECENTFILES                 1001
 #define IDS_SAVECOPY                    1002
@@ -62,8 +64,9 @@
 #define IDM_EDIT_GOTO                   3208
 #define IDM_EDIT_GOTO_FIRST             3209
 #define IDM_EDIT_GOTO_LAST              3210
-#define IDM_GOOGLEEARTH_OPEN            3400
-#define IDM_GOOGLEEARTH_EXPORT          3401
+#define IDM_GLOBE_OPEN                  3400
+#define IDM_GOOGLEEARTH_OPEN            3500
+#define IDM_GOOGLEEARTH_EXPORT          3501
 
 // Next default values for new objects
 // 

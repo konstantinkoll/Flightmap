@@ -221,6 +221,11 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_EDIT_GOTO_FIRST, 7, CDMB_SMALL);
 		pPopup->AddCommand(IDM_EDIT_GOTO_LAST, 8, CDMB_SMALL);
 		break;
+	case IDM_GLOBE:
+		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
+		pPopup->AddCommand(IDM_GLOBE_OPEN, 0, CDMB_LARGE);
+		pPopup->AddSeparator(TRUE);
+		break;
 	case IDM_GOOGLEEARTH:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddCommand(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE);

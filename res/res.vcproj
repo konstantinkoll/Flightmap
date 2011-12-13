@@ -212,6 +212,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Globe_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Globe_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
 				>
 			</File>

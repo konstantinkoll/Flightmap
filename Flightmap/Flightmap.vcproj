@@ -532,6 +532,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuGlobe_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobe_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\MenuGoogleEarth_16.bmp"
 				>
 			</File>
