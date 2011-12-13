@@ -535,6 +535,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\GlobeOptions_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Key_Tiny.ico"
 				>
 			</File>

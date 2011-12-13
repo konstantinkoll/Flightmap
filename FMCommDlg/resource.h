@@ -31,6 +31,7 @@
 #define IDS_UPDATE_AVAILABLE            20110
 #define IDS_UPDATE_NOTAVAILABLE         20111
 #define IDS_CANNOTLOADLICENSE           20112
+#define IDS_AUTOMATIC                   20113
 #define IDC_GROUPBOX1                   20200
 #define IDC_GROUPBOX2                   20201
 #define IDC_GROUPBOX3                   20202
@@ -83,6 +84,17 @@
 #define IDC_NRT_REGISTERED              21410
 #define IDC_REGARROW                    21411
 #define IDC_PURCHASE                    21412
+#define IDD_GLOBEOPTIONS                21500
+#define IDC_TEXTURESIZE                 21501
+#define IDC_HQMODEL                     21502
+#define IDC_LIGHTING                    21503
+#define IDC_ATMOSPHERE                  21504
+#define IDC_SHADOWS                     21505
+#define IDC_SPOTS                       21506
+#define IDC_AIRPORTNAMES                21507
+#define IDC_GPSCOORDINATES              21508
+#define IDC_VIEWPORT                    21509
+#define IDC_CROSSHAIRS                  21510
 
 // Next default values for new objects
 // 

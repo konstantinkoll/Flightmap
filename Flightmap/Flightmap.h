@@ -47,6 +47,9 @@ public:
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
 	BOOL m_GlobeShadows;
+	BOOL m_GlobeShowSpots;
+	BOOL m_GlobeShowAirportNames;
+	BOOL m_GlobeShowGPS;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 

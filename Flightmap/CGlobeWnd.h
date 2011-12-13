@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMCommDlg.h"
+#include "CGlobeView.h"
 
 
 // CGlobeWnd
@@ -22,9 +23,7 @@ public:
 
 protected:
 	HICON m_hIcon;
-	CWnd* m_pWndMainView;
-
-	void OpenMainView(BOOL Empty);
+	CGlobeView m_GlobeView;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

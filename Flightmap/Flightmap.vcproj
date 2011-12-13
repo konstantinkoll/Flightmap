@@ -376,6 +376,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGlobeView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeWnd.cpp"
 				>
 			</File>
@@ -389,6 +393,18 @@
 			</File>
 			<File
 				RelativePath=".\Flightmap.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GlobeOptionsDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLTexture.cpp"
 				>
 			</File>
 			<File
@@ -438,6 +454,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGlobeView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeWnd.h"
 				>
 			</File>
@@ -458,11 +478,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GLFont.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Globe_High.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Globe_Low.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GlobeOptionsDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLTexture.h"
 				>
 			</File>
 			<File

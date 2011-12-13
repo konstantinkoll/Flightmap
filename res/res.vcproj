@@ -493,6 +493,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\GlobeOptions_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Google Earth.png"
 			>
 		</File>

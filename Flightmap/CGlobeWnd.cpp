@@ -15,7 +15,6 @@ CGlobeWnd::CGlobeWnd()
 	: CMainWindow()
 {
 	m_hIcon = NULL;
-	m_pWndMainView = NULL;
 }
 
 CGlobeWnd::~CGlobeWnd()
@@ -43,9 +42,8 @@ BOOL CGlobeWnd::Create()
 BOOL CGlobeWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-	if (m_pWndMainView)
-		if (m_pWndMainView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-			return TRUE;
+	if (m_GlobeView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
 
 	return CMainWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
@@ -54,38 +52,13 @@ void CGlobeWnd::AdjustLayout()
 {
 	CMainWindow::AdjustLayout();
 
-	if (!m_pWndMainView)
-		return;
-
 	CRect rect;
 	GetClientRect(rect);
 
 	if (m_pDialogMenuBar)
 		rect.top += m_pDialogMenuBar->GetPreferredHeight();
 
-	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-}
-
-void CGlobeWnd::OpenMainView(BOOL Empty)
-{
-	if (m_pWndMainView)
-	{
-		m_pWndMainView->DestroyWindow();
-		delete m_pWndMainView;
-	}
-
-	if (Empty)
-	{
-		m_pWndMainView = new CLoungeView();
-		((CLoungeView*)m_pWndMainView)->Create(this, 2);
-	}
-	else
-	{
-		m_pWndMainView = NULL;	// TODO
-	}
-
-	AdjustLayout();
-	SetFocus();
+	m_GlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
@@ -94,13 +67,6 @@ BEGIN_MESSAGE_MAP(CGlobeWnd, CMainWindow)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
-
-	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
-	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
-
-	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
 END_MESSAGE_MAP()
 
 INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -111,7 +77,7 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar = new CDialogMenuBar();
 	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS, 1);
 
-	m_pDialogMenuBar->AddMenuLeft(IDM_FILE);
+	/*m_pDialogMenuBar->AddMenuLeft(IDM_FILE);
 	m_pDialogMenuBar->AddMenuLeft(IDM_EDIT);
 	m_pDialogMenuBar->AddMenuLeft(IDM_MAP);
 	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBE);
@@ -119,25 +85,17 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuLeft(IDM_STATISTICS);
 
 	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);*/
 	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
 	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
 
 	theApp.AddFrame(this);
-
-	OpenMainView(TRUE);
 
 	return 0;
 }
 
 void CGlobeWnd::OnDestroy()
 {
-	if (m_pWndMainView)
-	{
-		m_pWndMainView->DestroyWindow();
-		delete m_pWndMainView;
-	}
-
 	CMainWindow::OnDestroy();
 	theApp.KillFrame(this);
 }
@@ -147,15 +105,14 @@ void CGlobeWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
 
-	if (m_pWndMainView)
-		m_pWndMainView->SetFocus();
+	m_GlobeView.SetFocus();
 }
 
 LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 {
 	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 
-	switch ((UINT)wParam)
+	/*switch ((UINT)wParam)
 	{
 	case IDM_FILE:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
@@ -253,7 +210,7 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCaption(IDS_EXPORT);
 		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE);
 		break;
-	}
+	}*/
 
 	if (!pPopup->HasItems())
 	{
@@ -262,51 +219,4 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	}
 
 	return (LRESULT)pPopup;
-}
-
-
-// File commands
-
-void CGlobeWnd::OnFileOpen()
-{
-	CFileDialog dlg(TRUE, _T(".airx"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, _T("Flightmap itinerary (*.airx; *.air)|*.airx; *.air||"), this);
-	dlg.DoModal();
-}
-
-void CGlobeWnd::OnFileQuit()
-{
-	theApp.Quit();
-}
-
-void CGlobeWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case IDM_FILE_SAVE:
-	case IDM_FILE_SAVEAS:
-	case IDM_FILE_CLOSE:
-		pCmdUI->Enable(TRUE);
-		break;
-	default:
-		pCmdUI->Enable(TRUE);
-	}
-}
-
-
-// Globe commands
-
-void CGlobeWnd::OnGlobeOpen()
-{
-}
-
-void CGlobeWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case IDM_GLOBE_OPEN:
-		pCmdUI->Enable(TRUE);
-		break;
-	default:
-		pCmdUI->Enable(TRUE);
-	}
 }
