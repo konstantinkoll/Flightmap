@@ -25,8 +25,9 @@
 #define IDS_SAMPLEITINERARIES           1000
 #define IDS_RECENTFILES                 1001
 #define IDS_SAVECOPY                    1002
-#define IDS_PRINTPREVIEW                1003
-#define IDS_PREPAREDISTRIBUTION         1004
+#define IDS_EXPORT                      1003
+#define IDS_PRINTPREVIEW                1004
+#define IDS_PREPAREDISTRIBUTION         1005
 #define IDM_FILE                        3000
 #define IDM_EDIT                        3001
 #define IDM_MAP                         3002
@@ -64,6 +65,11 @@
 #define IDM_EDIT_GOTO                   3208
 #define IDM_EDIT_GOTO_FIRST             3209
 #define IDM_EDIT_GOTO_LAST              3210
+#define IDM_MAP_OPEN                    3300
+#define IDM_MAP_EXPORT_BMP              3301
+#define IDM_MAP_EXPORT_JPG              3302
+#define IDM_MAP_EXPORT_PNG              3303
+#define IDM_MAP_EXPORT_TIFF             3304
 #define IDM_GLOBE_OPEN                  3400
 #define IDM_GOOGLEEARTH_OPEN            3500
 #define IDM_GOOGLEEARTH_EXPORT          3501

@@ -179,9 +179,9 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
 		pPopup->AddCaption(IDS_SAVECOPY);
 		pPopup->AddFileType(IDM_FILE_SAVEAS_AIRX, _T(".airx"), CDMB_LARGE);
-		pPopup->AddSeparator();
-		pPopup->AddFileType(IDM_FILE_SAVEAS_ICS, _T(".ics"), CDMB_LARGE);
+		pPopup->AddCaption(IDS_EXPORT);
 		pPopup->AddFileType(IDM_FILE_SAVEAS_CSV, _T(".csv"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_ICS, _T(".ics"), CDMB_LARGE);
 		pPopup->AddFileType(IDM_FILE_SAVEAS_TXT, _T(".txt"), CDMB_LARGE);
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_FILE_SAVEAS_OTHER, 4, CDMB_LARGE);
@@ -208,6 +208,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_EDIT_DELETE, 4, CDMB_SMALL);
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_EDIT_SELECTALL, 5, CDMB_SMALL);
+		pPopup->AddSeparator();
 		pPopup->AddSubmenu(IDM_EDIT_GOTO, 6, CDMB_SMALL, TRUE);
 		break;
 	case IDM_EDIT_PASTE:
@@ -221,6 +222,19 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_EDIT_GOTO_FIRST, 7, CDMB_SMALL);
 		pPopup->AddCommand(IDM_EDIT_GOTO_LAST, 8, CDMB_SMALL);
 		break;
+	case IDM_MAP:
+		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
+		pPopup->AddSubmenu(IDM_MAP_OPEN, 0, CDMB_LARGE, TRUE);
+		pPopup->AddSeparator(TRUE);
+		break;
+	case IDM_MAP_OPEN:
+		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
+		pPopup->AddCaption(IDS_EXPORT);
+		pPopup->AddFileType(IDM_MAP_EXPORT_BMP, _T(".bmp"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_JPG, _T(".jpg"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_PNG, _T(".png"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_TIFF, _T(".tiff"), CDMB_LARGE);
+		break;
 	case IDM_GLOBE:
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
 		pPopup->AddCommand(IDM_GLOBE_OPEN, 0, CDMB_LARGE);
@@ -228,10 +242,13 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_GOOGLEEARTH:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
-		pPopup->AddCommand(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE);
-		pPopup->AddSeparator(FALSE);
-		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE, TRUE);
+		pPopup->AddSubmenu(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
+		break;
+	case IDM_GOOGLEEARTH_OPEN:
+		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
+		pPopup->AddCaption(IDS_EXPORT);
+		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE);
 		break;
 	}
 
