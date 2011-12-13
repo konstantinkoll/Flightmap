@@ -254,6 +254,7 @@ public:
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
 	virtual void OnDeselect();
+	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);
 	virtual BOOL OnMouseMove(CPoint point);
 	virtual BOOL OnMouseLeave();

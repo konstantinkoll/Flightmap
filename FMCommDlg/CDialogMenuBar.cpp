@@ -1516,7 +1516,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 			rectLeft.right = rectRight.left+1;
 
 			p_ParentPopup->DrawSelectedBackground(pDC, rectLeft, m_Enabled, m_HoverOverCommand);
-			p_ParentPopup->DrawSelectedBackground(pDC, rectRight, m_Enabled, (m_pSubmenu!=NULL) || !m_HoverOverCommand);
+			p_ParentPopup->DrawSelectedBackground(pDC, rectRight, TRUE, (m_pSubmenu!=NULL) || !m_HoverOverCommand);
 		}
 		else
 		{
@@ -1534,6 +1534,8 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	// Pfeil
 	if (m_Submenu)
 	{
+		COLORREF oldColor = pDC->SetTextColor(Themed==2 ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+
 		CRect rectArrow(rect);
 		rectArrow.left = rectArrow.right-ARROWWIDTH-2*GetInnerBorder();
 		rectArrow.DeflateRect(GetInnerBorder(), GetInnerBorder());
@@ -1544,6 +1546,8 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 			pDC->FillSolidRect(rectArrow.left, mid-a, ARROWWIDTH-a, 1, pDC->GetTextColor());
 			pDC->FillSolidRect(rectArrow.left, mid+a, ARROWWIDTH-a, 1, pDC->GetTextColor());
 		}
+
+		pDC->SetTextColor(oldColor);
 	}
 
 	// Text
@@ -1594,17 +1598,18 @@ void CDialogMenuCommand::OnDeselect()
 	}
 }
 
+BOOL CDialogMenuCommand::OnButtonDown(CPoint point)
+{
+	return PtOnSubmenuArrow(point) ? TrackSubmenu() : FALSE;
+}
+
 BOOL CDialogMenuCommand::OnButtonUp(CPoint point)
 {
+	if (PtOnSubmenuArrow(point))
+		return TrackSubmenu();
+
 	if (m_Enabled)
-		if (PtOnSubmenuArrow(point))
-		{
-			return TrackSubmenu();
-		}
-		else
-		{
-			Execute();
-		}
+		Execute();
 
 	return FALSE;
 }
