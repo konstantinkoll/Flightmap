@@ -28,6 +28,12 @@
 #define IDS_EXPORT                      1003
 #define IDS_PRINTPREVIEW                1004
 #define IDS_PREPAREDISTRIBUTION         1005
+#define IDS_YOULOOKAT                   1006
+#define IDS_AIRPORT_NAME                1007
+#define IDS_AIRPORT_COUNTRY             1008
+#define IDS_AIRPORT_CODE                1009
+#define IDS_AIRPORT_LOCATION            1010
+#define IDS_DRIVENOTREADY               1011
 #define IDM_FILE                        3000
 #define IDM_EDIT                        3001
 #define IDM_MAP                         3002

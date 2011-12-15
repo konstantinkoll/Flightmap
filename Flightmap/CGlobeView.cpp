@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CGlobeView.h"
 #include "Resource.h"
-#include "LFCore.h"
 #include "GlobeOptionsDlg.h"
 #include <math.h>
 
@@ -61,31 +60,6 @@ __forceinline void CalculateWorldCoords(double lat, double lon, GLfloat result[]
 	result[0] = (GLfloat)(cos(lon_r)*c);
 	result[1] = (GLfloat)(sin(lon_r)*c);
 	result[2] = (GLfloat)(sin(lat_r));
-}
-
-CString CookAttributeString(WCHAR* attr)
-{
-	CString tmpStr(attr);
-	tmpStr.Replace(_T("<"), _T("_"));
-	tmpStr.Replace(_T(">"), _T("_"));
-	tmpStr.Replace(_T("&"), _T("&amp;"));
-
-	return tmpStr;
-}
-
-void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
-{
-	WCHAR tmpStr[256];
-	LFAttributeToString(i, attr, tmpStr, 256);
-
-	if (tmpStr[0]!='\0')
-	{
-		f->WriteString(_T("&lt;b&gt;"));
-		f->WriteString(CookAttributeString(theApp.m_Attributes[attr]->Name));
-		f->WriteString(_T("&lt;/b&gt;: "));
-		f->WriteString(CookAttributeString(tmpStr));
-		f->WriteString(_T("&lt;br&gt;"));
-	}
 }
 
 __forceinline BOOL SetupPixelFormat(HDC hDC)
@@ -169,11 +143,11 @@ void glDrawIcon(GLfloat x, GLfloat y, GLfloat Size, GLfloat Alpha, UINT ID)
 // CGlobeView
 //
 
-#define GetItemData(idx)     ((GlobeItemData*)(m_ItemData+idx*m_DataSize))
+#define GetItemData(idx)     ((GlobeAirport*)(m_ItemData+idx*m_DataSize))
 
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, TRUE, FALSE, FALSE)
+	: CFileView(sizeof(GlobeAirport), FALSE, FALSE, TRUE, FALSE, FALSE)
 {
 	m_pDC = NULL;
 	hRC = NULL;
@@ -191,7 +165,7 @@ CGlobeView::CGlobeView()
 	m_Grabbed = FALSE;
 	m_AnimCounter = m_MoveCounter = 0;
 
-	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
+	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
 }
 
@@ -242,7 +216,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 
 				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
 				{
-					GlobeItemData* d = GetItemData(a);
+					GlobeAirport* d = GetItemData(a);
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
 					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
 
@@ -265,15 +239,14 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
-		GlobeItemData* d = GetItemData(a);
+		GlobeAirport* d = GetItemData(a);
 
-		if (d->Hdr.Valid)
-			if ((d->Alpha>0.1f) && ((d->Alpha>Alpha-0.05f) || (d->Alpha>0.75f)))
-				if (PtInRect(&d->Hdr.Rect, point))
-				{
-					res = a;
-					Alpha = d->Alpha;
-				}
+		if ((d->Alpha>0.1f) && ((d->Alpha>Alpha-0.05f) || (d->Alpha>0.75f)))
+			if (PtInRect(&d->Hdr.Rect, point))
+			{
+				res = a;
+				Alpha = d->Alpha;
+			}
 	}
 
 	return res;
@@ -387,8 +360,8 @@ void CGlobeView::PrepareTexture()
 {
 	// Automatisch höchstens 4096x4096 laden, da quadratisch und von den meisten Grafikkarten unterstützt
 	UINT Tex = theApp.m_nTextureSize;
-	if (Tex==LFTextureAuto)
-		Tex = LFTexture4096;
+	if (Tex==FMTextureAuto)
+		Tex = FMTexture4096;
 
 	// Texture prüfen
 	GLint TexSize = 1024;
@@ -405,7 +378,7 @@ Smaller:
 		goto Smaller;
 	}
 
-	theApp.m_nMaxTextureSize = (TexSize>=8192) ? LFTexture8192 : (TexSize>=4096) ? LFTexture4096 : (TexSize>=2048) ? LFTexture2048 : LFTexture1024;
+	theApp.m_nMaxTextureSize = (TexSize>=8192) ? FMTexture8192 : (TexSize>=4096) ? FMTexture4096 : (TexSize>=2048) ? FMTexture2048 : FMTexture1024;
 	if (Tex>theApp.m_nMaxTextureSize)
 		Tex = theApp.m_nMaxTextureSize;
 
@@ -459,27 +432,24 @@ void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4]
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
-		GlobeItemData* d = GetItemData(a);
-		if (d->Hdr.Valid)
+		GlobeAirport* d = GetItemData(a);
+		d->Alpha = 0.0f;
+
+		GLfloat z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
+		if ((z>m_FogEnd) && (m_Width) && (m_Height))
 		{
-			d->Alpha = 0.0f;
+			GLfloat w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
+			GLfloat x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5f;
+			GLfloat y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5f;
 
-			GLfloat z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
-			if ((z>m_FogEnd) && (m_Width) && (m_Height))
-			{
-				GLfloat w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
-				GLfloat x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5f;
-				GLfloat y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5f;
+			d->ScreenPoint[0] = (INT)x;
+			d->ScreenPoint[1] = (INT)y;
+			d->Alpha = 1.0f;
+			if (z<m_FogStart)
+				d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
 
-				d->ScreenPoint[0] = (INT)x;
-				d->ScreenPoint[1] = (INT)y;
-				d->Alpha = 1.0f;
-				if (z<m_FogStart)
-					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
-
-				if (m_ViewParameters.GlobeShowSpots)
-					glDrawIcon(x, y, 6.0f+8.0f*d->Alpha, d->Alpha, SPOT);
-			}
+			if (m_ViewParameters.GlobeShowSpots)
+				glDrawIcon(x, y, 6.0f+8.0f*d->Alpha, d->Alpha, SPOT);
 		}
 	}
 }
@@ -488,44 +458,43 @@ void CGlobeView::CalcAndDrawLabel()
 {
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
-		GlobeItemData* d = GetItemData(a);
+		GlobeAirport* d = GetItemData(a);
 
-		if (d->Hdr.Valid)
-			if (d->Alpha>0.0f)
+		if (d->Alpha>0.0f)
+		{
+			// Beschriftung
+			WCHAR* Caption = p_Result->m_Items[a]->CoreAttributes.FileName;
+			UINT cCaption = (UINT)wcslen(Caption);
+			WCHAR* Subcaption = NULL;
+			WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
+			WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
+			if (Description)
+				if (*Description==L'\0')
+					Description = NULL;
+
+			// Beschriftung aufbereiten
+			switch (m_ViewParameters.SortBy)
 			{
-				// Beschriftung
-				WCHAR* Caption = p_Result->m_Items[a]->CoreAttributes.FileName;
-				UINT cCaption = (UINT)wcslen(Caption);
-				WCHAR* Subcaption = NULL;
-				WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
-				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
-				if (Description)
-					if (*Description==L'\0')
-						Description = NULL;
-
-				// Beschriftung aufbereiten
-				switch (m_ViewParameters.SortBy)
+			case LFAttrLocationIATA:
+				if (cCaption>6)
 				{
-				case LFAttrLocationIATA:
-					if (cCaption>6)
-					{
-						if (m_ViewParameters.GlobeShowAirportNames)
-							Subcaption = &Caption[6];
-						cCaption = 3;
-					}
-					break;
-				case LFAttrLocationGPS:
-					if ((wcscmp(Caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
-						Coordinates = NULL;
-					break;
+					if (m_ViewParameters.GlobeShowAirportNames)
+						Subcaption = &Caption[6];
+					cCaption = 3;
 				}
-
-				DrawLabel(d, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a);
+				break;
+			case LFAttrLocationGPS:
+				if ((wcscmp(Caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
+					Coordinates = NULL;
+				break;
 			}
+
+			DrawLabel(d, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a);
+		}
 	}
 }
 
-void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
+void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -688,7 +657,7 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 		c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
 		LFGeoCoordinatesToString(c, Coord, 256, true);
 
-		swprintf(Viewpoint, 256, YouLookAt, Coord);
+		swprintf(Viewpoint, 256, m_YouLookAt, Coord);
 
 		ViewpointWidth = (INT)m_Fonts[0].GetTextWidth(Viewpoint);
 		if (m_Width<CopyrightWidth+ViewpointWidth+48)
@@ -696,14 +665,14 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 	}
 
 	// Kante
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.6f : 0.9f);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
 	glBegin(GL_LINES);
 	glVertex2i(0, m_Height-Height);
 	glVertex2i(m_Width, m_Height-Height);
 	glEnd();
 
 	// Füllen
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.55f : 0.8f);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.55f);
 	glRecti(0, m_Height-Height, m_Width, m_Height);
 
 	// Text
@@ -733,8 +702,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glRenderMode(GL_RENDER);
 
 	// Hintergrund
-	GLfloat BackColor[4];
-	ColorRef2GLColor(BackColor, theApp.m_GlobeBlackBackground ? 0x000000 : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	GLfloat BackColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glFogfv(GL_FOG_COLOR, BackColor);
 
 	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
@@ -938,7 +906,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 }
 
 
-BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
+BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_PAINT()
@@ -1254,68 +1222,7 @@ void CGlobeView::OnSettings()
 
 void CGlobeView::OnGoogleEarth()
 {
-	// Dateinamen finden
-	TCHAR Pathname[MAX_PATH];
-	if (!GetTempPath(MAX_PATH, Pathname))
-		_tcscpy_s(Pathname, MAX_PATH, theApp.m_Path);
-
-	CString szTempName;
-	srand(rand());
-	szTempName.Format(_T("%sliquidFOLDERS%.4X%.4X.KML"), Pathname, 32768+rand(), 32768+rand());
-
-	// Datei erzeugen
-	CStdioFile f;
-	if (!f.Open(szTempName, CFile::modeCreate | CFile::modeWrite))
-	{
-		LFErrorBox(LFDriveNotReady);
-	}
-	else
-	{
-		try
-		{
-			f.WriteString(_T("<?xml version=\"1.0\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
-			f.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
-
-			INT i = GetNextSelectedItem(-1);
-			while (i>-1)
-			{
-				LFGeoCoordinates c = p_Result->m_Items[i]->CoreAttributes.LocationGPS;
-				if ((c.Latitude!=0) || (c.Longitude!=0))
-				{
-					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(CookAttributeString(p_Result->m_Items[i]->CoreAttributes.FileName));
-					f.WriteString(_T("</name>\n<description>"));
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationName);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationIATA);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationGPS);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrArtist);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRoll);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRecordingTime);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrComments);
-					f.WriteString(_T("&lt;div&gt;</description>\n"));
-
-					f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));
-					CString tmpStr;
-					tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), c.Longitude, -c.Latitude);
-					f.WriteString(tmpStr);
-					f.WriteString(_T("</Placemark>\n"));
-				}
-
-				i = GetNextSelectedItem(i);
-			}
-
-			f.WriteString(_T("</Document>\n</kml>\n"));
-
-			ShellExecute(m_hWnd, _T("open"), szTempName, NULL, NULL, SW_SHOW);
-		}
-		catch(CFileException ex)
-		{
-			LFErrorBox(LFDriveNotReady);
-		}
-		f.Close();
-	}
+	// TODO
 }
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)

@@ -8,6 +8,37 @@
 #include "CMainWnd.h"
 
 
+void CookAttributeString(CString& tmpStr)
+{
+	tmpStr.Replace(_T("<"), _T("_"));
+	tmpStr.Replace(_T(">"), _T("_"));
+	tmpStr.Replace(_T("&"), _T("&amp;"));
+}
+
+void WriteGoogleAttribute(CStdioFile* f, UINT ResID, CString Value)
+{
+	if (!Value.IsEmpty())
+	{
+		CString Name;
+		ENSURE(Name.LoadString(ResID));
+		CookAttributeString(Name);
+		CookAttributeString(Value);
+
+		f->WriteString(_T("&lt;b&gt;"));
+		f->WriteString(Name);
+		f->WriteString(_T("&lt;/b&gt;: "));
+		f->WriteString(Value);
+		f->WriteString(_T("&lt;br&gt;"));
+	}
+}
+
+void WriteGoogleAttribute(CStdioFile* f, UINT ResID, CHAR* Value)
+{
+	CString tmpStr(Value);
+	WriteGoogleAttribute(f, ResID, tmpStr);
+}
+
+
 // CFlightmapApp
 
 BEGIN_MESSAGE_MAP(CFlightmapApp, FMApplication)
@@ -72,12 +103,12 @@ BOOL CFlightmapApp::InitInstance()
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
 
-	if (!FMIsLicensed())
-		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE);
-
 	CMainWnd* pFrame = new CMainWnd();
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);
+
+	if (!FMIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
 	//OnAppAbout();
 
@@ -148,6 +179,75 @@ void CFlightmapApp::Quit()
 	}
 
 	m_pMainWnd = m_pActiveWnd = NULL;
+}
+
+void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
+{
+	ASSERT(pAirport);
+
+	if (m_PathGoogleEarth.IsEmpty())
+		return;
+
+	// Dateinamen finden
+	TCHAR Pathname[MAX_PATH];
+	if (!GetTempPath(MAX_PATH, Pathname))
+		return;
+
+	CString szTempName;
+	srand(rand());
+	szTempName.Format(_T("%sFlightmapS%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
+
+	// Datei erzeugen
+	CStdioFile f;
+	if (!f.Open(szTempName, CFile::modeCreate | CFile::modeWrite))
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
+	else
+	{
+		try
+		{
+			f.WriteString(_T("<?xml version=\"1.0\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
+			f.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
+			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
+			f.WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
+			f.WriteString(_T("<Placemark>\n<name>"));
+
+			CString tmpStr(pAirport->Code);
+			CookAttributeString(tmpStr);
+			f.WriteString(tmpStr);
+
+			f.WriteString(_T("</name>\n<description>"));
+			WriteGoogleAttribute(&f, IDS_AIRPORT_NAME, pAirport->Name);
+			WriteGoogleAttribute(&f, IDS_AIRPORT_CODE, tmpStr);
+			WriteGoogleAttribute(&f, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+			FMGeoCoordinatesToString(pAirport->Location, tmpStr);
+			WriteGoogleAttribute(&f, IDS_AIRPORT_LOCATION, tmpStr);
+			f.WriteString(_T("&lt;div&gt;</description>\n"));
+
+			f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));
+			tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), pAirport->Location.Longitude, -pAirport->Location.Latitude);
+			f.WriteString(tmpStr);
+			f.WriteString(_T("</Placemark>\n"));
+
+			f.WriteString(_T("</Document>\n</kml>\n"));
+			f.Close();
+
+			ShellExecute(GetForegroundWindow(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(IDS_DRIVENOTREADY);
+			f.Close();
+		}
+	}
+}
+
+void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
+{
+	FMAirport* pAirport = NULL;
+	if (FMIATAGetAirportByCode(Code, &pAirport))
+		OpenAirportGoogleEarth(pAirport);
 }
 
 

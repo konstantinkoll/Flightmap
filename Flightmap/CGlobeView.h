@@ -10,12 +10,21 @@
 
 // Item data
 
-struct GlobeItemData
+struct GlobeParameters
 {
-	FVItemData Hdr;
+	GLfloat Latitude;
+	GLfloat Longitude;
+	INT Zoom;
+};
+
+struct GlobeAirport
+{
+	RECT Rect;
+	BOOL Selected;
 	GLfloat World[3];
 	INT ScreenPoint[2];
 	GLfloat Alpha;
+	FMAirport* pAirport;
 	WCHAR CoordString[32];
 };
 
@@ -23,15 +32,12 @@ struct GlobeItemData
 // CGlobeView
 //
 
-class CGlobeView : public CFileView
+class CGlobeView : public CWnd
 {
 public:
 	CGlobeView();
 
-	virtual CMenu* GetBackgroundContextMenu();
-	virtual void GetPersistentData(FVPersistentData& Data);
-
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL);
+	BOOL Create(CWnd* pParentWnd, UINT nID);
 
 protected:
 	GlobeParameters m_GlobeTarget;
@@ -105,7 +111,7 @@ private:
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
 	BOOL m_LockUpdate;
-	CString YouLookAt;
+	CString m_YouLookAt;
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();

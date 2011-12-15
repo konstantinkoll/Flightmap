@@ -89,12 +89,24 @@ FMCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
+FMCommDlg_API void FMErrorBox(UINT nResID, HWND hWnd)
+{
+	CString caption;
+	CString message;
+	ENSURE(caption.LoadString(IDS_ERROR));
+	ENSURE(message.LoadString(nResID));
+
+	MessageBox(hWnd, message, caption, MB_OK | MB_ICONERROR);
+}
+
 
 // IATA-Datenbank
 //
 
 #include "IATA_DE.h"
 #include "IATA_EN.h"
+
+#define ROUNDOFF 0.00000001
 
 static BOOL UseGermanDB = (GetUserDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
 
@@ -168,6 +180,47 @@ FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
 	}
 
 	return FALSE;
+}
+
+__forceinline DOUBLE GetMinutes(DOUBLE c)
+{
+	c = fabs(c)+ROUNDOFF;
+	return (c-(DOUBLE)(INT)c)*60.0;
+}
+
+__forceinline DOUBLE GetSeconds(DOUBLE c)
+{
+	c = fabs(c)*60.0+ROUNDOFF;
+	return (c-(DOUBLE)(INT)c)*60.0;
+}
+
+FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero)
+{
+	tmpStr.Format(FillZero ? L"%3u°%2u\'%2u\"%c" : L"%u°%u\'%u\"%c",
+		(UINT)(fabs(c)+ROUNDOFF),
+		(UINT)GetMinutes(c),
+		(UINT)(GetSeconds(c)+0.5),
+		c>0 ? IsLatitude ? 'S' : 'N' : IsLatitude ? 'W' : 'E');
+
+	if (FillZero)
+		tmpStr.Replace(L' ', L'0');
+}
+
+FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero)
+{
+	if ((c.Latitude==0) && (c.Longitude==0))
+	{
+		tmpStr.Empty();
+	}
+	else
+	{
+		CString Longitude;
+		FMGeoCoordinateToString(c.Longitude, Longitude, FALSE, FillZero);
+
+		FMGeoCoordinateToString(c.Latitude, tmpStr, TRUE, FillZero);
+		tmpStr.Append(_T(", "));
+		tmpStr.Append(Longitude);
+	}
 }
 
 

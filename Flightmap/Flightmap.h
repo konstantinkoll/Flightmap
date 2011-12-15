@@ -34,6 +34,8 @@ public:
 	void AddFrame(CMainWindow* pFrame);
 	void KillFrame(CMainWindow* pVictim);
 	void Quit();
+	void OpenAirportGoogleEarth(FMAirport* pAirport);
+	void OpenAirportGoogleEarth(CHAR* Code);
 
 	CList<CMainWindow*> m_MainFrames;
 	CString m_PathGoogleEarth;

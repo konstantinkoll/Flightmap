@@ -25,6 +25,7 @@
 FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 FMCommDlg_API BOOL IsCtrlThemed();
 FMCommDlg_API void DrawControlBorder(CWnd* pWnd);
+FMCommDlg_API void FMErrorBox(UINT nResID, HWND hWnd=NULL);
 
 
 // IATA database
@@ -57,6 +58,8 @@ FMCommDlg_API FMCountry* FMIATAGetCountry(UINT ID);
 FMCommDlg_API INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer);
 FMCommDlg_API INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer);
 FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
+FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero=FALSE);
+FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero=FALSE);
 
 
 // Lizensierung

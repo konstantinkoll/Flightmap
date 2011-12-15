@@ -126,6 +126,12 @@ BEGIN
     IDS_EXPORT              "Den Flugplan exportieren"
     IDS_PRINTPREVIEW        "Flugplan in der Vorschau anzeigen und drucken"
     IDS_PREPAREDISTRIBUTION "Flugplan für die Verteilung vorbereiten"
+    IDS_YOULOOKAT           "Sie schauen auf %s"
+    IDS_AIRPORT_NAME        "Name"
+    IDS_AIRPORT_COUNTRY     "Land"
+    IDS_AIRPORT_CODE        "IATA-Code"
+    IDS_AIRPORT_LOCATION    "Ort"
+    IDS_DRIVENOTREADY       "Der Datenträger ist nicht bereit!"
 END
 
 STRINGTABLE 
@@ -257,6 +263,12 @@ BEGIN
     IDS_EXPORT              "Export the itinerary"
     IDS_PRINTPREVIEW        "Preview and print the itinerary"
     IDS_PREPAREDISTRIBUTION "Prepare the itinerary for distribution"
+    IDS_YOULOOKAT           "You look at %s"
+    IDS_AIRPORT_NAME        "Name"
+    IDS_AIRPORT_COUNTRY     "Country"
+    IDS_AIRPORT_CODE        "IATA code"
+    IDS_AIRPORT_LOCATION    "Location"
+    IDS_DRIVENOTREADY       "The drive is not ready!"
 END
 
 STRINGTABLE 
@@ -278,7 +290,7 @@ BEGIN
     IDM_FILE_SAVE           "&Save"
     IDM_FILE_SAVEAS         "Save &as"
     IDM_FILE_SAVEAS_AIRX    "&Flightmap Itinerary\nSave the itinerary in the default file\nformat."
-	IDM_FILE_SAVEAS_ICS     "&Calendar items\nExports the itinerary to Microsoft\nOutlook and other applications."
+    IDM_FILE_SAVEAS_ICS     "&Calendar items\nExports the itinerary to Microsoft\nOutlook and other applications."
     IDM_FILE_SAVEAS_CSV     "Comma Separated &Values\nExports the itinerary to Microsoft\nExcel and other applications."
     IDM_FILE_SAVEAS_TXT     "&Text document\nExports the itinerary as\nplain text file."
     IDM_FILE_SAVEAS_OTHER   "&Other formats\nOpen the ""Save as"" dialog box to\nselect from all possible file types."
