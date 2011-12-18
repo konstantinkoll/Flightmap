@@ -25,6 +25,7 @@ struct GlobeAirport
 	INT ScreenPoint[2];
 	GLfloat Alpha;
 	FMAirport* pAirport;
+	CHAR NameString[130];
 	WCHAR CoordString[32];
 };
 
@@ -43,26 +44,27 @@ protected:
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;
 
+	DynArray<GlobeAirport> m_Airports;
+
 	CClientDC* m_pDC;
 	HGLRC hRC;
+	INT m_FocusItem;
+	INT m_HotItem;
 	INT m_Width;
 	INT m_Height;
 	GLTexture* m_TextureGlobe;
 	GLTexture* m_TextureIcons;
 	GLFont m_Fonts[2];
 
-	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
-	virtual INT ItemAtPosition(CPoint point);
-	virtual CMenu* GetItemContextMenu(INT idx);
+	INT ItemAtPosition(CPoint point);
 
 	void PrepareModel();
 	void PrepareTexture();
 	void Normalize();
 	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
 	void CalcAndDrawLabel();
-	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused);
-	void DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed);
+	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused);
+	void DrawStatusBar(INT Height);
 	void DrawScene(BOOL InternalCall=FALSE);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 

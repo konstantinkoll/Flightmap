@@ -143,11 +143,8 @@ void glDrawIcon(GLfloat x, GLfloat y, GLfloat Size, GLfloat Alpha, UINT ID)
 // CGlobeView
 //
 
-#define GetItemData(idx)     ((GlobeAirport*)(m_ItemData+idx*m_DataSize))
-
-
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeAirport), FALSE, FALSE, TRUE, FALSE, FALSE)
+	: CWnd()
 {
 	m_pDC = NULL;
 	hRC = NULL;
@@ -156,6 +153,7 @@ CGlobeView::CGlobeView()
 	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
 	m_CursorPos.x = m_CursorPos.y = 0;
 
+	m_FocusItem = m_HotItem = -1;
 	m_Width = m_Height = 0;
 	m_GlobeModel = -1;
 	m_TextureGlobe = m_TextureIcons = NULL;
@@ -169,12 +167,22 @@ CGlobeView::CGlobeView()
 	m_LockUpdate = FALSE;
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 {
-	return CFileView::Create(pParentWnd, nID, Result, Data, CS_DBLCLKS | CS_OWNDC);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, LoadCursor(NULL, IDC_ARROW));
+
+	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
+
+	CRect rect;
+	rect.SetRectEmpty();
+	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
+		return FALSE;
+
+//	UpdateViewOptions(Result ? Result->m_Context : LFContextDefault, TRUE);
+//	UpdateSearchResult(Result, Data);
 }
 
-void CGlobeView::SetViewOptions(BOOL Force)
+/*void CGlobeView::SetViewOptions(BOOL Force)
 {
 	if (Force)
 	{
@@ -194,7 +202,7 @@ void CGlobeView::SetViewOptions(BOOL Force)
 
 void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 {
-	p_Result = Result;
+	m_Airports = Result;
 
 	if (Result)
 		if (Result->m_ItemCount)
@@ -227,58 +235,26 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 	if (Data)
 		if (Data->LocationValid)
 			m_GlobeCurrent = Data->Location;
-}
+}*/
 
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
-	if (!p_Result)
-		return -1;
-
 	INT res = -1;
 	GLfloat Alpha = 0.0f;
 
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
 	{
-		GlobeAirport* d = GetItemData(a);
+		GlobeAirport* ga = &m_Airports.m_Items[a];
 
-		if ((d->Alpha>0.1f) && ((d->Alpha>Alpha-0.05f) || (d->Alpha>0.75f)))
-			if (PtInRect(&d->Hdr.Rect, point))
+		if ((ga->Alpha>0.75f) || ((ga->Alpha>0.1f) && (ga->Alpha>Alpha-0.05f)))
+			if (PtInRect(&ga->Rect, point))
 			{
 				res = a;
-				Alpha = d->Alpha;
+				Alpha = ga->Alpha;
 			}
 	}
 
 	return res;
-}
-
-CMenu* CGlobeView::GetBackgroundContextMenu()
-{
-	CMenu* pMenu = new CMenu();
-	pMenu->LoadMenu(IDM_GLOBE);
-	return pMenu;
-}
-
-CMenu* CGlobeView::GetItemContextMenu(INT idx)
-{
-	CMenu* pMenu = CFileView::GetItemContextMenu(idx);
-	
-	CMenu* pPopup = pMenu->GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENGOOGLEEARTH));
-	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, tmpStr);
-
-	return pMenu;
-}
-
-void CGlobeView::GetPersistentData(FVPersistentData& Data)
-{
-	CFileView::GetPersistentData(Data);
-
-	Data.Location = m_GlobeCurrent;
-	Data.LocationValid = TRUE;
 }
 
 BOOL CGlobeView::CursorOnGlobe(CPoint point)
@@ -318,7 +294,7 @@ void CGlobeView::UpdateCursor()
 // OpenGL
 //
 
-void CGlobeView::PrepareModel()
+__forceinline void CGlobeView::PrepareModel()
 {
 	// 3D-Modelle einbinden
 	#include "Globe_Low.h"
@@ -356,7 +332,7 @@ void CGlobeView::PrepareModel()
 	m_LockUpdate = FALSE;
 }
 
-void CGlobeView::PrepareTexture()
+__forceinline void CGlobeView::PrepareTexture()
 {
 	// Automatisch höchstens 4096x4096 laden, da quadratisch und von den meisten Grafikkarten unterstützt
 	UINT Tex = theApp.m_nTextureSize;
@@ -401,7 +377,7 @@ Smaller:
 	}
 }
 
-void CGlobeView::Normalize()
+__forceinline void CGlobeView::Normalize()
 {
 	// Zoom
 	if (m_GlobeTarget.Zoom<0)
@@ -422,7 +398,7 @@ void CGlobeView::Normalize()
 		m_GlobeTarget.Longitude -= 360.0f;
 }
 
-void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
+__forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
 {
 	GLfloat SizeX = m_Width/2.0f;
 	GLfloat SizeY = m_Height/2.0f;
@@ -430,76 +406,54 @@ void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4]
 	GLfloat MVP[4][4];
 	MatrixMul(MVP, ModelView, Projection);
 
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
 	{
-		GlobeAirport* d = GetItemData(a);
-		d->Alpha = 0.0f;
+		GlobeAirport* ga = &m_Airports.m_Items[a];
+		ga->Alpha = 0.0f;
 
-		GLfloat z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
+		GLfloat z = ModelView[0][2]*ga->World[0] + ModelView[1][2]*ga->World[1] + ModelView[2][2]*ga->World[2];
 		if ((z>m_FogEnd) && (m_Width) && (m_Height))
 		{
-			GLfloat w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
-			GLfloat x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5f;
-			GLfloat y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5f;
+			GLfloat w = MVP[0][3]*ga->World[0] + MVP[1][3]*ga->World[1] + MVP[2][3]*ga->World[2] + MVP[3][3];
+			GLfloat x = (MVP[0][0]*ga->World[0] + MVP[1][0]*ga->World[1] + MVP[2][0]*ga->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5f;
+			GLfloat y = -(MVP[0][1]*ga->World[0] + MVP[1][1]*ga->World[1] + MVP[2][1]*ga->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5f;
 
-			d->ScreenPoint[0] = (INT)x;
-			d->ScreenPoint[1] = (INT)y;
-			d->Alpha = 1.0f;
+			ga->ScreenPoint[0] = (INT)x;
+			ga->ScreenPoint[1] = (INT)y;
+			ga->Alpha = 1.0f;
 			if (z<m_FogStart)
-				d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
+				ga->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
 
-			if (m_ViewParameters.GlobeShowSpots)
-				glDrawIcon(x, y, 6.0f+8.0f*d->Alpha, d->Alpha, SPOT);
+			if (theApp.m_GlobeShowSpots)
+				glDrawIcon(x, y, 6.0f+8.0f*ga->Alpha, ga->Alpha, SPOT);
 		}
 	}
 }
 
-void CGlobeView::CalcAndDrawLabel()
+__forceinline void CGlobeView::CalcAndDrawLabel()
 {
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
 	{
-		GlobeAirport* d = GetItemData(a);
+		GlobeAirport* ga = &m_Airports.m_Items[a];
 
-		if (d->Alpha>0.0f)
+		if (ga->Alpha>0.0f)
 		{
 			// Beschriftung
-			WCHAR* Caption = p_Result->m_Items[a]->CoreAttributes.FileName;
-			UINT cCaption = (UINT)wcslen(Caption);
-			WCHAR* Subcaption = NULL;
-			WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
-			WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
-			if (Description)
-				if (*Description==L'\0')
-					Description = NULL;
+			CHAR* Caption = ga->pAirport->Code;
+			CHAR* Subcaption = (theApp.m_GlobeShowAirportNames ? ga->NameString : NULL);
+			WCHAR* Coordinates = (theApp.m_GlobeShowGPS ? ga->CoordString : NULL);
 
-			// Beschriftung aufbereiten
-			switch (m_ViewParameters.SortBy)
-			{
-			case LFAttrLocationIATA:
-				if (cCaption>6)
-				{
-					if (m_ViewParameters.GlobeShowAirportNames)
-						Subcaption = &Caption[6];
-					cCaption = 3;
-				}
-				break;
-			case LFAttrLocationGPS:
-				if ((wcscmp(Caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
-					Coordinates = NULL;
-				break;
-			}
-
-			DrawLabel(d, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a);
+			DrawLabel(ga, Caption, Subcaption, Coordinates, NULL, m_FocusItem==(INT)a);
 		}
 	}
 }
 
-void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
+__forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
 {
 	ASSERT(ARROWSIZE>3);
 
 	// Breite
-	UINT W1 = m_Fonts[1].GetTextWidth(Caption, cCaption);
+	UINT W1 = m_Fonts[1].GetTextWidth(Caption);
 	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
 	UINT W3 = m_Fonts[0].GetTextWidth(Coordinates);
 	UINT W4 = m_Fonts[0].GetTextWidth(Description);
@@ -513,24 +467,24 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 	Height += m_Fonts[0].GetTextHeight(Description);
 
 	// Position
-	INT top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
+	INT top = (ga->ScreenPoint[1]<m_Height/2) ? -1 : 1;
 
-	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
-	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? (INT)Height : 0);
-	d->Hdr.Rect.right = x+Width;
-	d->Hdr.Rect.bottom = y+Height;
+	INT x = ga->Rect.left = ga->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_Width-ga->ScreenPoint[0])/m_Width);
+	INT y = ga->Rect.top = ga->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? (INT)Height : 0);
+	ga->Rect.right = x+Width;
+	ga->Rect.bottom = y+Height;
 
 	// Sichtbar?
 	if ((x+Width+6<0) || (x-1>m_Width) || (y+Height+ARROWSIZE+6<0) || (y-ARROWSIZE-6>m_Height))
 	{
-		d->Alpha = 0.0f;
+		ga->Alpha = 0.0f;
 		return;
 	}
 
 	// Farben
 	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
 	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
-	if (d->Hdr.Selected)
+	if (ga->Selected)
 		if (this==GetFocus())
 		{
 			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
@@ -552,7 +506,7 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 	{
 		for (INT s=3; s>0; s--)
 		{
-			glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
+			glColor4f(0.0f, 0.0f, 0.0f, ga->Alpha/(s+2.5f));
 			glBegin(GL_LINES);
 			glVertex2i(x+2, y+Height+s);
 			glVertex2i(x+Width+s, y+Height+s);
@@ -561,7 +515,7 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 			glEnd();
 		}
 
-		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
+		glColor4f(0.0f, 0.0f, 0.0f, ga->Alpha/2.5f);
 		glBegin(GL_LINES);
 		glVertex2i(x+Width, y+Height);
 		glVertex2i(x+Width+1, y+Height);
@@ -572,7 +526,7 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 	}
 
 	// Grauer Rand
-	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
+	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, ga->Alpha);
 	glVertex2i(x, y-1);						// Oben
 	glVertex2i(x+Width, y-1);
 	glVertex2i(x, y+Height);				// Unten
@@ -585,7 +539,7 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 
 	// Pfeil
 	glBegin(GL_TRIANGLES);
-	GLfloat alpha = pow(d->Alpha, 3);
+	GLfloat alpha = pow(ga->Alpha, 3);
 	for (INT a=0; a<=3; a++)
 	{
 		switch (a)
@@ -600,12 +554,12 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], alpha/2);
 			break;
 		default:
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
+			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], ga->Alpha);
 		}
 
-		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]+(a-2)*top);
-		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
-		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+		glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]+(a-2)*top);
+		glVertex2i(ga->ScreenPoint[0]+(ARROWSIZE-a)*top, ga->ScreenPoint[1]+(ARROWSIZE-2)*top);
+		glVertex2i(ga->ScreenPoint[0]-(ARROWSIZE-a)*top, ga->ScreenPoint[1]+(ARROWSIZE-2)*top);
 	}
 	glEnd();
 
@@ -613,7 +567,7 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 	glRecti(x, y, x+(INT)Width, y+(INT)Height);
 	if ((Focused) && (GetFocus()==this))
 	{
-		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
+		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], ga->Alpha);
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
@@ -627,20 +581,20 @@ void CGlobeView::DrawLabel(GlobeAirport* d, UINT cCaption, WCHAR* Caption, WCHAR
 
 	x += 3;
 
-	glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha);
-	y += m_Fonts[1].Render(Caption, x, y, cCaption);
+	glColor4f(TextColor[0], TextColor[1], TextColor[2], ga->Alpha);
+	y += m_Fonts[1].Render(Caption, x, y);
 	if (Subcaption)
 		y += m_Fonts[0].Render(Subcaption, x, y);
 
-	if ((!d->Hdr.Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
-		glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha/2);
+	if ((!ga->Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
+		glColor4f(TextColor[0], TextColor[1], TextColor[2], ga->Alpha/2);
 	if (Coordinates)
 		y += m_Fonts[0].Render(Coordinates, x, y);
 	if (Description)
 		y += m_Fonts[0].Render(Description, x, y);
 }
 
-void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
+__forceinline void CGlobeView::DrawStatusBar(INT Height)
 {
 	WCHAR Copyright[] = L"© NASA's Earth Observatory";
 	INT CopyrightWidth = (INT)m_Fonts[0].GetTextWidth(Copyright);
@@ -651,11 +605,12 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 	INT ViewpointWidth = -1;
 	if (theApp.m_GlobeShowViewport)
 	{
-		WCHAR Coord[256];
-		LFGeoCoordinates c;
+		FMGeoCoordinates c;
 		c.Latitude = -m_GlobeCurrent.Latitude;
 		c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
-		LFGeoCoordinatesToString(c, Coord, 256, true);
+
+		CString Coord;
+		FMGeoCoordinatesToString(c, Coord, TRUE);
 
 		swprintf(Viewpoint, 256, m_YouLookAt, Coord);
 
@@ -676,9 +631,7 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 	glRecti(0, m_Height-Height, m_Width, m_Height);
 
 	// Text
-	GLfloat TextColor[4];
-	ColorRef2GLColor(TextColor, theApp.m_GlobeBlackBackground ? 0xFFFFFF : Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
-	glColor4f(TextColor[0], TextColor[1], TextColor[2], 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;
 
@@ -695,8 +648,6 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			return;
 		m_LockUpdate = TRUE;
 	}
-
-	BOOL Themed = IsCtrlThemed();
 
 	wglMakeCurrent(*m_pDC, hRC);
 	glRenderMode(GL_RENDER);
@@ -803,9 +754,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glBegin(GL_QUADS);
 
 	// Koordinaten bestimmen und Spots zeichnen
-	if (p_Result && !m_Nothing)
-		if (p_Result->m_ItemCount)
-			CalcAndDrawSpots(ModelView, Projection);
+	if (m_Airports.m_ItemCount)
+		CalcAndDrawSpots(ModelView, Projection);
 
 	// Fadenkreuz zeichnen
 	if (theApp.m_GlobeShowViewport && theApp.m_GlobeShowCrosshairs)
@@ -816,14 +766,13 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glDisable(GL_TEXTURE_2D);
 
 	// Label zeichnen
-	if (p_Result && !m_Nothing)
-		if (p_Result->m_ItemCount)
-			CalcAndDrawLabel();
+	if (m_Airports.m_ItemCount)
+		CalcAndDrawLabel();
 
 	// Statuszeile
-	const INT Height = m_FontHeight[0]+1;
+	const INT Height = m_Fonts[0].GetTextHeight("Wy")+1;
 	if (m_Height>=Height)
-		DrawStatusBar(Height, BackColor, Themed);
+		DrawStatusBar(Height);
 
 	// Beenden
 	glDisable2D();
@@ -920,13 +869,13 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_TIMER()
 
-	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
+	/*ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBE_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnAutosize)
 	ON_COMMAND(IDM_GLOBE_SETTINGS, OnSettings)
 	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_JUMPTOLOCATION, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_JUMPTOLOCATION, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)*/
 END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1088,7 +1037,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwHoverTime = FMHOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
@@ -1162,7 +1111,7 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 	if (m_MoveCounter<1000)
 		m_MoveCounter++;
 
-	CFileView::OnTimer(nIDEvent);
+	CWnd::OnTimer(nIDEvent);
 
 	// Eat bogus WM_TIMER messages
 	MSG msg;
@@ -1170,7 +1119,7 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 }
 
 
-void CGlobeView::OnJumpToLocation()
+/*void CGlobeView::OnJumpToLocation()
 {
 	LFSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
 
@@ -1245,4 +1194,4 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
-}
+}*/
