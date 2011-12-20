@@ -13,6 +13,8 @@ void CookAttributeString(CString& tmpStr)
 	tmpStr.Replace(_T("<"), _T("_"));
 	tmpStr.Replace(_T(">"), _T("_"));
 	tmpStr.Replace(_T("&"), _T("&amp;"));
+	tmpStr.Replace(_T("–"), _T("&#8211;"));
+	tmpStr.Replace(_T("—"), _T("&#8212;"));
 }
 
 void WriteGoogleAttribute(CStdioFile* f, UINT ResID, CString Value)
