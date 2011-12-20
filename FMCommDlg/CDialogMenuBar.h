@@ -76,7 +76,7 @@ protected:
 
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
-	void SelectItem(INT idx);
+	void SelectItem(INT idx, BOOL Keyboard);
 	void ExecuteItem(INT idx);
 	void SetTheme();
 
@@ -140,7 +140,7 @@ public:
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
-	void SetParentMenu(CWnd* pWnd);
+	void SetParentMenu(CWnd* pWnd, BOOL Select);
 	void Track(CPoint point);
 	BOOL HasItems();
 	INT GetGutter();
@@ -171,7 +171,7 @@ protected:
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
 	void SelectItem(INT idx);
-	void TrackSubmenu(CDialogMenuPopup* pPopup);
+	void TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Select);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -277,7 +277,7 @@ protected:
 
 private:
 	BOOL PtOnSubmenuArrow(CPoint point);
-	BOOL TrackSubmenu();
+	BOOL TrackSubmenu(BOOL Select);
 	void Execute();
 
 	CDialogMenuPopup* m_pSubmenu;
