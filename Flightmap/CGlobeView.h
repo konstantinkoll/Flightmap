@@ -20,13 +20,13 @@ struct GlobeParameters
 struct GlobeAirport
 {
 	RECT Rect;
-	BOOL Selected;
 	GLfloat World[3];
 	INT ScreenPoint[2];
 	GLfloat Alpha;
 	FMAirport* pAirport;
 	CHAR NameString[130];
 	WCHAR CoordString[32];
+	WCHAR CountString[64];
 };
 
 
@@ -39,6 +39,7 @@ public:
 	CGlobeView();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
+	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
 	GlobeParameters m_GlobeTarget;
@@ -52,12 +53,15 @@ protected:
 	INT m_HotItem;
 	INT m_Width;
 	INT m_Height;
+	BOOL m_IsSelected;
+	BOOL m_Hover;
 	GLTexture* m_TextureGlobe;
 	GLTexture* m_TextureIcons;
 	GLFont m_Fonts[2];
 
 	INT ItemAtPosition(CPoint point);
-
+	void InvalidateItem(INT idx);
+	void SelectItem(INT idx, BOOL Select);
 	void PrepareModel();
 	void PrepareTexture();
 	void Normalize();
@@ -70,6 +74,8 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnSysColorChange();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
@@ -78,16 +84,20 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
-	afx_msg void OnJumpToLocation();
+	//afx_msg void OnJumpToLocation();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
-	afx_msg void OnSettings();
-	afx_msg void OnGoogleEarth();
-	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	//afx_msg void OnSettings();
+	//afx_msg void OnGoogleEarth();
+	//afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:

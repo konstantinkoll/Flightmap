@@ -87,7 +87,9 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
 	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);*/
 	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
+	//m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
+
+	m_GlobeView.Create(this, 3);
 
 	theApp.AddFrame(this);
 

@@ -45,6 +45,9 @@ public:
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 
+	INT m_GlobeLatitude;
+	INT m_GlobeLongitude;
+	INT m_GlobeZoom;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
@@ -52,6 +55,7 @@ public:
 	BOOL m_GlobeShowSpots;
 	BOOL m_GlobeShowAirportNames;
 	BOOL m_GlobeShowGPS;
+	BOOL m_GlobeShowFlightCount;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 

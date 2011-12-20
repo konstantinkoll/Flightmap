@@ -219,8 +219,8 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 
 			f.WriteString(_T("</name>\n<description>"));
 			WriteGoogleAttribute(&f, IDS_AIRPORT_NAME, pAirport->Name);
-			WriteGoogleAttribute(&f, IDS_AIRPORT_CODE, tmpStr);
 			WriteGoogleAttribute(&f, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+			WriteGoogleAttribute(&f, IDS_AIRPORT_CODE, tmpStr);
 			FMGeoCoordinatesToString(pAirport->Location, tmpStr);
 			WriteGoogleAttribute(&f, IDS_AIRPORT_LOCATION, tmpStr);
 			f.WriteString(_T("&lt;div&gt;</description>\n"));

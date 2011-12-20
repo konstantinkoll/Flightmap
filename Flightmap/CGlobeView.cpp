@@ -160,7 +160,7 @@ CGlobeView::CGlobeView()
 	m_CurrentGlobeTexture = -1;
 	m_Scale = 1.0f;
 	m_Radius = m_Momentum = 0.0f;
-	m_Grabbed = FALSE;
+	m_IsSelected = m_Grabbed = m_Hover = FALSE;
 	m_AnimCounter = m_MoveCounter = 0;
 
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
@@ -178,17 +178,19 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
 		return FALSE;
 
-//	UpdateViewOptions(Result ? Result->m_Context : LFContextDefault, TRUE);
+	UpdateViewOptions(TRUE);
 //	UpdateSearchResult(Result, Data);
 }
 
-/*void CGlobeView::SetViewOptions(BOOL Force)
+void CGlobeView::UpdateViewOptions(BOOL Force)
 {
+	//m_TooltipCtrl.Deactivate();
+
 	if (Force)
 	{
-		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_ViewParameters->GlobeLatitude/1000.0f;
-		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_ViewParameters->GlobeLongitude/1000.0f;
-		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_ViewParameters->GlobeZoom;
+		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = theApp.m_GlobeLatitude/1000.0f;
+		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = theApp.m_GlobeLongitude/1000.0f;
+		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = theApp.m_GlobeZoom;
 	}
 
 	PrepareTexture();
@@ -198,9 +200,11 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 		PrepareModel();
 		m_IsHQModel = theApp.m_GlobeHQModel;
 	}
+
+	Invalidate();
 }
 
-void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
+/*void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 {
 	m_Airports = Result;
 
@@ -255,6 +259,23 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	}
 
 	return res;
+}
+
+void CGlobeView::InvalidateItem(INT idx)
+{
+	if ((idx>=0) && (idx<(INT)m_Airports.m_ItemCount))
+		InvalidateRect(&m_Airports.m_Items[idx].Rect);
+}
+
+void CGlobeView::SelectItem(INT idx, BOOL Select)
+{
+	if ((idx!=m_FocusItem) || (Select!=m_IsSelected))
+	{
+		InvalidateItem(m_FocusItem);
+		m_FocusItem = idx;
+		m_IsSelected = Select;
+		InvalidateItem(m_FocusItem);
+	}
 }
 
 BOOL CGlobeView::CursorOnGlobe(CPoint point)
@@ -442,8 +463,9 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 			CHAR* Caption = ga->pAirport->Code;
 			CHAR* Subcaption = (theApp.m_GlobeShowAirportNames ? ga->NameString : NULL);
 			WCHAR* Coordinates = (theApp.m_GlobeShowGPS ? ga->CoordString : NULL);
+			WCHAR* Count = (theApp.m_GlobeShowFlightCount ? ga->CountString : NULL);
 
-			DrawLabel(ga, Caption, Subcaption, Coordinates, NULL, m_FocusItem==(INT)a);
+			DrawLabel(ga, Caption, Subcaption, Coordinates, Count, m_FocusItem==(INT)a);
 		}
 	}
 }
@@ -484,7 +506,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* 
 	// Farben
 	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
 	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
-	if (ga->Selected)
+	if (Focused && m_IsSelected)
 		if (this==GetFocus())
 		{
 			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
@@ -586,7 +608,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* 
 	if (Subcaption)
 		y += m_Fonts[0].Render(Subcaption, x, y);
 
-	if ((!ga->Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
+	if (!(Focused && m_IsSelected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
 		glColor4f(TextColor[0], TextColor[1], TextColor[2], ga->Alpha/2);
 	if (Coordinates)
 		y += m_Fonts[0].Render(Coordinates, x, y);
@@ -858,6 +880,8 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_SYSCOLORCHANGE()
+	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETCURSOR()
@@ -866,8 +890,12 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_RBUTTONDOWN()
+	ON_WM_RBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_TIMER()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 
 	/*ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
@@ -880,8 +908,10 @@ END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFileView::OnCreate(lpCreateStruct)==-1)
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	//m_TooltipCtrl.Create(this);
 
 	m_pDC = new CClientDC(this);
 	if (!m_pDC)
@@ -947,14 +977,21 @@ void CGlobeView::OnDestroy()
 		delete m_pDC;
 	}
 
-	if (p_ViewParameters)
-	{
-		p_ViewParameters->GlobeLatitude = (INT)(m_GlobeTarget.Latitude*1000.0f);
-		p_ViewParameters->GlobeLongitude = (INT)(m_GlobeTarget.Longitude*1000.0f);
-		p_ViewParameters->GlobeZoom = m_GlobeTarget.Zoom;
-	}
+	theApp.m_GlobeLatitude = (INT)(m_GlobeTarget.Latitude*1000.0f);
+	theApp.m_GlobeLongitude = (INT)(m_GlobeTarget.Longitude*1000.0f);
+	theApp.m_GlobeZoom = m_GlobeTarget.Zoom;
 
-	CFileView::OnDestroy();
+	CWnd::OnDestroy();
+}
+
+void CGlobeView::OnSysColorChange()
+{
+	Invalidate();
+}
+
+BOOL CGlobeView::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
 }
 
 void CGlobeView::OnPaint()
@@ -978,7 +1015,11 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 		gluPerspective(3.0f, (GLfloat)cx/cy, 0.1f, 500.0f);
 	}
 
-	CFileView::OnSize(nType, cx, cy);
+	SetRedraw(FALSE);
+	CWnd::OnSize(nType, cx, cy);
+	SetRedraw(TRUE);
+
+	Invalidate();
 }
 
 BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
@@ -987,7 +1028,7 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/
 	return TRUE;
 }
 
-void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
+void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	m_CursorPos = point;
 
@@ -1009,7 +1050,24 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 		UpdateCursor();
 	}
 
-	CFileView::OnMouseMove(nFlags, point);
+	INT Item = ItemAtPosition(point);
+	if (!m_Hover)
+	{
+		m_Hover = TRUE;
+
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = FMHOVERTIME;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
+/*	else
+		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
+			m_TooltipCtrl.Deactivate();*/
+
+	if (m_HotItem!=Item)
+		m_HotItem = Item;
 }
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
@@ -1029,24 +1087,32 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if (m_Momentum==0.0f)
-	{
-		CFileView::OnMouseHover(nFlags, point);
-	}
-	else
-	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = FMHOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
+		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+			if (m_HotItem!=-1)
+			{
+				//if (!m_TooltipCtrl.IsWindowVisible())
+				{
+					ClientToScreen(&point);
+					//m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));
+				}
+			}
+			else
+			{
+				//m_TooltipCtrl.Deactivate();
+			}
+
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwHoverTime = FMHOVERTIME;
+	tme.hwndTrack = m_hWnd;
+	TrackMouseEvent(&tme);
 }
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT n = ItemAtPosition(point);
-	if (n==-1)
+	INT idx = ItemAtPosition(point);
+	if (idx==-1)
 	{
 		if (CursorOnGlobe(point))
 		{
@@ -1069,11 +1135,11 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		CFileView::OnLButtonDown(nFlags, point);
+		SelectItem(idx, nFlags & MK_SHIFT);
 	}
 }
 
-void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
+void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	if (m_Grabbed)
 	{
@@ -1086,20 +1152,65 @@ void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		CFileView::OnLButtonUp(nFlags, point);
+		INT idx = ItemAtPosition(point);
+		if (idx!=-1)
+		{
+			if (GetFocus()!=this)
+				SetFocus();
+		}
+		else
+		{
+			SelectItem(-1, FALSE);
+		}
 	}
+}
+
+void CGlobeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
+{
+	INT idx = ItemAtPosition(point);
+	if (idx!=-1)
+	{
+		SelectItem(idx, TRUE);
+	}
+	else
+	{
+		if (GetFocus()!=this)
+			SetFocus();
+	}
+}
+
+void CGlobeView::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	INT idx = ItemAtPosition(point);
+	if ((idx!=-1) && (GetFocus()!=this))
+		SetFocus();
+
+	SelectItem(idx, idx!=-1);
+
+	GetParent()->UpdateWindow();
+	CWnd::OnRButtonUp(nFlags, point);
 }
 
 void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	CFileView::OnKeyDown(nChar, nRepCnt, nFlags);
-
 	switch(nChar)
 	{
-	case 'L':
+	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			OnJumpToLocation();
+		{
+			m_IsSelected = FALSE;
+			InvalidateItem(m_FocusItem);
+		}
 		break;
+	case VK_SPACE:
+		if (m_FocusItem!=-1)
+		{
+			m_IsSelected = (GetKeyState(VK_CONTROL)>=0) ? TRUE : !m_IsSelected;
+			InvalidateItem(m_FocusItem);
+		}
+		break;
+	default:
+		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
 
@@ -1116,6 +1227,16 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
+}
+
+void CGlobeView::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	Invalidate();
+}
+
+void CGlobeView::OnKillFocus(CWnd* /*pNewWnd*/)
+{
+	Invalidate();
 }
 
 
@@ -1136,7 +1257,7 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 
 		UpdateScene();
 	}
-}
+}*/
 
 void CGlobeView::OnZoomIn()
 {
@@ -1162,7 +1283,7 @@ void CGlobeView::OnAutosize()
 	UpdateScene();
 }
 
-void CGlobeView::OnSettings()
+/*void CGlobeView::OnSettings()
 {
 	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
 	if (dlg.DoModal()==IDOK)
