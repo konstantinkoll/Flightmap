@@ -179,12 +179,11 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 		return FALSE;
 
 	UpdateViewOptions(TRUE);
-//	UpdateSearchResult(Result, Data);
 }
 
 void CGlobeView::UpdateViewOptions(BOOL Force)
 {
-	//m_TooltipCtrl.Deactivate();
+	m_TooltipCtrl.Deactivate();
 
 	if (Force)
 	{
@@ -911,7 +910,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	//m_TooltipCtrl.Create(this);
+	m_TooltipCtrl.Create(this);
 
 	m_pDC = new CClientDC(this);
 	if (!m_pDC)
@@ -1062,9 +1061,9 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
-/*	else
+	else
 		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
-			m_TooltipCtrl.Deactivate();*/
+			m_TooltipCtrl.Deactivate();
 
 	if (m_HotItem!=Item)
 		m_HotItem = Item;
@@ -1090,7 +1089,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 			if (m_HotItem!=-1)
 			{
-				//if (!m_TooltipCtrl.IsWindowVisible())
+				if (!m_TooltipCtrl.IsWindowVisible())
 				{
 					ClientToScreen(&point);
 					//m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));
@@ -1098,7 +1097,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 			}
 			else
 			{
-				//m_TooltipCtrl.Deactivate();
+				m_TooltipCtrl.Deactivate();
 			}
 
 	TRACKMOUSEEVENT tme;

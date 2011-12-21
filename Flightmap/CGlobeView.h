@@ -124,6 +124,7 @@ private:
 	BOOL m_Grabbed;
 	BOOL m_LockUpdate;
 	CString m_YouLookAt;
+	FMTooltip m_TooltipCtrl;
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();

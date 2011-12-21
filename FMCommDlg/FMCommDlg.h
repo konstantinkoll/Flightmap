@@ -5,15 +5,16 @@
 #include "..\FMCommDlg\CMainWindow.h"
 #include "..\FMCommDlg\CPictureCtrl.h"
 #include "..\FMCommDlg\CStripCtrl.h"
+#include "..\FMCommDlg\CTaskbar.h"
+#include "..\FMCommDlg\CTaskButton.h"
 #include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\FMLicenseDlg.h"
 #include "..\FMCommDlg\FMProgressDlg.h"
 #include "..\FMCommDlg\FMRegisterDlg.h"
+#include "..\FMCommDlg\FMTooltip.h"
 #include "..\FMCommDlg\License.h"
-
-#define FMHOVERTIME     850
 
 #ifdef FMCommDlg_EXPORTS
 #define FMCommDlg_API

@@ -351,6 +351,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTaskbar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CTaskButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
@@ -372,6 +380,10 @@
 			</File>
 			<File
 				RelativePath=".\FMRegisterDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMTooltip.cpp"
 				>
 			</File>
 			<File
@@ -441,6 +453,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTaskbar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTaskButton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DynArray.h"
 				>
 			</File>
@@ -466,6 +486,10 @@
 			</File>
 			<File
 				RelativePath=".\FMRegisterDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMTooltip.h"
 				>
 			</File>
 			<File
