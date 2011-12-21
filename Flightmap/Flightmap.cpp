@@ -90,6 +90,9 @@ BOOL CFlightmapApp::InitInstance()
 	m_ReduceVisuals = GetInt(_T("ReduceVisuals"), FALSE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
+	m_GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
+	m_GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
+	m_GlobeZoom = GetInt(_T("GlobeZoom"), 600);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
@@ -97,6 +100,7 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
 	m_GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_GlobeShowGPS = GetInt(_T("GlobeShowGPS"), FALSE);
+	m_GlobeShowFlightCount = GetInt(_T("GlobeShowFlightCount"), FALSE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 
@@ -128,6 +132,11 @@ INT CFlightmapApp::ExitInstance()
 	{
 		WriteInt(_T("UseStatuteMiles"), m_UseStatuteMiles);
 		WriteInt(_T("ReduceVisuals"), m_ReduceVisuals);
+		WriteInt(_T("TextureSize"), m_nTextureSize);
+		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+		WriteInt(_T("GlobeLatitude"), m_GlobeLatitude);
+		WriteInt(_T("GlobeLongitude"), m_GlobeLongitude);
+		WriteInt(_T("GlobeZoom"), m_GlobeZoom);
 		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
@@ -135,10 +144,9 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeShowSpots"), m_GlobeShowSpots);
 		WriteInt(_T("GlobeShowAirportNames"), m_GlobeShowAirportNames);
 		WriteInt(_T("GlobeShowGPS"), m_GlobeShowGPS);
+		WriteInt(_T("GlobeShowFlightCount"), m_GlobeShowFlightCount);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
-		WriteInt(_T("TextureSize"), m_nTextureSize);
-		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	}
 
 	return FMApplication::ExitInstance();

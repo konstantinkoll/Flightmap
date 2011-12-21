@@ -93,8 +93,9 @@
 #define IDC_SPOTS                       21506
 #define IDC_AIRPORTNAMES                21507
 #define IDC_GPSCOORDINATES              21508
-#define IDC_VIEWPORT                    21509
-#define IDC_CROSSHAIRS                  21510
+#define IDC_FLIGHTCOUNT                 21509
+#define IDC_VIEWPORT                    21510
+#define IDC_CROSSHAIRS                  21511
 
 // Next default values for new objects
 // 

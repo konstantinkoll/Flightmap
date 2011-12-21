@@ -26,6 +26,7 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_SPOTS, theApp.m_GlobeShowSpots);
 	DDX_Check(pDX, IDC_AIRPORTNAMES, theApp.m_GlobeShowAirportNames);
 	DDX_Check(pDX, IDC_GPSCOORDINATES, theApp.m_GlobeShowGPS);
+	DDX_Check(pDX, IDC_FLIGHTCOUNT, theApp.m_GlobeShowFlightCount);
 	DDX_Check(pDX, IDC_VIEWPORT, theApp.m_GlobeShowViewport);
 	DDX_Check(pDX, IDC_CROSSHAIRS, theApp.m_GlobeShowCrosshairs);
 
