@@ -194,16 +194,31 @@ __forceinline DOUBLE GetSeconds(DOUBLE c)
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
-FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero)
+FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero)
 {
-	tmpStr.Format(FillZero ? L"%3u°%2u\'%2u\"%c" : L"%u°%u\'%u\"%c",
+	sprintf_s(tmpStr, cCount, FillZero ? "%03u°%02u\'%02u\"%c" : "%u°%u\'%u\"%c",
 		(UINT)(fabs(c)+ROUNDOFF),
 		(UINT)GetMinutes(c),
 		(UINT)(GetSeconds(c)+0.5),
 		c>0 ? IsLatitude ? 'S' : 'N' : IsLatitude ? 'W' : 'E');
+}
 
-	if (FillZero)
-		tmpStr.Replace(L' ', L'0');
+FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)
+{
+	if ((c.Latitude==0) && (c.Longitude==0))
+	{
+		*tmpStr = '\0';
+	}
+	else
+	{
+		FMGeoCoordinateToString(c.Latitude, tmpStr, cCount, TRUE, FillZero);
+
+		CHAR Longitude[16];
+		FMGeoCoordinateToString(c.Longitude, Longitude, 16, FALSE, FillZero);
+
+		strcat_s(tmpStr, cCount, ", ");
+		strcat_s(tmpStr, cCount, Longitude);
+	}
 }
 
 FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero)
@@ -214,12 +229,16 @@ FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& t
 	}
 	else
 	{
-		CString Longitude;
-		FMGeoCoordinateToString(c.Longitude, Longitude, FALSE, FillZero);
+		CHAR Latitude[16];
+		FMGeoCoordinateToString(c.Latitude, Latitude, 16, TRUE, FillZero);
 
-		FMGeoCoordinateToString(c.Latitude, tmpStr, TRUE, FillZero);
+		CHAR Longitude[16];
+		FMGeoCoordinateToString(c.Longitude, Longitude, 16, FALSE, FillZero);
+		CString L(Longitude);
+
+		tmpStr = Latitude;
 		tmpStr.Append(_T(", "));
-		tmpStr.Append(Longitude);
+		tmpStr.Append(L);
 	}
 }
 

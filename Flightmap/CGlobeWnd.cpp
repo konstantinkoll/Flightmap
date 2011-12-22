@@ -42,7 +42,7 @@ BOOL CGlobeWnd::Create()
 BOOL CGlobeWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-	if (m_GlobeView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (m_wndGlobeView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
 	return CMainWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
@@ -58,7 +58,17 @@ void CGlobeWnd::AdjustLayout()
 	if (m_pDialogMenuBar)
 		rect.top += m_pDialogMenuBar->GetPreferredHeight();
 
-	m_GlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndGlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
+void CGlobeWnd::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
+{
+	m_wndGlobeView.AddFlight(From, To, Color);
+}
+
+void CGlobeWnd::CalcFlights()
+{
+	m_wndGlobeView.CalcFlights();
 }
 
 
@@ -89,7 +99,7 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
 	//m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
 
-	m_GlobeView.Create(this, 3);
+	m_wndGlobeView.Create(this, 3);
 
 	theApp.AddFrame(this);
 
@@ -107,7 +117,7 @@ void CGlobeWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
 
-	m_GlobeView.SetFocus();
+	m_wndGlobeView.SetFocus();
 }
 
 LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)

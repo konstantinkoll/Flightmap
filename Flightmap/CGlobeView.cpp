@@ -160,11 +160,15 @@ CGlobeView::CGlobeView()
 	m_CurrentGlobeTexture = -1;
 	m_Scale = 1.0f;
 	m_Radius = m_Momentum = 0.0f;
-	m_IsSelected = m_Grabbed = m_Hover = FALSE;
+	m_IsSelected = m_Grabbed = m_Hover = m_LockUpdate = FALSE;
 	m_AnimCounter = m_MoveCounter = 0;
 
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
-	m_LockUpdate = FALSE;
+	ENSURE(m_FlightCount_Singular.LoadString(IDS_FLIGHTCOUNT_SINGULAR));
+	ENSURE(m_FlightCount_Plural.LoadString(IDS_FLIGHTCOUNT_PLURAL));
+
+	m_FlightAirports.InitHashTable(2048);
+	m_FlightAirportCounts.InitHashTable(2048);
 }
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
@@ -179,6 +183,75 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 		return FALSE;
 
 	UpdateViewOptions(TRUE);
+	return TRUE;
+}
+
+FMAirport* CGlobeView::AddAirport(CHAR* Code)
+{
+	ASSERT(Code);
+
+	if (strlen(Code)!=3)
+		return NULL;
+
+	FMAirport* pAirport;
+	if (m_FlightAirports.Lookup(Code, pAirport))
+	{
+		m_FlightAirportCounts[Code]++;
+		return pAirport;
+	}
+
+	if (!FMIATAGetAirportByCode(Code, &pAirport))
+		return NULL;
+
+	m_FlightAirports[Code] = pAirport;
+	m_FlightAirportCounts[Code] = 1;
+
+	return pAirport;
+}
+
+void CGlobeView::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
+{
+	FMAirport* pFrom = AddAirport(From);
+	FMAirport* pTo = AddAirport(To);
+}
+
+void CGlobeView::CalcFlights()
+{
+	// Airports
+	CFlightAirports::CPair* pPair = m_FlightAirports.PGetFirstAssoc();
+	while (pPair)
+	{
+		GlobeAirport ga;
+		ZeroMemory(&ga, sizeof(ga));
+		ga.pAirport = pPair->value;
+
+		strcpy_s(ga.NameString, 130, ga.pAirport->Name);
+		FMCountry* Country = FMIATAGetCountry(ga.pAirport->CountryID);
+		if (Country)
+		{
+			strcat_s(ga.NameString, 130, ", ");
+			strcat_s(ga.NameString, 130, Country->Name);
+		}
+
+		FMGeoCoordinatesToString(ga.pAirport->Location, ga.CoordString, 32, FALSE);
+
+		CalculateWorldCoords(ga.pAirport->Location.Latitude, ga.pAirport->Location.Longitude, ga.World);
+
+		UINT Cnt = 0;
+		m_FlightAirportCounts.Lookup(ga.pAirport->Code, Cnt);
+		CString tmpStr;
+		tmpStr.Format(Cnt==1 ? m_FlightCount_Singular : m_FlightCount_Plural, Cnt);
+		wcscpy_s(ga.CountString, 64, tmpStr.GetBuffer());
+
+		m_Airports.AddItem(ga);
+		pPair = m_FlightAirports.PGetNextAssoc(pPair);
+	}
+
+	// Routes
+
+	// Flush
+	m_FlightAirports.RemoveAll();
+	m_FlightAirportCounts.RemoveAll();
 }
 
 void CGlobeView::UpdateViewOptions(BOOL Force)
@@ -202,43 +275,6 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 
 	Invalidate();
 }
-
-/*void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
-{
-	m_Airports = Result;
-
-	if (Result)
-		if (Result->m_ItemCount)
-			for (UINT a=0; a<Result->m_ItemCount; a++)
-			{
-				LFGeoCoordinates coord = { 0.0, 0.0 };
-				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
-				{
-					LFAirport* airport;
-					if (LFIATAGetAirportByCode((CHAR*)Result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
-						coord = airport->Location;
-				}
-				else
-					if (Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
-					{
-						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates);
-						coord = *((LFGeoCoordinates*)Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
-					}
-
-				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
-				{
-					GlobeAirport* d = GetItemData(a);
-					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
-					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
-
-					d->Hdr.Valid = TRUE;
-				}
-			}
-
-	if (Data)
-		if (Data->LocationValid)
-			m_GlobeCurrent = Data->Location;
-}*/
 
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
@@ -461,7 +497,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 			// Beschriftung
 			CHAR* Caption = ga->pAirport->Code;
 			CHAR* Subcaption = (theApp.m_GlobeShowAirportNames ? ga->NameString : NULL);
-			WCHAR* Coordinates = (theApp.m_GlobeShowGPS ? ga->CoordString : NULL);
+			CHAR* Coordinates = (theApp.m_GlobeShowGPS ? ga->CoordString : NULL);
 			WCHAR* Count = (theApp.m_GlobeShowFlightCount ? ga->CountString : NULL);
 
 			DrawLabel(ga, Caption, Subcaption, Coordinates, Count, m_FocusItem==(INT)a);
@@ -469,7 +505,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
+__forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -1134,7 +1170,7 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		SelectItem(idx, nFlags & MK_SHIFT);
+		SelectItem(idx, (nFlags & MK_CONTROL) && (m_FocusItem==idx) && m_IsSelected ? !m_IsSelected : TRUE);
 	}
 }
 

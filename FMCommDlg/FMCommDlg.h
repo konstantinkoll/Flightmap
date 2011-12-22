@@ -46,7 +46,7 @@ struct FMGeoCoordinates
 struct FMAirport
 {
 	INT CountryID;
-	CHAR Code[4];
+	CHAR Code[54];
 	CHAR MetroCode[4];
 	CHAR Name[64];
 	FMGeoCoordinates Location;
@@ -59,7 +59,8 @@ FMCommDlg_API FMCountry* FMIATAGetCountry(UINT ID);
 FMCommDlg_API INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer);
 FMCommDlg_API INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer);
 FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
-FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero=FALSE);
+FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero);
+FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero);
 FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero=FALSE);
 
 

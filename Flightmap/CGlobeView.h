@@ -10,6 +10,9 @@
 
 // Item data
 
+typedef CMap<CStringA, LPCSTR, FMAirport*, FMAirport*&> CFlightAirports;
+typedef CMap<CStringA, LPCSTR, UINT, UINT> CFlightCounts;
+
 struct GlobeParameters
 {
 	GLfloat Latitude;
@@ -25,7 +28,7 @@ struct GlobeAirport
 	GLfloat Alpha;
 	FMAirport* pAirport;
 	CHAR NameString[130];
-	WCHAR CoordString[32];
+	CHAR CoordString[32];
 	WCHAR CountString[64];
 };
 
@@ -39,6 +42,8 @@ public:
 	CGlobeView();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
+	void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
+	void CalcFlights();
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
@@ -67,7 +72,7 @@ protected:
 	void Normalize();
 	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
 	void CalcAndDrawLabel();
-	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused);
+	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused);
 	void DrawStatusBar(INT Height);
 	void DrawScene(BOOL InternalCall=FALSE);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
@@ -124,7 +129,14 @@ private:
 	BOOL m_Grabbed;
 	BOOL m_LockUpdate;
 	CString m_YouLookAt;
+	CString m_FlightCount_Singular;
+	CString m_FlightCount_Plural;
 	FMTooltip m_TooltipCtrl;
+
+	CFlightAirports m_FlightAirports;
+	CFlightCounts m_FlightAirportCounts;
+
+	FMAirport* AddAirport(CHAR* Code);
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();

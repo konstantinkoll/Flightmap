@@ -132,6 +132,8 @@ BEGIN
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
     IDS_DRIVENOTREADY       "Der Datenträger ist nicht bereit!"
+    IDS_FLIGHTCOUNT_SINGULAR "%d Flug"
+    IDS_FLIGHTCOUNT_PLURAL  "%d Flüge"
 END
 
 STRINGTABLE 
@@ -269,6 +271,8 @@ BEGIN
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
     IDS_DRIVENOTREADY       "The drive is not ready!"
+    IDS_FLIGHTCOUNT_SINGULAR "%d flight"
+    IDS_FLIGHTCOUNT_PLURAL  "%d flights"
 END
 
 STRINGTABLE 

@@ -299,6 +299,14 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 void CMainWnd::OnGlobeOpen()
 {
 	CGlobeWnd* pFrame = new CGlobeWnd();
+
+	pFrame->AddFlight("DUS", "FRA", (COLORREF)-1);
+	pFrame->AddFlight("FRA", "JFK", 0x0000FF);
+	pFrame->AddFlight("EWR", "SFO", (COLORREF)-1);
+	pFrame->AddFlight("SFO", "MUC", (COLORREF)-1);
+	pFrame->AddFlight("MUC", "DUS", (COLORREF)-1);
+	pFrame->CalcFlights();
+
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);
 }

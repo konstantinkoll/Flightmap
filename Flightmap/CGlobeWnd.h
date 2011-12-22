@@ -20,10 +20,12 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create();
+	void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
+	void CalcFlights();
 
 protected:
 	HICON m_hIcon;
-	CGlobeView m_GlobeView;
+	CGlobeView m_wndGlobeView;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
