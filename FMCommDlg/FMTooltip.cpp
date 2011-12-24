@@ -6,6 +6,27 @@
 #include "FMCommDlg.h"
 
 
+void AppendAttribute(CString& dst, UINT ResID, CString Value)
+{
+	if (!Value.IsEmpty())
+	{
+		CString Name;
+		ENSURE(Name.LoadString(ResID));
+
+		dst.Append(Name);
+		dst.Append(_T(": "));
+		dst.Append(Value);
+		dst.Append(_T("\n"));
+	}
+}
+
+void AppendAttribute(CString& dst, UINT ResID, CHAR* Value)
+{
+	CString tmpStr(Value);
+	AppendAttribute(dst, ResID, tmpStr);
+}
+
+
 // FMTooltip
 //
 
@@ -13,6 +34,7 @@ FMTooltip::FMTooltip()
 	: CWnd()
 {
 	m_Icon = NULL;
+	m_Bitmap = NULL;
 }
 
 BOOL FMTooltip::Create(CWnd* pWndParent)
@@ -45,7 +67,7 @@ BOOL FMTooltip::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void FMTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& strCaption, CString strText)
+void FMTooltip::Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, const CString& strCaption, CString strText, BOOL DrawBorder)
 {
 	if (!GetSafeHwnd())
 		return;
@@ -59,9 +81,11 @@ void FMTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		DestroyIcon(m_Icon);
 
 	m_Icon = hIcon;
-	m_szIcon = szIcon;
+	m_Bitmap = hBitmap;
+	m_Size = Size;
 	m_strCaption = strCaption;
 	m_strText = strText;
+	m_DrawBorder = DrawBorder;
 
 	// Size
 	CSize sz(0, 0);
@@ -109,10 +133,10 @@ void FMTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		dc.SelectObject(pOldFont);
 	}
 
-	if (hIcon)
+	if (hIcon || hBitmap)
 	{
-		sz.cx += szIcon.cx+2*AFX_TEXT_MARGIN;
-		sz.cy = max(sz.cy, szIcon.cy);
+		sz.cx += Size.cx+2*AFX_TEXT_MARGIN;
+		sz.cy = max(sz.cy, Size.cy);
 	}
 
 	sz.cx += 2*(AFX_TEXT_MARGIN+3);
@@ -204,6 +228,30 @@ void FMTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 	UpdateWindow();
 }
 
+void FMTooltip::Track(CPoint point, FMAirport* pAirport, CString strText)
+{
+	CString Caption(pAirport->Code);
+	CString Text(_T(""));
+	CString tmpStr;
+
+	AppendAttribute(Text, IDS_AIRPORT_NAME, pAirport->Name);
+	AppendAttribute(Text, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+	FMGeoCoordinatesToString(pAirport->Location, tmpStr);
+	AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
+
+	if (strText.IsEmpty())
+		Text.Append(strText);
+
+	Track(point, NULL, NULL, 128, Caption, Text, TRUE);
+}
+
+void FMTooltip::Track(CPoint point, CHAR* Code, CString strText)
+{
+	FMAirport* pAirport = NULL;
+	if (FMIATAGetAirportByCode(Code, &pAirport))
+		Track(point, pAirport, strText);
+}
+
 void FMTooltip::Hide()
 {
 	if (IsWindow(m_hWnd))
@@ -234,6 +282,8 @@ void FMTooltip::OnDestroy()
 {
 	if (m_Icon)
 		DestroyIcon(m_Icon);
+	if (m_Bitmap)
+		DeleteObject(m_Bitmap);
 
 	CWnd::OnDestroy();
 }
@@ -303,8 +353,8 @@ void FMTooltip::OnPaint()
 
 	if (m_Icon)
 	{
-		DrawIconEx(dc, rect.left, rect.top, m_Icon, m_szIcon.cx, m_szIcon.cy, 0, NULL, DI_NORMAL);
-		rect.left += m_szIcon.cx+2*AFX_TEXT_MARGIN;
+		DrawIconEx(dc, rect.left, rect.top, m_Icon, m_Size.cx, m_Size.cy, 0, NULL, DI_NORMAL);
+		rect.left += m_Size.cx+2*AFX_TEXT_MARGIN;
 	}
 
 	if (!m_strCaption.IsEmpty())

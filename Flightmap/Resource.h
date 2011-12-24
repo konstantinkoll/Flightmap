@@ -29,13 +29,9 @@
 #define IDS_PRINTPREVIEW                1004
 #define IDS_PREPAREDISTRIBUTION         1005
 #define IDS_YOULOOKAT                   1006
-#define IDS_AIRPORT_NAME                1007
-#define IDS_AIRPORT_COUNTRY             1008
-#define IDS_AIRPORT_CODE                1009
-#define IDS_AIRPORT_LOCATION            1010
-#define IDS_DRIVENOTREADY               1011
-#define IDS_FLIGHTCOUNT_SINGULAR        1012
-#define IDS_FLIGHTCOUNT_PLURAL          1013
+#define IDS_DRIVENOTREADY               1007
+#define IDS_FLIGHTCOUNT_SINGULAR        1008
+#define IDS_FLIGHTCOUNT_PLURAL          1009
 #define IDM_FILE                        3000
 #define IDM_EDIT                        3001
 #define IDM_MAP                         3002

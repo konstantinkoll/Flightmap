@@ -344,6 +344,11 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
+    IDS_AUTOMATIC           "Automatisch wählen"
+    IDS_AIRPORT_NAME        "Name"
+    IDS_AIRPORT_COUNTRY     "Land"
+    IDS_AIRPORT_CODE        "IATA-Code"
+    IDS_AIRPORT_LOCATION    "Ort"
 END
 
 STRINGTABLE 
@@ -673,6 +678,11 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
+    IDS_AUTOMATIC           "Choose automatically"
+    IDS_AIRPORT_NAME        "Name"
+    IDS_AIRPORT_COUNTRY     "Country"
+    IDS_AIRPORT_CODE        "IATA code"
+    IDS_AIRPORT_LOCATION    "Location"
 END
 
 STRINGTABLE 

@@ -493,6 +493,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IATA.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IATA_DE.h"
 				>
 			</File>

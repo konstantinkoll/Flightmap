@@ -32,6 +32,10 @@
 #define IDS_UPDATE_NOTAVAILABLE         20111
 #define IDS_CANNOTLOADLICENSE           20112
 #define IDS_AUTOMATIC                   20113
+#define IDS_AIRPORT_NAME                20114
+#define IDS_AIRPORT_COUNTRY             20115
+#define IDS_AIRPORT_CODE                20116
+#define IDS_AIRPORT_LOCATION            20117
 #define IDC_GROUPBOX1                   20200
 #define IDC_GROUPBOX2                   20201
 #define IDC_GROUPBOX3                   20202

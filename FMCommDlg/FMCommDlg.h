@@ -14,6 +14,7 @@
 #include "..\FMCommDlg\FMProgressDlg.h"
 #include "..\FMCommDlg\FMRegisterDlg.h"
 #include "..\FMCommDlg\FMTooltip.h"
+#include "..\FMCommDlg\IATA.h"
 #include "..\FMCommDlg\License.h"
 
 #ifdef FMCommDlg_EXPORTS
@@ -30,28 +31,6 @@ FMCommDlg_API void FMErrorBox(UINT nResID, HWND hWnd=NULL);
 
 
 // IATA database
-
-struct FMCountry
-{
-	UINT ID;
-	CHAR Name[64];
-};
-
-struct FMGeoCoordinates
-{
-	DOUBLE Latitude;
-	DOUBLE Longitude;
-};
-
-struct FMAirport
-{
-	INT CountryID;
-	CHAR Code[54];
-	CHAR MetroCode[4];
-	CHAR Name[64];
-	FMGeoCoordinates Location;
-};
-
 
 FMCommDlg_API UINT FMIATAGetCountryCount();
 FMCommDlg_API UINT FMIATAGetAirportCount();

@@ -1128,7 +1128,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 				if (!m_TooltipCtrl.IsWindowVisible())
 				{
 					ClientToScreen(&point);
-					//m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));
+					m_TooltipCtrl.Track(point, m_Airports.m_Items[m_HotItem].pAirport, m_Airports.m_Items[m_HotItem].CountString);
 				}
 			}
 			else

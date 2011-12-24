@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "IATA.h"
 
 
 // FMTooltip
@@ -18,7 +19,9 @@ public:
 	virtual BOOL Create(CWnd* pWndParent);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	void Track(CPoint point, HICON hIcon, CSize szIcon, const CString& strCaption, CString strText);
+	void Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, const CString& strCaption, CString strText, BOOL DrawBorder=FALSE);
+	void Track(CPoint point, FMAirport* pAirport, CString strText);
+	void Track(CPoint point, CHAR* Code, CString strText);
 	void Deactivate();
 
 protected:
@@ -26,10 +29,12 @@ protected:
 
 	BOOL m_Themed;
 	HICON m_Icon;
-	CSize m_szIcon;
+	HBITMAP m_Bitmap;
+	CSize m_Size;
 	CString m_strCaption;
 	CString m_strText;
 	INT m_TextHeight;
+	BOOL m_DrawBorder;
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
