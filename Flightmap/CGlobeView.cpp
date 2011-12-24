@@ -922,6 +922,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
@@ -1117,6 +1118,14 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 	}
 
 	return TRUE;
+}
+
+void CGlobeView::OnMouseLeave()
+{
+	m_TooltipCtrl.Deactivate();
+
+	m_Hover = FALSE;
+	m_HotItem = -1;
 }
 
 void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)

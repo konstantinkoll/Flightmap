@@ -239,7 +239,7 @@ void FMTooltip::Track(CPoint point, FMAirport* pAirport, CString strText)
 	FMGeoCoordinatesToString(pAirport->Location, tmpStr);
 	AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
 
-	if (strText.IsEmpty())
+	if (!strText.IsEmpty())
 		Text.Append(strText);
 
 	Track(point, NULL, NULL, 128, Caption, Text, TRUE);
