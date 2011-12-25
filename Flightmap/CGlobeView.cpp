@@ -186,6 +186,31 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 	return TRUE;
 }
 
+BOOL CGlobeView::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
 FMAirport* CGlobeView::AddAirport(CHAR* Code)
 {
 	ASSERT(Code);

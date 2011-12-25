@@ -41,6 +41,8 @@ class CGlobeView : public CWnd
 public:
 	CGlobeView();
 
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
 	void CalcFlights();
