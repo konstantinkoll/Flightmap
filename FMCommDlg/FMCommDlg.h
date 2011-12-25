@@ -38,6 +38,7 @@ FMCommDlg_API FMCountry* FMIATAGetCountry(UINT ID);
 FMCommDlg_API INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer);
 FMCommDlg_API INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer);
 FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
+FMCommDlg_API HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height);
 FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero);
 FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero);
 FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero=FALSE);

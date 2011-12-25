@@ -141,8 +141,8 @@ void FMTooltip::Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, co
 
 	sz.cx += 2*(AFX_TEXT_MARGIN+3);
 	sz.cy += 2*(AFX_TEXT_MARGIN+2);
-	if (sz.cx>m_TextHeight*25)
-		sz.cx = m_TextHeight*25;
+	if (sz.cx>m_TextHeight*50)
+		sz.cx = m_TextHeight*50;
 
 	// Position
 	CRect rect;
@@ -242,7 +242,7 @@ void FMTooltip::Track(CPoint point, FMAirport* pAirport, CString strText)
 	if (!strText.IsEmpty())
 		Text.Append(strText);
 
-	Track(point, NULL, NULL, 128, Caption, Text, TRUE);
+	Track(point, NULL, FMIATACreateAirportMap(pAirport, 192, 192), CSize(192, 192), Caption, Text, TRUE);
 }
 
 void FMTooltip::Track(CPoint point, CHAR* Code, CString strText)
@@ -351,11 +351,26 @@ void FMTooltip::OnPaint()
 	rect.DeflateRect(AFX_TEXT_MARGIN+3, AFX_TEXT_MARGIN+2);
 	dc.SetTextColor(clrText);
 
-	if (m_Icon)
+	if (m_Bitmap)
 	{
-		DrawIconEx(dc, rect.left, rect.top, m_Icon, m_Size.cx, m_Size.cy, 0, NULL, DI_NORMAL);
+		CDC dcBitmap;
+		dcBitmap.CreateCompatibleDC(&dc);
+		HBITMAP hOldBitmap = (HBITMAP)SelectObject(dcBitmap, m_Bitmap);
+
+		dc.BitBlt(rect.left, rect.top, m_Size.cx, m_Size.cy, &dcBitmap, 0, 0, SRCCOPY);
+		if (m_DrawBorder)
+			dc.Draw3dRect(rect.left, rect.top, m_Size.cx, m_Size.cy, 0x000000, 0x000000);
+
+		SelectObject(dcBitmap, hOldBitmap);
+
 		rect.left += m_Size.cx+2*AFX_TEXT_MARGIN;
 	}
+	else
+		if (m_Icon)
+		{
+			DrawIconEx(dc, rect.left, rect.top, m_Icon, m_Size.cx, m_Size.cy, 0, NULL, DI_NORMAL);
+			rect.left += m_Size.cx+2*AFX_TEXT_MARGIN;
+		}
 
 	if (!m_strCaption.IsEmpty())
 	{

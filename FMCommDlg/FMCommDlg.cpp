@@ -109,6 +109,8 @@ FMCommDlg_API void FMErrorBox(UINT nResID, HWND hWnd)
 #define ROUNDOFF 0.00000001
 
 static BOOL UseGermanDB = (GetUserDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
+static CGdiPlusBitmapResource* MapBackground = NULL;
+static CGdiPlusBitmapResource* MapIndicator = NULL;
 
 FMCommDlg_API UINT FMIATAGetCountryCount()
 {
@@ -180,6 +182,109 @@ FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
 	}
 
 	return FALSE;
+}
+
+FMCommDlg_API HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
+{
+	ASSERT(pAirport);
+
+	// Load resources
+	if (!MapBackground)
+	{
+		MapBackground = new CGdiPlusBitmapResource();
+		ENSURE(MapBackground->Load(IDB_EARTHMAP_2048, _T("PNG"), AfxGetResourceHandle()));
+	}
+	if (!MapIndicator)
+	{
+		MapIndicator = new CGdiPlusBitmapResource();
+		ENSURE(MapIndicator->Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), AfxGetResourceHandle()));
+	}
+
+	// Create bitmap
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+
+	BITMAPINFOHEADER bmi = { sizeof(bmi) };
+	bmi.biWidth = Width;
+	bmi.biHeight = Height;
+	bmi.biPlanes = 1;
+	bmi.biBitCount = 24;
+
+	BYTE* pbData = 0;
+	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
+	HGDIOBJ hOldBitmap = dc.SelectObject(hBitmap);
+
+	// Draw
+	Graphics g(dc);
+	g.SetCompositingMode(CompositingModeSourceOver);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+
+	INT L = MapBackground->m_pBitmap->GetWidth();
+	INT H = MapBackground->m_pBitmap->GetHeight();
+	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
+	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
+	INT PosX = -LocX+Width/2;
+	INT PosY = -LocY+Height/2;
+	if (PosY>1)
+	{
+		PosY = 1;
+	}
+	else
+		if (PosY<(INT)Height-H)
+		{
+			PosY = Height-H;
+		}
+	if (PosX>1)
+		g.DrawImage(MapBackground->m_pBitmap, PosX-L, PosY, L, H);
+	g.DrawImage(MapBackground->m_pBitmap, PosX, PosY, L, H);
+	if (PosX<(INT)Width-L)
+		g.DrawImage(MapBackground->m_pBitmap, PosX+L, PosY, L, H);
+
+	LocX += PosX-MapIndicator->m_pBitmap->GetWidth()/2+1;
+	LocY += PosY-MapIndicator->m_pBitmap->GetHeight()/2+1;
+	g.DrawImage(MapIndicator->m_pBitmap, LocX, LocY);
+
+	// Pfad erstellen
+	FontFamily fontFamily(((FMApplication*)AfxGetApp())->GetDefaultFontFace());
+	WCHAR pszBuf[4];
+	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
+
+	StringFormat strformat;
+	GraphicsPath TextPath;
+	TextPath.Reset();
+	TextPath.AddString(pszBuf, (INT)wcslen(pszBuf), &fontFamily, FontStyleRegular, 21, Gdiplus::Point(0, 0), &strformat);
+
+	// Pfad verschieben
+	Rect tr;
+	TextPath.GetBounds(&tr);
+
+	INT FntX = LocX+MapIndicator->m_pBitmap->GetWidth();
+	INT FntY = LocY-tr.Y;
+
+	if (FntY<10)
+	{
+		FntY = 10;
+	}
+	else
+		if (FntY+tr.Height+10>(INT)Height)
+		{
+			FntY = Height-tr.Height-10;
+		}
+	Matrix m;
+	m.Translate((Gdiplus::REAL)FntX, (Gdiplus::REAL)FntY-1.25f);
+	TextPath.Transform(&m);
+
+	// Text
+	Pen pen(Color(0, 0, 0), 3.0);
+	pen.SetLineJoin(LineJoinRound);
+	g.DrawPath(&pen, &TextPath);
+	SolidBrush brush(Color(255, 255, 255));
+	g.FillPath(&brush, &TextPath);
+
+	dc.SelectObject(hOldBitmap);
+
+	return hBitmap;
 }
 
 __forceinline DOUBLE GetMinutes(DOUBLE c)
