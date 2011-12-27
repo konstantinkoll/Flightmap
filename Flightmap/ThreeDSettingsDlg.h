@@ -1,27 +1,25 @@
 
-// GlobeOptionsDlg.h: Schnittstelle der Klasse GlobeOptionsDlg
+// ThreeDSettingsDlg.h: Schnittstelle der Klasse ThreeDSettingsDlg
 //
 
 #pragma once
 #include "Flightmap.h"
 
 
-// GlobeOptionsDlg
+// ThreeDSettingsDlg
 //
 
-class GlobeOptionsDlg : public CDialog
+class ThreeDSettingsDlg : public CDialog
 {
 public:
-	GlobeOptionsDlg(CWnd* pParent);
+	ThreeDSettingsDlg(CWnd* pParent);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnViewport();
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CComboBox m_wndTextureSize;
-	CButton m_wndViewport;
 };

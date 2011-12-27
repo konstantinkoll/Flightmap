@@ -10,9 +10,10 @@
 // CMainWindow
 //
 
-#define WM_REQUESTSUBMENU      WM_USER+1
-#define WM_PTINRECT            WM_USER+2
-#define WM_CLOSEPOPUP          WM_USER+3
+#define WM_REQUESTSUBMENU         WM_USER+1
+#define WM_PTINRECT               WM_USER+2
+#define WM_CLOSEPOPUP             WM_USER+3
+#define WM_USEBGIMAGESCHANGED     WM_USER+4
 
 class CMainWindow : public CWnd
 {
@@ -44,5 +45,6 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnClosePopup();
+	afx_msg void OnUseBgImagesChanged();
 	DECLARE_MESSAGE_MAP()
 };

@@ -98,14 +98,15 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 
-	//afx_msg void OnJumpToLocation();
+	afx_msg void OnJumpToLocation();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
-	//afx_msg void OnSettings();
-	//afx_msg void OnGoogleEarth();
-	//afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	afx_msg void On3DSettings();
+	afx_msg void OnOpenGoogleEarth();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:

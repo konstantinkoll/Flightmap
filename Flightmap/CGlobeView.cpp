@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "CGlobeView.h"
 #include "Resource.h"
-#include "GlobeOptionsDlg.h"
+#include "ThreeDSettingsDlg.h"
 #include <math.h>
 
 #define DISTANCE       39.0f
@@ -957,14 +957,16 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_TIMER()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_WM_CONTEXTMENU()
 
-	/*ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
-	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
-	ON_COMMAND(IDM_GLOBE_ZOOMOUT, OnZoomOut)
-	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnAutosize)
-	ON_COMMAND(IDM_GLOBE_SETTINGS, OnSettings)
-	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_JUMPTOLOCATION, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)*/
+	ON_COMMAND(IDM_GLOBEVIEW_JUMPTOLOCATION, OnJumpToLocation)
+	ON_COMMAND(IDM_GLOBEVIEW_ZOOMIN, OnZoomIn)
+	ON_COMMAND(IDM_GLOBEVIEW_ZOOMOUT, OnZoomOut)
+	ON_COMMAND(IDM_GLOBEVIEW_AUTOSIZE, OnAutosize)
+	ON_COMMAND(IDM_GLOBEVIEW_3DSETTINGS, On3DSettings)
+	ON_COMMAND(IDM_GLOBEITEM_OPENGOOGLEEARTH, OnOpenGoogleEarth)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEVIEW_JUMPTOLOCATION, IDM_GLOBEVIEW_AUTOSIZE, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEITEM_OPENGOOGLEEARTH, IDM_GLOBEITEM_OPENGOOGLEEARTH, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1264,6 +1266,20 @@ void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	switch(nChar)
 	{
+	case VK_ADD:
+	case VK_OEM_PLUS:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			OnZoomIn();
+		break;
+	case VK_SUBTRACT:
+	case VK_OEM_MINUS:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			OnZoomOut();
+		break;
+	case 'L':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			OnJumpToLocation();
+		break;
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 		{
@@ -1308,10 +1324,42 @@ void CGlobeView::OnKillFocus(CWnd* /*pNewWnd*/)
 	Invalidate();
 }
 
-
-/*void CGlobeView::OnJumpToLocation()
+void CGlobeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
-	LFSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
+	m_Momentum = 0.0f;
+
+	if ((pos.x<0) || (pos.y<0))
+	{
+		CRect rect;
+		GetClientRect(rect);
+
+		pos.x = (rect.left+rect.right)/2;
+		pos.y = (rect.top+rect.bottom)/2;
+		ClientToScreen(&pos);
+	}
+
+	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
+
+	if ((m_FocusItem!=-1) && (m_IsSelected))
+	{
+		pPopup->Create(this, IDB_MENUGLOBEITEM_32, IDB_MENUGLOBEITEM_16);
+		pPopup->AddCommand(IDM_GLOBEITEM_OPENGOOGLEEARTH, 0, CDMB_LARGE);
+	}
+	else
+	{
+		pPopup->Create(this, IDB_MENUGLOBEVIEW_32, IDB_MENUGLOBEVIEW_16);
+		pPopup->AddCommand(IDM_GLOBEVIEW_JUMPTOLOCATION, 0, CDMB_LARGE);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
+	}
+
+	pPopup->Track(pos);
+}
+
+
+void CGlobeView::OnJumpToLocation()
+{
+/*	LFSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -1325,8 +1373,8 @@ void CGlobeView::OnKillFocus(CWnd* /*pNewWnd*/)
 		m_Momentum = 0.0f;
 
 		UpdateScene();
-	}
-}*/
+	}*/
+}
 
 void CGlobeView::OnZoomIn()
 {
@@ -1352,16 +1400,16 @@ void CGlobeView::OnAutosize()
 	UpdateScene();
 }
 
-/*void CGlobeView::OnSettings()
+void CGlobeView::On3DSettings()
 {
-	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
-	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions(-1, LFViewGlobe);
+	ThreeDSettingsDlg dlg(this);
+	dlg.DoModal();
 }
 
-void CGlobeView::OnGoogleEarth()
+void CGlobeView::OnOpenGoogleEarth()
 {
-	// TODO
+	if ((m_FocusItem!=-1) && (m_IsSelected))
+		theApp.OpenAirportGoogleEarth(m_Airports.m_Items[m_FocusItem].pAirport);
 }
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -1369,19 +1417,19 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_GLOBE_ZOOMIN:
+	case IDM_GLOBEVIEW_ZOOMIN:
 		b = m_GlobeTarget.Zoom>0;
 		break;
-	case IDM_GLOBE_ZOOMOUT:
+	case IDM_GLOBEVIEW_ZOOMOUT:
 		b = m_GlobeTarget.Zoom<1000;
 		break;
-	case IDM_GLOBE_AUTOSIZE:
+	case IDM_GLOBEVIEW_AUTOSIZE:
 		b = m_GlobeTarget.Zoom!=600;
 		break;
-	case IDM_GLOBE_GOOGLEEARTH:
-		b = (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
+	case IDM_GLOBEITEM_OPENGOOGLEEARTH:
+		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());
 		break;
 	}
 
 	pCmdUI->Enable(b);
-}*/
+}

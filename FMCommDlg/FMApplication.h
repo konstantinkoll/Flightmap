@@ -65,7 +65,8 @@ public:
 	UINT OSVersion;
 	CLIPFORMAT CF_FILEDESCRIPTOR;
 	CLIPFORMAT CF_FILECONTENTS;
-	BOOL m_ReduceVisuals;
+	BOOL m_UseBgImages;
+	UINT msgUseBgImagesChanged;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;

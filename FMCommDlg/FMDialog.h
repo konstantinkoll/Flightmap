@@ -56,8 +56,8 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysColorChange();
+	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 

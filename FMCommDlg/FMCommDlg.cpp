@@ -305,7 +305,7 @@ FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cC
 		(UINT)(fabs(c)+ROUNDOFF),
 		(UINT)GetMinutes(c),
 		(UINT)(GetSeconds(c)+0.5),
-		c>0 ? IsLatitude ? 'S' : 'N' : IsLatitude ? 'W' : 'E');
+		c>0 ? IsLatitude ? 'S' : 'W' : IsLatitude ? 'N' : 'E');
 }
 
 FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)

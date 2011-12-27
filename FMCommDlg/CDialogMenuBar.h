@@ -7,8 +7,8 @@
 #include "CMainWindow.h"
 #include "DynArray.h"
 
-#define WM_MENULEFT      WM_USER+4
-#define WM_MENURIGHT     WM_USER+5
+#define WM_MENULEFT      WM_USER+5
+#define WM_MENURIGHT     WM_USER+6
 
 
 // CDialogCmdUI

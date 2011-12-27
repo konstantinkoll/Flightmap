@@ -11,17 +11,19 @@
 
 // Globe textures
 
-#define FMTextureNone                   -1
-#define FMTextureAuto                   0
-#define FMTexture1024                   1
-#define FMTexture2048                   2
-#define FMTexture4096                   3
-#define FMTexture8192                   4
+#define FMTextureNone     -1
+#define FMTextureAuto     0
+#define FMTexture1024     1
+#define FMTexture2048     2
+#define FMTexture4096     3
+#define FMTexture8192     4
 
 
 // CFlightmapApp:
 // Siehe Flightmap.cpp für die Implementierung dieser Klasse
 //
+
+#define WM_3DSETTINGSCHANGED      WM_USER+100
 
 class CFlightmapApp : public FMApplication
 {
@@ -34,6 +36,7 @@ public:
 	void AddFrame(CMainWindow* pFrame);
 	void KillFrame(CMainWindow* pVictim);
 	void Quit();
+	void Broadcast(UINT message);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
 

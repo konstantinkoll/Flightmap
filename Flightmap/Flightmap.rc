@@ -38,6 +38,12 @@ IDB_MENUGLOBE_16        BITMAP                  "res\\MenuGlobe_16.bmp"
 IDB_MENUGLOBE_32        BITMAP                  "res\\MenuGlobe_32.bmp"
 IDB_MENUGOOGLEEARTH_16  BITMAP                  "res\\MenuGoogleEarth_16.bmp"
 IDB_MENUGOOGLEEARTH_32  BITMAP                  "res\\MenuGoogleEarth_32.bmp"
+IDB_MENUGLOBEWND_16     BITMAP                  "res\\MenuGlobeWnd_16.bmp"
+IDB_MENUGLOBEWND_32     BITMAP                  "res\\MenuGlobeWnd_32.bmp"
+IDB_MENUGLOBEVIEW_16    BITMAP                  "res\\MenuGlobeView_16.bmp"
+IDB_MENUGLOBEVIEW_32    BITMAP                  "res\\MenuGlobeView_32.bmp"
+IDB_MENUGLOBEITEM_16    BITMAP                  "res\\MenuGlobeItem_16.bmp"
+IDB_MENUGLOBEITEM_32    BITMAP                  "res\\MenuGlobeItem_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -140,6 +146,8 @@ BEGIN
     IDM_GLOBE               "&Globus"
     IDM_GOOGLEEARTH         "Google &Earth"
     IDM_STATISTICS          "&Statistik"
+    IDM_GLOBEWND            "&Globus"
+    IDM_GLOBEVIEW           "&Ansicht"
 END
 
 STRINGTABLE 
@@ -183,6 +191,15 @@ BEGIN
     IDM_GLOBE_OPEN          "Globus ö&ffnen\nZeigt den Flugplan auf\neinem 3D-Globus an."
     IDM_GOOGLEEARTH_OPEN    "In Google Earth ö&ffnen\nÖffnet den Flugplan\nin Google Earth."
     IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
+    IDM_GLOBEWND_CLOSE      "S&chließen"
+    IDM_GLOBEVIEW_JUMPTOLOCATION 
+                            "&Ort auswählen...\nRichtet von Globus auf einen\nbestimmten Ort aus."
+    IDM_GLOBEVIEW_ZOOMIN    "Ver&gößern"
+    IDM_GLOBEVIEW_ZOOMOUT   "Ver&kleinern"
+    IDM_GLOBEVIEW_AUTOSIZE  "Größe &anpassen"
+    IDM_GLOBEVIEW_3DSETTINGS "3D-&Einstellungen..."
+    IDM_GLOBEITEM_OPENGOOGLEEARTH 
+                            "In Google Earth ö&ffnen\nÖffnet den Ort\nin Google Earth."
 END
 
 #endif    // Deutsch (neutral) resources
@@ -275,6 +292,8 @@ BEGIN
     IDM_GLOBE               "&Globe"
     IDM_GOOGLEEARTH         "Google &Earth"
     IDM_STATISTICS          "&Statistics"
+    IDM_GLOBEWND            "&Globe"
+    IDM_GLOBEVIEW           "&View"
 END
 
 STRINGTABLE 
@@ -305,8 +324,17 @@ BEGIN
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExports the itinerary\nas Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExports the itinerary\nas TIFF file."
     IDM_GLOBE_OPEN          "&Open globe\nVisualizes the itinerary\non a 3D globe."
-    IDM_GOOGLEEARTH_OPEN    "&Open on Google Earth\nOpen the itinerary\nin Google Earth."
+    IDM_GOOGLEEARTH_OPEN    "&Open in Google Earth\nOpen the itinerary\nin Google Earth."
     IDM_GOOGLEEARTH_EXPORT  "E&xport\nExport the itinerary\nas Google Earth overlay."
+    IDM_GLOBEWND_CLOSE      "&Close"
+    IDM_GLOBEVIEW_JUMPTOLOCATION 
+                            "Jump to &location...\nCenters the globe on a specific location."
+    IDM_GLOBEVIEW_ZOOMIN    "Zoom &in"
+    IDM_GLOBEVIEW_ZOOMOUT   "Zoom &out"
+    IDM_GLOBEVIEW_AUTOSIZE  "Size to &fit"
+    IDM_GLOBEVIEW_3DSETTINGS "3&D settings..."
+    IDM_GLOBEITEM_OPENGOOGLEEARTH 
+                            "&Open in Google Earth\nOpens the location\nin Google Earth."
 END
 
 #endif    // Englisch (USA) resources

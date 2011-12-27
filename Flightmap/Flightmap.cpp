@@ -3,8 +3,8 @@
 //
 
 #include "stdafx.h"
+#include "AboutDlg.h"
 #include "Flightmap.h"
-#include "CAboutDlg.h"
 #include "CMainWnd.h"
 
 
@@ -87,7 +87,7 @@ BOOL CFlightmapApp::InitInstance()
 	// Registry auslesen
 	SetRegistryBase();
 	m_UseStatuteMiles = GetInt(_T("UseStatuteMiles"), FALSE);
-	m_ReduceVisuals = GetInt(_T("ReduceVisuals"), FALSE);
+	m_UseBgImages = GetInt(_T("UseBgImages"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
 	m_GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
@@ -131,7 +131,7 @@ INT CFlightmapApp::ExitInstance()
 	if (m_AppInitialized)
 	{
 		WriteInt(_T("UseStatuteMiles"), m_UseStatuteMiles);
-		WriteInt(_T("ReduceVisuals"), m_ReduceVisuals);
+		WriteInt(_T("UseBgImages"), m_UseBgImages);
 		WriteInt(_T("TextureSize"), m_nTextureSize);
 		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 		WriteInt(_T("GlobeLatitude"), m_GlobeLatitude);
@@ -189,6 +189,12 @@ void CFlightmapApp::Quit()
 	}
 
 	m_pMainWnd = m_pActiveWnd = NULL;
+}
+
+void CFlightmapApp::Broadcast(UINT message)
+{
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
+		m_MainFrames.GetNext(p)->PostMessage(message);
 }
 
 void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
@@ -263,10 +269,15 @@ void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
 
 void CFlightmapApp::OnAppAbout()
 {
-	CAboutDlg dlg(m_pActiveWnd);
+	AboutDlg dlg(m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
 	{
 		m_UseStatuteMiles = dlg.m_UseStatuteMiles;
-		m_ReduceVisuals = dlg.m_ReduceVisuals;
+
+		if (m_UseBgImages!=dlg.m_UseBgImages)
+		{
+			m_UseBgImages = dlg.m_UseBgImages;
+			SendMessage(HWND_BROADCAST, msgUseBgImagesChanged, NULL, NULL);
+		}
 	}
 }

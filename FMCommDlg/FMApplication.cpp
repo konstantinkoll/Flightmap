@@ -58,6 +58,9 @@ FMApplication::FMApplication()
 	// DLL-Hijacking verhindern
 	SetDllDirectory(_T(""));
 
+	// Messages
+	msgUseBgImagesChanged = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
+
 	// Themes
 	hModThemes = LoadLibrary(_T("UXTHEME.DLL"));
 	if (hModThemes)

@@ -372,7 +372,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CAboutDlg.cpp"
+				RelativePath=".\AboutDlg.cpp"
 				>
 			</File>
 			<File
@@ -397,10 +397,6 @@
 			</File>
 			<File
 				RelativePath=".\GLFont.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GlobeOptionsDlg.cpp"
 				>
 			</File>
 			<File
@@ -443,6 +439,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\ThreeDSettingsDlg.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -450,7 +450,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\CAboutDlg.h"
+				RelativePath=".\AboutDlg.h"
 				>
 			</File>
 			<File
@@ -490,10 +490,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GlobeOptionsDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GLTexture.h"
 				>
 			</File>
@@ -507,6 +503,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ThreeDSettingsDlg.h"
 				>
 			</File>
 		</Filter>
@@ -577,6 +577,30 @@
 			</File>
 			<File
 				RelativePath=".\res\MenuGlobe_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobeItem_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobeItem_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobeView_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobeView_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobeWnd_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuGlobeWnd_32.bmp"
 				>
 			</File>
 			<File

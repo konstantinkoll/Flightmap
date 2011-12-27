@@ -101,7 +101,7 @@ void CGroupBox::OnPaint()
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		if ((!((FMApplication*)AfxGetApp())->m_ReduceVisuals) && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
+		if (((FMApplication*)AfxGetApp())->m_UseBgImages && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
 		{
 			rectBounds.right -= 3;
 			rectBounds.bottom -= 3;

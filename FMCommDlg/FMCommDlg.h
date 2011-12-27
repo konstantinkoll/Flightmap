@@ -5,8 +5,6 @@
 #include "..\FMCommDlg\CMainWindow.h"
 #include "..\FMCommDlg\CPictureCtrl.h"
 #include "..\FMCommDlg\CStripCtrl.h"
-#include "..\FMCommDlg\CTaskbar.h"
-#include "..\FMCommDlg\CTaskButton.h"
 #include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMDialog.h"
@@ -22,7 +20,6 @@
 #else
 #define FMCommDlg_API
 #endif
-
 
 FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 FMCommDlg_API BOOL IsCtrlThemed();

@@ -43,7 +43,7 @@
 #define IDD_ABOUT                       21000
 #define IDC_NAUTICALMILES               21001
 #define IDC_STATUTEMILES                21002
-#define IDC_REDUCEVISUALS               21003
+#define IDC_BGIMAGES                    21003
 #define IDC_NAME                        21004
 #define IDC_PURCHASEDATE                21005
 #define IDC_ID                          21006
@@ -56,6 +56,7 @@
 #define IDC_CHECKMONTHLY                21013
 #define IDC_UPDATENOW                   21014
 #define IDC_ENTERLICENSEKEY             21015
+#define IDC_UPDATENOW2                  21017
 #define IDD_SELECTIATA                  21100
 #define IDC_COUNTRY                     21101
 #define IDC_AIRPORTS                    21102
@@ -88,18 +89,12 @@
 #define IDC_NRT_REGISTERED              21410
 #define IDC_REGARROW                    21411
 #define IDC_PURCHASE                    21412
-#define IDD_GLOBEOPTIONS                21500
+#define IDD_3DSETTINGS                  21500
 #define IDC_TEXTURESIZE                 21501
 #define IDC_HQMODEL                     21502
 #define IDC_LIGHTING                    21503
 #define IDC_ATMOSPHERE                  21504
 #define IDC_SHADOWS                     21505
-#define IDC_SPOTS                       21506
-#define IDC_AIRPORTNAMES                21507
-#define IDC_GPSCOORDINATES              21508
-#define IDC_FLIGHTCOUNT                 21509
-#define IDC_VIEWPORT                    21510
-#define IDC_CROSSHAIRS                  21511
 
 // Next default values for new objects
 // 

@@ -351,14 +351,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTaskbar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTaskButton.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
@@ -453,14 +445,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTaskbar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTaskButton.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DynArray.h"
 				>
 			</File>
@@ -527,6 +511,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\3DSettings_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\About_Tiny.ico"
 				>
 			</File>
@@ -560,10 +548,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Globe_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\GlobeOptions_Tiny.ico"
 				>
 			</File>
 			<File

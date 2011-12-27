@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
+	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
 
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -263,6 +264,11 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	}
 
 	return (LRESULT)pPopup;
+}
+
+LRESULT CMainWnd::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	return m_pWndMainView ? m_pWndMainView->SendMessage(theApp.msgUseBgImagesChanged) : NULL;
 }
 
 

@@ -32,7 +32,7 @@ BOOL CLoungeView::Create(CWnd* pParentWnd, UINT nID)
 void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	BOOL Themed = IsCtrlThemed();
-	if (Themed && !theApp.m_ReduceVisuals)
+	if (Themed && theApp.m_UseBgImages)
 	{
 		INT l = m_pBackdrop->m_pBitmap->GetWidth();
 		INT h = m_pBackdrop->m_pBitmap->GetHeight();
@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CLoungeView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_THEMECHANGED()
 	ON_WM_SYSCOLORCHANGE()
+	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
 	ON_WM_CTLCOLOR()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
@@ -153,6 +154,17 @@ void CLoungeView::OnSysColorChange()
 {
 	if (!IsCtrlThemed())
 		m_BackBufferL = m_BackBufferH = 0;
+}
+
+LRESULT CLoungeView::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (IsCtrlThemed())
+	{
+		m_BackBufferL = m_BackBufferH = 0;
+		Invalidate();
+	}
+
+	return NULL;
 }
 
 HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

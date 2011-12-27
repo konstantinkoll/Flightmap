@@ -148,14 +148,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Close_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Close_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Copy_16.png"
 				>
 			</File>
@@ -185,6 +177,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\FileAttachments_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FileClose_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FileClose_32.png"
 				>
 			</File>
 			<File
@@ -265,6 +265,22 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Last_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Location_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Location_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Monitor_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Monitor_32.png"
 				>
 			</File>
 			<File
@@ -396,6 +412,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\WindowClose_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\WindowClose_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\ZoomIn_16.png"
 				>
 			</File>
@@ -412,6 +436,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\3DSettings_Tiny.ico"
+			>
+		</File>
 		<File
 			RelativePath=".\About_Tiny.ico"
 			>
@@ -490,10 +518,6 @@
 		</File>
 		<File
 			RelativePath=".\Globe_Low.asc"
-			>
-		</File>
-		<File
-			RelativePath=".\GlobeOptions_Tiny.ico"
 			>
 		</File>
 		<File

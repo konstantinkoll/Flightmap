@@ -1,22 +1,21 @@
 
-// CAboutDlg.cpp: Implementierung der Klasse CAboutDlg
+// AboutDlg.cpp: Implementierung der Klasse AboutDlg
 //
 
 #include "stdafx.h"
-#include "CAboutDlg.h"
+#include "AboutDlg.h"
+#include "ThreeDSettingsDlg.h"
 #include "Flightmap.h"
 
 
-// CAboutDlg
+// AboutDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
-CAboutDlg::CAboutDlg(CWnd* pParent)
+AboutDlg::AboutDlg(CWnd* pParent)
 	: FMDialog(IDD_ABOUT, FMDS_Blue, pParent)
 {
 	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
-	m_ReduceVisuals = theApp.m_ReduceVisuals;
+	m_UseBgImages = theApp.m_UseBgImages;
 
 	m_pLogo = new CGdiPlusBitmapResource();
 	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP, _T("PNG"), AfxGetResourceHandle()));
@@ -24,12 +23,12 @@ CAboutDlg::CAboutDlg(CWnd* pParent)
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+void AboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	FMDialog::DoDataExchange(pDX);
 
 	DDX_Radio(pDX, IDC_NAUTICALMILES, m_UseStatuteMiles);
-	DDX_Check(pDX, IDC_REDUCEVISUALS, m_ReduceVisuals);
+	DDX_Check(pDX, IDC_BGIMAGES, m_UseBgImages);
 
 	BOOL EnableAutoUpdate;
 	INT Interval;
@@ -52,7 +51,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void CAboutDlg::CheckLicenseKey(FMLicense* License)
+void AboutDlg::CheckLicenseKey(FMLicense* License)
 {
 	FMLicense l;
 	if (!License)
@@ -72,12 +71,13 @@ void CAboutDlg::CheckLicenseKey(FMLicense* License)
 }
 
 
-BEGIN_MESSAGE_MAP(CAboutDlg, FMDialog)
+BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
+	ON_BN_CLICKED(IDD_3DSETTINGS, On3DSettings)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
 END_MESSAGE_MAP()
 
-BOOL CAboutDlg::OnInitDialog()
+BOOL AboutDlg::OnInitDialog()
 {
 	FMDialog::OnInitDialog();
 
@@ -87,7 +87,7 @@ BOOL CAboutDlg::OnInitDialog()
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-void CAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
@@ -131,7 +131,13 @@ void CAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	dc.SelectObject(pOldFont);
 }
 
-void CAboutDlg::OnEnableAutoUpdate()
+void AboutDlg::On3DSettings()
+{
+	ThreeDSettingsDlg dlg(this);
+	dlg.DoModal();
+}
+
+void AboutDlg::OnEnableAutoUpdate()
 {
 	BOOL Enabled = ((CButton*)GetDlgItem(IDC_ENABLEAUTOUPDATE))->GetCheck();
 
@@ -140,7 +146,7 @@ void CAboutDlg::OnEnableAutoUpdate()
 	GetDlgItem(IDC_CHECKMONTHLY)->EnableWindow(Enabled);
 }
 
-void CAboutDlg::OnUpdateNow()
+void AboutDlg::OnUpdateNow()
 {
 	//LFCheckForUpdate(TRUE, this);
 }
