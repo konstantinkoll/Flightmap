@@ -193,7 +193,7 @@ BEGIN
     IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
     IDM_GLOBEWND_CLOSE      "S&chließen"
     IDM_GLOBEVIEW_JUMPTOLOCATION 
-                            "&Ort auswählen...\nRichtet von Globus auf einen\nbestimmten Ort aus."
+                            "&Ort anzeigen...\nRichtet den Globus auf einen\nbestimmten Ort aus."
     IDM_GLOBEVIEW_ZOOMIN    "Ver&gößern"
     IDM_GLOBEVIEW_ZOOMOUT   "Ver&kleinern"
     IDM_GLOBEVIEW_AUTOSIZE  "Größe &anpassen"
