@@ -976,6 +976,9 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Select)
 		pPopup->SetParentMenu(this, Select);
 		pPopup->Track(CPoint(rect.right-BORDERPOPUP+1, rect.top));
 	}
+
+	if (!pPopup)
+		SetCapture();
 }
 
 void CDialogMenuPopup::AdjustLayout()
