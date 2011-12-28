@@ -28,6 +28,24 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
 	{
+	case WM_KEYDOWN:
+		if (pMsg->wParam==VK_F10)
+			if (m_pDialogMenuBar)
+				if (!m_pDialogMenuBar->HasFocus())
+				{
+					m_pDialogMenuBar->SetFocus();
+					return TRUE;
+				}
+		break;
+	case WM_SYSKEYDOWN:
+		if (pMsg->wParam==VK_MENU)
+			if (m_pDialogMenuBar)
+				if (!m_pDialogMenuBar->HasFocus())
+				{
+					m_pDialogMenuBar->SetFocus();
+					return TRUE;
+				}
+		break;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -41,8 +59,7 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
 		{
-			CPoint pt;
-			GetCursorPos(&pt);
+			CPoint pt(AFX_GET_X_LPARAM(pMsg->lParam), AFX_GET_Y_LPARAM(pMsg->lParam));
 
 			if (m_pDialogMenuBar)
 			{
@@ -102,7 +119,6 @@ void CMainWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 	if (!p_PopupWindow)
 		p_PopupWindow = pPopupWnd;
 }
-
 
 BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_CREATE()

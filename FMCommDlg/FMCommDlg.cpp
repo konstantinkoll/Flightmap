@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
+#include <cmath>
 #include <sstream>
 
 #pragma warning(push, 3)

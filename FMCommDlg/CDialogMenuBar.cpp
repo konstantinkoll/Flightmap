@@ -123,6 +123,9 @@ void CDialogMenuBar::AddMenuLeft(UINT nID)
 	i.Enabled = TRUE;
 	ENSURE(LoadString(AfxGetResourceHandle(), nID, i.Name, 256));
 
+	WCHAR* pChar = wcschr(i.Name, L'&');
+	i.Accelerator = pChar ? toupper(*(pChar+1)) : 0;
+
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&m_MenuFont);
 	i.MinWidth = pDC->GetTextExtent(i.Name, (INT)wcslen(i.Name)).cx;
@@ -264,6 +267,11 @@ void CDialogMenuBar::AdjustLayout()
 	Invalidate();
 }
 
+BOOL CDialogMenuBar::HasFocus()
+{
+	return (GetFocus()==this) || m_pPopup;
+}
+
 void CDialogMenuBar::SetTheme()
 {
 	// Themes
@@ -321,6 +329,8 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
+	ON_WM_SYSKEYDOWN()
+	ON_WM_SYSKEYUP()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_SETFOCUS()
@@ -578,31 +588,7 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
 	{
-	/*	INT Cnt = 0;
-		INT Item = -1;
-
-		for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		{
-			if (++idx>=(INT)m_Items.m_ItemCount)
-				idx = 0;
-			if ((m_Items.m_Items[idx].Selectable) && (nChar==m_Items.m_Items[idx].Accelerator))
-				if ((Cnt++)==0)
-					Item = idx;
-		}
-
-		if (Cnt>=1)
-		{
-			SelectItem(Item, TRUE);
-
-			if (Cnt==1)
-				if (m_Items.m_Items[Item].Enabled)
-					m_Items.m_Items[Item].pItem->OnKeyDown(VK_EXECUTE);
-		}
-		else
-		{
-			p_App->PlayStandardSound();
-		}
-*/
+		OnSysKeyDown(nChar, nRepCnt, nFlags);
 		return;
 	}
 	else
@@ -626,6 +612,14 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			return;
 		case VK_UP:
 		case VK_DOWN:
+			if (!m_UseDropdown && (m_SelectedItem!=-1))
+			{
+				INT Item = m_SelectedItem;
+				m_SelectedItem = -1;
+
+				m_UseDropdown = TRUE;
+				SelectItem(Item, TRUE);
+			}
 			return;
 		case VK_LEFT:
 		case VK_RIGHT:
@@ -635,9 +629,53 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case VK_EXECUTE:
 			ExecuteItem(m_SelectedItem);
 			return;
+		case VK_ESCAPE:
+			GetOwner()->SetFocus();
+			return;
 		}
 
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CDialogMenuBar::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
+	{
+		INT idx = m_SelectedItem;
+		INT Cnt = 0;
+		INT Item = -1;
+
+		for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		{
+			if (++idx>=(INT)m_Items.m_ItemCount)
+				idx = 0;
+			if (nChar==m_Items.m_Items[idx].Accelerator)
+				if ((Cnt++)==0)
+					Item = idx;
+		}
+
+		if (Cnt>=1)
+		{
+			m_UseDropdown |= (Cnt==1);
+			SelectItem(Item, TRUE);
+		}
+		else
+		{
+			p_App->PlayStandardSound();
+		}
+
+		return;
+	}
+
+	CWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CDialogMenuBar::OnSysKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if ((nChar==VK_MENU) && (m_SelectedItem==-1))
+		SelectItem(0, TRUE);
+
+	CWnd::OnSysKeyUp(nChar, nRepCnt, nFlags);
 }
 
 void CDialogMenuBar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
@@ -751,6 +789,13 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 			return TRUE;
 		}
 		break;
+	case WM_SYSKEYDOWN:
+		if (pMsg->wParam==VK_F4)
+		{
+			GetOwner()->PostMessage(WM_CLOSE);
+			return TRUE;
+		}
+		break;
 	case WM_MOUSEMOVE:
 	case WM_MOUSEHOVER:
 	case WM_LBUTTONDOWN:
@@ -774,8 +819,6 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 
 			if (!rect.PtInRect(pt))
 			{
-				OnMouseLeave();
-
 				ClientToScreen(&pt);
 				pWnd->ScreenToClient(&pt);
 				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
@@ -912,6 +955,10 @@ void CDialogMenuPopup::SetParentMenu(CWnd* pWnd, BOOL Select)
 void CDialogMenuPopup::Track(CPoint point)
 {
 	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+
+	GetCursorPos(&m_LastMove);
+	ScreenToClient(&m_LastMove);
+
 	SetFocus();
 	SetCapture();
 }
