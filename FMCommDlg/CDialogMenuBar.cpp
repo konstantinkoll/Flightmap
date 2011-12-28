@@ -571,6 +571,7 @@ void CDialogMenuBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 		if (!m_UseDropdown)
 		{
 			m_UseDropdown = TRUE;
+			m_SelectedItem = -1;
 			Invalidate();
 		}
 
