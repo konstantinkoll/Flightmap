@@ -737,7 +737,7 @@ CDialogMenuPopup::CDialogMenuPopup()
 	m_LargeIconsID = m_SmallIconsID = 0;
 	m_SelectedItem = m_LastSelectedItem = -1;
 	m_LastMove.x = m_LastMove.y = -1;
-	m_EnableHover = m_Hover = FALSE;
+	m_EnableHover = m_Hover = m_Keyboard = FALSE;
 	hThemeButton = hThemeList = NULL;
 	p_ParentMenu = p_SubMenu = NULL;
 }
@@ -932,11 +932,12 @@ void CDialogMenuPopup::SelectItem(INT idx)
 	}
 }
 
-void CDialogMenuPopup::SetParentMenu(CWnd* pWnd, BOOL Select)
+void CDialogMenuPopup::SetParentMenu(CWnd* pWnd, BOOL Keyboard)
 {
 	p_ParentMenu = pWnd;
+	m_Keyboard = Keyboard;
 
-	if (pWnd && Select)
+	if (pWnd && Keyboard)
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 			if (m_Items.m_Items[a].Enabled)
 			{
@@ -964,7 +965,7 @@ void CDialogMenuPopup::Track(CPoint point)
 	SetCapture();
 }
 
-void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Select)
+void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard)
 {
 	p_SubMenu = pPopup;
 
@@ -973,7 +974,7 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Select)
 		CRect rect(m_Items.m_Items[m_SelectedItem].Rect);
 		ClientToScreen(rect);
 
-		pPopup->SetParentMenu(this, Select);
+		pPopup->SetParentMenu(this, Keyboard);
 		pPopup->Track(CPoint(rect.right-BORDERPOPUP+1, rect.top));
 	}
 
@@ -1239,6 +1240,7 @@ void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 			Item = m_LastSelectedItem;
 
 		SelectItem(Item);
+		m_Keyboard = FALSE;
 
 		if (Item!=-1)
 		{
@@ -1251,7 +1253,7 @@ void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
 
 void CDialogMenuPopup::OnMouseLeave()
 {
-	if (!p_SubMenu)
+	if (!p_SubMenu && !m_Keyboard)
 	{
 		if (m_SelectedItem!=-1)
 			if (m_Items.m_Items[m_SelectedItem].pItem->OnMouseLeave())
@@ -1334,6 +1336,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if (Cnt>=1)
 		{
 			SelectItem(Item);
+			m_Keyboard = TRUE;
 
 			if (Cnt==1)
 				if (m_Items.m_Items[Item].Enabled)
@@ -1354,6 +1357,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if (m_Items.m_Items[a].Selectable)
 				{
 					SelectItem(a);
+					m_Keyboard = TRUE;
 					break;
 				}
 			return;
@@ -1362,6 +1366,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if (m_Items.m_Items[a].Selectable)
 				{
 					SelectItem(a);
+					m_Keyboard = TRUE;
 					break;
 				}
 			return;
@@ -1373,6 +1378,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if (m_Items.m_Items[idx].Selectable)
 				{
 					SelectItem(idx);
+					m_Keyboard = TRUE;
 					break;
 				}
 			}
@@ -1385,6 +1391,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if (m_Items.m_Items[idx].Selectable)
 				{
 					SelectItem(idx);
+					m_Keyboard = TRUE;
 					break;
 				}
 			}

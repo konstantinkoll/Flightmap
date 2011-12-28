@@ -146,7 +146,7 @@ public:
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
-	void SetParentMenu(CWnd* pWnd, BOOL Select);
+	void SetParentMenu(CWnd* pWnd, BOOL Keyboard);
 	void Track(CPoint point);
 	BOOL HasItems();
 	INT GetGutter();
@@ -168,6 +168,7 @@ protected:
 	INT m_SelectedItem;
 	INT m_LastSelectedItem;
 	BOOL m_Hover;
+	BOOL m_Keyboard;
 	CMFCToolBarImages m_LargeIcons;
 	CMFCToolBarImages m_SmallIcons;
 	CDialogMenuPopup* p_SubMenu;
@@ -177,7 +178,7 @@ protected:
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
 	void SelectItem(INT idx);
-	void TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Select);
+	void TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
