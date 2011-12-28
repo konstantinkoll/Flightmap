@@ -819,6 +819,8 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 
 			if (!rect.PtInRect(pt))
 			{
+				OnMouseLeave();
+
 				pWnd->ScreenToClient(&pt);
 				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
 
@@ -954,11 +956,11 @@ void CDialogMenuPopup::SetParentMenu(CWnd* pWnd, BOOL Select)
 void CDialogMenuPopup::Track(CPoint point)
 {
 	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+	SetFocus();
 
 	GetCursorPos(&m_LastMove);
 	ScreenToClient(&m_LastMove);
 
-	SetFocus();
 	SetCapture();
 }
 
@@ -1256,7 +1258,8 @@ void CDialogMenuPopup::OnMouseLeave()
 	}
 
 	m_Hover = FALSE;
-	m_LastMove.x = m_LastMove.y = -1;
+	if (!p_SubMenu)
+		m_LastMove.x = m_LastMove.y = -1;
 }
 
 void CDialogMenuPopup::OnMouseHover(UINT /*nFlags*/, CPoint point)
