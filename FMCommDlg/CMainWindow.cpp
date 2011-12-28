@@ -33,6 +33,7 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 			if (m_pDialogMenuBar)
 				if (!m_pDialogMenuBar->HasFocus())
 				{
+					OnClosePopup();
 					m_pDialogMenuBar->SetFocus();
 					return TRUE;
 				}
@@ -42,6 +43,7 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 			if (m_pDialogMenuBar)
 				if (!m_pDialogMenuBar->HasFocus())
 				{
+					OnClosePopup();
 					m_pDialogMenuBar->SetFocus();
 					return TRUE;
 				}
@@ -59,7 +61,8 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
 		{
-			CPoint pt(AFX_GET_X_LPARAM(pMsg->lParam), AFX_GET_Y_LPARAM(pMsg->lParam));
+			CPoint pt;
+			GetCursorPos(&pt);
 
 			if (m_pDialogMenuBar)
 			{

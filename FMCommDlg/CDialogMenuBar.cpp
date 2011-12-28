@@ -75,16 +75,17 @@ BOOL CDialogMenuBar::PreTranslateMessage(MSG* pMsg)
 	case WM_NCMBUTTONUP:
 		if (pWnd)
 		{
-			CPoint pt(pMsg->lParam);
+			CPoint pt;
+			GetCursorPos(&pt);
 
 			CRect rect;
 			GetClientRect(rect);
+			ClientToScreen(rect);
 
 			if (!rect.PtInRect(pt))
 			{
 				OnMouseLeave();
 
-				ClientToScreen(&pt);
 				pWnd->ScreenToClient(&pt);
 				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
 
@@ -520,7 +521,7 @@ LRESULT CDialogMenuBar::OnMenuRight(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	return NULL;
 }
 
-void CDialogMenuBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CDialogMenuBar::OnMouseMove(UINT nFlags, CPoint point)
 {
 	INT Item = ItemAtPosition(point);
 
@@ -539,6 +540,7 @@ void CDialogMenuBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	if ((m_LastMove.x!=point.x) || (m_LastMove.y!=point.y))
 	{
 		m_LastMove = point;
+		m_UseDropdown |= (Item!=-1) && (nFlags & MK_LBUTTON);
 
 		if ((Item!=-1) || (!m_UseDropdown))
 		{
@@ -658,10 +660,6 @@ void CDialogMenuBar::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_UseDropdown |= (Cnt==1);
 			SelectItem(Item, TRUE);
-		}
-		else
-		{
-			p_App->PlayStandardSound();
 		}
 
 		return;
@@ -812,14 +810,15 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 	case WM_NCMBUTTONUP:
 		if (pWnd)
 		{
-			CPoint pt(pMsg->lParam);
+			CPoint pt;
+			GetCursorPos(&pt);
 
 			CRect rect;
 			GetClientRect(rect);
+			ClientToScreen(rect);
 
 			if (!rect.PtInRect(pt))
 			{
-				ClientToScreen(&pt);
 				pWnd->ScreenToClient(&pt);
 				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
 
