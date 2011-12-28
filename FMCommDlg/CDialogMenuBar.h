@@ -52,6 +52,8 @@ friend class CDialogMenuPopup;
 public:
 	CDialogMenuBar();
 
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
 	INT GetMinWidth();
@@ -199,8 +201,6 @@ private:
 	HTHEME hThemeList;
 	BOOL m_EnableHover;
 	CPoint m_LastMove;
-
-	void FixShadow();
 };
 
 

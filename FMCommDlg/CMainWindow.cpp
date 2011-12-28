@@ -66,6 +66,7 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 						break;
 
 			OnClosePopup();
+			break;
 		}
 	}
 

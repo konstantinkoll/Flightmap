@@ -53,6 +53,53 @@ BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
+BOOL CDialogMenuBar::PreTranslateMessage(MSG* pMsg)
+{
+	CWnd* pWnd = GetTopLevelParent();
+
+	switch (pMsg->message)
+	{
+	case WM_MOUSEMOVE:
+	case WM_MOUSEHOVER:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		if (pWnd)
+		{
+			CPoint pt(pMsg->lParam);
+
+			CRect rect;
+			GetClientRect(rect);
+
+			if (!rect.PtInRect(pt))
+			{
+				OnMouseLeave();
+
+				ClientToScreen(&pt);
+				pWnd->ScreenToClient(&pt);
+				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
+
+				if (!pWnd->PreTranslateMessage(pMsg))
+					pWnd->SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
+
+				return TRUE;
+			}
+		}
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
 UINT CDialogMenuBar::GetPreferredHeight()
 {
 	return IsCtrlThemed() ? m_MenuHeight : m_MenuHeight+2;
@@ -98,6 +145,12 @@ void CDialogMenuBar::AddMenuRight(UINT nCmdID, INT nIconID)
 
 INT CDialogMenuBar::ItemAtPosition(CPoint point)
 {
+	CRect rect;
+	GetClientRect(rect);
+
+	if ((point.y<rect.top) || (point.y>rect.bottom))
+		return -1;
+
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		if ((point.x>=m_Items.m_Items[a].Left) && (point.x<m_Items.m_Items[a].Right))
 			return a;
@@ -477,12 +530,15 @@ void CDialogMenuBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	{
 		m_LastMove = point;
 
-		InvalidateItem(m_HoverItem);
-		m_HoverItem = Item;
-		InvalidateItem(Item);
+		if ((Item!=-1) || (!m_UseDropdown))
+		{
+			InvalidateItem(m_HoverItem);
+			m_HoverItem = Item;
+			InvalidateItem(Item);
 
-		if (FOCUSED)
-			SelectItem(Item, FALSE);
+			if (FOCUSED)
+				SelectItem(Item, FALSE);
+		}
 	}
 }
 
@@ -684,13 +740,54 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 
 BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 {
-	if (pMsg->message==WM_KEYDOWN)
-		switch (pMsg->wParam)
+	CWnd* pWnd = p_ParentMenu ? p_ParentMenu : GetTopLevelParent();
+
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+		if (pMsg->wParam==VK_ESCAPE)
 		{
-		case VK_ESCAPE:
 			GetOwner()->PostMessage(WM_CLOSEPOPUP);
 			return TRUE;
 		}
+		break;
+	case WM_MOUSEMOVE:
+	case WM_MOUSEHOVER:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		if (pWnd)
+		{
+			CPoint pt(pMsg->lParam);
+
+			CRect rect;
+			GetClientRect(rect);
+
+			if (!rect.PtInRect(pt))
+			{
+				OnMouseLeave();
+
+				ClientToScreen(&pt);
+				pWnd->ScreenToClient(&pt);
+				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
+
+				if (!pWnd->PreTranslateMessage(pMsg))
+					pWnd->SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
+
+				return TRUE;
+			}
+		}
+		break;
+	}
 
 	return CWnd::PreTranslateMessage(pMsg);
 }
@@ -816,6 +913,7 @@ void CDialogMenuPopup::Track(CPoint point)
 {
 	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 	SetFocus();
+	SetCapture();
 }
 
 void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Select)
