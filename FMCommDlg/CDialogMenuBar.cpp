@@ -323,8 +323,8 @@ BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_CLOSEPOPUP, OnClosePopup)
 	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
-	ON_MESSAGE(WM_MENULEFT, OnMenuLeft)
-	ON_MESSAGE(WM_MENURIGHT, OnMenuRight)
+	ON_MESSAGE_VOID(WM_MENULEFT, OnMenuLeft)
+	ON_MESSAGE_VOID(WM_MENURIGHT, OnMenuRight)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
@@ -485,7 +485,7 @@ LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM lParam)
 	return m_pPopup ? rect.PtInRect(pt) || m_pPopup->SendMessage(WM_PTINRECT, wParam, lParam) : FALSE;
 }
 
-LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void CDialogMenuBar::OnMenuLeft()
 {
 	INT idx = m_SelectedItem;
 	for (UINT a=0; a<m_Items.m_ItemCount-1; a++)
@@ -499,11 +499,9 @@ LRESULT CDialogMenuBar::OnMenuLeft(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	}
 
 	SelectItem(idx, TRUE);
-
-	return NULL;
 }
 
-LRESULT CDialogMenuBar::OnMenuRight(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void CDialogMenuBar::OnMenuRight()
 {
 	INT idx = m_SelectedItem;
 	for (UINT a=0; a<m_Items.m_ItemCount-1; a++)
@@ -517,8 +515,6 @@ LRESULT CDialogMenuBar::OnMenuRight(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	}
 
 	SelectItem(idx, TRUE);
-
-	return NULL;
 }
 
 void CDialogMenuBar::OnMouseMove(UINT nFlags, CPoint point)
@@ -1052,8 +1048,9 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
-	ON_MESSAGE(WM_MENULEFT, OnMenuLeft)
-	ON_MESSAGE(WM_MENURIGHT, OnMenuRight)
+	ON_MESSAGE_VOID(WM_MENULEFT, OnMenuLeft)
+	ON_MESSAGE_VOID(WM_MENURIGHT, OnMenuRight)
+	ON_MESSAGE_VOID(WM_MENUCHECKENABLE, OnMenuCheckEnable)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -1197,7 +1194,7 @@ LRESULT CDialogMenuPopup::OnPtInRect(WPARAM wParam, LPARAM /*lParam*/)
 	return rect.PtInRect(pt) ? TRUE : p_SubMenu ? p_SubMenu->OnPtInRect(wParam) : FALSE;
 }
 
-LRESULT CDialogMenuPopup::OnMenuLeft(WPARAM wParam, LPARAM lParam)
+void CDialogMenuPopup::OnMenuLeft()
 {
 	if ((m_LastSelectedItem!=-1) && (p_SubMenu))
 	{
@@ -1205,17 +1202,25 @@ LRESULT CDialogMenuPopup::OnMenuLeft(WPARAM wParam, LPARAM lParam)
 	}
 	else
 		if (p_ParentMenu)
-			p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
-
-	return NULL;
+			p_ParentMenu->SendMessage(WM_MENURIGHT);
 }
 
-LRESULT CDialogMenuPopup::OnMenuRight(WPARAM wParam, LPARAM lParam)
+void CDialogMenuPopup::OnMenuRight()
 {
 	if (p_ParentMenu)
-		p_ParentMenu->SendMessage(WM_MENURIGHT, wParam, lParam);
+		p_ParentMenu->SendMessage(WM_MENURIGHT);
+}
 
-	return NULL;
+void CDialogMenuPopup::OnMenuCheckEnable()
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if (m_Items.m_Items[a].Selectable)
+			m_Items.m_Items[a].Enabled = m_Items.m_Items[a].pItem->IsEnabled();
+
+	Invalidate();
+
+	if (p_ParentMenu)
+		p_ParentMenu->SendMessage(WM_MENUCHECKENABLE);
 }
 
 void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
@@ -1579,7 +1584,11 @@ void CDialogMenuCommand::Execute()
 {
 	if (m_CloseOnExecute)
 		p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+
 	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
+
+	if (!m_CloseOnExecute)
+		p_ParentPopup->PostMessage(WM_MENUCHECKENABLE);
 }
 
 INT CDialogMenuCommand::GetMinHeight()

@@ -7,8 +7,9 @@
 #include "CMainWindow.h"
 #include "DynArray.h"
 
-#define WM_MENULEFT      WM_USER+5
-#define WM_MENURIGHT     WM_USER+6
+#define WM_MENULEFT            WM_USER+5
+#define WM_MENURIGHT           WM_USER+6
+#define WM_MENUCHECKENABLE     WM_USER+7
 
 
 // CDialogCmdUI
@@ -91,8 +92,8 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnClosePopup();
 	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
-	afx_msg LRESULT OnMenuLeft(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnMenuRight(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnMenuLeft();
+	afx_msg void OnMenuRight();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -188,8 +189,9 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
-	afx_msg LRESULT OnMenuLeft(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnMenuRight(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnMenuLeft();
+	afx_msg void OnMenuRight();
+	afx_msg void OnMenuCheckEnable();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
