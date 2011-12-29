@@ -542,7 +542,7 @@ BEGIN
     CTEXT           "Shareware version",IDC_CAPTION1,11,149,128,8
     CTEXT           "Full version",IDC_CAPTION2,169,149,128,8
     LTEXT           "- Saving as .csv, .ics, .klm or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,335,8
-    LTEXT           "- You won't see the text „""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,335,8
+    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,335,8
     LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,335,8
     LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,335,8
     CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
