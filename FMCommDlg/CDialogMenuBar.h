@@ -140,7 +140,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
-	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL);
+	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL CloseOnExecute=TRUE);
 	void AddSubmenu(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL Split=FALSE);
 	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL, BOOL RetainCaption=FALSE);
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
@@ -246,7 +246,7 @@ protected:
 class CDialogMenuCommand : public CDialogMenuItem
 {
 public:
-	CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize, BOOL Submenu=FALSE, BOOL Split=FALSE);
+	CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize, BOOL Submenu=FALSE, BOOL Split=FALSE, BOOL CloseOnExecute=TRUE);
 	virtual ~CDialogMenuCommand();
 
 	virtual INT GetMinHeight();
@@ -275,6 +275,7 @@ protected:
 	BOOL m_Submenu;
 	BOOL m_Split;
 	BOOL m_Enabled;
+	BOOL m_CloseOnExecute;
 	CString m_Caption;
 	CString m_Hint;
 

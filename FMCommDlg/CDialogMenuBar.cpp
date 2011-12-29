@@ -865,9 +865,9 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	m_Height += pItem->GetMinHeight();
 }
 
-void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize)
+void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize, BOOL CloseOnExecute)
 {
-	AddItem(new CDialogMenuCommand(this, CmdID, IconID, PreferredSize));
+	AddItem(new CDialogMenuCommand(this, CmdID, IconID, PreferredSize, FALSE, FALSE, CloseOnExecute));
 }
 
 void CDialogMenuPopup::AddSubmenu(UINT CmdID, INT IconID, UINT PreferredSize, BOOL IsSplit)
@@ -964,6 +964,7 @@ void CDialogMenuPopup::Track(CPoint point)
 	ScreenToClient(&m_LastMove);
 
 	SetCapture();
+	SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
 }
 
 void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard)
@@ -980,7 +981,10 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard)
 	}
 
 	if (!pPopup)
+	{
 		SetCapture();
+		SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
+	}
 }
 
 void CDialogMenuPopup::AdjustLayout()
@@ -1517,7 +1521,7 @@ BOOL CDialogMenuItem::OnKeyDown(UINT /*nChar*/)
 #define ARROWWIDTH     4
 #define MARGIN         BORDER+3
 
-CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize, BOOL Submenu, BOOL Split)
+CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize, BOOL Submenu, BOOL Split, BOOL CloseOnExecute)
 	: CDialogMenuItem(pParentPopup)
 {
 	m_CmdID = CmdID;
@@ -1527,6 +1531,7 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_Submenu = Submenu;
 	m_Split = Split && Submenu;
 	m_Enabled = m_HoverOverCommand = FALSE;
+	m_CloseOnExecute = CloseOnExecute;
 	m_pSubmenu = NULL;
 
 	ENSURE(m_Caption.LoadString(CmdID));
@@ -1572,7 +1577,8 @@ BOOL CDialogMenuCommand::TrackSubmenu(BOOL Select)
 
 void CDialogMenuCommand::Execute()
 {
-	p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+	if (m_CloseOnExecute)
+		p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
 	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
 }
 

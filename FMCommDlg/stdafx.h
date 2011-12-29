@@ -14,7 +14,6 @@
 
 #include <afxwin.h>         // MFC-Kern- und Standardkomponenten
 #include <afxext.h>         // MFC-Erweiterungen
-#include <afxpriv.h>        // MFC-Privatklassen
 
 #ifndef _AFX_NO_OLE_SUPPORT
 #include <afxole.h>         // MFC OLE-Klassen

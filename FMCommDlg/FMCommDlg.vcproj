@@ -343,6 +343,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMapPreviewCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapSelectionCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CPictureCtrl.cpp"
 				>
 			</File>
@@ -372,6 +380,14 @@
 			</File>
 			<File
 				RelativePath=".\FMRegisterDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMSelectLocationGPSDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMSelectLocationIATADlg.cpp"
 				>
 			</File>
 			<File
@@ -437,6 +453,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMapPreviewCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapSelectionCtrl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CPictureCtrl.h"
 				>
 			</File>
@@ -470,6 +494,14 @@
 			</File>
 			<File
 				RelativePath=".\FMRegisterDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMSelectLocationGPSDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMSelectLocationIATADlg.h"
 				>
 			</File>
 			<File

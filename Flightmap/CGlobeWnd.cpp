@@ -134,8 +134,8 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUGLOBEVIEW_32, IDB_MENUGLOBEVIEW_16);
 		pPopup->AddCommand(IDM_GLOBEVIEW_JUMPTOLOCATION, 0, CDMB_LARGE);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMIN, 1, CDMB_SMALL);
-		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMOUT, 2, CDMB_SMALL);
+		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMIN, 1, CDMB_SMALL, FALSE);
+		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMOUT, 2, CDMB_SMALL, FALSE);
 		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddSeparator();
