@@ -1202,7 +1202,9 @@ void CDialogMenuPopup::OnMenuLeft()
 	}
 	else
 		if (p_ParentMenu)
-			p_ParentMenu->SendMessage(WM_MENURIGHT);
+		{
+			p_ParentMenu->SendMessage(WM_MENULEFT);
+		}
 }
 
 void CDialogMenuPopup::OnMenuRight()
