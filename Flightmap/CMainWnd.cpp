@@ -214,18 +214,13 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_EDIT_SELECTALL, 5, CDMB_SMALL);
 		pPopup->AddSeparator();
-		pPopup->AddSubmenu(IDM_EDIT_GOTO, 6, CDMB_SMALL, TRUE);
+		pPopup->AddCommand(IDM_EDIT_GOTO, 6, CDMB_SMALL);
 		break;
 	case IDM_EDIT_PASTE:
 		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
 		pPopup->AddCommand(IDM_EDIT_INSERT_FLIGHT, 3, CDMB_LARGE);
 		pPopup->AddCommand(IDM_EDIT_INSERT_ROUTE, 3, CDMB_LARGE);
 		pPopup->AddFileType(IDM_EDIT_INSERT_ITINERARY, _T(".airx"), CDMB_LARGE);
-		break;
-	case IDM_EDIT_GOTO:
-		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
-		pPopup->AddCommand(IDM_EDIT_GOTO_FIRST, 7, CDMB_SMALL);
-		pPopup->AddCommand(IDM_EDIT_GOTO_LAST, 8, CDMB_SMALL);
 		break;
 	case IDM_MAP:
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);

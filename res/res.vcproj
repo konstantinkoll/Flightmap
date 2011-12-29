@@ -204,14 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\First_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\First_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Globe_16.png"
 				>
 			</File>
@@ -257,14 +249,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Key_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Last_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Last_32.png"
 				>
 			</File>
 			<File
