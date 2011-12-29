@@ -241,7 +241,7 @@ CString FMApplication::GetDefaultFontFace()
 
 void FMApplication::SendMail(CString Subject)
 {
-	CString URL = _T("mailto:author@flightmap.net");
+	CString URL = _T("mailto:support@flightmap.net");
 	if (!Subject.IsEmpty())
 		URL += _T("?subject=")+Subject;
 
