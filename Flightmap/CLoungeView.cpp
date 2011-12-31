@@ -15,7 +15,7 @@ CLoungeView::CLoungeView()
 	: CWnd()
 {
 	hBackgroundBrush = NULL;
-	m_pBackdrop = m_pLogo = NULL;
+	m_pBackdrop = m_pLogo = m_pSanta = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
 }
 
@@ -50,7 +50,12 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		l = m_pLogo->m_pBitmap->GetWidth();
 		h = m_pLogo->m_pBitmap->GetHeight();
 		if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
+		{
 			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
+
+			if (m_pSanta)
+				g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-17, 128, 128);
+		}
 	}
 	else
 	{
@@ -82,6 +87,12 @@ INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pBackdrop = new CGdiPlusBitmapResource(IDB_DOCKED, _T("JPG"));
 	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP, _T("PNG"));
 
+	SYSTEMTIME st;
+	GetSystemTime(&st);
+
+	if (st.wMonth==12)
+		m_pSanta = new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG"));
+
 	return 0;
 }
 
@@ -91,6 +102,8 @@ void CLoungeView::OnDestroy()
 		delete m_pBackdrop;
 	if (m_pLogo)
 		delete m_pLogo;
+	if (m_pSanta)
+		delete m_pSanta;
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
 

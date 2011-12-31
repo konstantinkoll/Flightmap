@@ -34,6 +34,7 @@ protected:
 private:
 	CGdiPlusBitmapResource* m_pBackdrop;
 	CGdiPlusBitmapResource* m_pLogo;
+	CGdiPlusBitmapResource* m_pSanta;
 	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;

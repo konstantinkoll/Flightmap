@@ -573,6 +573,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Santa.png"
+			>
+		</File>
+		<File
 			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>

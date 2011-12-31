@@ -619,6 +619,10 @@
 				RelativePath=".\res\PDZVOR.png"
 				>
 			</File>
+			<File
+				RelativePath=".\res\Santa.png"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\Flightmap32.manifest.xml"
