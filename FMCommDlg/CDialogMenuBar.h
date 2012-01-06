@@ -148,6 +148,7 @@ public:
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
 	void SetParentMenu(CWnd* pWnd, BOOL Keyboard);
+	void Track(CRect rect, BOOL Down=TRUE);
 	void Track(CPoint point);
 	BOOL HasItems();
 	INT GetGutter();

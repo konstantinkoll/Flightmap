@@ -208,7 +208,7 @@ void CDialogMenuBar::SelectItem(INT idx, BOOL Keyboard)
 				rect.right = m_Items.m_Items[idx].Right;
 
 				ClientToScreen(rect);
-				m_pPopup->Track(CPoint(rect.left, rect.bottom));
+				m_pPopup->Track(rect);
 			}
 			else
 			{
@@ -951,9 +951,47 @@ void CDialogMenuPopup::SetParentMenu(CWnd* pWnd, BOOL Keyboard)
 			}
 }
 
-void CDialogMenuPopup::Track(CPoint point)
+void CDialogMenuPopup::Track(CRect rect, BOOL Down)
 {
-	SetWindowPos(NULL, point.x, point.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+	// Get screen rectangle
+	MONITORINFO mi;
+	mi.cbSize = sizeof(MONITORINFO);
+
+	CRect rectScreen;
+	if (GetMonitorInfo(MonitorFromPoint(rect.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
+	{
+		rectScreen = mi.rcWork;
+	}
+	else
+	{
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
+	}
+
+	// Determine point
+	CPoint pt;
+	if (Down)
+	{
+		pt.x = max(rect.left, 0);
+		pt.y = rect.bottom;
+
+		if (pt.x+m_Width+2>rectScreen.right)
+			pt.x = max(rect.right-m_Width-2, 0);
+		if ((pt.y+m_Height+2>rectScreen.bottom) && (rect.top-m_Height-2>0))
+			pt.y = rect.top-m_Height-2;
+	}
+	else
+	{
+		pt.x = rect.right-BORDERPOPUP+1;
+		pt.y = max(rect.top, 0);
+
+		if ((pt.x+m_Width+2>rectScreen.right) && (rect.left-m_Width-3+BORDERPOPUP>0))
+			pt.x = rect.left-m_Width-3+BORDERPOPUP;
+		if (pt.y+m_Height+2>rectScreen.bottom)
+			pt.y = max(rectScreen.bottom-m_Height-2, 0);
+	}
+
+	// Set
+	SetWindowPos(NULL, pt.x, pt.y, m_Width+2, m_Height+2, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 	SetFocus();
 
 	GetCursorPos(&m_LastMove);
@@ -961,6 +999,11 @@ void CDialogMenuPopup::Track(CPoint point)
 
 	SetCapture();
 	SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
+}
+
+void CDialogMenuPopup::Track(CPoint point)
+{
+	Track(CRect(point, point));
 }
 
 void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard)
@@ -973,7 +1016,7 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard)
 		ClientToScreen(rect);
 
 		pPopup->SetParentMenu(this, Keyboard);
-		pPopup->Track(CPoint(rect.right-BORDERPOPUP+1, rect.top));
+		pPopup->Track(rect, FALSE);
 	}
 
 	if (!pPopup)
