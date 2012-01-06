@@ -320,8 +320,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://flightmap.net/purchase.htm"
-    IDS_UPDATEURL           "http://flightmap.net/download.htm"
+    IDS_PURCHASEURL         "http://flightmap.net/purchase"
+    IDS_UPDATEURL           "http://flightmap.net/download"
     IDS_ERROR               "Fehler"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
@@ -647,8 +647,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://flightmap.net/purchase.htm"
-    IDS_UPDATEURL           "http://flightmap.net/download.htm"
+    IDS_PURCHASEURL         "http://flightmap.net/purchase"
+    IDS_UPDATEURL           "http://flightmap.net/download"
     IDS_ERROR               "Error"
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
     IDS_LICFILEFILTER       "License files"

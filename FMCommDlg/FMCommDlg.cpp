@@ -6,6 +6,7 @@
 #include "FMCommDlg.h"
 #include <cmath>
 #include <sstream>
+#include <winhttp.h>
 
 #pragma warning(push, 3)
 #pragma warning(disable: 4702)
@@ -587,4 +588,174 @@ FMCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Co
 			delete[] lpInfo;
 		}
 	}
+}
+
+FMCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
+{
+	CString VersionIni;
+
+	// Obtain current version from instance version resource
+	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
+
+	// Variant
+#ifdef _M_X64
+#define ISET _T(" (x64")
+#else
+#define ISET _T(" (x32")
+#endif
+
+	CurrentVersion += ISET;
+
+	// Licensed?
+	if (FMIsLicensed())
+	{
+		CurrentVersion += _T(";licensed");
+	}
+	else
+		if (FMIsSharewareExpired())
+		{
+			CurrentVersion += _T(";expired");
+		}
+
+	CurrentVersion += _T(")");
+
+	// Get available version
+	HINTERNET hSession = WinHttpOpen(_T("Flightmap/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+	if (hSession)
+	{
+		HINTERNET hConnect = WinHttpConnect(hSession, L"update.flightmap.net", INTERNET_DEFAULT_HTTP_PORT, 0);
+		if (hConnect)
+		{
+			HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/version.ini", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+			if (hRequest)
+			{
+				if (WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, NULL, 0, 0, 0))
+					if (WinHttpReceiveResponse(hRequest, NULL))
+					{
+						DWORD dwSize;
+
+						do
+						{
+							dwSize = 0;
+							if (WinHttpQueryDataAvailable(hRequest, &dwSize))
+							{
+								CHAR* pBuffer = new CHAR[dwSize+1];
+								DWORD dwDownloaded;
+								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
+								{
+									pBuffer[dwDownloaded] = '\0';
+									CString tmpStr(pBuffer);
+									VersionIni += tmpStr;
+									delete[] pBuffer;
+								}
+							}
+						}
+						while (dwSize>0);
+					}
+
+				WinHttpCloseHandle(hRequest);
+			}
+
+			WinHttpCloseHandle(hConnect);
+		}
+
+		WinHttpCloseHandle(hSession);
+	}
+
+	return VersionIni;
+}
+
+CString GetIniValue(CString Ini, CString Name)
+{
+	while (!Ini.IsEmpty())
+	{
+		INT pos = Ini.Find(L"\n");
+		if (pos==-1)
+			pos = Ini.GetLength()+1;
+
+		CString Line = Ini.Mid(0, pos-1);
+		Ini.Delete(0, pos+1);
+
+		pos = Line.Find(L"=");
+		if (pos!=-1)
+			if (Line.Mid(0, pos)==Name)
+				return Line.Mid(pos+1, Line.GetLength()-pos);
+	}
+
+	return _T("");
+}
+
+struct Version
+{
+	UINT Major, Minor, Build;
+};
+
+__forceinline INT ParseVersion(CString ver, Version* v)
+{
+	ZeroMemory(v, sizeof(Version));
+	return swscanf_s(ver, L"%d.%d.%d", &v->Major, &v->Minor, &v->Build);
+}
+
+FMCommDlg_API void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
+{
+	BOOL UpdateFound = FALSE;
+	BOOL Check = Force;
+
+	// Check due?
+	if (!Check)
+		Check = ((FMApplication*)AfxGetApp())->IsUpdateCheckDue();
+
+	// Perform check
+	CString VersionIni;
+	CString LatestVersion;
+	if (Check)
+	{
+		CWaitCursor wait;
+
+		CString CurrentVersion;
+		VersionIni = GetLatestVersion(CurrentVersion);
+
+		if (!VersionIni.IsEmpty())
+		{
+			LatestVersion = GetIniValue(VersionIni, _T("Version"));
+			if (!LatestVersion.IsEmpty())
+			{
+				Version CV;
+				Version LV;
+				ParseVersion(CurrentVersion, &CV);
+				ParseVersion(LatestVersion, &LV);
+
+				UpdateFound = (LV.Major>CV.Major) ||
+								((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
+								((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build));
+			}
+		}
+	}
+
+	// Result
+	CString Caption;
+	ENSURE(Caption.LoadString(IDS_UPDATE));
+
+	if (UpdateFound)
+	{
+		CString Mask;
+		ENSURE(Mask.LoadString(IDS_UPDATE_AVAILABLE));
+
+		CString Text;
+		Text.Format(Mask, LatestVersion);
+		if (MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONQUESTION | MB_YESNO)==IDYES)
+		{
+			CString url;
+			ENSURE(url.LoadString(IDS_UPDATEURL));
+
+			ShellExecute(pParentWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+		}
+	}
+	else
+		if (Force)
+		{
+			CString Text;
+			ENSURE(Text.LoadString(IDS_UPDATE_NOTAVAILABLE));
+			MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONINFORMATION | MB_OK);
+		}
 }

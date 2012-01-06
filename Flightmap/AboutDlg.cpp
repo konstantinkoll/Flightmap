@@ -148,5 +148,5 @@ void AboutDlg::OnEnableAutoUpdate()
 
 void AboutDlg::OnUpdateNow()
 {
-	//LFCheckForUpdate(TRUE, this);
+	FMCheckForUpdate(TRUE, this);
 }

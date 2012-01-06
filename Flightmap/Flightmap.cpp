@@ -116,6 +116,8 @@ BOOL CFlightmapApp::InitInstance()
 	if (!FMIsLicensed())
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
+	FMCheckForUpdate(FALSE, pFrame);
+
 	//OnAppAbout();
 
 	//FMProgressDlg dlg(NULL, NULL, NULL);

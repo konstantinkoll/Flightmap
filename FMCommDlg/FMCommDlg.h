@@ -54,3 +54,4 @@ FMCommDlg_API BOOL FMIsSharewareExpired();
 // Update
 
 FMCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
+FMCommDlg_API void FMCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
