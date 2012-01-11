@@ -21,8 +21,10 @@ public:
 	CDialogCmdUI();
 
 	virtual void Enable(BOOL bOn=TRUE);
+	virtual void SetCheck(INT nCheck=1);
 
 	BOOL m_Enabled;
+	BOOL m_Checked;
 };
 
 
@@ -145,6 +147,7 @@ public:
 	void AddSubmenu(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL Split=FALSE);
 	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL, BOOL RetainCaption=FALSE);
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
+	void AddCheckbox(UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute=FALSE);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
 	void SetParentMenu(CWnd* pWnd, BOOL Keyboard);
@@ -155,6 +158,7 @@ public:
 	INT GetBlueAreaStart();
 	CFont* SelectNormalFont(CDC* pDC);
 	CFont* SelectCaptionFont(CDC* pDC);
+	void DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed);
 	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled=TRUE, BOOL Focused=TRUE);
 
 protected:
@@ -319,6 +323,19 @@ class CDialogMenuFile : public CDialogMenuFileType
 {
 public:
 	CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CString Path, UINT PreferredSize);
+};
+
+
+// CDialogMenuCheckbox
+//
+
+class CDialogMenuCheckbox : public CDialogMenuCommand
+{
+public:
+	CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute);
+
+protected:
+	BOOL* p_Flag;
 };
 
 

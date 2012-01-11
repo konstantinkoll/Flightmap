@@ -12,13 +12,18 @@
 CDialogCmdUI::CDialogCmdUI()
 	: CCmdUI()
 {
-	m_Enabled = FALSE;
+	m_Enabled = m_Checked = FALSE;
 }
 
 void CDialogCmdUI::Enable(BOOL bOn)
 {
 	m_Enabled = bOn;
 	m_bEnableChanged = TRUE;
+}
+
+void CDialogCmdUI::SetCheck(INT nCheck)
+{
+	m_Checked = (nCheck!=0);
 }
 
 
@@ -881,6 +886,11 @@ void CDialogMenuPopup::AddFile(UINT CmdID, CString Path, UINT PreferredSize)
 	AddItem(new CDialogMenuFile(this, CmdID, Path, PreferredSize));
 }
 
+void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute)
+{
+	AddItem(new CDialogMenuCheckbox(this, CmdID, pFlag, CloseOnExecute));
+}
+
 void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
 {
 	ASSERT(m_BlueAreaStart==0);
@@ -1069,6 +1079,24 @@ __forceinline CFont* CDialogMenuPopup::SelectCaptionFont(CDC* pDC)
 	return pDC->SelectObject(&((CMainWindow*)GetTopLevelParent())->m_pDialogMenuBar->m_CaptionFont);
 }
 
+void CDialogMenuPopup::DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed)
+{
+	if (Themed)
+	{
+		Graphics g(dc);
+
+		LinearGradientBrush brush1(Point(x, y), Point(x, y+height/2), Color(0xF5, 0xF8, 0xFC), Color(0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush1, x, y, width, height/2);
+
+		LinearGradientBrush brush2(Point(x, y+height/2-1), Point(x, y+height), Color(0xFF, 0xFF, 0xFF), Color(0xF5, 0xF8, 0xFC));
+		g.FillRectangle(&brush2, x, y+height/2, width, height-height/2);
+	}
+	else
+	{
+		dc.FillSolidRect(x, y, width, height, 0xFFFFFF);
+	}
+}
+
 void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled, BOOL Focused)
 {
 	if (hThemeList)
@@ -1177,12 +1205,12 @@ void CDialogMenuPopup::OnPaint()
 
 	if (m_BlueAreaStart)
 	{
-		dc.FillSolidRect(rect.left, rect.top, rect.Width(), m_BlueAreaStart, 0xFFFFFF);
+		DrawBevelRect(dc, rect.left, rect.top, rect.Width(), m_BlueAreaStart, Themed);
 		dc.FillSolidRect(rect.left, m_BlueAreaStart, rect.Width(), rect.bottom, Themed ? 0xFBF5F1 : GetSysColor(COLOR_3DFACE));
 	}
 	else
 	{
-		dc.FillSolidRect(rect, 0xFFFFFF);
+		DrawBevelRect(dc, rect.left, rect.top, rect.Width(), rect.Height(), Themed);
 	}
 
 	// Items
@@ -1981,6 +2009,16 @@ CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CSt
 			FindClose(hFind);
 		}
 	}
+}
+
+
+// CDialogMenuCheckbox
+//
+
+CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute)
+	: CDialogMenuCommand(pParentPopup, CmdID, -1, CDMB_SMALL, FALSE, FALSE, CloseOnExecute)
+{
+	p_Flag = pFlag;
 }
 
 

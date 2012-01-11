@@ -214,7 +214,7 @@ BEGIN
     CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
     CTEXT           "Shareware-Version",IDC_CAPTION1,11,149,128,8
     CTEXT           "Vollversion",IDC_CAPTION2,169,149,128,8
-    LTEXT           "- Der Dateiexport in die Formaten .csv, .ics, .klm or .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,364,8
+    LTEXT           "- Der Dateiexport in die Formaten .csv, .ics, .klm oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,364,8
     LTEXT           "- Auf Ausdrucken und PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“",IDC_TEXTROW4,7,169,364,8
     LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_TEXTROW5,7,178,364,8
     LTEXT           "- Und zuletzt ermöglichen Sie uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_TEXTROW6,7,187,364,8
