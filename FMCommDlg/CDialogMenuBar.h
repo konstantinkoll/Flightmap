@@ -150,6 +150,7 @@ public:
 	void AddCheckbox(UINT CmdID, BOOL CloseOnExecute=FALSE);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
+	void GetCheckSize(CSize& sz);
 	void SetParentMenu(CWnd* pWnd, BOOL Keyboard);
 	void Track(CRect rect, BOOL Down=TRUE);
 	void Track(CPoint point);
@@ -160,6 +161,7 @@ public:
 	CFont* SelectCaptionFont(CDC* pDC);
 	void DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed);
 	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled=TRUE, BOOL Focused=TRUE);
+	void DrawCheckbox(CDC* pDC, LPRECT rect, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed);
 
 protected:
 	FMApplication* p_App;
@@ -196,7 +198,7 @@ protected:
 	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg void OnMenuLeft();
 	afx_msg void OnMenuRight();
-	afx_msg void OnMenuUpdateStatus();
+	afx_msg LRESULT OnMenuUpdateStatus(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -209,8 +211,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	HTHEME hThemeButton;
 	HTHEME hThemeList;
+	HTHEME hThemeButton;
 	BOOL m_EnableHover;
 	CPoint m_LastMove;
 };
@@ -264,7 +266,7 @@ public:
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
-	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);
@@ -306,10 +308,7 @@ class CDialogMenuFileType : public CDialogMenuCommand
 public:
 	CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT CmdID, CString FileType, UINT PreferredSize, BOOL RetainCaption);
 
-	virtual INT GetMinHeight();
-	virtual INT GetMinGutter();
-
-	virtual void OnDrawIcon(CDC* pDC, CPoint pt);
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
 
 private:
 	CImageList* p_Icons;
@@ -336,8 +335,14 @@ public:
 
 	virtual BOOL IsEnabled();
 
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
+	virtual void OnDeselect();
+	virtual BOOL OnButtonDown(CPoint point);
+	virtual BOOL OnButtonUp(CPoint point);
+
 protected:
 	BOOL m_Checked;
+	BOOL m_Pressed;
 };
 
 

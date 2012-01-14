@@ -740,7 +740,7 @@ CDialogMenuPopup::CDialogMenuPopup()
 	m_SelectedItem = m_LastSelectedItem = -1;
 	m_LastMove.x = m_LastMove.y = -1;
 	m_EnableHover = m_Hover = m_Keyboard = FALSE;
-	hThemeButton = hThemeList = NULL;
+	hThemeList = hThemeButton = NULL;
 	p_ParentMenu = p_SubMenu = NULL;
 }
 
@@ -904,6 +904,21 @@ void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
 void CDialogMenuPopup::AddCaption(UINT ResID)
 {
 	AddItem(new CDialogMenuCaption(this, ResID), -(BORDERPOPUP+3));
+}
+
+void CDialogMenuPopup::GetCheckSize(CSize& sz)
+{
+	if (hThemeButton)
+	{
+		CDC* dc = GetDC();
+		p_App->zGetThemePartSize(hThemeButton, *dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &sz);
+		ReleaseDC(dc);
+	}
+	else
+	{
+		sz.cx = GetSystemMetrics(SM_CXMENUCHECK);
+		sz.cy = GetSystemMetrics(SM_CYMENUCHECK);
+	}
 }
 
 INT CDialogMenuPopup::ItemAtPosition(CPoint point)
@@ -1109,6 +1124,24 @@ void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enable
 	}
 }
 
+void CDialogMenuPopup::DrawCheckbox(CDC* pDC, LPRECT rect, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed)
+{
+	if (hThemeButton)
+	{
+		INT uiStyle = Enabled ? Selected ? Pressed ? CBS_UNCHECKEDPRESSED : CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL : CBS_UNCHECKEDDISABLED;
+		if (Checked)
+			uiStyle += 4;
+
+		p_App->zDrawThemeBackground(hThemeButton, *pDC, BP_CHECKBOX, uiStyle, rect, rect);
+	}
+	else
+	{
+		UINT uiStyle = DFCS_BUTTONCHECK | (Enabled ? 0 : DFCS_INACTIVE) | (Checked ? DFCS_CHECKED : 0) | ((Selected && Pressed) ? DFCS_PUSHED : 0);
+
+		pDC->DrawFrameControl(rect, DFC_BUTTON, uiStyle);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_WM_CREATE()
@@ -1121,7 +1154,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
 	ON_MESSAGE_VOID(WM_MENULEFT, OnMenuLeft)
 	ON_MESSAGE_VOID(WM_MENURIGHT, OnMenuRight)
-	ON_MESSAGE_VOID(WM_MENUUPDATESTATUS, OnMenuUpdateStatus)
+	ON_MESSAGE(WM_MENUUPDATESTATUS, OnMenuUpdateStatus)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -1140,12 +1173,13 @@ INT CDialogMenuPopup::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (p_App->m_ThemeLibLoaded)
 	{
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (p_App->OSVersion>=OS_Vista)
 		{
 			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
+
+		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 	}
 
 	return 0;
@@ -1153,10 +1187,10 @@ INT CDialogMenuPopup::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CDialogMenuPopup::OnDestroy()
 {
-	if (hThemeButton)
-		p_App->zCloseThemeData(hThemeButton);
 	if (hThemeList)
 		p_App->zCloseThemeData(hThemeList);
+	if (hThemeButton)
+		p_App->zCloseThemeData(hThemeButton);
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		delete m_Items.m_Items[a].pItem;
@@ -1235,14 +1269,14 @@ LRESULT CDialogMenuPopup::OnThemeChanged()
 {
 	if (p_App->m_ThemeLibLoaded)
 	{
-		if (hThemeButton)
-			p_App->zCloseThemeData(hThemeButton);
 		if (hThemeList)
 			p_App->zCloseThemeData(hThemeList);
+		if (hThemeButton)
+			p_App->zCloseThemeData(hThemeButton);
 
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (p_App->OSVersion>=OS_Vista)
 			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 	}
 
 	return TRUE;
@@ -1284,9 +1318,10 @@ void CDialogMenuPopup::OnMenuRight()
 		p_ParentMenu->SendMessage(WM_MENURIGHT);
 }
 
-void CDialogMenuPopup::OnMenuUpdateStatus()
+LRESULT CDialogMenuPopup::OnMenuUpdateStatus(WPARAM /*wParam*/, LPARAM lParam)
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+	{
 		if (m_Items.m_Items[a].Selectable)
 		{
 			BOOL Enabled = m_Items.m_Items[a].pItem->IsEnabled();
@@ -1297,8 +1332,11 @@ void CDialogMenuPopup::OnMenuUpdateStatus()
 			}
 		}
 
-	if (p_ParentMenu)
-		p_ParentMenu->SendMessage(WM_MENUUPDATESTATUS);
+		if (m_Items.m_Items[a].pItem==(CDialogMenuItem*)lParam)
+			InvalidateItem(a);
+	}
+
+	return p_ParentMenu ? p_ParentMenu->SendMessage(WM_MENUUPDATESTATUS) : NULL;
 }
 
 void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
@@ -1666,7 +1704,7 @@ void CDialogMenuCommand::Execute()
 	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
 
 	if (!m_CloseOnExecute)
-		p_ParentPopup->PostMessage(WM_MENUUPDATESTATUS);
+		p_ParentPopup->PostMessage(WM_MENUUPDATESTATUS, NULL, (LPARAM)this);
 }
 
 INT CDialogMenuCommand::GetMinHeight()
@@ -1780,7 +1818,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 	// Icon
 	if (m_IconID!=-1)
-		OnDrawIcon(pDC, CPoint(rect->left+GetInnerBorder()+(p_ParentPopup->GetGutter()-GetInnerBorder()-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2));
+		OnDrawIcon(pDC, CPoint(rect->left+GetInnerBorder()+(p_ParentPopup->GetGutter()-GetInnerBorder()-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2), Selected);
 
 	// Pfeil
 	if (m_Submenu)
@@ -1825,7 +1863,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	}
 }
 
-void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt)
+void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/)
 {
 	CMFCToolBarImages* pIcons = (m_PreferredSize==CDMB_SMALL) ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons;
 
@@ -1942,22 +1980,7 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 	}
 }
 
-INT CDialogMenuFileType::GetMinHeight()
-{
-	INT h = CDialogMenuCommand::GetMinHeight();
-
-	if (m_IconID!=-1)
-		h = max(h, 2*GetInnerBorder()+m_IconSize.cy);
-
-	return h;
-}
-
-INT CDialogMenuFileType::GetMinGutter()
-{
-	return (m_IconID==-1) ? 0 : m_IconSize.cx+GetInnerBorder();
-}
-
-void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt)
+void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/)
 {
 	CImageList* pIcons = (m_PreferredSize==CDMB_SMALL) ? &((FMApplication*)AfxGetApp())->m_SystemImageListSmall : &((FMApplication*)AfxGetApp())->m_SystemImageListLarge;
 	pIcons->DrawEx(pDC, m_IconID, pt, m_IconSize, CLR_NONE, CLR_NONE, ILD_NORMAL);
@@ -2021,9 +2044,11 @@ CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CSt
 //
 
 CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL CloseOnExecute)
-	: CDialogMenuCommand(pParentPopup, CmdID, -1, CDMB_SMALL, FALSE, FALSE, CloseOnExecute)
+	: CDialogMenuCommand(pParentPopup, CmdID, 0, CDMB_SMALL, FALSE, FALSE, CloseOnExecute)
 {
-	m_Checked = FALSE;
+	m_Checked = m_Pressed = FALSE;
+
+	pParentPopup->GetCheckSize(m_IconSize);
 }
 
 BOOL CDialogMenuCheckbox::IsEnabled()
@@ -2035,6 +2060,36 @@ BOOL CDialogMenuCheckbox::IsEnabled()
 	m_Checked = cmdUI.m_Checked;
 
 	return m_Enabled = cmdUI.m_Enabled;
+}
+
+void CDialogMenuCheckbox::OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected)
+{
+	CRect rectButton(pt.x, pt.y, pt.x+m_IconSize.cx, pt.y+m_IconSize.cy);
+
+	p_ParentPopup->DrawCheckbox(pDC, rectButton, m_Checked, m_Enabled, Selected, m_Pressed);
+}
+
+void CDialogMenuCheckbox::OnDeselect()
+{
+	m_Pressed = FALSE;
+
+	CDialogMenuCommand::OnDeselect();
+}
+
+BOOL CDialogMenuCheckbox::OnButtonDown(CPoint point)
+{
+	m_Pressed = TRUE;
+
+	CDialogMenuCommand::OnButtonDown(point);
+	return TRUE;
+}
+
+BOOL CDialogMenuCheckbox::OnButtonUp(CPoint point)
+{
+	m_Pressed = FALSE;
+
+	CDialogMenuCommand::OnButtonUp(point);
+	return TRUE;
 }
 
 
