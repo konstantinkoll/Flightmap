@@ -51,6 +51,13 @@ public:
 protected:
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;
+	BOOL m_UseColors;
+	BOOL m_ShowSpots;
+	BOOL m_ShowAirportNames;
+	BOOL m_ShowGPS;
+	BOOL m_ShowFlightCount;
+	BOOL m_ShowViewport;
+	BOOL m_ShowCrosshairs;
 
 	DynArray<GlobeAirport> m_Airports;
 
@@ -104,6 +111,13 @@ protected:
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
+	afx_msg void OnColors();
+	afx_msg void OnSpots();
+	afx_msg void OnAirportNames();
+	afx_msg void OnGPS();
+	afx_msg void OnFlightCount();
+	afx_msg void OnViewport();
+	afx_msg void OnCrosshairs();
 	afx_msg void On3DSettings();
 	afx_msg void OnOpenGoogleEarth();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

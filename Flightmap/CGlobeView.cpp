@@ -288,6 +288,14 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = theApp.m_GlobeLatitude/1000.0f;
 		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = theApp.m_GlobeLongitude/1000.0f;
 		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = theApp.m_GlobeZoom;
+
+		m_UseColors = theApp.m_GlobeUseColors;
+		m_ShowSpots = theApp.m_GlobeShowSpots;
+		m_ShowAirportNames = theApp.m_GlobeShowAirportNames;
+		m_ShowGPS = theApp.m_GlobeShowGPS;
+		m_ShowFlightCount = theApp.m_GlobeShowFlightCount;
+		m_ShowViewport = theApp.m_GlobeShowViewport;
+		m_ShowCrosshairs = theApp.m_GlobeShowCrosshairs;
 	}
 
 	PrepareTexture();
@@ -505,7 +513,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat
 			if (z<m_FogStart)
 				ga->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
 
-			if (theApp.m_GlobeShowSpots)
+			if (m_ShowSpots)
 				glDrawIcon(x, y, 6.0f+8.0f*ga->Alpha, ga->Alpha, SPOT);
 		}
 	}
@@ -521,9 +529,9 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 		{
 			// Beschriftung
 			CHAR* Caption = ga->pAirport->Code;
-			CHAR* Subcaption = (theApp.m_GlobeShowAirportNames ? ga->NameString : NULL);
-			CHAR* Coordinates = (theApp.m_GlobeShowGPS ? ga->CoordString : NULL);
-			WCHAR* Count = (theApp.m_GlobeShowFlightCount ? ga->CountString : NULL);
+			CHAR* Subcaption = (m_ShowAirportNames ? ga->NameString : NULL);
+			CHAR* Coordinates = (m_ShowGPS ? ga->CoordString : NULL);
+			WCHAR* Count = (m_ShowFlightCount ? ga->CountString : NULL);
 
 			DrawLabel(ga, Caption, Subcaption, Coordinates, Count, m_FocusItem==(INT)a);
 		}
@@ -685,7 +693,7 @@ __forceinline void CGlobeView::DrawStatusBar(INT Height)
 
 	WCHAR Viewpoint[256] = L"";
 	INT ViewpointWidth = -1;
-	if (theApp.m_GlobeShowViewport)
+	if (m_ShowViewport)
 	{
 		FMGeoCoordinates c;
 		c.Latitude = -m_GlobeCurrent.Latitude;
@@ -840,7 +848,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		CalcAndDrawSpots(ModelView, Projection);
 
 	// Fadenkreuz zeichnen
-	if (theApp.m_GlobeShowViewport && theApp.m_GlobeShowCrosshairs)
+	if (m_ShowViewport && m_ShowCrosshairs)
 		glDrawIcon(m_Width/2.0f, m_Height/2.0f, 64.0f, 1.0f, CROSSHAIRS);
 
 	// Icons beenden
@@ -963,9 +971,16 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBEVIEW_AUTOSIZE, OnAutosize)
+	ON_COMMAND(IDM_GLOBEVIEW_COLORS, OnColors)
+	ON_COMMAND(IDM_GLOBEVIEW_SPOTS, OnSpots)
+	ON_COMMAND(IDM_GLOBEVIEW_AIRPORTNAMES, OnAirportNames)
+	ON_COMMAND(IDM_GLOBEVIEW_GPS, OnGPS)
+	ON_COMMAND(IDM_GLOBEVIEW_FLIGHTCOUNT, OnFlightCount)
+	ON_COMMAND(IDM_GLOBEVIEW_VIEWPORT, OnViewport)
+	ON_COMMAND(IDM_GLOBEVIEW_CROSSHAIRS, OnCrosshairs)
 	ON_COMMAND(IDM_GLOBEVIEW_3DSETTINGS, On3DSettings)
 	ON_COMMAND(IDM_GLOBEITEM_OPENGOOGLEEARTH, OnOpenGoogleEarth)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEVIEW_JUMPTOLOCATION, IDM_GLOBEVIEW_AUTOSIZE, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEVIEW_JUMPTOLOCATION, IDM_GLOBEVIEW_3DSETTINGS, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEITEM_OPENGOOGLEEARTH, IDM_GLOBEITEM_OPENGOOGLEEARTH, OnUpdateCommands)
 END_MESSAGE_MAP()
 
@@ -1400,6 +1415,48 @@ void CGlobeView::OnAutosize()
 	UpdateScene();
 }
 
+void CGlobeView::OnColors()
+{
+	theApp.m_GlobeUseColors = m_UseColors = !m_UseColors;
+	Invalidate();
+}
+
+void CGlobeView::OnSpots()
+{
+	theApp.m_GlobeShowSpots = m_ShowSpots = !m_ShowSpots;
+	Invalidate();
+}
+
+void CGlobeView::OnAirportNames()
+{
+	theApp.m_GlobeShowAirportNames = m_ShowAirportNames = !m_ShowAirportNames;
+	Invalidate();
+}
+
+void CGlobeView::OnGPS()
+{
+	theApp.m_GlobeShowGPS = m_ShowGPS = !m_ShowGPS;
+	Invalidate();
+}
+
+void CGlobeView::OnFlightCount()
+{
+	theApp.m_GlobeShowFlightCount = m_ShowFlightCount = !m_ShowFlightCount;
+	Invalidate();
+}
+
+void CGlobeView::OnViewport()
+{
+	theApp.m_GlobeShowViewport = m_ShowViewport = !m_ShowViewport;
+	Invalidate();
+}
+
+void CGlobeView::OnCrosshairs()
+{
+	theApp.m_GlobeShowCrosshairs = m_ShowCrosshairs = !m_ShowCrosshairs;
+	Invalidate();
+}
+
 void CGlobeView::On3DSettings()
 {
 	ThreeDSettingsDlg dlg(this);
@@ -1428,6 +1485,28 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_GLOBEITEM_OPENGOOGLEEARTH:
 		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());
+		break;
+	case IDM_GLOBEVIEW_COLORS:
+		pCmdUI->SetCheck(m_UseColors);
+		break;
+	case IDM_GLOBEVIEW_SPOTS:
+		pCmdUI->SetCheck(m_ShowSpots);
+		break;
+	case IDM_GLOBEVIEW_AIRPORTNAMES:
+		pCmdUI->SetCheck(m_ShowAirportNames);
+		break;
+	case IDM_GLOBEVIEW_GPS:
+		pCmdUI->SetCheck(m_ShowGPS);
+		break;
+	case IDM_GLOBEVIEW_FLIGHTCOUNT:
+		pCmdUI->SetCheck(m_ShowFlightCount);
+		break;
+	case IDM_GLOBEVIEW_VIEWPORT:
+		pCmdUI->SetCheck(m_ShowViewport);
+		break;
+	case IDM_GLOBEVIEW_CROSSHAIRS:
+		pCmdUI->SetCheck(m_ShowCrosshairs);
+		b = m_ShowViewport;
 		break;
 	}
 

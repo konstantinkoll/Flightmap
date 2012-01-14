@@ -138,7 +138,14 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMOUT, 2, CDMB_SMALL, FALSE);
 		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
 		pPopup->AddSeparator(TRUE);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_COLORS);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_SPOTS);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_AIRPORTNAMES);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_GPS);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_FLIGHTCOUNT);
 		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_VIEWPORT);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_CROSSHAIRS);
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_GLOBEVIEW_3DSETTINGS, 4, CDMB_SMALL);
 		break;

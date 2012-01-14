@@ -886,9 +886,9 @@ void CDialogMenuPopup::AddFile(UINT CmdID, CString Path, UINT PreferredSize)
 	AddItem(new CDialogMenuFile(this, CmdID, Path, PreferredSize));
 }
 
-void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute)
+void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL CloseOnExecute)
 {
-	AddItem(new CDialogMenuCheckbox(this, CmdID, pFlag, CloseOnExecute));
+	AddItem(new CDialogMenuCheckbox(this, CmdID, CloseOnExecute));
 }
 
 void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
@@ -1121,7 +1121,7 @@ BEGIN_MESSAGE_MAP(CDialogMenuPopup, CWnd)
 	ON_MESSAGE(WM_PTINRECT, OnPtInRect)
 	ON_MESSAGE_VOID(WM_MENULEFT, OnMenuLeft)
 	ON_MESSAGE_VOID(WM_MENURIGHT, OnMenuRight)
-	ON_MESSAGE_VOID(WM_MENUCHECKENABLE, OnMenuCheckEnable)
+	ON_MESSAGE_VOID(WM_MENUUPDATESTATUS, OnMenuUpdateStatus)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -1284,16 +1284,21 @@ void CDialogMenuPopup::OnMenuRight()
 		p_ParentMenu->SendMessage(WM_MENURIGHT);
 }
 
-void CDialogMenuPopup::OnMenuCheckEnable()
+void CDialogMenuPopup::OnMenuUpdateStatus()
 {
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		if (m_Items.m_Items[a].Selectable)
-			m_Items.m_Items[a].Enabled = m_Items.m_Items[a].pItem->IsEnabled();
-
-	Invalidate();
+		{
+			BOOL Enabled = m_Items.m_Items[a].pItem->IsEnabled();
+			if (Enabled!=m_Items.m_Items[a].Enabled)
+			{
+				m_Items.m_Items[a].Enabled = Enabled;
+				InvalidateItem(a);
+			}
+		}
 
 	if (p_ParentMenu)
-		p_ParentMenu->SendMessage(WM_MENUCHECKENABLE);
+		p_ParentMenu->SendMessage(WM_MENUUPDATESTATUS);
 }
 
 void CDialogMenuPopup::OnMouseMove(UINT /*nFlags*/, CPoint point)
@@ -1661,7 +1666,7 @@ void CDialogMenuCommand::Execute()
 	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
 
 	if (!m_CloseOnExecute)
-		p_ParentPopup->PostMessage(WM_MENUCHECKENABLE);
+		p_ParentPopup->PostMessage(WM_MENUUPDATESTATUS);
 }
 
 INT CDialogMenuCommand::GetMinHeight()
@@ -2015,10 +2020,21 @@ CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CSt
 // CDialogMenuCheckbox
 //
 
-CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute)
+CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL CloseOnExecute)
 	: CDialogMenuCommand(pParentPopup, CmdID, -1, CDMB_SMALL, FALSE, FALSE, CloseOnExecute)
 {
-	p_Flag = pFlag;
+	m_Checked = FALSE;
+}
+
+BOOL CDialogMenuCheckbox::IsEnabled()
+{
+	CDialogCmdUI cmdUI;
+	cmdUI.m_nID = m_CmdID;
+	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
+
+	m_Checked = cmdUI.m_Checked;
+
+	return m_Enabled = cmdUI.m_Enabled;
 }
 
 

@@ -9,7 +9,7 @@
 
 #define WM_MENULEFT            WM_USER+5
 #define WM_MENURIGHT           WM_USER+6
-#define WM_MENUCHECKENABLE     WM_USER+7
+#define WM_MENUUPDATESTATUS    WM_USER+7
 
 
 // CDialogCmdUI
@@ -147,7 +147,7 @@ public:
 	void AddSubmenu(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL Split=FALSE);
 	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL, BOOL RetainCaption=FALSE);
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
-	void AddCheckbox(UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute=FALSE);
+	void AddCheckbox(UINT CmdID, BOOL CloseOnExecute=FALSE);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
 	void SetParentMenu(CWnd* pWnd, BOOL Keyboard);
@@ -196,7 +196,7 @@ protected:
 	afx_msg LRESULT OnPtInRect(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg void OnMenuLeft();
 	afx_msg void OnMenuRight();
-	afx_msg void OnMenuCheckEnable();
+	afx_msg void OnMenuUpdateStatus();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -332,10 +332,12 @@ public:
 class CDialogMenuCheckbox : public CDialogMenuCommand
 {
 public:
-	CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL* pFlag, BOOL CloseOnExecute);
+	CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL CloseOnExecute);
+
+	virtual BOOL IsEnabled();
 
 protected:
-	BOOL* p_Flag;
+	BOOL m_Checked;
 };
 
 
