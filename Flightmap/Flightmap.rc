@@ -347,7 +347,7 @@ BEGIN
     IDM_GLOBEVIEW_ZOOMIN    "Zoom &in"
     IDM_GLOBEVIEW_ZOOMOUT   "Zoom &out"
     IDM_GLOBEVIEW_AUTOSIZE  "Size to &fit"
-    IDM_GLOBEVIEW_COLORS    "Use co&lors"
+    IDM_GLOBEVIEW_COLORS    "Use colo&rs"
     IDM_GLOBEVIEW_SPOTS     "Mark loca&tions"
     IDM_GLOBEVIEW_AIRPORTNAMES "Show &airport names"
     IDM_GLOBEVIEW_GPS       "Show &GPS coordinates"
