@@ -333,6 +333,7 @@ class CDialogMenuCheckbox : public CDialogMenuCommand
 public:
 	CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL CloseOnExecute);
 
+	virtual INT GetMinHeight();
 	virtual BOOL IsEnabled();
 
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);

@@ -2051,6 +2051,12 @@ CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT Cm
 	pParentPopup->GetCheckSize(m_IconSize);
 }
 
+INT CDialogMenuCheckbox::GetMinHeight()
+{
+	INT h = CDialogMenuCommand::GetMinHeight();
+	return h+((h-m_IconSize.cy) & 1);
+}
+
 BOOL CDialogMenuCheckbox::IsEnabled()
 {
 	CDialogCmdUI cmdUI;
