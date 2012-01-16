@@ -61,6 +61,9 @@ FMApplication::FMApplication()
 	// Messages
 	msgUseBgImagesChanged = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
 
+	// Custom colors
+	ZeroMemory(&m_CustomColors, sizeof(m_CustomColors));
+
 	// Themes
 	hModThemes = LoadLibrary(_T("UXTHEME.DLL"));
 	if (hModThemes)

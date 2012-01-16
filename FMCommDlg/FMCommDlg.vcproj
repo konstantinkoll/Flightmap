@@ -359,6 +359,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMColorDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMCommDlg.cpp"
 				>
 			</File>
@@ -473,6 +477,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMColorDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FMCommDlg.h"
 				>
 			</File>
@@ -548,6 +556,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Backdrop_Blue.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ChooseColor_Tiny.ico"
 				>
 			</File>
 			<File

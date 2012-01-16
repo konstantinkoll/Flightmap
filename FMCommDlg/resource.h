@@ -7,6 +7,36 @@
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
+#define IDC_COLOR_HUESCROLL             700
+#define IDC_COLOR_SATSCROLL             701
+#define IDC_COLOR_LUMSCROLL             702
+#define IDC_COLOR_HUE                   703
+#define IDC_COLOR_SAT                   704
+#define IDC_COLOR_LUM                   705
+#define IDC_COLOR_RED                   706
+#define IDC_COLOR_GREEN                 707
+#define IDC_COLOR_BLUE                  708
+#define IDC_COLOR_CURRENT               709
+#define IDC_COLOR_RAINBOW               710
+#define IDC_COLOR_SAVE                  711
+#define IDC_COLOR_ADD                   712
+#define IDC_COLOR_SOLID                 713
+#define IDC_COLOR_TUNE                  714
+#define IDC_COLOR_SCHEMES               715
+#define IDC_COLOR_ELEMENT               716
+#define IDC_COLOR_SAMPLES               717
+#define IDC_COLOR_PALETTE               718
+#define IDC_COLOR_MIX                   719
+#define IDC_COLOR_BOX1                  720
+#define IDC_COLOR_CUSTOM1               721
+#define IDC_COLOR_HUEACCEL              723
+#define IDC_COLOR_SATACCEL              724
+#define IDC_COLOR_LUMACCEL              725
+#define IDC_COLOR_REDACCEL              726
+#define IDC_COLOR_GREENACCEL            727
+#define IDC_COLOR_BLUEACCEL             728
+#define IDC_COLOR_SOLID_LEFT            730
+#define IDC_COLOR_SOLID_RIGHT           731
 #define IDB_FLIGHTMAP                   20000
 #define IDB_BACKDROP_BLUE               20001
 #define IDB_LOCATIONINDICATOR_8         20002
@@ -95,6 +125,7 @@
 #define IDC_LIGHTING                    21503
 #define IDC_ATMOSPHERE                  21504
 #define IDC_SHADOWS                     21505
+#define IDD_CHOOSECOLOR                 21600
 
 // Next default values for new objects
 // 

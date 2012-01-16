@@ -148,6 +148,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\ChooseColor_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ChooseColor_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Copy_16.png"
 				>
 			</File>
@@ -454,6 +462,10 @@
 		</File>
 		<File
 			RelativePath=".\Backdrop_Blue.png"
+			>
+		</File>
+		<File
+			RelativePath=".\ChooseColor_Tiny.ico"
 			>
 		</File>
 		<File

@@ -9,6 +9,7 @@
 #include "..\FMCommDlg\CStripCtrl.h"
 #include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"
+#include "..\FMCommDlg\FMColorDlg.h"
 #include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\FMLicenseDlg.h"
 #include "..\FMCommDlg\FMProgressDlg.h"

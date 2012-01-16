@@ -23,7 +23,7 @@
 // Siehe Flightmap.cpp für die Implementierung dieser Klasse
 //
 
-#define WM_3DSETTINGSCHANGED      WM_USER+100
+#define WM_3DSETTINGSCHANGED     WM_USER+100
 
 class CFlightmapApp : public FMApplication
 {
@@ -39,6 +39,7 @@ public:
 	void Broadcast(UINT message);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
+	BOOL ChooseColor(COLORREF& clr, CWnd* pParentWnd=NULL);
 
 	CList<CMainWindow*> m_MainFrames;
 	CString m_PathGoogleEarth;
@@ -68,6 +69,8 @@ public:
 
 protected:
 	BOOL m_AppInitialized;
+
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()

@@ -104,6 +104,7 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeShowFlightCount = GetInt(_T("GlobeShowFlightCount"), FALSE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
+	GetBinary(_T("CustomColors"), &m_CustomColors, sizeof(m_CustomColors));
 
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
@@ -151,6 +152,7 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeShowFlightCount"), m_GlobeShowFlightCount);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
+		WriteBinary(_T("CustomColors"), (LPBYTE)&m_CustomColors, sizeof(m_CustomColors));
 	}
 
 	return FMApplication::ExitInstance();
@@ -268,6 +270,32 @@ void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
 	FMAirport* pAirport = NULL;
 	if (FMIATAGetAirportByCode(Code, &pAirport))
 		OpenAirportGoogleEarth(pAirport);
+}
+
+void CFlightmapApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
+{
+	UINT sz;
+	LPBYTE buf = NULL;
+	CWinAppEx::GetBinary(lpszEntry, &buf, &sz);
+	if (buf)
+	{
+		if (sz<size)
+			size = sz;
+		memcpy_s(pData, size, buf, size);
+		free(buf);
+	}
+}
+
+BOOL CFlightmapApp::ChooseColor(COLORREF& clr, CWnd* pParentWnd)
+{
+	FMColorDlg dlg(clr, CC_RGBINIT, pParentWnd);
+	if (dlg.DoModal()==IDOK)
+	{
+		clr = dlg.m_cc.rgbResult;
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 
