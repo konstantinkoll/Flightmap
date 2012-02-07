@@ -98,7 +98,7 @@ FlightSegments* CKitchen::Tesselate(FlightRoute& Route)
 	pSegments->PointCount = PointCount;
 
 	DOUBLE MinH = 1.01;
-	DOUBLE Elevation = min(D, 0.4);
+	DOUBLE Elevation = min(D/2, 0.25);
 
 	for (UINT a=0; a<PointCount; a++)
 	{
