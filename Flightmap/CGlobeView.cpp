@@ -880,7 +880,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	if (m_Routes.m_ItemCount)
 	{
 		glDisable(GL_TEXTURE_2D);
-		glLineWidth(min(3.5f, 3.5f*m_Scale));
+		glLineWidth(min(3.5f, 0.5f+m_Radius/250));
 		glEnable(GL_LINE_SMOOTH);
 		glCallList(m_GlobeRoutes);
 		glDisable(GL_LINE_SMOOTH);
