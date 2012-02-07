@@ -281,6 +281,7 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 		m_ShowViewport = theApp.m_GlobeShowViewport;
 		m_ShowCrosshairs = theApp.m_GlobeShowCrosshairs;
 		m_UseColors = theApp.m_GlobeUseColors;
+		m_Clamp = theApp.m_GlobeClamp;
 	}
 
 	PrepareTexture();
@@ -430,9 +431,10 @@ void CGlobeView::PrepareRoutes()
 
 		for (UINT b=0; b<m_Routes.m_Items[a]->PointCount; b++)
 		{
-			const DOUBLE X = pPoints[2]*cos(pPoints[0])*sin(pPoints[1]+PI/2);
-			const DOUBLE Y = -pPoints[2]*cos(pPoints[0])*cos(pPoints[1]+PI/2);
-			const DOUBLE Z = -pPoints[2]*sin(pPoints[0]);
+			const DOUBLE H = m_Clamp ? min(pPoints[2], 1.005) : pPoints[2];
+			const DOUBLE X = H*cos(pPoints[0])*sin(pPoints[1]+PI/2);
+			const DOUBLE Y = -H*cos(pPoints[0])*cos(pPoints[1]+PI/2);
+			const DOUBLE Z = -H*sin(pPoints[0]);
 
 			glVertex3d(X, Y, Z);
 			pPoints += 3;
@@ -1019,6 +1021,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBEVIEW_AUTOSIZE, OnAutosize)
 	ON_COMMAND(IDM_GLOBEVIEW_COLORS, OnColors)
+	ON_COMMAND(IDM_GLOBEVIEW_CLAMP, OnClamp)
 	ON_COMMAND(IDM_GLOBEVIEW_SPOTS, OnSpots)
 	ON_COMMAND(IDM_GLOBEVIEW_AIRPORTNAMES, OnAirportNames)
 	ON_COMMAND(IDM_GLOBEVIEW_GPS, OnGPS)
@@ -1472,6 +1475,13 @@ void CGlobeView::OnColors()
 	Invalidate();
 }
 
+void CGlobeView::OnClamp()
+{
+	theApp.m_GlobeClamp = m_Clamp = !m_Clamp;
+	PrepareRoutes();
+	Invalidate();
+}
+
 void CGlobeView::OnSpots()
 {
 	theApp.m_GlobeShowSpots = m_ShowSpots = !m_ShowSpots;
@@ -1539,6 +1549,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_GLOBEVIEW_COLORS:
 		pCmdUI->SetCheck(m_UseColors);
+		break;
+	case IDM_GLOBEVIEW_CLAMP:
+		pCmdUI->SetCheck(m_Clamp);
 		break;
 	case IDM_GLOBEVIEW_SPOTS:
 		pCmdUI->SetCheck(m_ShowSpots);

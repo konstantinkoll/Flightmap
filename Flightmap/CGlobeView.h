@@ -56,6 +56,7 @@ protected:
 	BOOL m_ShowViewport;
 	BOOL m_ShowCrosshairs;
 	BOOL m_UseColors;
+	BOOL m_Clamp;
 
 	DynArray<GlobeAirport> m_Airports;
 	DynArray<FlightSegments*> m_Routes;
@@ -112,6 +113,7 @@ protected:
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
 	afx_msg void OnColors();
+	afx_msg void OnClamp();
 	afx_msg void OnSpots();
 	afx_msg void OnAirportNames();
 	afx_msg void OnGPS();

@@ -18,11 +18,6 @@ CKitchen::CKitchen()
 	m_FlightRoutes.InitHashTable(4096);
 }
 
-CKitchen::~CKitchen()
-{
-}
-
-
 FMAirport* CKitchen::AddAirport(CHAR* Code)
 {
 	ASSERT(Code);

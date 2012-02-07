@@ -134,6 +134,8 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_COLORS);
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_CLAMP);
+		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_SPOTS);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_AIRPORTNAMES);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_GPS);

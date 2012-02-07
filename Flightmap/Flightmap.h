@@ -61,6 +61,7 @@ public:
 	BOOL m_GlobeShadows;
 	// User view settings
 	BOOL m_GlobeUseColors;
+	BOOL m_GlobeClamp;
 	BOOL m_GlobeShowSpots;
 	BOOL m_GlobeShowAirportNames;
 	BOOL m_GlobeShowGPS;

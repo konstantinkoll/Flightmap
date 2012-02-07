@@ -35,7 +35,6 @@ class CKitchen
 {
 public:
 	CKitchen();
-	~CKitchen();
 
 	virtual void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
 

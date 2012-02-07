@@ -273,7 +273,6 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_SELECTEDONLY);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_ANIMATED);
-		pPopup->AddCaption(IDS_FLIGHTROUTES);
 		break;
 	case IDM_GOOGLEEARTH_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
