@@ -5,6 +5,7 @@
 #pragma once
 #include "FMCommDlg.h"
 #include "CGlobeView.h"
+#include "CKitchen.h"
 
 
 // CGlobeWnd
@@ -20,8 +21,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create();
-	void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
-	void CalcFlights();
+	void SetFlights(CKitchen* pKitchen);
 
 protected:
 	HICON m_hIcon;

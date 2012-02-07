@@ -3,15 +3,13 @@
 //
 
 #pragma once
+#include "CKitchen.h"
 #include "Flightmap.h"
 #include "GLTexture.h"
 #include "GLFont.h"
 
 
 // Item data
-
-typedef CMap<CStringA, LPCSTR, FMAirport*, FMAirport*&> CFlightAirports;
-typedef CMap<CStringA, LPCSTR, UINT, UINT> CFlightCounts;
 
 struct GlobeParameters
 {
@@ -44,8 +42,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
-	void CalcFlights();
+	void SetFlights(CKitchen* pKitchen);
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
@@ -60,6 +57,7 @@ protected:
 	BOOL m_ShowCrosshairs;
 
 	DynArray<GlobeAirport> m_Airports;
+	DynArray<FlightSegments*> m_Routes;
 
 	CClientDC* m_pDC;
 	HGLRC hRC;
@@ -69,8 +67,8 @@ protected:
 	INT m_Height;
 	BOOL m_IsSelected;
 	BOOL m_Hover;
-	GLTexture* m_TextureGlobe;
-	GLTexture* m_TextureIcons;
+	GLTexture* m_pTextureGlobe;
+	GLTexture* m_pTextureIcons;
 	GLFont m_Fonts[2];
 
 	INT ItemAtPosition(CPoint point);
@@ -80,6 +78,7 @@ protected:
 	void PrepareTexture();
 	void Normalize();
 	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
+	void CalcAndDrawRoutes();
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused);
 	void DrawStatusBar(INT Height);
@@ -150,11 +149,6 @@ private:
 	CString m_FlightCount_Singular;
 	CString m_FlightCount_Plural;
 	FMTooltip m_TooltipCtrl;
-
-	CFlightAirports m_FlightAirports;
-	CFlightCounts m_FlightAirportCounts;
-
-	FMAirport* AddAirport(CHAR* Code);
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();

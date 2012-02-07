@@ -61,14 +61,9 @@ void CGlobeWnd::AdjustLayout()
 	m_wndGlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CGlobeWnd::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
+void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 {
-	m_wndGlobeView.AddFlight(From, To, Color);
-}
-
-void CGlobeWnd::CalcFlights()
-{
-	m_wndGlobeView.CalcFlights();
+	m_wndGlobeView.SetFlights(pKitchen);
 }
 
 

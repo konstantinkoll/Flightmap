@@ -6,8 +6,9 @@
 #include "Database.h"
 #include "FMCommDlg.h"
 #include "resource.h"
-#include <hash_map>
 
+
+#define PI                3.14159265358979323846
 
 // Globe textures
 

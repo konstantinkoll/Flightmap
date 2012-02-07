@@ -133,6 +133,10 @@ BEGIN
     IDS_EXPORT              "Den Flugplan exportieren"
     IDS_PRINTPREVIEW        "Flugplan in der Vorschau anzeigen und drucken"
     IDS_PREPAREDISTRIBUTION "Flugplan für die Verteilung vorbereiten"
+    IDS_BACKGROUND          "Hintergrund"
+    IDS_FLIGHTROUTES        "Flugrouten"
+    IDS_LOCATIONS           "Orte"
+    IDS_IATACODES           "IATA-Codes"
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_DRIVENOTREADY       "Der Datenträger ist nicht bereit!"
     IDS_FLIGHTCOUNT_SINGULAR "%d Flug"
@@ -187,9 +191,19 @@ BEGIN
     IDM_MAP_EXPORT_JPG      "&JPEG\nExportiert den Flugplan\nals JPEG-Bild."
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExportiert den Flugplan\nals Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExportiert den Flugplan\nals TIFF-Datei."
+    IDM_MAP_SELECTEDONLY    "Nur &ausgewählte Flüge"
+    IDM_MAP_SHOWFLIGHTROUTES
+                            "&Flugrouten zeigen"
+    IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
+    IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
     IDM_GLOBE_OPEN          "Globus ö&ffnen\nZeigt den Flugplan auf\neinem 3D-Globus an."
+    IDM_GLOBE_SELECTEDONLY  "Nur &ausgewählte Flüge"
     IDM_GOOGLEEARTH_OPEN    "In Google Earth ö&ffnen\nÖffnet den Flugplan\nin Google Earth."
     IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
+    IDM_GOOGLEEARTH_SELECTEDONLY
+                            "Nur &ausgewählte Flüge"
+    IDM_GOOGLEEARTH_ANIMATED
+                            "&Animiertes Overlay"
     IDM_GLOBEWND_CLOSE      "S&chließen"
     IDM_GLOBEVIEW_JUMPTOLOCATION 
                             "&Ort anzeigen...\nRichtet den Globus auf einen\nbestimmten Ort aus."
@@ -284,6 +298,10 @@ BEGIN
     IDS_EXPORT              "Export the itinerary"
     IDS_PRINTPREVIEW        "Preview and print the itinerary"
     IDS_PREPAREDISTRIBUTION "Prepare the itinerary for distribution"
+    IDS_BACKGROUND          "Background"
+    IDS_FLIGHTROUTES        "Flight routes"
+    IDS_LOCATIONS           "Locations"
+    IDS_IATACODES           "IATA codes"
     IDS_YOULOOKAT           "You look at %s"
     IDS_DRIVENOTREADY       "The drive is not ready!"
     IDS_FLIGHTCOUNT_SINGULAR "%d flight"
@@ -338,9 +356,19 @@ BEGIN
     IDM_MAP_EXPORT_JPG      "&JPEG\nExport the itinerary\nas JPEG image."
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExport the itinerary\nas Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExport the itinerary\nas TIFF file."
+    IDM_MAP_SELECTEDONLY    "&Selected flights only"
+    IDM_MAP_SHOWFLIGHTROUTES
+                            "Show &flight routes"
+    IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
+    IDM_MAP_SHOWIATACODES   "Show &IATA codes"
     IDM_GLOBE_OPEN          "&Open globe\nVisualizes the itinerary\non a 3D globe."
+    IDM_GLOBE_SELECTEDONLY  "&Selected flights only"
     IDM_GOOGLEEARTH_OPEN    "&Open in Google Earth\nOpen the itinerary\nin Google Earth."
     IDM_GOOGLEEARTH_EXPORT  "E&xport\nExport the itinerary\nas Google Earth overlay."
+    IDM_GOOGLEEARTH_SELECTEDONLY
+                            "&Selected flights only"
+    IDM_GOOGLEEARTH_ANIMATED
+                            "&Animated overlay"
     IDM_GLOBEWND_CLOSE      "&Close"
     IDM_GLOBEVIEW_JUMPTOLOCATION 
                             "Jump to &location...\nCenter the globe on\na specific location."

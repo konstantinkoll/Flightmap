@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CKitchen.h"
 #include "CLoungeView.h"
 #include "CMainWnd.h"
 #include "CGlobeWnd.h"
@@ -89,6 +90,23 @@ void CMainWnd::OpenMainView(BOOL Empty)
 	SetFocus();
 }
 
+CKitchen* CMainWnd::GetKitchen(BOOL Selected)
+{
+	CKitchen* pKitchen = new CKitchen();
+
+	pKitchen->AddFlight("DUS", "FRA", (COLORREF)-1);
+	pKitchen->AddFlight("FRA", "JFK", 0x0000FF);
+	pKitchen->AddFlight("EWR", "SFO", (COLORREF)-1);
+	pKitchen->AddFlight("SFO", "MUC", (COLORREF)-1);
+	pKitchen->AddFlight("SFO", "HNL", (COLORREF)-1);
+	pKitchen->AddFlight("HNL", "NRT", (COLORREF)-1);
+	pKitchen->AddFlight("NRT", "JNB", (COLORREF)-1);
+	pKitchen->AddFlight("CPT", "JNB", (COLORREF)-1);
+	pKitchen->AddFlight("EZE", "CPT", (COLORREF)-1);
+	pKitchen->AddFlight("MUC", "DUS", (COLORREF)-1);
+
+	return pKitchen;
+}
 
 BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
@@ -226,6 +244,14 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
 		pPopup->AddSubmenu(IDM_MAP_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
+		pPopup->AddCheckbox(IDM_MAP_SELECTEDONLY);
+		pPopup->AddCaption(IDS_BACKGROUND);
+		pPopup->AddCaption(IDS_FLIGHTROUTES);
+		pPopup->AddCheckbox(IDM_MAP_SHOWFLIGHTROUTES);
+		pPopup->AddCaption(IDS_LOCATIONS);
+		pPopup->AddCheckbox(IDM_MAP_SHOWLOCATIONS);
+		pPopup->AddCaption(IDS_IATACODES);
+		pPopup->AddCheckbox(IDM_MAP_SHOWIATACODES);
 		break;
 	case IDM_MAP_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
@@ -239,11 +265,15 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
 		pPopup->AddCommand(IDM_GLOBE_OPEN, 0, CDMB_LARGE);
 		pPopup->AddSeparator(TRUE);
+		pPopup->AddCheckbox(IDM_GLOBE_SELECTEDONLY);
 		break;
 	case IDM_GOOGLEEARTH:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddSubmenu(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
+		pPopup->AddCheckbox(IDM_GOOGLEEARTH_SELECTEDONLY);
+		pPopup->AddCheckbox(IDM_GOOGLEEARTH_ANIMATED);
+		pPopup->AddCaption(IDS_FLIGHTROUTES);
 		break;
 	case IDM_GOOGLEEARTH_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
@@ -301,14 +331,8 @@ void CMainWnd::OnGlobeOpen()
 {
 	CGlobeWnd* pFrame = new CGlobeWnd();
 
-	pFrame->AddFlight("DUS", "FRA", (COLORREF)-1);
-	pFrame->AddFlight("FRA", "JFK", 0x0000FF);
-	pFrame->AddFlight("EWR", "SFO", (COLORREF)-1);
-	pFrame->AddFlight("SFO", "MUC", (COLORREF)-1);
-	pFrame->AddFlight("MUC", "DUS", (COLORREF)-1);
-	pFrame->CalcFlights();
-
 	pFrame->Create();
+	pFrame->SetFlights(GetKitchen());
 	pFrame->ShowWindow(SW_SHOW);
 }
 

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMCommDlg.h"
+#include "CKitchen.h"
 
 
 // CMainWnd
@@ -25,6 +26,7 @@ protected:
 	CWnd* m_pWndMainView;
 
 	void OpenMainView(BOOL Empty);
+	CKitchen* GetKitchen(BOOL Selected=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

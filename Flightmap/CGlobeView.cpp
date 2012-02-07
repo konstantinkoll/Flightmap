@@ -10,7 +10,6 @@
 
 #define DISTANCE       39.0f
 #define ARROWSIZE      9
-#define PI             3.14159265358979323846
 #define ANIMLENGTH     200
 #define MOVEDELAY      10
 #define MOVEDIVIDER    8.0f
@@ -78,7 +77,7 @@ __forceinline BOOL SetupPixelFormat(HDC hDC)
 		0,								// shift bit ignored
 		0,								// no accumulation buffer
 		0, 0, 0, 0,						// accum bits ignored
-		0,								// no z-buffer
+		32,								// no z-buffer
 		0,								// no stencil buffer
 		0,								// no auxiliary buffer
 		PFD_MAIN_PLANE,					// main layer
@@ -156,7 +155,7 @@ CGlobeView::CGlobeView()
 	m_FocusItem = m_HotItem = -1;
 	m_Width = m_Height = 0;
 	m_GlobeModel = -1;
-	m_TextureGlobe = m_TextureIcons = NULL;
+	m_pTextureGlobe = m_pTextureIcons = NULL;
 	m_CurrentGlobeTexture = -1;
 	m_Scale = 1.0f;
 	m_Radius = m_Momentum = 0.0f;
@@ -166,9 +165,6 @@ CGlobeView::CGlobeView()
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 	ENSURE(m_FlightCount_Singular.LoadString(IDS_FLIGHTCOUNT_SINGULAR));
 	ENSURE(m_FlightCount_Plural.LoadString(IDS_FLIGHTCOUNT_PLURAL));
-
-	m_FlightAirports.InitHashTable(2048);
-	m_FlightAirportCounts.InitHashTable(2048);
 }
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
@@ -211,44 +207,18 @@ BOOL CGlobeView::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-FMAirport* CGlobeView::AddAirport(CHAR* Code)
+void CGlobeView::SetFlights(CKitchen* pKitchen)
 {
-	ASSERT(Code);
+	// Reset
+	m_Airports.m_ItemCount = 0;
 
-	if (strlen(Code)!=3)
-		return NULL;
-
-	FMAirport* pAirport;
-	if (m_FlightAirports.Lookup(Code, pAirport))
-	{
-		m_FlightAirportCounts[Code]++;
-		return pAirport;
-	}
-
-	if (!FMIATAGetAirportByCode(Code, &pAirport))
-		return NULL;
-
-	m_FlightAirports[Code] = pAirport;
-	m_FlightAirportCounts[Code] = 1;
-
-	return pAirport;
-}
-
-void CGlobeView::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
-{
-	FMAirport* pFrom = AddAirport(From);
-	FMAirport* pTo = AddAirport(To);
-}
-
-void CGlobeView::CalcFlights()
-{
 	// Airports
-	CFlightAirports::CPair* pPair = m_FlightAirports.PGetFirstAssoc();
-	while (pPair)
+	CFlightAirports::CPair* pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
+	while (pPair1)
 	{
 		GlobeAirport ga;
 		ZeroMemory(&ga, sizeof(ga));
-		ga.pAirport = pPair->value;
+		ga.pAirport = pPair1->value;
 
 		strcpy_s(ga.NameString, 130, ga.pAirport->Name);
 		FMCountry* Country = FMIATAGetCountry(ga.pAirport->CountryID);
@@ -263,20 +233,23 @@ void CGlobeView::CalcFlights()
 		CalculateWorldCoords(ga.pAirport->Location.Latitude, ga.pAirport->Location.Longitude, ga.World);
 
 		UINT Cnt = 0;
-		m_FlightAirportCounts.Lookup(ga.pAirport->Code, Cnt);
+		pKitchen->m_FlightAirportCounts.Lookup(ga.pAirport->Code, Cnt);
 		CString tmpStr;
 		tmpStr.Format(Cnt==1 ? m_FlightCount_Singular : m_FlightCount_Plural, Cnt);
 		wcscpy_s(ga.CountString, 64, tmpStr.GetBuffer());
 
 		m_Airports.AddItem(ga);
-		pPair = m_FlightAirports.PGetNextAssoc(pPair);
+		pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
 	}
 
 	// Routes
+	CFlightRoutes::CPair* pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+	while (pPair2)
+	{
+		m_Routes.AddItem(pKitchen->Tesselate(pPair2->value));
 
-	// Flush
-	m_FlightAirports.RemoveAll();
-	m_FlightAirportCounts.RemoveAll();
+		pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
+	}
 }
 
 void CGlobeView::UpdateViewOptions(BOOL Force)
@@ -454,9 +427,9 @@ Smaller:
 
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_TextureGlobe)
-			delete m_TextureGlobe;
-		m_TextureGlobe = new GLTextureBlueMarble(Tex);
+		if (m_pTextureGlobe)
+			delete m_pTextureGlobe;
+		m_pTextureGlobe = new GLTextureBlueMarble(Tex);
 		m_CurrentGlobeTexture = Tex;
 
 		m_LockUpdate = FALSE;
@@ -516,6 +489,31 @@ __forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat
 			if (m_ShowSpots)
 				glDrawIcon(x, y, 6.0f+8.0f*ga->Alpha, ga->Alpha, SPOT);
 		}
+	}
+}
+
+__forceinline void CGlobeView::CalcAndDrawRoutes()
+{
+	for (UINT a=0; a<m_Routes.m_ItemCount; a++)
+	{
+		GLfloat Color[4];
+		ColorRef2GLColor(&Color[0], m_Routes.m_Items[a]->Route.Color);
+		glColor4f(Color[0], Color[1], Color[2], 1.0f);
+
+		glBegin(GL_LINE_STRIP);
+		DOUBLE* pPoints = &m_Routes.m_Items[a]->Points[0][0];
+
+		for (UINT b=0; b<m_Routes.m_Items[a]->PointCount; b++)
+		{
+			const DOUBLE X = pPoints[2]*cos(pPoints[0])*sin(pPoints[1]+PI/2);
+			const DOUBLE Y = -pPoints[2]*cos(pPoints[0])*cos(pPoints[1]+PI/2);
+			const DOUBLE Z = -pPoints[2]*sin(pPoints[0]);
+
+			glVertex3d(X, Y, Z);
+			pPoints += 3;
+		}
+
+		glEnd();
 	}
 }
 
@@ -797,10 +795,10 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	}
 
 	// Globus-Textur
-	if (m_TextureGlobe)
+	if (m_pTextureGlobe)
 	{
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
+		glBindTexture(GL_TEXTURE_2D, m_pTextureGlobe->GetID());
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
 	}
 	else
@@ -830,29 +828,49 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glGetFloatv(GL_PROJECTION_MATRIX, &Projection[0][0]);
 
 	// Für Icons vorbereiten
-	if (m_TextureIcons)
+	if (m_pTextureIcons)
 	{
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
+		glBindTexture(GL_TEXTURE_2D, m_pTextureIcons->GetID());
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 	else
 	{
 		glDisable(GL_TEXTURE_2D);
 	}
-	glEnable2D();
-	glBegin(GL_QUADS);
 
 	// Koordinaten bestimmen und Spots zeichnen
 	if (m_Airports.m_ItemCount)
+	{
+		glEnable2D();
+		glBegin(GL_QUADS);
 		CalcAndDrawSpots(ModelView, Projection);
+		glEnd();
+		glDisable2D();
+	}
+
+	// Routen zeichnen
+	if (m_Routes.m_ItemCount)
+	{
+		glDisable(GL_TEXTURE_2D);
+		glLineWidth(3.5f);
+		CalcAndDrawRoutes();
+		glLineWidth(1.0f);
+		if (m_pTextureIcons)
+			glEnable(GL_TEXTURE_2D);
+	}
+
+	glEnable2D();
 
 	// Fadenkreuz zeichnen
 	if (m_ShowViewport && m_ShowCrosshairs)
+	{
+		glBegin(GL_QUADS);
 		glDrawIcon(m_Width/2.0f, m_Height/2.0f, 64.0f, 1.0f, CROSSHAIRS);
+		glEnd();
+	}
 
 	// Icons beenden
-	glEnd();
 	glDisable(GL_TEXTURE_2D);
 
 	// Label zeichnen
@@ -1005,6 +1023,9 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel(GL_SMOOTH);
 	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1024,7 +1045,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Icons
 	CGdiPlusBitmapResource Tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
 	CGdiPlusBitmapResource Tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
-	m_TextureIcons = new GLTextureCombine(&Tex0, &Tex1);
+	m_pTextureIcons = new GLTextureCombine(&Tex0, &Tex1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
@@ -1042,10 +1063,10 @@ void CGlobeView::OnDestroy()
 	{
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_TextureGlobe)
-			delete m_TextureGlobe;
-		if (m_TextureIcons)
-			delete m_TextureIcons;
+		if (m_pTextureGlobe)
+			delete m_pTextureGlobe;
+		if (m_pTextureIcons)
+			delete m_pTextureIcons;
 		if (m_GlobeModel!=-1)
 			glDeleteLists(m_GlobeModel, 1);
 
