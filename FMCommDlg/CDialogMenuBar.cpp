@@ -893,8 +893,6 @@ void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL CloseOnExecute)
 
 void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
 {
-	ASSERT(m_BlueAreaStart==0);
-
 	if (ForBlueArea)
 		m_BlueAreaStart = m_Height;
 

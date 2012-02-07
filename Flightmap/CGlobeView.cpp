@@ -154,7 +154,7 @@ CGlobeView::CGlobeView()
 
 	m_FocusItem = m_HotItem = -1;
 	m_Width = m_Height = 0;
-	m_GlobeModel = -1;
+	m_GlobeModel = m_GlobeRoutes = -1;
 	m_pTextureGlobe = m_pTextureIcons = NULL;
 	m_CurrentGlobeTexture = -1;
 	m_Scale = 1.0f;
@@ -165,6 +165,12 @@ CGlobeView::CGlobeView()
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 	ENSURE(m_FlightCount_Singular.LoadString(IDS_FLIGHTCOUNT_SINGULAR));
 	ENSURE(m_FlightCount_Plural.LoadString(IDS_FLIGHTCOUNT_PLURAL));
+}
+
+CGlobeView::~CGlobeView()
+{
+	for (UINT a=0; a<m_Routes.m_ItemCount; a++)
+		free(m_Routes.m_Items[a]);
 }
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
@@ -207,7 +213,7 @@ BOOL CGlobeView::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CGlobeView::SetFlights(CKitchen* pKitchen)
+void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 {
 	// Reset
 	m_Airports.m_ItemCount = 0;
@@ -250,6 +256,12 @@ void CGlobeView::SetFlights(CKitchen* pKitchen)
 
 		pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
 	}
+
+	// Finish
+	if (DeleteKitchen)
+		delete pKitchen;
+
+	PrepareRoutes();
 }
 
 void CGlobeView::UpdateViewOptions(BOOL Force)
@@ -262,13 +274,13 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = theApp.m_GlobeLongitude/1000.0f;
 		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = theApp.m_GlobeZoom;
 
-		m_UseColors = theApp.m_GlobeUseColors;
 		m_ShowSpots = theApp.m_GlobeShowSpots;
 		m_ShowAirportNames = theApp.m_GlobeShowAirportNames;
 		m_ShowGPS = theApp.m_GlobeShowGPS;
 		m_ShowFlightCount = theApp.m_GlobeShowFlightCount;
 		m_ShowViewport = theApp.m_GlobeShowViewport;
 		m_ShowCrosshairs = theApp.m_GlobeShowCrosshairs;
+		m_UseColors = theApp.m_GlobeUseColors;
 	}
 
 	PrepareTexture();
@@ -368,7 +380,9 @@ __forceinline void CGlobeView::PrepareModel()
 	m_LockUpdate = TRUE;
 	wglMakeCurrent(*m_pDC, hRC);
 
-	m_GlobeModel = glGenLists(1);
+	if (m_GlobeModel==-1)
+		m_GlobeModel = glGenLists(1);
+
 	glNewList(m_GlobeModel, GL_COMPILE);
 	glEnable(GL_CULL_FACE);
 	glBegin(GL_TRIANGLES);
@@ -389,6 +403,44 @@ __forceinline void CGlobeView::PrepareModel()
 
 	glEnd();
 	glDisable(GL_CULL_FACE);
+	glEndList();
+
+	m_LockUpdate = FALSE;
+}
+
+void CGlobeView::PrepareRoutes()
+{
+	// Display-Liste für die Routen erstellen
+	m_LockUpdate = TRUE;
+	wglMakeCurrent(*m_pDC, hRC);
+
+	if (m_GlobeRoutes==-1)
+		m_GlobeRoutes = glGenLists(1);
+
+	glNewList(m_GlobeRoutes, GL_COMPILE);
+
+	for (UINT a=0; a<m_Routes.m_ItemCount; a++)
+	{
+		GLfloat Color[4];
+		ColorRef2GLColor(&Color[0], (!theApp.m_GlobeUseColors || (m_Routes.m_Items[a]->Route.Color==(COLORREF)-1)) ? 0xFFFFFF : m_Routes.m_Items[a]->Route.Color);
+		glColor4f(Color[0], Color[1], Color[2], 1.0f);
+
+		glBegin(GL_LINE_STRIP);
+		DOUBLE* pPoints = &m_Routes.m_Items[a]->Points[0][0];
+
+		for (UINT b=0; b<m_Routes.m_Items[a]->PointCount; b++)
+		{
+			const DOUBLE X = pPoints[2]*cos(pPoints[0])*sin(pPoints[1]+PI/2);
+			const DOUBLE Y = -pPoints[2]*cos(pPoints[0])*cos(pPoints[1]+PI/2);
+			const DOUBLE Z = -pPoints[2]*sin(pPoints[0]);
+
+			glVertex3d(X, Y, Z);
+			pPoints += 3;
+		}
+
+		glEnd();
+	}
+
 	glEndList();
 
 	m_LockUpdate = FALSE;
@@ -489,31 +541,6 @@ __forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat
 			if (m_ShowSpots)
 				glDrawIcon(x, y, 6.0f+8.0f*ga->Alpha, ga->Alpha, SPOT);
 		}
-	}
-}
-
-__forceinline void CGlobeView::CalcAndDrawRoutes()
-{
-	for (UINT a=0; a<m_Routes.m_ItemCount; a++)
-	{
-		GLfloat Color[4];
-		ColorRef2GLColor(&Color[0], m_Routes.m_Items[a]->Route.Color);
-		glColor4f(Color[0], Color[1], Color[2], 1.0f);
-
-		glBegin(GL_LINE_STRIP);
-		DOUBLE* pPoints = &m_Routes.m_Items[a]->Points[0][0];
-
-		for (UINT b=0; b<m_Routes.m_Items[a]->PointCount; b++)
-		{
-			const DOUBLE X = pPoints[2]*cos(pPoints[0])*sin(pPoints[1]+PI/2);
-			const DOUBLE Y = -pPoints[2]*cos(pPoints[0])*cos(pPoints[1]+PI/2);
-			const DOUBLE Z = -pPoints[2]*sin(pPoints[0]);
-
-			glVertex3d(X, Y, Z);
-			pPoints += 3;
-		}
-
-		glEnd();
 	}
 }
 
@@ -853,8 +880,10 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	if (m_Routes.m_ItemCount)
 	{
 		glDisable(GL_TEXTURE_2D);
-		glLineWidth(3.5f);
-		CalcAndDrawRoutes();
+		glLineWidth(min(3.5f, 3.5f*m_Scale));
+		glEnable(GL_LINE_SMOOTH);
+		glCallList(m_GlobeRoutes);
+		glDisable(GL_LINE_SMOOTH);
 		glLineWidth(1.0f);
 		if (m_pTextureIcons)
 			glEnable(GL_TEXTURE_2D);
@@ -1439,6 +1468,7 @@ void CGlobeView::OnAutosize()
 void CGlobeView::OnColors()
 {
 	theApp.m_GlobeUseColors = m_UseColors = !m_UseColors;
+	PrepareRoutes();
 	Invalidate();
 }
 

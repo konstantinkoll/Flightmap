@@ -38,23 +38,24 @@ class CGlobeView : public CWnd
 {
 public:
 	CGlobeView();
+	~CGlobeView();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetFlights(CKitchen* pKitchen);
+	void SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen=TRUE);
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;
-	BOOL m_UseColors;
 	BOOL m_ShowSpots;
 	BOOL m_ShowAirportNames;
 	BOOL m_ShowGPS;
 	BOOL m_ShowFlightCount;
 	BOOL m_ShowViewport;
 	BOOL m_ShowCrosshairs;
+	BOOL m_UseColors;
 
 	DynArray<GlobeAirport> m_Airports;
 	DynArray<FlightSegments*> m_Routes;
@@ -75,10 +76,10 @@ protected:
 	void InvalidateItem(INT idx);
 	void SelectItem(INT idx, BOOL Select);
 	void PrepareModel();
+	void PrepareRoutes();
 	void PrepareTexture();
 	void Normalize();
 	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
-	void CalcAndDrawRoutes();
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused);
 	void DrawStatusBar(INT Height);
@@ -128,6 +129,7 @@ private:
 	CPoint m_CursorPos;
 
 	GLint m_GlobeModel;
+	GLint m_GlobeRoutes;
 	BOOL m_IsHQModel;
 	INT m_CurrentGlobeTexture;
 
