@@ -384,6 +384,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGoogleEarthFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CKitchen.cpp"
 				>
 			</File>
@@ -463,6 +467,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlobeWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGoogleEarthFile.h"
 				>
 			</File>
 			<File

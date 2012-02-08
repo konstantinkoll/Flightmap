@@ -115,13 +115,12 @@ BOOL CFlightmapApp::InitInstance()
 	CMainWnd* pFrame = new CMainWnd();
 	pFrame->Create();
 	pFrame->ShowWindow(SW_SHOW);
+	pFrame->UpdateWindow();
 
 	if (!FMIsLicensed())
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
 	FMCheckForUpdate(FALSE, pFrame);
-
-	//OnAppAbout();
 
 	//FMProgressDlg dlg(NULL, NULL, NULL);
 	//dlg.DoModal();
@@ -219,7 +218,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 
 	CString szTempName;
 	srand(rand());
-	szTempName.Format(_T("%sFlightmapS%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
+	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	// Datei erzeugen
 	CStdioFile f;

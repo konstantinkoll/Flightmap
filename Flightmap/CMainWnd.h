@@ -21,6 +21,8 @@ public:
 
 	BOOL Create();
 
+	BOOL ExportKML(CString FileName, BOOL Selected=FALSE);
+
 protected:
 	HICON m_hIcon;
 	CWnd* m_pWndMainView;
@@ -40,5 +42,9 @@ protected:
 
 	afx_msg void OnGlobeOpen();
 	afx_msg void OnUpdateGlobeCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnGoogleEarthOpen();
+	afx_msg void OnGoogleEarthExport();
+	afx_msg void OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

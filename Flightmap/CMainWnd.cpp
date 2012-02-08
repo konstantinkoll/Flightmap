@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CGoogleEarthFile.h"
 #include "CKitchen.h"
 #include "CLoungeView.h"
 #include "CMainWnd.h"
@@ -108,6 +109,34 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected)
 	return pKitchen;
 }
 
+BOOL CMainWnd::ExportKML(CString FileName, BOOL Selected)
+{
+	CGoogleEarthFile f;
+
+	if (!f.Open(FileName, _T("Test")))
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+		return FALSE;
+	}
+	else
+	{
+		try
+		{
+			f.WriteRoutes(GetKitchen(Selected));
+			f.Close();
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(IDS_DRIVENOTREADY);
+			f.Close();
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+}
+
+
 BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
@@ -121,6 +150,10 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
+
+	ON_COMMAND(IDM_GOOGLEEARTH_OPEN, OnGoogleEarthOpen)
+	ON_COMMAND(IDM_GOOGLEEARTH_EXPORT, OnGoogleEarthExport)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_EXPORT, OnUpdateGlobeCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -272,7 +305,6 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSubmenu(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_SELECTEDONLY);
-		pPopup->AddCheckbox(IDM_GOOGLEEARTH_ANIMATED);
 		break;
 	case IDM_GOOGLEEARTH_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
@@ -341,6 +373,47 @@ void CMainWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_GLOBE_OPEN:
 		pCmdUI->Enable(TRUE);
+		break;
+	default:
+		pCmdUI->Enable(TRUE);
+	}
+}
+
+
+// Google Earth commands
+
+void CMainWnd::OnGoogleEarthOpen()
+{
+	// Dateinamen finden
+	TCHAR Pathname[MAX_PATH];
+	if (!GetTempPath(MAX_PATH, Pathname))
+		return;
+
+	CString szTempName;
+	srand(rand());
+	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
+
+	if (ExportKML(szTempName))
+		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+}
+
+void CMainWnd::OnGoogleEarthExport()
+{
+	CString Extensions;
+	ENSURE(Extensions.LoadString(IDS_FILEFILTER_KML));
+	Extensions += _T(" (*.kml)|*.kml||");
+
+	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportKML(dlg.GetPathName());
+}
+
+void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_GOOGLEEARTH_OPEN:
+		pCmdUI->Enable(!theApp.m_PathGoogleEarth.IsEmpty());
 		break;
 	default:
 		pCmdUI->Enable(TRUE);

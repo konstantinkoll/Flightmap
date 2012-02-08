@@ -43,6 +43,7 @@
 #define IDS_DRIVENOTREADY               1011
 #define IDS_FLIGHTCOUNT_SINGULAR        1012
 #define IDS_FLIGHTCOUNT_PLURAL          1013
+#define IDS_FILEFILTER_KML              1100
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002
@@ -91,7 +92,6 @@
 #define IDM_GOOGLEEARTH_OPEN            3401
 #define IDM_GOOGLEEARTH_EXPORT          3402
 #define IDM_GOOGLEEARTH_SELECTEDONLY    3403
-#define IDM_GOOGLEEARTH_ANIMATED        3404
 #define IDM_STATISTICS                  3500
 #define IDM_GLOBEWND                    3600
 #define IDM_GLOBEWND_CLOSE              3601
