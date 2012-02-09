@@ -109,7 +109,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected)
 	return pKitchen;
 }
 
-BOOL CMainWnd::ExportKML(CString FileName, BOOL Selected)
+BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Selected)
 {
 	CGoogleEarthFile f;
 
@@ -120,19 +120,32 @@ BOOL CMainWnd::ExportKML(CString FileName, BOOL Selected)
 	}
 	else
 	{
+		BOOL Res = FALSE;
+		CKitchen* pKitchen = GetKitchen(Selected);
+
 		try
 		{
-			f.WriteRoutes(GetKitchen(Selected));
+			f.WriteRoutes(pKitchen, UseColors, Clamp, FALSE);
+
+			CFlightAirports::CPair* pPair = pKitchen->m_FlightAirports.PGetFirstAssoc();
+			while (pPair)
+			{
+				f.WriteAirport(pPair->value);
+
+				pPair = pKitchen->m_FlightAirports.PGetNextAssoc(pPair);
+			}
+
 			f.Close();
+			Res = TRUE;
 		}
 		catch(CFileException ex)
 		{
 			FMErrorBox(IDS_DRIVENOTREADY);
 			f.Close();
-			return FALSE;
 		}
 
-		return TRUE;
+		delete pKitchen;
+		return Res;
 	}
 }
 
@@ -153,7 +166,9 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 
 	ON_COMMAND(IDM_GOOGLEEARTH_OPEN, OnGoogleEarthOpen)
 	ON_COMMAND(IDM_GOOGLEEARTH_EXPORT, OnGoogleEarthExport)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_EXPORT, OnUpdateGlobeCommands)
+	ON_COMMAND(IDM_GOOGLEEARTH_COLORS, OnGoogleEarthColors)
+	ON_COMMAND(IDM_GOOGLEEARTH_CLAMP, OnGoogleEarthClamp)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_CLAMP, OnUpdateGoogleEarthCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -305,6 +320,9 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSubmenu(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_SELECTEDONLY);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_GOOGLEEARTH_COLORS);
+		pPopup->AddCheckbox(IDM_GOOGLEEARTH_CLAMP);
 		break;
 	case IDM_GOOGLEEARTH_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
@@ -393,7 +411,7 @@ void CMainWnd::OnGoogleEarthOpen()
 	srand(rand());
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
-	if (ExportKML(szTempName))
+	if (ExportKML(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp))
 		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
 }
 
@@ -405,17 +423,38 @@ void CMainWnd::OnGoogleEarthExport()
 
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportKML(dlg.GetPathName());
+		ExportKML(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
+}
+
+void CMainWnd::OnGoogleEarthColors()
+{
+	theApp.m_GoogleEarthUseColors = !theApp.m_GoogleEarthUseColors;
+}
+
+void CMainWnd::OnGoogleEarthClamp()
+{
+	theApp.m_GoogleEarthClamp = !theApp.m_GoogleEarthClamp;
 }
 
 void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
 {
+	BOOL b = TRUE;
+
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GOOGLEEARTH_OPEN:
-		pCmdUI->Enable(!theApp.m_PathGoogleEarth.IsEmpty());
+		b = !theApp.m_PathGoogleEarth.IsEmpty();
 		break;
-	default:
-		pCmdUI->Enable(TRUE);
+	case IDM_GOOGLEEARTH_SELECTEDONLY:
+		b = FALSE;
+		break;
+	case IDM_GOOGLEEARTH_COLORS:
+		pCmdUI->SetCheck(theApp.m_GoogleEarthUseColors);
+		break;
+	case IDM_GOOGLEEARTH_CLAMP:
+		pCmdUI->SetCheck(theApp.m_GoogleEarthClamp);
+		break;
 	}
+
+	pCmdUI->Enable(b);
 }

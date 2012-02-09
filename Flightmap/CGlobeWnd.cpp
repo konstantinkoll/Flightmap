@@ -123,7 +123,9 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	{
 	case IDM_GLOBEWND:
 		pPopup->Create(this, IDB_MENUGLOBEWND_32, IDB_MENUGLOBEWND_16);
-		pPopup->AddCommand(IDM_GLOBEWND_CLOSE, 0, CDMB_MEDIUM);
+		pPopup->AddCommand(IDM_GLOBEVIEW_SAVEAS, 0, CDMB_MEDIUM);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_GLOBEWND_CLOSE, 1, CDMB_MEDIUM);
 		break;
 	case IDM_GLOBEVIEW:
 		pPopup->Create(this, IDB_MENUGLOBEVIEW_32, IDB_MENUGLOBEVIEW_16);

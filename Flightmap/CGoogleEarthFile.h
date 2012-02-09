@@ -17,10 +17,14 @@ public:
 	CGoogleEarthFile();
 
 	BOOL Open(LPCTSTR lpszFileName, LPCTSTR lpszDisplayName=NULL);
-	void WriteRoute(FlightSegments* pSegments, BOOL UseColors=TRUE);
-	void WriteRoutes(CKitchen* pKitchen, BOOL UseColors=TRUE);
+	void WriteAirport(FMAirport* pAirport);
+	void WriteRoute(FlightSegments* pSegments, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL FreeSegments=TRUE);
+	void WriteRoutes(CKitchen* pKitchen, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL FreeKitchen=TRUE);
 	void Close();
 
 private:
+	void WriteAttribute(UINT ResID, CString Value);
+	void WriteAttribute(UINT ResID, CHAR* Value);
+
 	BOOL m_IsOpen;
 };

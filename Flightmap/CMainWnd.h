@@ -21,7 +21,7 @@ public:
 
 	BOOL Create();
 
-	BOOL ExportKML(CString FileName, BOOL Selected=FALSE);
+	BOOL ExportKML(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE);
 
 protected:
 	HICON m_hIcon;
@@ -45,6 +45,8 @@ protected:
 
 	afx_msg void OnGoogleEarthOpen();
 	afx_msg void OnGoogleEarthExport();
+	afx_msg void OnGoogleEarthColors();
+	afx_msg void OnGoogleEarthClamp();
 	afx_msg void OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

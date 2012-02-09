@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CGlobeView.h"
+#include "CGoogleEarthFile.h"
 #include "Resource.h"
 #include "ThreeDSettingsDlg.h"
 #include <math.h>
@@ -1016,6 +1017,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_WM_KILLFOCUS()
 	ON_WM_CONTEXTMENU()
 
+	ON_COMMAND(IDM_GLOBEVIEW_SAVEAS, OnSaveAs)
 	ON_COMMAND(IDM_GLOBEVIEW_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMOUT, OnZoomOut)
@@ -1030,7 +1032,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_COMMAND(IDM_GLOBEVIEW_CROSSHAIRS, OnCrosshairs)
 	ON_COMMAND(IDM_GLOBEVIEW_3DSETTINGS, On3DSettings)
 	ON_COMMAND(IDM_GLOBEITEM_OPENGOOGLEEARTH, OnOpenGoogleEarth)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEVIEW_JUMPTOLOCATION, IDM_GLOBEVIEW_3DSETTINGS, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEVIEW_SAVEAS, IDM_GLOBEVIEW_3DSETTINGS, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEITEM_OPENGOOGLEEARTH, IDM_GLOBEITEM_OPENGOOGLEEARTH, OnUpdateCommands)
 END_MESSAGE_MAP()
 
@@ -1425,6 +1427,42 @@ void CGlobeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 }
 
 
+void CGlobeView::OnSaveAs()
+{
+	CString Extensions;
+	ENSURE(Extensions.LoadString(IDS_FILEFILTER_KML));
+	Extensions += _T(" (*.kml)|*.kml||");
+
+	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		CGoogleEarthFile f;
+
+		if (!f.Open(dlg.GetPathName(), _T("Test")))
+		{
+			FMErrorBox(IDS_DRIVENOTREADY);
+		}
+		else
+		{
+			try
+			{
+				for (UINT a=0; a<m_Routes.m_ItemCount; a++)
+					f.WriteRoute(m_Routes.m_Items[a], m_UseColors, m_Clamp, FALSE);
+
+				for (UINT a=0; a<m_Airports.m_ItemCount; a++)
+					f.WriteAirport(m_Airports.m_Items[a].pAirport);
+
+				f.Close();
+			}
+			catch(CFileException ex)
+			{
+				FMErrorBox(IDS_DRIVENOTREADY);
+				f.Close();
+			}
+		}
+	}
+}
+
 void CGlobeView::OnJumpToLocation()
 {
 	FMSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
@@ -1535,6 +1573,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_GLOBEVIEW_SAVEAS:
+		b = m_Routes.m_ItemCount>0;
+		break;
 	case IDM_GLOBEVIEW_ZOOMIN:
 		b = m_GlobeTarget.Zoom>0;
 		break;

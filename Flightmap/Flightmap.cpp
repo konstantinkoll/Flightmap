@@ -5,40 +5,8 @@
 #include "stdafx.h"
 #include "AboutDlg.h"
 #include "Flightmap.h"
+#include "CGoogleEarthFile.h"
 #include "CMainWnd.h"
-
-
-void CookAttributeString(CString& tmpStr)
-{
-	tmpStr.Replace(_T("<"), _T("_"));
-	tmpStr.Replace(_T(">"), _T("_"));
-	tmpStr.Replace(_T("&"), _T("&amp;"));
-	tmpStr.Replace(_T("–"), _T("&#8211;"));
-	tmpStr.Replace(_T("—"), _T("&#8212;"));
-}
-
-void WriteGoogleAttribute(CStdioFile* f, UINT ResID, CString Value)
-{
-	if (!Value.IsEmpty())
-	{
-		CString Name;
-		ENSURE(Name.LoadString(ResID));
-		CookAttributeString(Name);
-		CookAttributeString(Value);
-
-		f->WriteString(_T("&lt;b&gt;"));
-		f->WriteString(Name);
-		f->WriteString(_T("&lt;/b&gt;: "));
-		f->WriteString(Value);
-		f->WriteString(_T("&lt;br&gt;"));
-	}
-}
-
-void WriteGoogleAttribute(CStdioFile* f, UINT ResID, CHAR* Value)
-{
-	CString tmpStr(Value);
-	WriteGoogleAttribute(f, ResID, tmpStr);
-}
 
 
 // CFlightmapApp
@@ -105,6 +73,8 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeShowFlightCount = GetInt(_T("GlobeShowFlightCount"), FALSE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
+	m_GoogleEarthUseColors = GetInt(_T("GoogleEarthUseColors"), TRUE);
+	m_GoogleEarthClamp = GetInt(_T("GoogleEarthClamp"), FALSE);
 	GetBinary(_T("CustomColors"), &m_CustomColors, sizeof(m_CustomColors));
 
 	if (m_nTextureSize<0)
@@ -153,6 +123,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeShowFlightCount"), m_GlobeShowFlightCount);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
+		WriteInt(_T("GoogleEarthUseColors"), m_GoogleEarthUseColors);
+		WriteInt(_T("GoogleEarthClamp"), m_GoogleEarthClamp);
 		WriteBinary(_T("CustomColors"), (LPBYTE)&m_CustomColors, sizeof(m_CustomColors));
 	}
 
@@ -221,8 +193,8 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	// Datei erzeugen
-	CStdioFile f;
-	if (!f.Open(szTempName, CFile::modeCreate | CFile::modeWrite))
+	CGoogleEarthFile f;
+	if (!f.Open(szTempName))
 	{
 		FMErrorBox(IDS_DRIVENOTREADY);
 	}
@@ -230,30 +202,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	{
 		try
 		{
-			f.WriteString(_T("<?xml version=\"1.0\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
-			f.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
-			f.WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
-			f.WriteString(_T("<Placemark>\n<name>"));
-
-			CString tmpStr(pAirport->Code);
-			CookAttributeString(tmpStr);
-			f.WriteString(tmpStr);
-
-			f.WriteString(_T("</name>\n<description>"));
-			WriteGoogleAttribute(&f, IDS_AIRPORT_NAME, pAirport->Name);
-			WriteGoogleAttribute(&f, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
-			WriteGoogleAttribute(&f, IDS_AIRPORT_CODE, tmpStr);
-			FMGeoCoordinatesToString(pAirport->Location, tmpStr);
-			WriteGoogleAttribute(&f, IDS_AIRPORT_LOCATION, tmpStr);
-			f.WriteString(_T("&lt;div&gt;</description>\n"));
-
-			f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));
-			tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), pAirport->Location.Longitude, -pAirport->Location.Latitude);
-			f.WriteString(tmpStr);
-			f.WriteString(_T("</Placemark>\n"));
-
-			f.WriteString(_T("</Document>\n</kml>\n"));
+			f.WriteAirport(pAirport);
 			f.Close();
 
 			ShellExecute(GetForegroundWindow(), _T("open"), szTempName, NULL, NULL, SW_SHOW);

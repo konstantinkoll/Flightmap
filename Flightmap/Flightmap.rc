@@ -207,7 +207,10 @@ BEGIN
     IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
     IDM_GOOGLEEARTH_SELECTEDONLY
                             "Nur &ausgewählte Flüge"
+    IDM_GOOGLEEARTH_COLORS  "&Farben benutzen"
+    IDM_GOOGLEEARTH_CLAMP   "&Echte Flughöhen"
     IDM_GLOBEWND_CLOSE      "S&chließen"
+    IDM_GLOBEVIEW_SAVEAS    "Speichern &unter"
     IDM_GLOBEVIEW_JUMPTOLOCATION 
                             "&Ort anzeigen...\nRichtet den Globus auf einen\nbestimmten Ort aus."
     IDM_GLOBEVIEW_ZOOMIN    "Ver&gößern"
@@ -376,7 +379,10 @@ BEGIN
     IDM_GOOGLEEARTH_EXPORT  "E&xport\nExport the itinerary\nas Google Earth overlay."
     IDM_GOOGLEEARTH_SELECTEDONLY
                             "&Selected flights only"
+    IDM_GOOGLEEARTH_COLORS  "Use colo&rs"
+    IDM_GOOGLEEARTH_CLAMP   "&True flight levels"
     IDM_GLOBEWND_CLOSE      "&Close"
+    IDM_GLOBEVIEW_SAVEAS    "Save &as"
     IDM_GLOBEVIEW_JUMPTOLOCATION 
                             "Jump to &location...\nCenter the globe on\na specific location."
     IDM_GLOBEVIEW_ZOOMIN    "Zoom &in"

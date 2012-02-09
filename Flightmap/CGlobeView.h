@@ -108,6 +108,7 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 
+	afx_msg void OnSaveAs();
 	afx_msg void OnJumpToLocation();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();

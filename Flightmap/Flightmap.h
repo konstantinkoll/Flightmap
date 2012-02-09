@@ -69,6 +69,9 @@ public:
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 
+	BOOL m_GoogleEarthUseColors;
+	BOOL m_GoogleEarthClamp;
+
 protected:
 	BOOL m_AppInitialized;
 
