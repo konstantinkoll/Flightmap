@@ -400,6 +400,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMapWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Flightmap.cpp"
 				>
 			</File>
@@ -483,6 +487,10 @@
 			</File>
 			<File
 				RelativePath=".\CMainWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapWnd.h"
 				>
 			</File>
 			<File
@@ -625,6 +633,14 @@
 			</File>
 			<File
 				RelativePath=".\res\MenuGoogleEarth_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuMap_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuMap_32.bmp"
 				>
 			</File>
 			<File

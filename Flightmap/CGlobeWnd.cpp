@@ -34,7 +34,7 @@ BOOL CGlobeWnd::Create()
 	rect.DeflateRect(32, 32);
 
 	CString caption;
-	ENSURE(caption.LoadString(IDR_APPLICATION));
+	ENSURE(caption.LoadString(IDR_GLOBE));
 
 	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }

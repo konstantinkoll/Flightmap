@@ -40,6 +40,9 @@ protected:
 	afx_msg void OnFileQuit();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnMapOpen();
+	afx_msg void OnUpdateMapCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnGlobeOpen();
 	afx_msg void OnUpdateGlobeCommands(CCmdUI* pCmdUI);
 

@@ -565,6 +565,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Map_Small.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\NRT_Registered.png"
 			>
 		</File>

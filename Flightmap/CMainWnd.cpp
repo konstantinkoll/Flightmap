@@ -7,6 +7,7 @@
 #include "CKitchen.h"
 #include "CLoungeView.h"
 #include "CMainWnd.h"
+#include "CMapWnd.h"
 #include "CGlobeWnd.h"
 #include "Flightmap.h"
 
@@ -161,6 +162,9 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
 
+	ON_COMMAND(IDM_MAP_OPEN, OnMapOpen)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_OPEN, IDM_MAP_OPEN, OnUpdateMapCommands)
+
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
 
@@ -289,7 +293,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddFileType(IDM_EDIT_INSERT_ITINERARY, _T(".airx"), CDMB_LARGE);
 		break;
 	case IDM_MAP:
-		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
+		pPopup->Create(this, IDB_MENUMAP_32, IDB_MENUMAP_16);
 		pPopup->AddSubmenu(IDM_MAP_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_MAP_SELECTEDONLY);
@@ -366,6 +370,30 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_CLOSE:
+		pCmdUI->Enable(TRUE);
+		break;
+	default:
+		pCmdUI->Enable(TRUE);
+	}
+}
+
+
+// Map commands
+
+void CMainWnd::OnMapOpen()
+{
+	CMapWnd* pFrame = new CMapWnd();
+
+	pFrame->Create();
+//	pFrame->SetFlights(GetKitchen());
+	pFrame->ShowWindow(SW_SHOW);
+}
+
+void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_MAP_OPEN:
 		pCmdUI->Enable(TRUE);
 		break;
 	default:
