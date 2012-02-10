@@ -236,6 +236,7 @@ public:
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnSelect(BOOL Keyboard);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);
@@ -267,6 +268,7 @@ public:
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
+	virtual void OnSelect(BOOL Keyboard);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);

@@ -560,8 +560,6 @@ void CDialogMenuBar::OnMouseLeave()
 	m_Hover = FALSE;
 	m_HoverItem = -1;
 	Invalidate();
-
-	m_LastMove.x = m_LastMove.y = -1;
 }
 
 void CDialogMenuBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
@@ -942,7 +940,10 @@ void CDialogMenuPopup::SelectItem(INT idx)
 
 		m_SelectedItem = idx;
 		if (idx!=-1)
+		{
+			m_Items.m_Items[idx].pItem->OnSelect(m_Keyboard);
 			m_LastSelectedItem = idx;
+		}
 
 		InvalidateItem(m_SelectedItem);
 
@@ -1441,7 +1442,10 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	INT idx = m_SelectedItem;
 	if (idx!=-1)
 		if (m_Items.m_Items[idx].pItem->OnKeyDown(nChar))
+		{
+			InvalidateItem(idx);
 			return;
+		}
 
 	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
 	{
@@ -1596,6 +1600,10 @@ BOOL CDialogMenuItem::IsSelectable()
 }
 
 void CDialogMenuItem::OnPaint(CDC* /*pDC*/, LPRECT /*rect*/, BOOL /*Selected*/, UINT /*Themed*/)
+{
+}
+
+void CDialogMenuItem::OnSelect(BOOL /*Keyboard*/)
 {
 }
 
@@ -1871,6 +1879,12 @@ void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/)
 	pIcons->EndDrawImage(ds);
 }
 
+void CDialogMenuCommand::OnSelect(BOOL Keyboard)
+{
+	if (Keyboard)
+		m_HoverOverCommand = TRUE;
+}
+
 void CDialogMenuCommand::OnDeselect()
 {
 	if (m_pSubmenu)
@@ -1939,6 +1953,7 @@ BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
 		}
 		break;
 	case VK_RIGHT:
+		m_HoverOverCommand = FALSE;
 		return m_Submenu ? TrackSubmenu(TRUE) : FALSE;
 	}
 
