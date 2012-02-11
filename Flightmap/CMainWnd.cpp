@@ -163,7 +163,12 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
 
 	ON_COMMAND(IDM_MAP_OPEN, OnMapOpen)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_OPEN, IDM_MAP_OPEN, OnUpdateMapCommands)
+	ON_COMMAND(IDM_MAP_CENTERATLANTIC, OnMapCenterAtlantic)
+	ON_COMMAND(IDM_MAP_CENTERPACIFIC, OnMapCenterPacific)
+	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
+	ON_COMMAND(IDM_MAP_SHOWLOCATIONS, OnMapShowLocations)
+	ON_COMMAND(IDM_MAP_SHOWIATACODES, OnMapShowIATACodes)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_OPEN, IDM_MAP_SHOWIATACODES, OnUpdateMapCommands)
 
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
@@ -298,6 +303,8 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_MAP_SELECTEDONLY);
 		pPopup->AddCaption(IDS_BACKGROUND);
+		pPopup->AddCheckbox(IDM_MAP_CENTERATLANTIC, TRUE);
+		pPopup->AddCheckbox(IDM_MAP_CENTERPACIFIC, TRUE);
 		pPopup->AddCaption(IDS_FLIGHTROUTES);
 		pPopup->AddCheckbox(IDM_MAP_SHOWFLIGHTROUTES);
 		pPopup->AddCaption(IDS_LOCATIONS);
@@ -389,16 +396,61 @@ void CMainWnd::OnMapOpen()
 	pFrame->ShowWindow(SW_SHOW);
 }
 
+void CMainWnd::OnMapCenterAtlantic()
+{
+	theApp.m_MapSettings.CenterPacific = FALSE;
+}
+
+void CMainWnd::OnMapCenterPacific()
+{
+	theApp.m_MapSettings.CenterPacific = TRUE;
+}
+
+void CMainWnd::OnMapShowFlightRoutes()
+{
+	theApp.m_MapSettings.ShowFlightRoutes = !theApp.m_MapSettings.ShowFlightRoutes;
+	if (theApp.m_MapSettings.ShowFlightRoutes)
+		theApp.m_MapSettings.ShowLocations = TRUE;
+}
+
+void CMainWnd::OnMapShowLocations()
+{
+	theApp.m_MapSettings.ShowLocations = !theApp.m_MapSettings.ShowLocations;
+}
+
+void CMainWnd::OnMapShowIATACodes()
+{
+	theApp.m_MapSettings.ShowIATACodes = !theApp.m_MapSettings.ShowIATACodes;
+}
+
 void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 {
+	BOOL b = TRUE;
+
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_MAP_OPEN:
-		pCmdUI->Enable(TRUE);
+	case IDM_MAP_SELECTEDONLY:
+		b = FALSE;
 		break;
-	default:
-		pCmdUI->Enable(TRUE);
+	case IDM_MAP_CENTERATLANTIC:
+		pCmdUI->SetCheck(!theApp.m_MapSettings.CenterPacific);
+		break;
+	case IDM_MAP_CENTERPACIFIC:
+		pCmdUI->SetCheck(theApp.m_MapSettings.CenterPacific);
+		break;
+	case IDM_MAP_SHOWFLIGHTROUTES:
+		pCmdUI->SetCheck(theApp.m_MapSettings.ShowFlightRoutes);
+		break;
+	case IDM_MAP_SHOWLOCATIONS:
+		pCmdUI->SetCheck(theApp.m_MapSettings.ShowLocations);
+		b = !theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_SHOWIATACODES:
+		pCmdUI->SetCheck(theApp.m_MapSettings.ShowIATACodes);
+		break;
 	}
+
+	pCmdUI->Enable(b);
 }
 
 

@@ -26,6 +26,14 @@
 
 #define WM_3DSETTINGSCHANGED     WM_USER+100
 
+struct MapSettings
+{
+	BOOL CenterPacific;
+	BOOL ShowFlightRoutes;
+	BOOL ShowLocations;
+	BOOL ShowIATACodes;
+};
+
 class CFlightmapApp : public FMApplication
 {
 public:
@@ -49,6 +57,8 @@ public:
 
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
+
+	MapSettings m_MapSettings;
 
 	// Viewport
 	INT m_GlobeLatitude;

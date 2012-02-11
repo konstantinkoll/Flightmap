@@ -205,6 +205,8 @@ BEGIN
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExportiert den Flugplan\nals Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExportiert den Flugplan\nals TIFF-Datei."
     IDM_MAP_SELECTEDONLY    "Nur &ausgewählte Flüge"
+    IDM_MAP_CENTERATLANTIC  "&Atlantik mittig"
+    IDM_MAP_CENTERPACIFIC   "&Pazifik mittig"
     IDM_MAP_SHOWFLIGHTROUTES
                             "&Flugrouten zeigen"
     IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
@@ -388,6 +390,8 @@ BEGIN
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExport the itinerary\nas Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExport the itinerary\nas TIFF file."
     IDM_MAP_SELECTEDONLY    "&Selected flights only"
+    IDM_MAP_CENTERATLANTIC  "Center &Atlantic Ocean"
+    IDM_MAP_CENTERPACIFIC   "Center &Pacific Ocean"
     IDM_MAP_SHOWFLIGHTROUTES
                             "Show &flight routes"
     IDM_MAP_SHOWLOCATIONS   "Show loca&tions"

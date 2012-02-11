@@ -852,7 +852,10 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	i.pItem = pItem;
 	i.Selectable = pItem->IsSelectable();
 	if (i.Selectable)
+	{
 		i.Enabled = pItem->IsEnabled();
+		i.Checked = pItem->IsChecked();
+	}
 	i.Accelerator = toupper(pItem->GetAccelerator());
 
 	m_Items.AddItem(i);
@@ -884,9 +887,9 @@ void CDialogMenuPopup::AddFile(UINT CmdID, CString Path, UINT PreferredSize)
 	AddItem(new CDialogMenuFile(this, CmdID, Path, PreferredSize));
 }
 
-void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL CloseOnExecute)
+void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL Radio, BOOL CloseOnExecute)
 {
-	AddItem(new CDialogMenuCheckbox(this, CmdID, CloseOnExecute));
+	AddItem(new CDialogMenuCheckbox(this, CmdID, Radio, CloseOnExecute));
 }
 
 void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
@@ -1123,7 +1126,7 @@ void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enable
 	}
 }
 
-void CDialogMenuPopup::DrawCheckbox(CDC* pDC, LPRECT rect, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed)
+void CDialogMenuPopup::DrawButton(CDC* pDC, LPRECT rect, BOOL Radio, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed)
 {
 	if (hThemeButton)
 	{
@@ -1131,11 +1134,11 @@ void CDialogMenuPopup::DrawCheckbox(CDC* pDC, LPRECT rect, BOOL Checked, BOOL En
 		if (Checked)
 			uiStyle += 4;
 
-		p_App->zDrawThemeBackground(hThemeButton, *pDC, BP_CHECKBOX, uiStyle, rect, rect);
+		p_App->zDrawThemeBackground(hThemeButton, *pDC, Radio ? BP_RADIOBUTTON : BP_CHECKBOX, uiStyle, rect, rect);
 	}
 	else
 	{
-		UINT uiStyle = DFCS_BUTTONCHECK | (Enabled ? 0 : DFCS_INACTIVE) | (Checked ? DFCS_CHECKED : 0) | ((Selected && Pressed) ? DFCS_PUSHED : 0);
+		UINT uiStyle = (Radio ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK) | (Enabled ? 0 : DFCS_INACTIVE) | (Checked ? DFCS_CHECKED : 0) | ((Selected && Pressed) ? DFCS_PUSHED : 0);
 
 		pDC->DrawFrameControl(rect, DFC_BUTTON, uiStyle);
 	}
@@ -1324,9 +1327,11 @@ LRESULT CDialogMenuPopup::OnMenuUpdateStatus(WPARAM /*wParam*/, LPARAM lParam)
 		if (m_Items.m_Items[a].Selectable)
 		{
 			BOOL Enabled = m_Items.m_Items[a].pItem->IsEnabled();
-			if (Enabled!=m_Items.m_Items[a].Enabled)
+			BOOL Checked = m_Items.m_Items[a].pItem->IsChecked();
+			if ((Enabled!=m_Items.m_Items[a].Enabled) || (Checked!=m_Items.m_Items[a].Checked))
 			{
 				m_Items.m_Items[a].Enabled = Enabled;
+				m_Items.m_Items[a].Checked = Checked;
 				InvalidateItem(a);
 			}
 		}
@@ -1590,6 +1595,11 @@ UINT CDialogMenuItem::GetAccelerator()
 }
 
 BOOL CDialogMenuItem::IsEnabled()
+{
+	return FALSE;
+}
+
+BOOL CDialogMenuItem::IsChecked()
 {
 	return FALSE;
 }
@@ -2056,10 +2066,11 @@ CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CSt
 // CDialogMenuCheckbox
 //
 
-CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL CloseOnExecute)
+CDialogMenuCheckbox::CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL Radio, BOOL CloseOnExecute)
 	: CDialogMenuCommand(pParentPopup, CmdID, 0, CDMB_SMALL, FALSE, FALSE, CloseOnExecute)
 {
 	m_Checked = m_Pressed = FALSE;
+	m_Radio = Radio;
 
 	pParentPopup->GetCheckSize(m_IconSize);
 }
@@ -2070,22 +2081,20 @@ INT CDialogMenuCheckbox::GetMinHeight()
 	return h+((h-m_IconSize.cy) & 1);
 }
 
-BOOL CDialogMenuCheckbox::IsEnabled()
+BOOL CDialogMenuCheckbox::IsChecked()
 {
 	CDialogCmdUI cmdUI;
 	cmdUI.m_nID = m_CmdID;
 	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
 
-	m_Checked = cmdUI.m_Checked;
-
-	return m_Enabled = cmdUI.m_Enabled;
+	return m_Checked = cmdUI.m_Checked;
 }
 
 void CDialogMenuCheckbox::OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected)
 {
 	CRect rectButton(pt.x, pt.y, pt.x+m_IconSize.cx, pt.y+m_IconSize.cy);
 
-	p_ParentPopup->DrawCheckbox(pDC, rectButton, m_Checked, m_Enabled, Selected, m_Pressed);
+	p_ParentPopup->DrawButton(pDC, rectButton, m_Radio, m_Checked, m_Enabled, Selected, m_Pressed);
 }
 
 void CDialogMenuCheckbox::OnDeselect()

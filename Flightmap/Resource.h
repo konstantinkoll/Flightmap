@@ -88,9 +88,11 @@
 #define IDM_MAP_EXPORT_PNG              3204
 #define IDM_MAP_EXPORT_TIFF             3205
 #define IDM_MAP_SELECTEDONLY            3206
-#define IDM_MAP_SHOWFLIGHTROUTES        3207
-#define IDM_MAP_SHOWLOCATIONS           3208
-#define IDM_MAP_SHOWIATACODES           3209
+#define IDM_MAP_CENTERATLANTIC          3207
+#define IDM_MAP_CENTERPACIFIC           3208
+#define IDM_MAP_SHOWFLIGHTROUTES        3209
+#define IDM_MAP_SHOWLOCATIONS           3210
+#define IDM_MAP_SHOWIATACODES           3211
 #define IDM_GLOBE                       3300
 #define IDM_GLOBE_OPEN                  3301
 #define IDM_GLOBE_SELECTEDONLY          3302

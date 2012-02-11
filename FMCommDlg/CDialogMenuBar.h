@@ -128,6 +128,7 @@ struct MenuPopupItem
 	CDialogMenuItem* pItem;
 	RECT Rect;
 	BOOL Enabled;
+	BOOL Checked;
 	BOOL Selectable;
 	UINT Accelerator;
 };
@@ -147,7 +148,7 @@ public:
 	void AddSubmenu(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL Split=FALSE);
 	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL, BOOL RetainCaption=FALSE);
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
-	void AddCheckbox(UINT CmdID, BOOL CloseOnExecute=FALSE);
+	void AddCheckbox(UINT CmdID, BOOL Radio=FALSE, BOOL CloseOnExecute=FALSE);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
 	void GetCheckSize(CSize& sz);
@@ -161,7 +162,7 @@ public:
 	CFont* SelectCaptionFont(CDC* pDC);
 	void DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed);
 	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled=TRUE, BOOL Focused=TRUE);
-	void DrawCheckbox(CDC* pDC, LPRECT rect, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed);
+	void DrawButton(CDC* pDC, LPRECT rect, BOOL Radio, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed);
 
 protected:
 	FMApplication* p_App;
@@ -233,6 +234,7 @@ public:
 	virtual INT GetOuterBorder();
 	virtual UINT GetAccelerator();
 	virtual BOOL IsEnabled();
+	virtual BOOL IsChecked();
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
@@ -333,10 +335,10 @@ public:
 class CDialogMenuCheckbox : public CDialogMenuCommand
 {
 public:
-	CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL CloseOnExecute);
+	CDialogMenuCheckbox(CDialogMenuPopup* pParentPopup, UINT CmdID, BOOL Radio, BOOL CloseOnExecute);
 
 	virtual INT GetMinHeight();
-	virtual BOOL IsEnabled();
+	virtual BOOL IsChecked();
 
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
 	virtual void OnDeselect();
@@ -346,6 +348,7 @@ public:
 protected:
 	BOOL m_Checked;
 	BOOL m_Pressed;
+	BOOL m_Radio;
 };
 
 

@@ -41,6 +41,11 @@ protected:
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnMapOpen();
+	afx_msg void OnMapCenterAtlantic();
+	afx_msg void OnMapCenterPacific();
+	afx_msg void OnMapShowFlightRoutes();
+	afx_msg void OnMapShowLocations();
+	afx_msg void OnMapShowIATACodes();
 	afx_msg void OnUpdateMapCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnGlobeOpen();
