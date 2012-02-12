@@ -29,6 +29,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // BMP
 //
 
+IDB_BACKGROUNDS         BITMAP                  "res\\Backgrounds.bmp"
 IDB_MENUBARICONS        BITMAP                  "res\\MenubarIcons.bmp"
 IDB_MENUFILE_16         BITMAP                  "res\\MenuFile_16.bmp"
 IDB_MENUFILE_32         BITMAP                  "res\\MenuFile_32.bmp"
@@ -147,6 +148,10 @@ BEGIN
     IDS_DRIVENOTREADY       "Der Datenträger ist nicht bereit!"
     IDS_FLIGHTCOUNT_SINGULAR "%d Flug"
     IDS_FLIGHTCOUNT_PLURAL  "%d Flüge"
+    IDS_BACKGROUND_DEFAULT  "Standard"
+    IDS_BACKGROUND_NIGHT    "Nacht"
+    IDS_BACKGROUND_ABSTRACT "Abstrakt"
+    IDS_BACKGROUND_COLOR    "Einfarbig"
 END
 
 STRINGTABLE 
@@ -208,7 +213,9 @@ BEGIN
     IDM_MAP_CENTERATLANTIC  "&Atlantik mittig"
     IDM_MAP_CENTERPACIFIC   "&Pazifik mittig"
     IDM_MAP_SHOWFLIGHTROUTES
-                            "&Flugrouten zeigen"
+                            "Flug&routen zeigen"
+    IDM_MAP_STRAIGHTLINES   "&Gerade Linien"
+    IDM_MAP_USECOLORS       "&Farben benutzen"
     IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
     IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
     IDM_GLOBE_OPEN          "Globus ö&ffnen\nZeigt den Flugplan auf\neinem 3D-Globus an."
@@ -332,6 +339,10 @@ BEGIN
     IDS_DRIVENOTREADY       "The drive is not ready!"
     IDS_FLIGHTCOUNT_SINGULAR "%d flight"
     IDS_FLIGHTCOUNT_PLURAL  "%d flights"
+    IDS_BACKGROUND_DEFAULT  "Default"
+    IDS_BACKGROUND_NIGHT    "City lights"
+    IDS_BACKGROUND_ABSTRACT "Abstract"
+    IDS_BACKGROUND_COLOR    "Solid color"
 END
 
 STRINGTABLE 
@@ -394,6 +405,8 @@ BEGIN
     IDM_MAP_CENTERPACIFIC   "Center &Pacific Ocean"
     IDM_MAP_SHOWFLIGHTROUTES
                             "Show &flight routes"
+    IDM_MAP_STRAIGHTLINES   "&Straight lines"
+    IDM_MAP_USECOLORS       "Use colo&rs"
     IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
     IDM_MAP_SHOWIATACODES   "Show &IATA codes"
     IDM_GLOBE_OPEN          "&Open globe\nVisualizes the itinerary\non a 3D globe."

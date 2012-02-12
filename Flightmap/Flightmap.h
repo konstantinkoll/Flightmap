@@ -30,6 +30,8 @@ struct MapSettings
 {
 	BOOL CenterPacific;
 	BOOL ShowFlightRoutes;
+	BOOL UseColors;
+	BOOL StraightLines;
 	BOOL ShowLocations;
 	BOOL ShowIATACodes;
 };

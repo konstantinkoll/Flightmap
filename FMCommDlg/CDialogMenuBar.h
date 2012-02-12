@@ -144,6 +144,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
+	void AddGallery(UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute=TRUE);
 	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL CloseOnExecute=TRUE);
 	void AddSubmenu(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL Split=FALSE);
 	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL, BOOL RetainCaption=FALSE);
@@ -249,6 +250,36 @@ public:
 
 protected:
 	CDialogMenuPopup* p_ParentPopup;
+};
+
+
+// CDialogMenuGallery
+//
+
+class CDialogMenuGallery : public CDialogMenuItem
+{
+public:
+	CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute=TRUE);
+	virtual ~CDialogMenuGallery();
+
+	virtual INT GetMinHeight();
+	virtual INT GetMinWidth();
+
+	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+
+protected:
+	CMFCToolBarImages m_Icons;
+	UINT m_CmdID;
+	UINT m_ItemCount;
+	UINT m_Rows;
+	UINT m_Columns;
+	BOOL m_Enabled;
+	BOOL m_CloseOnExecute;
+	CSize m_IconSize;
+	UINT m_ItemHeight;
+	UINT m_ItemWidth;
+
+private:
 };
 
 

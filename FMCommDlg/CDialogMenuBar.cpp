@@ -867,6 +867,11 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	m_Height += pItem->GetMinHeight();
 }
 
+void CDialogMenuPopup::AddGallery(UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute)
+{
+	AddItem(new CDialogMenuGallery(this, CmdID, IconsID, IconSize, FirstCaptionID, ItemCount, Columns, CloseOnExecute));
+}
+
 void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize, BOOL CloseOnExecute)
 {
 	AddItem(new CDialogMenuCommand(this, CmdID, IconID, PreferredSize, FALSE, FALSE, CloseOnExecute));
@@ -1649,6 +1654,70 @@ BOOL CDialogMenuItem::OnHover(CPoint /*point*/)
 BOOL CDialogMenuItem::OnKeyDown(UINT /*nChar*/)
 {
 	return FALSE;
+}
+
+
+// CDialogMenuGallery
+//
+
+CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute)
+	: CDialogMenuItem(pParentPopup)
+{
+	ASSERT(Columns>0);
+
+	m_CmdID = CmdID;
+	m_IconSize = IconSize;
+	m_ItemCount = ItemCount;
+	m_Rows = (ItemCount+Columns-1)/Columns;
+	m_Columns = Columns;
+	m_Enabled = FALSE;
+	m_CloseOnExecute = CloseOnExecute;
+
+	m_Icons.SetImageSize(IconSize);
+	if (IconsID)
+		m_Icons.Load(IconsID);
+
+}
+
+CDialogMenuGallery::~CDialogMenuGallery()
+{
+}
+
+INT CDialogMenuGallery::GetMinHeight()
+{
+	CDC* pDC = p_ParentPopup->GetWindowDC();
+	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
+	m_ItemHeight = pDC->GetTextExtent(_T("Wy")).cy+BORDER+m_IconSize.cy+2;
+	p_ParentPopup->ReleaseDC(pDC);
+
+	return m_ItemHeight*m_Rows;
+}
+
+INT CDialogMenuGallery::GetMinWidth()
+{
+	m_ItemWidth = BORDER+m_IconSize.cx+2;
+
+	return m_ItemWidth*m_Columns;
+}
+
+void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed)
+{
+
+
+	for (UINT a=0; a<m_ItemCount; a++)
+	{
+		CRect rectItem(CPoint(rect->left+(a%m_Columns)*m_ItemWidth, rect->top+(a/m_Columns)*m_ItemHeight), CSize(m_ItemWidth, m_ItemHeight));
+
+		rectItem.DeflateRect(BORDER/2, BORDER/2);
+
+		CAfxDrawState ds;
+		m_Icons.PrepareDrawImage(ds);
+		m_Icons.Draw(pDC, rectItem.left+1, rectItem.top+1, a);
+		m_Icons.EndDrawImage(ds);
+
+		COLORREF clr = Themed ? m_Enabled ? 0x8F8F8E : 0xB1B1B1 : 0x000000;
+		pDC->Draw3dRect(rectItem.left, rectItem.top, m_IconSize.cx+2, m_IconSize.cy+2, clr, clr);
+	}
 }
 
 

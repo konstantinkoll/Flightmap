@@ -303,10 +303,15 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_MAP_SELECTEDONLY);
 		pPopup->AddCaption(IDS_BACKGROUND);
+		pPopup->AddGallery(IDM_MAP_BACKGROUND, IDB_BACKGROUNDS, CSize(96, 48), IDS_BACKGROUND_DEFAULT, 4, 2, FALSE);
+		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_CENTERATLANTIC, TRUE);
 		pPopup->AddCheckbox(IDM_MAP_CENTERPACIFIC, TRUE);
 		pPopup->AddCaption(IDS_FLIGHTROUTES);
 		pPopup->AddCheckbox(IDM_MAP_SHOWFLIGHTROUTES);
+		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_MAP_USECOLORS);
 		pPopup->AddCaption(IDS_LOCATIONS);
 		pPopup->AddCheckbox(IDM_MAP_SHOWLOCATIONS);
 		pPopup->AddCaption(IDS_IATACODES);
@@ -440,6 +445,14 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_SHOWFLIGHTROUTES:
 		pCmdUI->SetCheck(theApp.m_MapSettings.ShowFlightRoutes);
+		break;
+	case IDM_MAP_STRAIGHTLINES:
+		pCmdUI->SetCheck(theApp.m_MapSettings.StraightLines);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_USECOLORS:
+		pCmdUI->SetCheck(theApp.m_MapSettings.UseColors);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
 		break;
 	case IDM_MAP_SHOWLOCATIONS:
 		pCmdUI->SetCheck(theApp.m_MapSettings.ShowLocations);
