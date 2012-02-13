@@ -940,7 +940,7 @@ void CDialogMenuPopup::InvalidateItem(INT idx)
 		InvalidateRect(&m_Items.m_Items[idx].Rect);
 }
 
-void CDialogMenuPopup::SelectItem(INT idx)
+void CDialogMenuPopup::SelectItem(INT idx, BOOL FromTop)
 {
 	if (idx!=m_SelectedItem)
 	{
@@ -949,7 +949,7 @@ void CDialogMenuPopup::SelectItem(INT idx)
 		m_SelectedItem = idx;
 		if (idx!=-1)
 		{
-			m_Items.m_Items[idx].pItem->OnSelect(m_Keyboard);
+			m_Items.m_Items[idx].pItem->OnSelect(m_Keyboard, FromTop);
 			m_LastSelectedItem = idx;
 		}
 
@@ -1494,7 +1494,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			for (INT a=0; a<(INT)m_Items.m_ItemCount; a++)
 				if (m_Items.m_Items[a].Selectable)
 				{
-					SelectItem(a);
+					SelectItem(a, FALSE);
 					m_Keyboard = TRUE;
 					break;
 				}
@@ -1503,7 +1503,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
 				if (m_Items.m_Items[a].Selectable)
 				{
-					SelectItem(a);
+					SelectItem(a, TRUE);
 					m_Keyboard = TRUE;
 					break;
 				}
@@ -1515,7 +1515,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					idx = m_Items.m_ItemCount-1;
 				if (m_Items.m_Items[idx].Selectable)
 				{
-					SelectItem(idx);
+					SelectItem(idx, FALSE);
 					m_Keyboard = TRUE;
 					break;
 				}
@@ -1528,7 +1528,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					idx = 0;
 				if (m_Items.m_Items[idx].Selectable)
 				{
-					SelectItem(idx);
+					SelectItem(idx, TRUE);
 					m_Keyboard = TRUE;
 					break;
 				}
@@ -1618,7 +1618,7 @@ void CDialogMenuItem::OnPaint(CDC* /*pDC*/, LPRECT /*rect*/, BOOL /*Selected*/, 
 {
 }
 
-void CDialogMenuItem::OnSelect(BOOL /*Keyboard*/)
+void CDialogMenuItem::OnSelect(BOOL /*Keyboard*/, BOOL /*FromTop*/)
 {
 }
 
@@ -1757,10 +1757,10 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	}
 }
 
-void CDialogMenuGallery::OnSelect(BOOL Keyboard)
+void CDialogMenuGallery::OnSelect(BOOL Keyboard, BOOL FromTop)
 {
 	if (Keyboard)
-		m_HoverItem = m_SelectedItem;
+		m_HoverItem = FromTop ? 0 : (m_Rows-1)*m_Columns;
 }
 
 BOOL CDialogMenuGallery::OnMouseMove(CPoint point)
@@ -2066,7 +2066,7 @@ void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/)
 	pIcons->EndDrawImage(ds);
 }
 
-void CDialogMenuCommand::OnSelect(BOOL Keyboard)
+void CDialogMenuCommand::OnSelect(BOOL Keyboard, BOOL /*FromTop*/)
 {
 	if (Keyboard)
 		m_HoverOverCommand = TRUE;

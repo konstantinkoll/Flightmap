@@ -187,7 +187,7 @@ protected:
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
-	void SelectItem(INT idx);
+	void SelectItem(INT idx, BOOL FromTop=FALSE);
 	void TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -239,7 +239,7 @@ public:
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
-	virtual void OnSelect(BOOL Keyboard);
+	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);
@@ -268,7 +268,7 @@ public:
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
-	virtual void OnSelect(BOOL Keyboard);
+	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual BOOL OnMouseMove(CPoint point);
 	virtual BOOL OnMouseLeave();
 	virtual BOOL OnKeyDown(UINT nChar);
@@ -311,7 +311,7 @@ public:
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
-	virtual void OnSelect(BOOL Keyboard);
+	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);
