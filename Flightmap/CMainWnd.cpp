@@ -156,6 +156,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
+	ON_MESSAGE(WM_GALLERYCHANGED, OnGalleryChanged)
 	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
 
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
@@ -356,6 +357,18 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	return (LRESULT)pPopup;
 }
 
+LRESULT CMainWnd::OnGalleryChanged(WPARAM wParam, LPARAM lParam)
+{
+	switch ((UINT)wParam)
+	{
+	case IDM_MAP_BACKGROUND:
+		theApp.m_MapSettings.Background = lParam;
+		break;
+	}
+
+	return NULL;
+}
+
 LRESULT CMainWnd::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	return m_pWndMainView ? m_pWndMainView->SendMessage(theApp.msgUseBgImagesChanged) : NULL;
@@ -436,6 +449,9 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_MAP_SELECTEDONLY:
 		b = FALSE;
+		break;
+	case IDM_MAP_BACKGROUND:
+		pCmdUI->SetCheck(theApp.m_MapSettings.Background);
 		break;
 	case IDM_MAP_CENTERATLANTIC:
 		pCmdUI->SetCheck(!theApp.m_MapSettings.CenterPacific);

@@ -34,6 +34,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnGalleryChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnFileOpen();

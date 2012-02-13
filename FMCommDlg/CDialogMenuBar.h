@@ -10,6 +10,7 @@
 #define WM_MENULEFT            WM_USER+5
 #define WM_MENURIGHT           WM_USER+6
 #define WM_MENUUPDATESTATUS    WM_USER+7
+#define WM_GALLERYCHANGED      WM_USER+8
 
 
 // CDialogCmdUI
@@ -25,6 +26,7 @@ public:
 
 	BOOL m_Enabled;
 	BOOL m_Checked;
+	INT m_CheckedItem;
 };
 
 
@@ -265,10 +267,14 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual BOOL IsEnabled();
+	virtual BOOL IsChecked();
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
 	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
+	virtual void OnDeselect();
+	virtual BOOL OnButtonDown(CPoint point);
+	virtual BOOL OnButtonUp(CPoint point);
 	virtual BOOL OnMouseMove(CPoint point);
 	virtual BOOL OnMouseLeave();
 	virtual BOOL OnKeyDown(UINT nChar);
@@ -282,7 +288,9 @@ protected:
 	UINT m_SelectedItem;
 	INT m_HoverItem;
 	BOOL m_Enabled;
+	BOOL m_Pressed;
 	BOOL m_CloseOnExecute;
+	CSize m_CheckSize;
 	CSize m_IconSize;
 	UINT m_ItemHeight;
 	UINT m_ItemWidth;

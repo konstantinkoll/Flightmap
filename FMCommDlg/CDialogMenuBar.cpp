@@ -13,6 +13,7 @@ CDialogCmdUI::CDialogCmdUI()
 	: CCmdUI()
 {
 	m_Enabled = m_Checked = FALSE;
+	m_CheckedItem = -1;
 }
 
 void CDialogCmdUI::Enable(BOOL bOn)
@@ -24,6 +25,7 @@ void CDialogCmdUI::Enable(BOOL bOn)
 void CDialogCmdUI::SetCheck(INT nCheck)
 {
 	m_Checked = (nCheck!=0);
+	m_CheckedItem = nCheck;
 }
 
 
@@ -1670,11 +1672,12 @@ CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_ItemCount = ItemCount;
 	m_Rows = (ItemCount+Columns-1)/Columns;
 	m_Columns = Columns;
-	m_Enabled = FALSE;
+	m_Enabled = m_Pressed = FALSE;
 	m_CloseOnExecute = CloseOnExecute;
 	m_SelectedItem = 0;
 	m_HoverItem = -1;
 
+	pParentPopup->GetCheckSize(m_CheckSize);
 	m_Icons.SetImageSize(IconSize);
 	if (IconsID)
 		m_Icons.Load(IconsID);
@@ -1694,7 +1697,7 @@ void CDialogMenuGallery::Execute()
 	if (m_CloseOnExecute)
 		p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
 
-	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
+	p_ParentPopup->GetOwner()->PostMessage(WM_GALLERYCHANGED, m_CmdID, m_HoverItem);
 
 	if (!m_CloseOnExecute)
 		p_ParentPopup->PostMessage(WM_MENUUPDATESTATUS, NULL, (LPARAM)this);
@@ -1704,7 +1707,7 @@ INT CDialogMenuGallery::GetMinHeight()
 {
 	CDC* pDC = p_ParentPopup->GetWindowDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
-	m_ItemHeight = pDC->GetTextExtent(_T("Wy")).cy+BORDER+m_IconSize.cy+2;
+	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+2;
 	p_ParentPopup->ReleaseDC(pDC);
 
 	return m_ItemHeight*m_Rows;
@@ -1724,6 +1727,16 @@ BOOL CDialogMenuGallery::IsEnabled()
 	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
 
 	return m_Enabled = cmdUI.m_Enabled;
+}
+
+BOOL CDialogMenuGallery::IsChecked()
+{
+	CDialogCmdUI cmdUI;
+	cmdUI.m_nID = m_CmdID;
+	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
+
+	m_SelectedItem = cmdUI.m_CheckedItem;
+	return TRUE;
 }
 
 BOOL CDialogMenuGallery::IsSelectable()
@@ -1752,8 +1765,17 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		CRect rectText(rectItem);
 		rectText.top += m_IconSize.cy+2;
 
+		INT l = pDC->GetTextExtent(m_Captions[a]).cx+m_CheckSize.cx+BORDER;
+
+		CRect rectButton(rectText);
+		rectButton.left = rectText.left+max(0, (rectText.Width()-l)/2);
+		rectButton.right = rectButton.left+m_CheckSize.cx;
+
+		p_ParentPopup->DrawButton(pDC, rectButton, TRUE, (INT)a==m_SelectedItem, m_Enabled, (Selected && ((INT)a==m_HoverItem)), m_Pressed);
+		rectText.left = rectButton.right+BORDER;
+
 		pDC->SetTextColor(!m_Enabled ? GetSysColor(COLOR_3DSHADOW) : Themed==2 ? 0x6E1500 : (Selected && ((INT)a==m_HoverItem)) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
-		pDC->DrawText(m_Captions[a], rectText, DT_HIDEPREFIX | DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS);
+		pDC->DrawText(m_Captions[a], rectText, DT_HIDEPREFIX | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
 	}
 }
 
@@ -1761,6 +1783,28 @@ void CDialogMenuGallery::OnSelect(BOOL Keyboard, BOOL FromTop)
 {
 	if (Keyboard)
 		m_HoverItem = FromTop ? 0 : (m_Rows-1)*m_Columns;
+}
+
+void CDialogMenuGallery::OnDeselect()
+{
+	m_Pressed = FALSE;
+}
+
+BOOL CDialogMenuGallery::OnButtonDown(CPoint /*point*/)
+{
+	m_Pressed = TRUE;
+
+	return TRUE;
+}
+
+BOOL CDialogMenuGallery::OnButtonUp(CPoint /*point*/)
+{
+	m_Pressed = FALSE;
+
+	if (m_Enabled && (m_HoverItem!=-1))
+		Execute();
+
+	return TRUE;
 }
 
 BOOL CDialogMenuGallery::OnMouseMove(CPoint point)
@@ -1789,7 +1833,7 @@ BOOL CDialogMenuGallery::OnKeyDown(UINT nChar)
 	{
 	case VK_RETURN:
 	case VK_EXECUTE:
-		if (m_Enabled)
+		if (m_Enabled && (m_HoverItem!=-1))
 		{
 			Execute();
 			return TRUE;

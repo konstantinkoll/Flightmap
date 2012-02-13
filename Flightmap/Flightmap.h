@@ -28,6 +28,7 @@
 
 struct MapSettings
 {
+	INT Background;
 	BOOL CenterPacific;
 	BOOL ShowFlightRoutes;
 	BOOL UseColors;
