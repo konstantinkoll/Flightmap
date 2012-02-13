@@ -56,7 +56,7 @@ BOOL CFlightmapApp::InitInstance()
 	SetRegistryBase();
 	m_UseStatuteMiles = GetInt(_T("UseStatuteMiles"), FALSE);
 	m_UseBgImages = GetInt(_T("UseBgImages"), TRUE);
-	m_nTextureSize = GetInt(_T("TextureSize"), 0);
+	m_nTextureSize = GetInt(_T("TextureSize"), FMTextureAuto);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
 	m_GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
