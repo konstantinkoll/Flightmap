@@ -264,8 +264,14 @@ public:
 
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
+	virtual BOOL IsEnabled();
+	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnSelect(BOOL Keyboard);
+	virtual BOOL OnMouseMove(CPoint point);
+	virtual BOOL OnMouseLeave();
+	virtual BOOL OnKeyDown(UINT nChar);
 
 protected:
 	CMFCToolBarImages m_Icons;
@@ -273,13 +279,17 @@ protected:
 	UINT m_ItemCount;
 	UINT m_Rows;
 	UINT m_Columns;
+	UINT m_SelectedItem;
+	INT m_HoverItem;
 	BOOL m_Enabled;
 	BOOL m_CloseOnExecute;
 	CSize m_IconSize;
 	UINT m_ItemHeight;
 	UINT m_ItemWidth;
+	CString* m_Captions;
 
 private:
+	void Execute();
 };
 
 

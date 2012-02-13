@@ -1672,15 +1672,32 @@ CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_Columns = Columns;
 	m_Enabled = FALSE;
 	m_CloseOnExecute = CloseOnExecute;
+	m_SelectedItem = 0;
+	m_HoverItem = -1;
 
 	m_Icons.SetImageSize(IconSize);
 	if (IconsID)
 		m_Icons.Load(IconsID);
 
+	m_Captions = new CString[ItemCount];
+	for (UINT a=0; a<ItemCount; a++)
+		ENSURE(m_Captions[a].LoadString(FirstCaptionID+a));
 }
 
 CDialogMenuGallery::~CDialogMenuGallery()
 {
+	delete[] m_Captions;
+}
+
+void CDialogMenuGallery::Execute()
+{
+	if (m_CloseOnExecute)
+		p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+
+	p_ParentPopup->GetOwner()->PostMessage(WM_COMMAND, m_CmdID);
+
+	if (!m_CloseOnExecute)
+		p_ParentPopup->PostMessage(WM_MENUUPDATESTATUS, NULL, (LPARAM)this);
 }
 
 INT CDialogMenuGallery::GetMinHeight()
@@ -1700,13 +1717,27 @@ INT CDialogMenuGallery::GetMinWidth()
 	return m_ItemWidth*m_Columns;
 }
 
+BOOL CDialogMenuGallery::IsEnabled()
+{
+	CDialogCmdUI cmdUI;
+	cmdUI.m_nID = m_CmdID;
+	cmdUI.DoUpdate(p_ParentPopup->GetOwner(), TRUE);
+
+	return m_Enabled = cmdUI.m_Enabled;
+}
+
+BOOL CDialogMenuGallery::IsSelectable()
+{
+	return TRUE;
+}
+
 void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed)
 {
-
-
 	for (UINT a=0; a<m_ItemCount; a++)
 	{
 		CRect rectItem(CPoint(rect->left+(a%m_Columns)*m_ItemWidth, rect->top+(a/m_Columns)*m_ItemHeight), CSize(m_ItemWidth, m_ItemHeight));
+		if (Selected && ((INT)a==m_HoverItem))
+			p_ParentPopup->DrawSelectedBackground(pDC, rectItem, m_Enabled);
 
 		rectItem.DeflateRect(BORDER/2, BORDER/2);
 
@@ -1717,7 +1748,84 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 		COLORREF clr = Themed ? m_Enabled ? 0x8F8F8E : 0xB1B1B1 : 0x000000;
 		pDC->Draw3dRect(rectItem.left, rectItem.top, m_IconSize.cx+2, m_IconSize.cy+2, clr, clr);
+
+		CRect rectText(rectItem);
+		rectText.top += m_IconSize.cy+2;
+
+		pDC->SetTextColor(!m_Enabled ? GetSysColor(COLOR_3DSHADOW) : Themed==2 ? 0x6E1500 : (Selected && ((INT)a==m_HoverItem)) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+		pDC->DrawText(m_Captions[a], rectText, DT_HIDEPREFIX | DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS);
 	}
+}
+
+void CDialogMenuGallery::OnSelect(BOOL Keyboard)
+{
+	if (Keyboard)
+		m_HoverItem = m_SelectedItem;
+}
+
+BOOL CDialogMenuGallery::OnMouseMove(CPoint point)
+{
+	INT Col = point.x/m_ItemWidth;
+	INT Row = point.y/m_ItemHeight;
+	m_HoverItem = (Col<(INT)m_Columns) && (Row<(INT)m_Rows) ? Row*m_Columns+Col : -1;
+
+	return TRUE;
+}
+
+BOOL CDialogMenuGallery::OnMouseLeave()
+{
+	m_HoverItem = -1;
+
+	return TRUE;
+}
+
+BOOL CDialogMenuGallery::OnKeyDown(UINT nChar)
+{
+	INT Item = m_HoverItem==-1 ? m_SelectedItem : m_HoverItem;
+	INT Col = Item%m_Columns;
+	INT Row = Item/m_Columns;
+
+	switch (nChar)
+	{
+	case VK_RETURN:
+	case VK_EXECUTE:
+		if (m_Enabled)
+		{
+			Execute();
+			return TRUE;
+		}
+		break;
+	case VK_UP:
+		if (Row>0)
+		{
+			m_HoverItem = (Row-1)*m_Columns+Col;
+			return TRUE;
+		}
+		break;
+	case VK_DOWN:
+		if (Row<((INT)m_Rows)-1)
+		{
+			m_HoverItem = (Row+1)*m_Columns+Col;
+			return TRUE;
+		}
+		break;
+	case VK_LEFT:
+		if (Col>0)
+		{
+			m_HoverItem = Row*m_Columns+Col-1;
+			return TRUE;
+		}
+		break;
+	case VK_RIGHT:
+		if (Col<((INT)m_Columns)-1)
+		{
+			m_HoverItem = Row*m_Columns+Col+1;
+			return TRUE;
+		}
+		break;
+	}
+
+	return FALSE;
 }
 
 
