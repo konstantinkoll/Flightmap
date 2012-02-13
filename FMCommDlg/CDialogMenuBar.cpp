@@ -1707,7 +1707,7 @@ INT CDialogMenuGallery::GetMinHeight()
 {
 	CDC* pDC = p_ParentPopup->GetWindowDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
-	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+2;
+	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+4;
 	p_ParentPopup->ReleaseDC(pDC);
 
 	return m_ItemHeight*m_Rows;
@@ -1775,7 +1775,7 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		rectText.left = rectButton.right+BORDER;
 
 		pDC->SetTextColor(!m_Enabled ? GetSysColor(COLOR_3DSHADOW) : Themed==2 ? 0x6E1500 : (Selected && ((INT)a==m_HoverItem)) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
-		pDC->DrawText(m_Captions[a], rectText, DT_HIDEPREFIX | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
+		pDC->DrawText(m_Captions[a], rectText, DT_HIDEPREFIX | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS | DT_SINGLELINE);
 	}
 }
 
