@@ -884,9 +884,11 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	{
 		glDisable(GL_TEXTURE_2D);
 		glLineWidth(min(3.5f, 0.5f+m_Radius/250));
-		glEnable(GL_LINE_SMOOTH);
+		if (theApp.m_GlobeAntialising)
+			glEnable(GL_LINE_SMOOTH);
 		glCallList(m_GlobeRoutes);
-		glDisable(GL_LINE_SMOOTH);
+		if (theApp.m_GlobeAntialising)
+			glDisable(GL_LINE_SMOOTH);
 		glLineWidth(1.0f);
 		if (m_pTextureIcons)
 			glEnable(GL_TEXTURE_2D);
