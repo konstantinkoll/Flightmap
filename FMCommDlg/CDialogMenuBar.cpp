@@ -1707,7 +1707,7 @@ INT CDialogMenuGallery::GetMinHeight()
 {
 	CDC* pDC = p_ParentPopup->GetWindowDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
-	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+4;
+	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+5;
 	p_ParentPopup->ReleaseDC(pDC);
 
 	return m_ItemHeight*m_Rows;
@@ -1715,7 +1715,7 @@ INT CDialogMenuGallery::GetMinHeight()
 
 INT CDialogMenuGallery::GetMinWidth()
 {
-	m_ItemWidth = BORDER+m_IconSize.cx+2;
+	m_ItemWidth = BORDER+m_IconSize.cx+4;
 
 	return m_ItemWidth*m_Columns;
 }
@@ -1752,7 +1752,7 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		if (Selected && ((INT)a==m_HoverItem))
 			p_ParentPopup->DrawSelectedBackground(pDC, rectItem, m_Enabled);
 
-		rectItem.DeflateRect(BORDER/2, BORDER/2);
+		rectItem.DeflateRect(BORDER/2+1, BORDER/2+1);
 
 		CAfxDrawState ds;
 		m_Icons.PrepareDrawImage(ds);
@@ -1763,7 +1763,8 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		pDC->Draw3dRect(rectItem.left, rectItem.top, m_IconSize.cx+2, m_IconSize.cy+2, clr, clr);
 
 		CRect rectText(rectItem);
-		rectText.top += m_IconSize.cy+2;
+		rectText.top += m_IconSize.cy+BORDER/2+1;
+		rectText.bottom++;
 
 		INT l = pDC->GetTextExtent(m_Captions[a]).cx+m_CheckSize.cx+BORDER;
 

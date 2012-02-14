@@ -362,7 +362,7 @@ LRESULT CMainWnd::OnGalleryChanged(WPARAM wParam, LPARAM lParam)
 	switch ((UINT)wParam)
 	{
 	case IDM_MAP_BACKGROUND:
-		theApp.m_MapSettings.Background = lParam;
+		theApp.m_MapSettings.Background = (INT)lParam;
 		break;
 	}
 
