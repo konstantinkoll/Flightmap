@@ -77,6 +77,19 @@ BOOL CFlightmapApp::InitInstance()
 	m_GoogleEarthUseColors = GetInt(_T("GoogleEarthUseColors"), TRUE);
 	m_GoogleEarthClamp = GetInt(_T("GoogleEarthClamp"), FALSE);
 	GetBinary(_T("CustomColors"), &m_CustomColors, sizeof(m_CustomColors));
+	m_MapSettings.Background = GetInt(_T("MapBackground"), 0);
+	m_MapSettings.BackgroundColor = GetInt(_T("MapBackgroundColor"), 0xF0F0F0);
+	m_MapSettings.CenterPacific = GetInt(_T("MapCenterPacific"), FALSE);
+	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapShowFlightRoutes"), TRUE);
+	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapStraightLines"), FALSE);
+	m_MapSettings.UseColors = GetInt(_T("MapUseColors"), TRUE);
+	m_MapSettings.RouteColor = GetInt(_T("MapRouteColor"), 0xFFFFFF);
+	m_MapSettings.ShowLocations = GetInt(_T("MapShowLocations"), TRUE);
+	m_MapSettings.LocationInnerColor = GetInt(_T("MapLocationInnerColor"), 0x0000FF);
+	m_MapSettings.LocationOuterColor = GetInt(_T("MapLocationOuterColor"), 0xFFFFFF);
+	m_MapSettings.ShowIATACodes = GetInt(_T("MapShowIATACodes"), TRUE);
+	m_MapSettings.IATAInnerColor = GetInt(_T("MapIATAInnerColor"), 0xFFFFFF);
+	m_MapSettings.IATAOuterColor = GetInt(_T("MapIATAOuterColor"), 0x000000);
 
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
@@ -128,6 +141,19 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GoogleEarthUseColors"), m_GoogleEarthUseColors);
 		WriteInt(_T("GoogleEarthClamp"), m_GoogleEarthClamp);
 		WriteBinary(_T("CustomColors"), (LPBYTE)&m_CustomColors, sizeof(m_CustomColors));
+		WriteInt(_T("MapBackground"), m_MapSettings.Background);
+		WriteInt(_T("MapBackgroundColor"), m_MapSettings.BackgroundColor);
+		WriteInt(_T("MapCenterPacific"), m_MapSettings.CenterPacific);
+		WriteInt(_T("MapShowFlightRoutes"), m_MapSettings.ShowFlightRoutes);
+		WriteInt(_T("MapStraightLines"), m_MapSettings.ShowFlightRoutes);
+		WriteInt(_T("MapUseColors"), m_MapSettings.UseColors);
+		WriteInt(_T("MapRouteColor"), m_MapSettings.RouteColor);
+		WriteInt(_T("MapShowLocations"), m_MapSettings.ShowLocations);
+		WriteInt(_T("MapLocationInnerColor"), m_MapSettings.LocationInnerColor);
+		WriteInt(_T("MapLocationOuterColor"), m_MapSettings.LocationOuterColor);
+		WriteInt(_T("MapShowIATACodes"), m_MapSettings.ShowIATACodes);
+		WriteInt(_T("MapIATAInnerColor"), m_MapSettings.IATAInnerColor);
+		WriteInt(_T("MapIATAOuterColor"), m_MapSettings.IATAOuterColor);
 	}
 
 	return FMApplication::ExitInstance();
@@ -236,18 +262,6 @@ void CFlightmapApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 		memcpy_s(pData, size, buf, size);
 		free(buf);
 	}
-}
-
-BOOL CFlightmapApp::ChooseColor(COLORREF& clr, CWnd* pParentWnd)
-{
-	FMColorDlg dlg(clr, CC_RGBINIT, pParentWnd);
-	if (dlg.DoModal()==IDOK)
-	{
-		clr = dlg.m_cc.rgbResult;
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 

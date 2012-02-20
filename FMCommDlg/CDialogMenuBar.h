@@ -146,12 +146,13 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT LargeIconsID=0, UINT SmallIconsID=0);
-	void AddGallery(UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute=TRUE);
+	void AddGallery(UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, COLORREF DefaultColor=0xFFFFFF, BOOL CloseOnExecute=TRUE);
 	void AddCommand(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL CloseOnExecute=TRUE);
 	void AddSubmenu(UINT CmdID, INT IconID=-1, UINT PreferredSize=CDMB_SMALL, BOOL Split=FALSE);
 	void AddFileType(UINT CmdID, CString FileType, UINT PreferredSize=CDMB_SMALL, BOOL RetainCaption=FALSE);
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
 	void AddCheckbox(UINT CmdID, BOOL Radio=FALSE, BOOL CloseOnExecute=FALSE);
+	void AddColor(UINT CmdID, COLORREF* pColor);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
 	void GetCheckSize(CSize& sz);
@@ -261,7 +262,7 @@ protected:
 class CDialogMenuGallery : public CDialogMenuItem
 {
 public:
-	CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute=TRUE);
+	CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, COLORREF DefaultColor=0xFFFFFF, BOOL CloseOnExecute=TRUE);
 	virtual ~CDialogMenuGallery();
 
 	virtual INT GetMinHeight();
@@ -295,9 +296,9 @@ protected:
 	UINT m_ItemHeight;
 	UINT m_ItemWidth;
 	CString* m_Captions;
+	COLORREF m_DefaultColor;
 
-private:
-	void Execute();
+	virtual void Execute();
 };
 
 
@@ -318,7 +319,7 @@ public:
 	virtual BOOL IsSelectable();
 
 	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
-	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL Themed);
 	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
@@ -341,12 +342,13 @@ protected:
 	CString m_Caption;
 	CString m_Hint;
 
+	virtual void Execute();
+
 	INT GetInnerBorder();
 
 private:
 	BOOL PtOnSubmenuArrow(CPoint point);
 	BOOL TrackSubmenu(BOOL Select);
-	void Execute();
 
 	CDialogMenuPopup* m_pSubmenu;
 	BOOL m_HoverOverCommand;
@@ -361,7 +363,7 @@ class CDialogMenuFileType : public CDialogMenuCommand
 public:
 	CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT CmdID, CString FileType, UINT PreferredSize, BOOL RetainCaption);
 
-	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL Themed);
 
 private:
 	CImageList* p_Icons;
@@ -389,7 +391,7 @@ public:
 	virtual INT GetMinHeight();
 	virtual BOOL IsChecked();
 
-	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected);
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL Themed);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
 	virtual BOOL OnButtonUp(CPoint point);
@@ -398,6 +400,23 @@ protected:
 	BOOL m_Checked;
 	BOOL m_Pressed;
 	BOOL m_Radio;
+};
+
+
+// CDialogMenuColor
+//
+
+class CDialogMenuColor : public CDialogMenuCommand
+{
+public:
+	CDialogMenuColor(CDialogMenuPopup* pParentPopup, UINT CmdID, COLORREF* pColor);
+
+	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL Themed);
+
+protected:
+	COLORREF* p_Color;
+
+	virtual void Execute();
 };
 
 

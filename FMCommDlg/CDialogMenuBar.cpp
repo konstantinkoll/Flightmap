@@ -869,9 +869,9 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 	m_Height += pItem->GetMinHeight();
 }
 
-void CDialogMenuPopup::AddGallery(UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute)
+void CDialogMenuPopup::AddGallery(UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, COLORREF DefaultColor, BOOL CloseOnExecute)
 {
-	AddItem(new CDialogMenuGallery(this, CmdID, IconsID, IconSize, FirstCaptionID, ItemCount, Columns, CloseOnExecute));
+	AddItem(new CDialogMenuGallery(this, CmdID, IconsID, IconSize, FirstCaptionID, ItemCount, Columns, DefaultColor, CloseOnExecute));
 }
 
 void CDialogMenuPopup::AddCommand(UINT CmdID, INT IconID, UINT PreferredSize, BOOL CloseOnExecute)
@@ -897,6 +897,11 @@ void CDialogMenuPopup::AddFile(UINT CmdID, CString Path, UINT PreferredSize)
 void CDialogMenuPopup::AddCheckbox(UINT CmdID, BOOL Radio, BOOL CloseOnExecute)
 {
 	AddItem(new CDialogMenuCheckbox(this, CmdID, Radio, CloseOnExecute));
+}
+
+void CDialogMenuPopup::AddColor(UINT CmdID, COLORREF* pColor)
+{
+	AddItem(new CDialogMenuColor(this, CmdID, pColor));
 }
 
 void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
@@ -1662,7 +1667,7 @@ BOOL CDialogMenuItem::OnKeyDown(UINT /*nChar*/)
 // CDialogMenuGallery
 //
 
-CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, BOOL CloseOnExecute)
+CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdID, UINT IconsID, CSize IconSize, UINT FirstCaptionID, UINT ItemCount, UINT Columns, COLORREF DefaultColor, BOOL CloseOnExecute)
 	: CDialogMenuItem(pParentPopup)
 {
 	ASSERT(Columns>0);
@@ -1676,6 +1681,7 @@ CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_CloseOnExecute = CloseOnExecute;
 	m_SelectedItem = 0;
 	m_HoverItem = -1;
+	m_DefaultColor = DefaultColor;
 
 	pParentPopup->GetCheckSize(m_CheckSize);
 	m_Icons.SetImageSize(IconSize);
@@ -1754,10 +1760,17 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 		rectItem.DeflateRect(BORDER/2+1, BORDER/2+1);
 
-		CAfxDrawState ds;
-		m_Icons.PrepareDrawImage(ds);
-		m_Icons.Draw(pDC, rectItem.left+1, rectItem.top+1, a);
-		m_Icons.EndDrawImage(ds);
+		if ((INT)a<m_Icons.GetCount())
+		{
+			CAfxDrawState ds;
+			m_Icons.PrepareDrawImage(ds);
+			m_Icons.Draw(pDC, rectItem.left+1, rectItem.top+1, a);
+			m_Icons.EndDrawImage(ds);
+		}
+		else
+		{
+			pDC->FillSolidRect(rectItem.left+1, rectItem.top+1, m_IconSize.cx, m_IconSize.cy, m_DefaultColor);
+		}
 
 		COLORREF clr = Themed ? m_Enabled ? 0x8F8F8E : 0xB1B1B1 : 0x000000;
 		pDC->Draw3dRect(rectItem.left, rectItem.top, m_IconSize.cx+2, m_IconSize.cy+2, clr, clr);
@@ -2056,7 +2069,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 	// Icon
 	if (m_IconID!=-1)
-		OnDrawIcon(pDC, CPoint(rect->left+GetInnerBorder()+(p_ParentPopup->GetGutter()-GetInnerBorder()-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2), Selected);
+		OnDrawIcon(pDC, CPoint(rect->left+GetInnerBorder()+(p_ParentPopup->GetGutter()-GetInnerBorder()-m_IconSize.cx)/2, rect->top+(rect->bottom-rect->top-m_IconSize.cy)/2), Selected, Themed);
 
 	// Pfeil
 	if (m_Submenu)
@@ -2101,7 +2114,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	}
 }
 
-void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/)
+void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL /*Themed*/)
 {
 	CMFCToolBarImages* pIcons = (m_PreferredSize==CDMB_SMALL) ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons;
 
@@ -2225,7 +2238,7 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 	}
 }
 
-void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/)
+void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL /*Themed*/)
 {
 	CImageList* pIcons = (m_PreferredSize==CDMB_SMALL) ? &((FMApplication*)AfxGetApp())->m_SystemImageListSmall : &((FMApplication*)AfxGetApp())->m_SystemImageListLarge;
 	pIcons->DrawEx(pDC, m_IconID, pt, m_IconSize, CLR_NONE, CLR_NONE, ILD_NORMAL);
@@ -2312,7 +2325,7 @@ BOOL CDialogMenuCheckbox::IsChecked()
 	return m_Checked = cmdUI.m_Checked;
 }
 
-void CDialogMenuCheckbox::OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected)
+void CDialogMenuCheckbox::OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL /*Themed*/)
 {
 	CRect rectButton(pt.x, pt.y, pt.x+m_IconSize.cx, pt.y+m_IconSize.cy);
 
@@ -2340,6 +2353,39 @@ BOOL CDialogMenuCheckbox::OnButtonUp(CPoint point)
 
 	CDialogMenuCommand::OnButtonUp(point);
 	return TRUE;
+}
+
+
+// CDialogMenuColor
+//
+
+CDialogMenuColor::CDialogMenuColor(CDialogMenuPopup* pParentPopup, UINT CmdID, COLORREF* pColor)
+	: CDialogMenuCommand(pParentPopup, CmdID, 0, CDMB_SMALL)
+{
+	m_Caption.Append(_T("..."));
+	p_Color = pColor;
+
+	pParentPopup->GetCheckSize(m_IconSize);
+}
+
+void CDialogMenuColor::Execute()
+{
+	p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+
+	CString Caption = m_Caption.Left(m_Caption.GetLength()-3);
+	Caption.Remove(L'&');
+	((FMApplication*)AfxGetApp())->ChooseColor(p_Color, p_ParentPopup->GetOwner(), Caption);
+}
+
+void CDialogMenuColor::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL Themed)
+{
+	CRect rect(pt.x, pt.y, pt.x+m_IconSize.cx, pt.y+m_IconSize.cy);
+
+	COLORREF clr = (Themed && !m_Enabled) ? 0xB1B1B1 : 0x000000;
+	pDC->Draw3dRect(rect, clr, clr);
+
+	rect.DeflateRect(1, 1);
+	pDC->FillSolidRect(rect, *p_Color);
 }
 
 

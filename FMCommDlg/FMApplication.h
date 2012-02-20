@@ -91,6 +91,7 @@ public:
 	virtual INT ExitInstance();
 
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
+	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
 	static void PlayStandardSound();

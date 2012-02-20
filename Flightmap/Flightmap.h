@@ -7,8 +7,8 @@
 #include "FMCommDlg.h"
 #include "resource.h"
 
-
 #define PI                3.14159265358979323846
+
 
 // Globe textures
 
@@ -29,12 +29,18 @@
 struct MapSettings
 {
 	INT Background;
+	COLORREF BackgroundColor;
 	BOOL CenterPacific;
 	BOOL ShowFlightRoutes;
-	BOOL UseColors;
 	BOOL StraightLines;
+	BOOL UseColors;
+	COLORREF RouteColor;
 	BOOL ShowLocations;
+	COLORREF LocationInnerColor;
+	COLORREF LocationOuterColor;
 	BOOL ShowIATACodes;
+	COLORREF IATAInnerColor;
+	COLORREF IATAOuterColor;
 };
 
 class CFlightmapApp : public FMApplication
@@ -51,7 +57,6 @@ public:
 	void Broadcast(UINT message);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
-	BOOL ChooseColor(COLORREF& clr, CWnd* pParentWnd=NULL);
 
 	CList<CMainWindow*> m_MainFrames;
 	CString m_PathGoogleEarth;

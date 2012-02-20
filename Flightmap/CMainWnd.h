@@ -45,6 +45,8 @@ protected:
 	afx_msg void OnMapCenterAtlantic();
 	afx_msg void OnMapCenterPacific();
 	afx_msg void OnMapShowFlightRoutes();
+	afx_msg void OnMapStraightLines();
+	afx_msg void OnMapUseColors();
 	afx_msg void OnMapShowLocations();
 	afx_msg void OnMapShowIATACodes();
 	afx_msg void OnUpdateMapCommands(CCmdUI* pCmdUI);

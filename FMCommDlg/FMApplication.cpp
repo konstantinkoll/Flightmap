@@ -234,6 +234,20 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 	return FALSE;
 }
 
+BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, CString Caption)
+{
+	ASSERT(pColor);
+
+	FMColorDlg dlg(*pColor, CC_RGBINIT, pParentWnd, Caption);
+	if (dlg.DoModal()==IDOK)
+	{
+		*pColor = dlg.m_cc.rgbResult;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 CString FMApplication::GetDefaultFontFace()
 {
 	LOGFONT lf;

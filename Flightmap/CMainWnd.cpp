@@ -167,9 +167,11 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_CENTERATLANTIC, OnMapCenterAtlantic)
 	ON_COMMAND(IDM_MAP_CENTERPACIFIC, OnMapCenterPacific)
 	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
+	ON_COMMAND(IDM_MAP_STRAIGHTLINES, OnMapStraightLines)
+	ON_COMMAND(IDM_MAP_USECOLORS, OnMapUseColors)
 	ON_COMMAND(IDM_MAP_SHOWLOCATIONS, OnMapShowLocations)
 	ON_COMMAND(IDM_MAP_SHOWIATACODES, OnMapShowIATACodes)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_OPEN, IDM_MAP_SHOWIATACODES, OnUpdateMapCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_OPEN, IDM_MAP_IATAOUTERCOLOR, OnUpdateMapCommands)
 
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
@@ -304,7 +306,8 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_MAP_SELECTEDONLY);
 		pPopup->AddCaption(IDS_BACKGROUND);
-		pPopup->AddGallery(IDM_MAP_BACKGROUND, IDB_BACKGROUNDS, CSize(96, 48), IDS_BACKGROUND_DEFAULT, 4, 2, FALSE);
+		pPopup->AddGallery(IDM_MAP_BACKGROUND, IDB_BACKGROUNDS, CSize(96, 48), IDS_BACKGROUND_DEFAULT, 4, 2, theApp.m_MapSettings.BackgroundColor, FALSE);
+		pPopup->AddColor(IDM_MAP_BACKGROUNDCOLOR, &theApp.m_MapSettings.BackgroundColor);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_CENTERATLANTIC, TRUE);
 		pPopup->AddCheckbox(IDM_MAP_CENTERPACIFIC, TRUE);
@@ -313,10 +316,15 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_USECOLORS);
+		pPopup->AddColor(IDM_MAP_ROUTECOLOR, &theApp.m_MapSettings.RouteColor);
 		pPopup->AddCaption(IDS_LOCATIONS);
 		pPopup->AddCheckbox(IDM_MAP_SHOWLOCATIONS);
+		pPopup->AddColor(IDM_MAP_LOCATIONINNERCOLOR, &theApp.m_MapSettings.LocationInnerColor);
+		pPopup->AddColor(IDM_MAP_LOCATIONOUTERCOLOR, &theApp.m_MapSettings.LocationOuterColor);
 		pPopup->AddCaption(IDS_IATACODES);
 		pPopup->AddCheckbox(IDM_MAP_SHOWIATACODES);
+		pPopup->AddColor(IDM_MAP_IATAINNERCOLOR, &theApp.m_MapSettings.IATAInnerColor);
+		pPopup->AddColor(IDM_MAP_IATAOUTERCOLOR, &theApp.m_MapSettings.IATAOuterColor);
 		break;
 	case IDM_MAP_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
@@ -431,6 +439,16 @@ void CMainWnd::OnMapShowFlightRoutes()
 		theApp.m_MapSettings.ShowLocations = TRUE;
 }
 
+void CMainWnd::OnMapStraightLines()
+{
+	theApp.m_MapSettings.StraightLines = !theApp.m_MapSettings.StraightLines;
+}
+
+void CMainWnd::OnMapUseColors()
+{
+	theApp.m_MapSettings.UseColors = !theApp.m_MapSettings.UseColors;
+}
+
 void CMainWnd::OnMapShowLocations()
 {
 	theApp.m_MapSettings.ShowLocations = !theApp.m_MapSettings.ShowLocations;
@@ -453,6 +471,9 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 	case IDM_MAP_BACKGROUND:
 		pCmdUI->SetCheck(theApp.m_MapSettings.Background);
 		break;
+	case IDM_MAP_BACKGROUNDCOLOR:
+		b = theApp.m_MapSettings.Background==3;
+		break;
 	case IDM_MAP_CENTERATLANTIC:
 		pCmdUI->SetCheck(!theApp.m_MapSettings.CenterPacific);
 		break;
@@ -468,14 +489,23 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_USECOLORS:
 		pCmdUI->SetCheck(theApp.m_MapSettings.UseColors);
+	case IDM_MAP_ROUTECOLOR:
 		b = theApp.m_MapSettings.ShowFlightRoutes;
 		break;
 	case IDM_MAP_SHOWLOCATIONS:
 		pCmdUI->SetCheck(theApp.m_MapSettings.ShowLocations);
 		b = !theApp.m_MapSettings.ShowFlightRoutes;
 		break;
+	case IDM_MAP_LOCATIONINNERCOLOR:
+	case IDM_MAP_LOCATIONOUTERCOLOR:
+		b = theApp.m_MapSettings.ShowLocations;
+		break;
 	case IDM_MAP_SHOWIATACODES:
 		pCmdUI->SetCheck(theApp.m_MapSettings.ShowIATACodes);
+		break;
+	case IDM_MAP_IATAINNERCOLOR:
+	case IDM_MAP_IATAOUTERCOLOR:
+		b = theApp.m_MapSettings.ShowIATACodes;
 		break;
 	}
 

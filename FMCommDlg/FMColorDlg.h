@@ -12,7 +12,7 @@
 class FMColorDlg : public CColorDialog
 {
 public:
-	FMColorDlg(COLORREF clrInit=0, DWORD dwFlags=0, CWnd* pParentWnd=NULL);
+	FMColorDlg(COLORREF clrInit=0, DWORD dwFlags=0, CWnd* pParentWnd=NULL, CString Caption=_T(""));
 
 protected:
 	afx_msg BOOL OnInitDialog();
@@ -22,4 +22,5 @@ protected:
 private:
 	HICON hIconL;
 	HICON hIconS;
+	CString m_Caption;
 };
