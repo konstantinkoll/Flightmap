@@ -1777,7 +1777,7 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 			pDC->FillSolidRect(rectItem.left+1, rectItem.top+1, m_IconSize.cx, m_IconSize.cy, m_DefaultColor);
 		}
 
-		COLORREF clr = Themed ? m_Enabled ? 0x8F8F8E : 0xB1B1B1 : 0x000000;
+		COLORREF clr = Themed ? m_Enabled ? (Selected && ((INT)a==m_HoverItem)) ? 0x000000 : 0x8F8F8E : 0xB1B1B1 : 0x000000;
 		pDC->Draw3dRect(rectItem.left, rectItem.top, m_IconSize.cx+2, m_IconSize.cy+2, clr, clr);
 
 		CRect rectText(rectItem);
