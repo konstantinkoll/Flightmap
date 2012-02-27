@@ -356,6 +356,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Resolution_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Resolution_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Save_16.png"
 				>
 			</File>
@@ -586,6 +594,10 @@
 		</File>
 		<File
 			RelativePath=".\Plane_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Resolution_Tiny.ico"
 			>
 		</File>
 		<File

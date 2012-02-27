@@ -79,6 +79,8 @@ BOOL CFlightmapApp::InitInstance()
 	GetBinary(_T("CustomColors"), &m_CustomColors, sizeof(m_CustomColors));
 	m_MapSettings.Background = GetInt(_T("MapBackground"), 0);
 	m_MapSettings.BackgroundColor = GetInt(_T("MapBackgroundColor"), 0xF0F0F0);
+	m_MapSettings.Width = GetInt(_T("MapWidth"), 1024);
+	m_MapSettings.Height = GetInt(_T("MapHeight"), 768);
 	m_MapSettings.CenterPacific = GetInt(_T("MapCenterPacific"), FALSE);
 	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapShowFlightRoutes"), TRUE);
 	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapStraightLines"), FALSE);
@@ -95,6 +97,16 @@ BOOL CFlightmapApp::InitInstance()
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
+
+	if (m_MapSettings.Width<400)
+		m_MapSettings.Width = 400;
+	if (m_MapSettings.Width>8192)
+		m_MapSettings.Width = 8192;
+
+	if (m_MapSettings.Height<300)
+		m_MapSettings.Height = 300;
+	if (m_MapSettings.Height>4096)
+		m_MapSettings.Height = 4096;
 
 	CMainWnd* pFrame = new CMainWnd();
 	pFrame->Create();
@@ -143,6 +155,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteBinary(_T("CustomColors"), (LPBYTE)&m_CustomColors, sizeof(m_CustomColors));
 		WriteInt(_T("MapBackground"), m_MapSettings.Background);
 		WriteInt(_T("MapBackgroundColor"), m_MapSettings.BackgroundColor);
+		WriteInt(_T("MapWidth"), m_MapSettings.Width);
+		WriteInt(_T("MapHeight"), m_MapSettings.Height);
 		WriteInt(_T("MapCenterPacific"), m_MapSettings.CenterPacific);
 		WriteInt(_T("MapShowFlightRoutes"), m_MapSettings.ShowFlightRoutes);
 		WriteInt(_T("MapStraightLines"), m_MapSettings.ShowFlightRoutes);

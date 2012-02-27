@@ -1,5 +1,6 @@
 #pragma once
 #include "..\FMCommDlg\CDialogMenuBar.h"
+#include "..\FMCommDlg\CExplorerList.h"
 #include "..\FMCommDlg\CGdiPlusBitmap.h"
 #include "..\FMCommDlg\CGroupBox.h"
 #include "..\FMCommDlg\CMainWindow.h"
@@ -14,6 +15,7 @@
 #include "..\FMCommDlg\FMLicenseDlg.h"
 #include "..\FMCommDlg\FMProgressDlg.h"
 #include "..\FMCommDlg\FMRegisterDlg.h"
+#include "..\FMCommDlg\FMResolutionDlg.h"
 #include "..\FMCommDlg\FMSelectLocationGPSDlg.h"
 #include "..\FMCommDlg\FMSelectLocationIATADlg.h"
 #include "..\FMCommDlg\FMTooltip.h"

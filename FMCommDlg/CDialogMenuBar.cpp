@@ -904,6 +904,11 @@ void CDialogMenuPopup::AddColor(UINT CmdID, COLORREF* pColor)
 	AddItem(new CDialogMenuColor(this, CmdID, pColor));
 }
 
+void CDialogMenuPopup::AddResolution(UINT CmdID, INT IconID, UINT* pWidth, UINT* pHeight)
+{
+	AddItem(new CDialogMenuResolution(this, CmdID, IconID, pWidth, pHeight));
+}
+
 void CDialogMenuPopup::AddSeparator(BOOL ForBlueArea)
 {
 	if (ForBlueArea)
@@ -2386,6 +2391,29 @@ void CDialogMenuColor::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL T
 
 	rect.DeflateRect(1, 1);
 	pDC->FillSolidRect(rect, *p_Color);
+}
+
+
+// CDialogMenuResolution
+//
+
+CDialogMenuResolution::CDialogMenuResolution(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT* pWidth, UINT* pHeight)
+	: CDialogMenuCommand(pParentPopup, CmdID, IconID, CDMB_SMALL)
+{
+	CString tmpStr;
+	tmpStr.Format(_T("%s (%d×%d)..."), m_Caption, *pWidth, *pHeight);
+	m_Caption = tmpStr;
+
+	p_Width = pWidth;
+	p_Height = pHeight;
+}
+
+void CDialogMenuResolution::Execute()
+{
+	p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+
+	FMResolutionDlg dlg(p_Width, p_Height, p_ParentPopup->GetOwner());
+	dlg.DoModal();
 }
 
 

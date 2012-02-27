@@ -308,6 +308,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCaption(IDS_BACKGROUND);
 		pPopup->AddGallery(IDM_MAP_BACKGROUND, IDB_BACKGROUNDS, CSize(96, 48), IDS_BACKGROUND_DEFAULT, 4, 2, theApp.m_MapSettings.BackgroundColor, FALSE);
 		pPopup->AddColor(IDM_MAP_BACKGROUNDCOLOR, &theApp.m_MapSettings.BackgroundColor);
+		pPopup->AddResolution(IDM_MAP_RESOLUTION, 1, &theApp.m_MapSettings.Width, &theApp.m_MapSettings.Height);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_CENTERATLANTIC, TRUE);
 		pPopup->AddCheckbox(IDM_MAP_CENTERPACIFIC, TRUE);

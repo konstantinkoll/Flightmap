@@ -30,6 +30,8 @@ struct MapSettings
 {
 	INT Background;
 	COLORREF BackgroundColor;
+	UINT Width;
+	UINT Height;
 	BOOL CenterPacific;
 	BOOL ShowFlightRoutes;
 	BOOL StraightLines;

@@ -153,6 +153,7 @@ public:
 	void AddFile(UINT CmdID, CString Path, UINT PreferredSize=CDMB_SMALL);
 	void AddCheckbox(UINT CmdID, BOOL Radio=FALSE, BOOL CloseOnExecute=FALSE);
 	void AddColor(UINT CmdID, COLORREF* pColor);
+	void AddResolution(UINT CmdID, INT IconID, UINT* pWidth, UINT* pHeight);
 	void AddSeparator(BOOL ForBlueArea=FALSE);
 	void AddCaption(UINT ResID);
 	void GetCheckSize(CSize& sz);
@@ -415,6 +416,22 @@ public:
 
 protected:
 	COLORREF* p_Color;
+
+	virtual void Execute();
+};
+
+
+// CDialogMenuResolution
+//
+
+class CDialogMenuResolution : public CDialogMenuCommand
+{
+public:
+	CDialogMenuResolution(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT* pWidth, UINT* pHeight);
+
+protected:
+	UINT* p_Width;
+	UINT* p_Height;
 
 	virtual void Execute();
 };

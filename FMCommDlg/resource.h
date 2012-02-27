@@ -128,14 +128,19 @@
 #define IDC_ATMOSPHERE                  21505
 #define IDC_SHADOWS                     21506
 #define IDD_CHOOSECOLOR                 21600
+#define IDD_RESOLUTION                  21700
+#define IDC_RESLIST                     21701
+#define IDC_USERDEFINEDRES              21702
+#define IDC_WIDTH                       21703
+#define IDC_HEIGHT                      21704
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2011
+#define _APS_NEXT_RESOURCE_VALUE        2012
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2040
+#define _APS_NEXT_CONTROL_VALUE         2044
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

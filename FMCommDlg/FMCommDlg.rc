@@ -71,6 +71,7 @@ IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Tiny.ico"
 IDD_REGISTER            ICON                    "res\\Wallet_Tiny.ico"
 IDD_3DSETTINGS          ICON                    "res\\3DSettings_Tiny.ico"
 IDD_CHOOSECOLOR         ICON                    "res\\ChooseColor_Tiny.ico"
+IDD_RESOLUTION          ICON                    "res\\Resolution_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -275,6 +276,23 @@ BEGIN
     EDITTEXT        IDC_COLOR_HUE,282,130,23,12,WS_GROUP
 END
 
+IDD_RESOLUTION DIALOGEX 0, 0, 316, 287
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Auflösung"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,14,18,288,177
+    CONTROL         "Benutzer&definierte Auflösung",IDC_USERDEFINEDRES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,201,288,10
+    EDITTEXT        IDC_WIDTH,51,216,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_HEIGHT,51,237,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    DEFPUSHBUTTON   "OK",IDOK,201,266,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,259,266,50,14
+    GROUPBOX        "Kartenauflösung",IDC_STATIC,7,7,302,253
+    LTEXT           "Breite:",IDC_STATIC,14,219,35,8
+    LTEXT           "Höhe:",IDC_STATIC,14,240,35,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -354,6 +372,14 @@ BEGIN
         RIGHTMARGIN, 371
         TOPMARGIN, 7
         BOTTOMMARGIN, 221
+    END
+
+    IDD_RESOLUTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 280
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -652,6 +678,22 @@ BEGIN
     EDITTEXT        IDC_COLOR_HUE,282,130,23,12,WS_GROUP
 END
 
+IDD_RESOLUTION DIALOGEX 0, 0, 316, 287
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Resolution"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,14,18,288,177
+    CONTROL         "User &defined resolution",IDC_USERDEFINEDRES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,201,288,10
+    EDITTEXT        IDC_WIDTH,51,216,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_HEIGHT,51,237,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    DEFPUSHBUTTON   "OK",IDOK,201,266,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,259,266,50,14
+    GROUPBOX        "Map resolution",IDC_STATIC,7,7,302,253
+    LTEXT           "Width:",IDC_STATIC,14,219,35,8
+    LTEXT           "Height:",IDC_STATIC,14,240,35,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -731,6 +773,14 @@ BEGIN
         RIGHTMARGIN, 371
         TOPMARGIN, 7
         BOTTOMMARGIN, 221
+    END
+
+    IDD_RESOLUTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 280
     END
 END
 #endif    // APSTUDIO_INVOKED

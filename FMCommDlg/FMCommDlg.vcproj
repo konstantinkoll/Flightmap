@@ -327,6 +327,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExplorerList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGdiPlusBitmap.cpp"
 				>
 			</File>
@@ -380,6 +384,10 @@
 			</File>
 			<File
 				RelativePath=".\FMRegisterDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMResolutionDlg.cpp"
 				>
 			</File>
 			<File
@@ -441,6 +449,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExplorerList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CGdiPlusBitmap.h"
 				>
 			</File>
@@ -498,6 +510,10 @@
 			</File>
 			<File
 				RelativePath=".\FMRegisterDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMResolutionDlg.h"
 				>
 			</File>
 			<File
@@ -624,6 +640,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Plane_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Resolution_Tiny.ico"
 				>
 			</File>
 			<File
