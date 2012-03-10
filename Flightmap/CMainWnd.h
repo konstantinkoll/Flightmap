@@ -46,6 +46,7 @@ protected:
 	afx_msg void OnMapCenterPacific();
 	afx_msg void OnMapShowFlightRoutes();
 	afx_msg void OnMapStraightLines();
+	afx_msg void OnMapArrows();
 	afx_msg void OnMapUseColors();
 	afx_msg void OnMapShowLocations();
 	afx_msg void OnMapShowIATACodes();

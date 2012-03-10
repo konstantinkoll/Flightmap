@@ -83,7 +83,8 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.Height = GetInt(_T("MapHeight"), 768);
 	m_MapSettings.CenterPacific = GetInt(_T("MapCenterPacific"), FALSE);
 	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapShowFlightRoutes"), TRUE);
-	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapStraightLines"), FALSE);
+	m_MapSettings.StraightLines = GetInt(_T("MapStraightLines"), FALSE);
+	m_MapSettings.Arrows = GetInt(_T("MapArrows"), FALSE);
 	m_MapSettings.UseColors = GetInt(_T("MapUseColors"), TRUE);
 	m_MapSettings.RouteColor = GetInt(_T("MapRouteColor"), 0xFFFFFF);
 	m_MapSettings.ShowLocations = GetInt(_T("MapShowLocations"), TRUE);
@@ -159,7 +160,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapHeight"), m_MapSettings.Height);
 		WriteInt(_T("MapCenterPacific"), m_MapSettings.CenterPacific);
 		WriteInt(_T("MapShowFlightRoutes"), m_MapSettings.ShowFlightRoutes);
-		WriteInt(_T("MapStraightLines"), m_MapSettings.ShowFlightRoutes);
+		WriteInt(_T("MapStraightLines"), m_MapSettings.StraightLines);
+		WriteInt(_T("MapArrows"), m_MapSettings.Arrows);
 		WriteInt(_T("MapUseColors"), m_MapSettings.UseColors);
 		WriteInt(_T("MapRouteColor"), m_MapSettings.RouteColor);
 		WriteInt(_T("MapShowLocations"), m_MapSettings.ShowLocations);

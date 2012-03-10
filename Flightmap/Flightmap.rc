@@ -217,6 +217,7 @@ BEGIN
     IDM_MAP_SHOWFLIGHTROUTES
                             "Flug&routen zeigen"
     IDM_MAP_STRAIGHTLINES   "&Gerade Linien"
+    IDM_MAP_ARROWS          "&Pfeilspitzen"
     IDM_MAP_USECOLORS       "&Farben benutzen"
     IDM_MAP_ROUTECOLOR      "&Standardfarbe"
     IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
@@ -415,6 +416,7 @@ BEGIN
     IDM_MAP_SHOWFLIGHTROUTES
                             "Show &flight routes"
     IDM_MAP_STRAIGHTLINES   "&Straight lines"
+    IDM_MAP_ARROWS          "Arro&ws"
     IDM_MAP_USECOLORS       "Use colo&rs"
     IDM_MAP_ROUTECOLOR      "&Default color"
     IDM_MAP_SHOWLOCATIONS   "Show loca&tions"

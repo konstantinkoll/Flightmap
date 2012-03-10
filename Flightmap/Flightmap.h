@@ -35,6 +35,7 @@ struct MapSettings
 	BOOL CenterPacific;
 	BOOL ShowFlightRoutes;
 	BOOL StraightLines;
+	BOOL Arrows;
 	BOOL UseColors;
 	COLORREF RouteColor;
 	BOOL ShowLocations;
