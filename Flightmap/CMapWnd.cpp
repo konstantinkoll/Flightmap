@@ -127,7 +127,7 @@ LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_MAPVIEW_ZOOMIN, 0, CDMB_SMALL, FALSE);
 		pPopup->AddCommand(IDM_MAPVIEW_ZOOMOUT, 1, CDMB_SMALL, FALSE);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_MAPVIEW_AUTOSIZE, 2, CDMB_SMALL);
+		pPopup->AddCheckbox(IDM_MAPVIEW_AUTOSIZE);
 		break;
 	case IDM_MAPWND_SAVEAS:
 		pPopup->Create(this, IDB_MENUMAPWND_32, IDB_MENUMAPWND_16);
