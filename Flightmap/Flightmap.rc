@@ -436,7 +436,7 @@ BEGIN
     IDM_MAPWND_COPY         "&Copy"
     IDM_MAPWND_SAVEAS       "Save &as"
     IDM_MAPWND_PRINT        "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
-    IDM_MAPWND_PRINT_QUICK  "&Quick print\nSend the itinerary directly to the default\nprinter without making changes."
+    IDM_MAPWND_PRINT_QUICK  "&Quick print\nSend the map directly to the default\nprinter without making changes."
     IDM_MAPWND_PRINT_PREVIEW "Print Pre&view\nPreview and make changes to the page\nbefore printing."
     IDM_MAPWND_CLOSE        "&Close"
     IDM_MAPVIEW_ZOOMIN      "Zoom &in"
