@@ -7,6 +7,7 @@
 #include "CKitchen.h"
 #include "CLoungeView.h"
 #include "CMainWnd.h"
+#include "CMapFactory.h"
 #include "CMapWnd.h"
 #include "CGlobeWnd.h"
 #include "Flightmap.h"
@@ -418,10 +419,12 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnMapOpen()
 {
-	CMapWnd* pFrame = new CMapWnd();
+	CMapFactory f(&theApp.m_MapSettings);
+	CBitmap* pBitmap = f.RenderMap(GetKitchen());
 
+	CMapWnd* pFrame = new CMapWnd();
 	pFrame->Create();
-//	pFrame->SetFlights(GetKitchen());
+	pFrame->SetBitmap(pBitmap);
 	pFrame->ShowWindow(SW_SHOW);
 }
 

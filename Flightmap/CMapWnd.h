@@ -5,6 +5,7 @@
 #pragma once
 #include "FMCommDlg.h"
 #include "CKitchen.h"
+#include "CMapView.h"
 
 
 // CMapWnd
@@ -20,9 +21,12 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create();
+	void SetBitmap(CBitmap* pBitmap);
 
 protected:
 	HICON m_hIcon;
+	CBitmap* m_pBitmap;
+	CMapView m_wndMapView;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

@@ -15,12 +15,15 @@ CMapWnd::CMapWnd()
 	: CMainWindow()
 {
 	m_hIcon = NULL;
+	m_pBitmap = NULL;
 }
 
 CMapWnd::~CMapWnd()
 {
 	if (m_hIcon)
 		DestroyIcon(m_hIcon);
+	if (m_pBitmap)
+		delete m_pBitmap;
 }
 
 BOOL CMapWnd::Create()
@@ -39,11 +42,19 @@ BOOL CMapWnd::Create()
 	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
+void CMapWnd::SetBitmap(CBitmap* pBitmap)
+{
+	if (m_pBitmap)
+		delete m_pBitmap;
+
+	m_wndMapView.SetBitmap(m_pBitmap = pBitmap);
+}
+
 BOOL CMapWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-//	if (m_wndGlobeView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-//		return TRUE;
+	if (m_wndMapView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
 
 	return CMainWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
@@ -58,7 +69,7 @@ void CMapWnd::AdjustLayout()
 	if (m_pDialogMenuBar)
 		rect.top += m_pDialogMenuBar->GetPreferredHeight();
 
-//	m_wndGlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndMapView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
@@ -88,6 +99,9 @@ INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
 	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
 
+	if (!m_wndMapView.Create(this, 2))
+		return -1;
+
 	theApp.AddFrame(this);
 
 	return 0;
@@ -104,7 +118,7 @@ void CMapWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
 
-	//m_wndGlobeWnd.SetFocus();
+	m_wndMapView.SetFocus();
 }
 
 LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)

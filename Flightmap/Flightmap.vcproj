@@ -400,6 +400,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMapFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CMapWnd.cpp"
 				>
 			</File>
@@ -487,6 +495,14 @@
 			</File>
 			<File
 				RelativePath=".\CMainWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapView.h"
 				>
 			</File>
 			<File
