@@ -156,7 +156,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILEFILTER_BMP      "Windows Bitmap"
+    IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
+    IDS_FILEFILTER_PNG      "Portable Network Graphics"
+    IDS_FILEFILTER_TIFF     "TIFF"
 END
 
 STRINGTABLE 
@@ -206,7 +210,7 @@ BEGIN
     IDM_EDIT_GOTO           "Gehe z&u Zeile..."
     IDM_MAP_OPEN            "Karte ö&ffnen\nZeigt den Flugplan auf\neiner 2D-Karte an."
     IDM_MAP_EXPORT_BMP      "Windows &Bitmap\nExportiert den Flugplan\nals Windows Bitmap."
-    IDM_MAP_EXPORT_JPG      "&JPEG\nExportiert den Flugplan\nals JPEG-Bild."
+    IDM_MAP_EXPORT_JPEG     "&JPEG\nExportiert den Flugplan\nals JPEG-Bild."
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExportiert den Flugplan\nals Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExportiert den Flugplan\nals TIFF-Datei."
     IDM_MAP_SELECTEDONLY    "Nur &ausgewählte Flüge"
@@ -355,7 +359,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILEFILTER_BMP      "Windows Bitmap"
+    IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
+    IDS_FILEFILTER_PNG      "Portable Network Graphics"
+    IDS_FILEFILTER_TIFF     "TIFF"
 END
 
 STRINGTABLE 
@@ -405,7 +413,7 @@ BEGIN
     IDM_EDIT_GOTO           "Go to &line..."
     IDM_MAP_OPEN            "&Open map\nVisualize the itinerary\non a 2D map."
     IDM_MAP_EXPORT_BMP      "Windows &Bitmap\nExport the itinerary\nas Windows Bitmap file."
-    IDM_MAP_EXPORT_JPG      "&JPEG\nExport the itinerary\nas JPEG image."
+    IDM_MAP_EXPORT_JPEG     "&JPEG\nExport the itinerary\nas JPEG image."
     IDM_MAP_EXPORT_PNG      "&Portable Network Graphics\nExport the itinerary\nas Portable Network Graphics."
     IDM_MAP_EXPORT_TIFF     "&TIFF\nExport the itinerary\nas TIFF file."
     IDM_MAP_SELECTEDONLY    "&Selected flights only"

@@ -1432,8 +1432,7 @@ void CGlobeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 void CGlobeView::OnSaveAs()
 {
 	CString Extensions;
-	ENSURE(Extensions.LoadString(IDS_FILEFILTER_KML));
-	Extensions += _T(" (*.kml)|*.kml||");
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"), TRUE);
 
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)

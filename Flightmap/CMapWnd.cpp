@@ -47,7 +47,16 @@ void CMapWnd::SetBitmap(CBitmap* pBitmap)
 	if (m_pBitmap)
 		delete m_pBitmap;
 
-	m_wndMapView.SetBitmap(m_pBitmap = pBitmap);
+	m_wndMapView.SetBitmap(m_pBitmap=pBitmap);
+}
+
+void CMapWnd::ExportMap(CString Filename, GUID guidFileType)
+{
+	ASSERT(m_pBitmap);
+
+	CWaitCursor csr;
+
+	theApp.SaveBitmap(m_pBitmap, Filename, guidFileType, FALSE);
 }
 
 BOOL CMapWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -81,8 +90,15 @@ BEGIN_MESSAGE_MAP(CMapWnd, CMainWindow)
 	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
 
 	ON_COMMAND(IDM_MAPWND_COPY, OnMapWndCopy)
+	ON_COMMAND(IDM_MAPWND_SAVEAS, OnMapWndSaveAs)
 	ON_COMMAND(IDM_MAPWND_CLOSE, OnMapWndClose)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAPWND_COPY, IDM_MAPWND_CLOSE, OnUpdateMapWndCommands)
+
+	ON_COMMAND(IDM_MAP_EXPORT_BMP, OnMapExportBMP)
+	ON_COMMAND(IDM_MAP_EXPORT_JPEG, OnMapExportJPEG)
+	ON_COMMAND(IDM_MAP_EXPORT_PNG, OnMapExportPNG)
+	ON_COMMAND(IDM_MAP_EXPORT_TIFF, OnMapExportTIFF)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_EXPORT_BMP, IDM_MAP_EXPORT_TIFF, OnUpdateMapExportCommands)
 END_MESSAGE_MAP()
 
 INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -148,10 +164,10 @@ LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	case IDM_MAPWND_SAVEAS:
 		pPopup->Create(this, IDB_MENUMAPWND_32, IDB_MENUMAPWND_16);
 		pPopup->AddCaption(IDS_EXPORT);
-		pPopup->AddFileType(IDM_MAP_EXPORT_BMP, _T(".bmp"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_MAP_EXPORT_JPG, _T(".jpg"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_MAP_EXPORT_PNG, _T(".png"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_MAP_EXPORT_TIFF, _T(".tiff"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_BMP, _T("bmp"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_JPEG, _T("jpg"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_PNG, _T("png"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_TIFF, _T("tiff"), CDMB_LARGE);
 		break;
 	case IDM_MAPWND_PRINT:
 		pPopup->Create(this, IDB_MENUMAPWND_32, IDB_MENUMAPWND_16);
@@ -182,6 +198,8 @@ LRESULT CMapWnd::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 void CMapWnd::OnMapWndCopy()
 {
+	CWaitCursor csr;
+
 	// Create device-dependent bitmap
 	CDC* pDC = GetWindowDC();
 	CSize sz = m_pBitmap->GetBitmapDimension();
@@ -213,6 +231,41 @@ void CMapWnd::OnMapWndCopy()
 	}
 }
 
+void CMapWnd::OnMapWndSaveAs()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		CString ext = dlg.GetFileExt();
+
+		if (ext==_T("bmp"))
+		{
+			ExportMap(dlg.GetPathName(), ImageFormatBMP);
+		}
+		else
+			if (ext==_T("jpg"))
+			{
+				ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+			}
+			else
+				if (ext==_T("png"))
+				{
+					ExportMap(dlg.GetPathName(), ImageFormatPNG);
+				}
+				else
+					if (ext==_T("tif"))
+					{
+						ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+					}
+	}
+}
+
 void CMapWnd::OnMapWndClose()
 {
 	SendMessage(WM_CLOSE);
@@ -221,4 +274,52 @@ void CMapWnd::OnMapWndClose()
 void CMapWnd::OnUpdateMapWndCommands(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pCmdUI->m_nID==IDM_MAPWND_CLOSE ? TRUE : m_pBitmap!=NULL);
+}
+
+
+// Map export commands
+
+void CMapWnd::OnMapExportBMP()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatBMP);
+}
+
+void CMapWnd::OnMapExportJPEG()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+}
+
+void CMapWnd::OnMapExportPNG()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatPNG);
+}
+
+void CMapWnd::OnMapExportTIFF()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("tif"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+}
+
+void CMapWnd::OnUpdateMapExportCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pBitmap!=NULL);
 }

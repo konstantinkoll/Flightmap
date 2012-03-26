@@ -98,6 +98,8 @@ public:
 	static void PlayNavigateSound();
 	static void PlayWarningSound();
 	static void PlayTrashSound();
+	static HRESULT SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
+	static void AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last=FALSE);
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();

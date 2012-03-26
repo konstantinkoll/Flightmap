@@ -111,6 +111,19 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected)
 	return pKitchen;
 }
 
+CBitmap* CMainWnd::GetMap(BOOL Selected)
+{
+	CMapFactory f(&theApp.m_MapSettings);
+	return f.RenderMap(GetKitchen(Selected));
+}
+
+void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected)
+{
+	CWaitCursor csr;
+
+	theApp.SaveBitmap(GetMap(Selected), Filename, guidFileType);
+}
+
 BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Selected)
 {
 	CGoogleEarthFile f;
@@ -174,6 +187,12 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_SHOWLOCATIONS, OnMapShowLocations)
 	ON_COMMAND(IDM_MAP_SHOWIATACODES, OnMapShowIATACodes)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_OPEN, IDM_MAP_IATAOUTERCOLOR, OnUpdateMapCommands)
+
+	ON_COMMAND(IDM_MAP_EXPORT_BMP, OnMapExportBMP)
+	ON_COMMAND(IDM_MAP_EXPORT_JPEG, OnMapExportJPEG)
+	ON_COMMAND(IDM_MAP_EXPORT_PNG, OnMapExportPNG)
+	ON_COMMAND(IDM_MAP_EXPORT_TIFF, OnMapExportTIFF)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_EXPORT_BMP, IDM_MAP_EXPORT_TIFF, OnUpdateMapExportCommands)
 
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
@@ -333,10 +352,10 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	case IDM_MAP_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddCaption(IDS_EXPORT);
-		pPopup->AddFileType(IDM_MAP_EXPORT_BMP, _T(".bmp"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_MAP_EXPORT_JPG, _T(".jpg"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_MAP_EXPORT_PNG, _T(".png"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_MAP_EXPORT_TIFF, _T(".tiff"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_BMP, _T("bmp"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_JPEG, _T("jpg"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_PNG, _T("png"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_MAP_EXPORT_TIFF, _T("tif"), CDMB_LARGE);
 		break;
 	case IDM_GLOBE:
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
@@ -419,8 +438,9 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnMapOpen()
 {
-	CMapFactory f(&theApp.m_MapSettings);
-	CBitmap* pBitmap = f.RenderMap(GetKitchen());
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
+	CBitmap* pBitmap = GetMap();
 
 	CMapWnd* pFrame = new CMapWnd();
 	pFrame->Create();
@@ -528,6 +548,54 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 }
 
 
+// Map export commands
+
+void CMainWnd::OnMapExportBMP()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatBMP);
+}
+
+void CMainWnd::OnMapExportJPEG()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+}
+
+void CMainWnd::OnMapExportPNG()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatPNG);
+}
+
+void CMainWnd::OnMapExportTIFF()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("tif"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+}
+
+void CMainWnd::OnUpdateMapExportCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(TRUE);
+}
+
+
 // Globe commands
 
 void CMainWnd::OnGlobeOpen()
@@ -572,8 +640,7 @@ void CMainWnd::OnGoogleEarthOpen()
 void CMainWnd::OnGoogleEarthExport()
 {
 	CString Extensions;
-	ENSURE(Extensions.LoadString(IDS_FILEFILTER_KML));
-	Extensions += _T(" (*.kml)|*.kml||");
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"), TRUE);
 
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)

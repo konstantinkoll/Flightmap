@@ -2226,6 +2226,8 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 	m_IconSize.cx = cx;
 	m_IconSize.cy = cy;
 
+	FileType.Insert(0, L'.');
+
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo(FileType, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
 	{

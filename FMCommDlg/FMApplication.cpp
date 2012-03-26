@@ -320,6 +320,35 @@ void FMApplication::PlayTrashSound()
 }
 
 
+HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap)
+{
+	ASSERT(pBitmap);
+
+	CImage img;
+	img.Attach(*pBitmap);
+	HRESULT res = img.Save(Filename, guidFileType);
+
+	if (!DeleteBitmap)
+		img.Detach();
+
+	return res;
+}
+
+void FMApplication::AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last)
+{
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(nID));
+
+	Extensions += tmpStr;
+	Extensions += _T(" (*.");
+	Extensions += Extension;
+	Extensions += _T(")|*.");
+	Extensions += Extension;
+	Extensions += _T("|");
+	if (Last)
+		Extensions += _T("|");
+}
+
 void FMApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 {
 	if (EnableAutoUpdate)

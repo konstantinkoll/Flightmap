@@ -54,7 +54,11 @@
 #define IDS_BACKGROUND_NIGHT            1015
 #define IDS_BACKGROUND_ABSTRACT         1016
 #define IDS_BACKGROUND_COLOR            1017
-#define IDS_FILEFILTER_KML              1100
+#define IDS_FILEFILTER_BMP              1100
+#define IDS_FILEFILTER_JPEG             1101
+#define IDS_FILEFILTER_KML              1102
+#define IDS_FILEFILTER_PNG              1103
+#define IDS_FILEFILTER_TIFF             1104
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002
@@ -89,7 +93,7 @@
 #define IDM_MAP                         3200
 #define IDM_MAP_OPEN                    3201
 #define IDM_MAP_EXPORT_BMP              3202
-#define IDM_MAP_EXPORT_JPG              3203
+#define IDM_MAP_EXPORT_JPEG             3203
 #define IDM_MAP_EXPORT_PNG              3204
 #define IDM_MAP_EXPORT_TIFF             3205
 #define IDM_MAP_SELECTEDONLY            3206

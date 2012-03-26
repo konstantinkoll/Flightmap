@@ -28,6 +28,8 @@ protected:
 	CBitmap* m_pBitmap;
 	CMapView m_wndMapView;
 
+	void ExportMap(CString Filename, GUID guidFileType);
+
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -35,7 +37,14 @@ protected:
 	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnMapWndCopy();
+	afx_msg void OnMapWndSaveAs();
 	afx_msg void OnMapWndClose();
 	afx_msg void OnUpdateMapWndCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnMapExportBMP();
+	afx_msg void OnMapExportJPEG();
+	afx_msg void OnMapExportPNG();
+	afx_msg void OnMapExportTIFF();
+	afx_msg void OnUpdateMapExportCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

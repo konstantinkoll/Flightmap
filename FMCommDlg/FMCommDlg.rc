@@ -212,7 +212,7 @@ BEGIN
     PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,209,100,12
     DEFPUSHBUTTON   "Fortsetzen",IDOK,321,209,50,12
     LTEXT           "Dieses ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile!",IDC_TEXTROW1,7,7,364,8
-    LTEXT           "- Die von Flightmap erzeugten Karten haben keine magentafarbene Balken mehr:",IDC_TEXTROW2,7,19,364,8
+    LTEXT           "- Die von Flightmap erzeugten Karten haben keine magentafarbenen Balken mehr:",IDC_TEXTROW2,7,19,364,8
     CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
     CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
     CTEXT           "Shareware-Version",IDC_CAPTION1,11,149,128,8

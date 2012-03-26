@@ -29,6 +29,8 @@ protected:
 
 	void OpenMainView(BOOL Empty);
 	CKitchen* GetKitchen(BOOL Selected=FALSE);
+	CBitmap* GetMap(BOOL Selected=FALSE);
+	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -51,6 +53,12 @@ protected:
 	afx_msg void OnMapShowLocations();
 	afx_msg void OnMapShowIATACodes();
 	afx_msg void OnUpdateMapCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnMapExportBMP();
+	afx_msg void OnMapExportJPEG();
+	afx_msg void OnMapExportPNG();
+	afx_msg void OnMapExportTIFF();
+	afx_msg void OnUpdateMapExportCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnGlobeOpen();
 	afx_msg void OnUpdateGlobeCommands(CCmdUI* pCmdUI);
