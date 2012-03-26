@@ -79,6 +79,7 @@ BEGIN_MESSAGE_MAP(CMapWnd, CMainWindow)
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 
+	ON_COMMAND(IDM_MAPWND_COPY, OnMapWndCopy)
 	ON_COMMAND(IDM_MAPWND_CLOSE, OnMapWndClose)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAPWND_COPY, IDM_MAPWND_CLOSE, OnUpdateMapWndCommands)
 END_MESSAGE_MAP()
@@ -170,6 +171,39 @@ LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 }
 
 
+void CMapWnd::OnMapWndCopy()
+{
+	// Create device-dependent bitmap
+	CDC* pDC = GetWindowDC();
+	CSize sz = m_pBitmap->GetBitmapDimension();
+
+	CDC dc;
+	dc.CreateCompatibleDC(pDC);
+
+	CBitmap buffer;
+	buffer.CreateCompatibleBitmap(pDC, sz.cx, sz.cy);
+	CBitmap* pOldBitmap1 = dc.SelectObject(&buffer);
+
+	CDC dcMap;
+	dcMap.CreateCompatibleDC(pDC);
+
+	CBitmap* pOldBitmap2 = dcMap.SelectObject(m_pBitmap);
+	dc.BitBlt(0, 0, sz.cx, sz.cy, &dcMap, 0, 0, SRCCOPY);
+
+	dcMap.SelectObject(pOldBitmap2);
+	dc.SelectObject(pOldBitmap1);
+	ReleaseDC(pDC);
+
+	// Copy to clipboard
+	if (OpenClipboard())
+	{
+		EmptyClipboard();
+		SetClipboardData(CF_BITMAP, buffer.Detach());
+
+		CloseClipboard();
+	}
+}
+
 void CMapWnd::OnMapWndClose()
 {
 	SendMessage(WM_CLOSE);
@@ -177,5 +211,5 @@ void CMapWnd::OnMapWndClose()
 
 void CMapWnd::OnUpdateMapWndCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(TRUE);
+	pCmdUI->Enable(pCmdUI->m_nID==IDM_MAPWND_CLOSE ? TRUE : m_pBitmap!=NULL);
 }

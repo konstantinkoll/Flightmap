@@ -664,6 +664,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuMapView_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuMapView_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuMapWnd_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuMapWnd_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Night_8192.jpg"
 				>
 			</File>
