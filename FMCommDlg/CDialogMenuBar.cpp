@@ -401,7 +401,7 @@ void CDialogMenuBar::OnPaint()
 
 	BOOL Focused = FOCUSED;
 	UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	if (!Focused)
+	if (!Focused || m_pPopup)
 	{
 		BOOL AlwaysUnderline = FALSE;
 		if (SystemParametersInfo(SPI_GETKEYBOARDCUES, 0, &AlwaysUnderline, 0))
