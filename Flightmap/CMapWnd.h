@@ -32,6 +32,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnMapWndCopy();
 	afx_msg void OnMapWndClose();

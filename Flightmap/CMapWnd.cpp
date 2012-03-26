@@ -78,6 +78,7 @@ BEGIN_MESSAGE_MAP(CMapWnd, CMainWindow)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
+	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
 
 	ON_COMMAND(IDM_MAPWND_COPY, OnMapWndCopy)
 	ON_COMMAND(IDM_MAPWND_CLOSE, OnMapWndClose)
@@ -168,6 +169,14 @@ LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	}
 
 	return (LRESULT)pPopup;
+}
+
+LRESULT CMapWnd::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (IsCtrlThemed())
+		m_wndMapView.Invalidate();
+
+	return NULL;
 }
 
 
