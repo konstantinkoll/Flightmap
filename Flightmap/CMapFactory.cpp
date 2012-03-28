@@ -41,12 +41,16 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	INT MinZ = 4096;
 	INT MaxS = 0;
 	INT MaxZ = 0;
+	DOUBLE Upscale = 2.0;
 
 	UINT AirportCount = pKitchen->m_FlightAirports.GetCount();
 	FactoryAirportData* AirportData = new FactoryAirportData[AirportCount];
 	ZeroMemory(AirportData, AirportCount*sizeof(FactoryAirportData));
 
-	// Convert coordinates to row/column, and computer background boundaries
+	UINT RouteCount = pKitchen->m_FlightRoutes.GetCount();
+	FlightSegments** RouteData = NULL;
+
+	// Convert coordinates to row/column, and compute background boundaries
 	CFlightAirports::CPair* pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
 	UINT Cnt = 0;
 	while (pPair1)
@@ -64,15 +68,80 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 		pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
 	}
 
+	// Match routes with airport data
+	CFlightRoutes::CPair* pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+	while (pPair2)
+	{
+		FlightAirport Airport;
+
+		VERIFY(pKitchen->m_FlightAirports.Lookup(pPair2->value.pFrom->Code, Airport));
+		pPair2->value.lpFrom = Airport.lpAirport;
+		VERIFY(pKitchen->m_FlightAirports.Lookup(pPair2->value.pTo->Code, Airport));
+		pPair2->value.lpTo = Airport.lpAirport;
+
+		pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
+	}
+
+	// Tesselate routes if neccessary, and check for wrap-arounds of routes
+	if ((m_Settings.ShowFlightRoutes) && (RouteCount>0))
+	{
+		BOOL WrapAround = FALSE;
+
+		if (!m_Settings.StraightLines)
+		{
+			// Tesselated routes
+			RouteData = new FlightSegments*[RouteCount];
+			ZeroMemory(RouteData, RouteCount*sizeof(FlightSegments*));
+
+			pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+			UINT Cnt = 0;
+			while (pPair2)
+			{
+				FlightSegments* pSegments = RouteData[Cnt++] = pKitchen->Tesselate(pPair2->value);
+				for (UINT b=0; b<pSegments->PointCount; b++)
+				{
+					if (b>0)
+						WrapAround |= ((pSegments->Points[b-1][1]<-2.0) && (pSegments->Points[b][1]>2.0)) ||
+							((pSegments->Points[b-1][1]>2.0) && (pSegments->Points[b][1]<-2.0));
+				}
+
+				pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
+			}
+		}
+		else
+		{
+			// Straight routes
+			pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+			while (pPair2)
+			{
+				const FactoryAirportData* pFrom = (FactoryAirportData*)pPair2->value.lpFrom;
+				const FactoryAirportData* pTo = (FactoryAirportData*)pPair2->value.lpTo;
+				if (((pFrom->S<2500.0) && (pTo->S>5500.0)) || ((pFrom->S>5500.0) && (pTo->S<2500.0)))
+				{
+					WrapAround = TRUE;
+					break;
+				}
+
+				pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
+			}
+		}
+
+		if (WrapAround)
+		{
+			MinS = 0;
+			MaxS = 8191;
+		}
+	}
+
 	// Border
 	MinS = max(0, MinS-94);
 	MinZ = max(0, MinZ-54);
 	MaxS = min(8191, MaxS+94);
-	MaxZ = min(4096, MaxZ+54);
+	MaxZ = min(4095, MaxZ+54);
 
 	// Background
-	INT Width = MaxS-MinS;
-	INT Height = MaxZ-MinZ;
+	INT Width = MaxS-MinS+1;
+	INT Height = MaxZ-MinZ+1;
 	CBitmap* pBitmap = LoadBackground(MinS, MinZ, Width, Height);
 
 	// Obtain device context and graphics surface
@@ -84,16 +153,22 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetPixelOffsetMode(PixelOffsetModeHighQuality);
 
+	// Draw routes
+	if (m_Settings.ShowFlightRoutes)
+	{
+	}
+
 	// Draw locations
 	if (m_Settings.ShowLocations)
 	{
 		SolidBrush brush(CColor(m_Settings.LocationInnerColor));
-		Pen pen(CColor(m_Settings.LocationOuterColor), 2.0);
+		Pen pen(CColor(m_Settings.LocationOuterColor), (REAL)(2.0*Upscale));
+		DOUBLE Radius = 11.0*Upscale;
 
 		for (UINT a=0; a<AirportCount; a++)
 		{
-			g.FillEllipse(&brush, (REAL)(AirportData[a].S-MinS-5.0), (REAL)(AirportData[a].Z-MinZ-5.0), 11.0f, 11.0f);
-			g.DrawEllipse(&pen, (REAL)(AirportData[a].S-MinS-5.0), (REAL)(AirportData[a].Z-MinZ-5.0), 11.0f, 11.0f);
+			g.FillEllipse(&brush, (REAL)(AirportData[a].S-MinS-Radius/2.0), (REAL)(AirportData[a].Z-MinZ-Radius/2.0), (REAL)(Radius-1.0), (REAL)(Radius-1.0));
+			g.DrawEllipse(&pen, (REAL)(AirportData[a].S-MinS-Radius/2.0), (REAL)(AirportData[a].Z-MinZ-Radius/2.0), (REAL)Radius, (REAL)Radius);
 		}
 	}
 
@@ -111,6 +186,13 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 		delete pKitchen;
 
 	delete[] AirportData;
+	if (RouteData)
+	{
+		for (UINT a=0; a<RouteCount; a++)
+			free(RouteData[a]);
+
+		delete[] RouteData;
+	}
 
 	return pBitmap;
 }

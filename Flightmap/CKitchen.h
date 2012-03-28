@@ -22,6 +22,8 @@ struct FlightRoute
 {
 	FMAirport* pFrom;
 	FMAirport* pTo;
+	LPVOID lpFrom;
+	LPVOID lpTo;
 	COLORREF Color;
 	INT Count;
 };
