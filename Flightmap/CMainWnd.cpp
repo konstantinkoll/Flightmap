@@ -145,7 +145,7 @@ BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Sele
 			CFlightAirports::CPair* pPair = pKitchen->m_FlightAirports.PGetFirstAssoc();
 			while (pPair)
 			{
-				f.WriteAirport(pPair->value);
+				f.WriteAirport(pPair->value.pAirport);
 
 				pPair = pKitchen->m_FlightAirports.PGetNextAssoc(pPair);
 			}

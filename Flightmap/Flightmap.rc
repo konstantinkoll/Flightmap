@@ -69,7 +69,7 @@ IDB_DOCKED              JPG                     "res\\Docked.jpg"
 // PNG
 //
 
-IDB_GRAY_8192           JPG                     "res\\Gray_8192.png"
+IDB_GRAY_8192           PNG                     "res\\Gray_8192.png"
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
 IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
 IDB_PDZVOR              PNG                     "res\\PDZVOR.png"

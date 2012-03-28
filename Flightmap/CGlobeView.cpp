@@ -225,7 +225,7 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 	{
 		GlobeAirport ga;
 		ZeroMemory(&ga, sizeof(ga));
-		ga.pAirport = pPair1->value;
+		ga.pAirport = pPair1->value.pAirport;
 
 		strcpy_s(ga.NameString, 130, ga.pAirport->Name);
 		FMCountry* Country = FMIATAGetCountry(ga.pAirport->CountryID);

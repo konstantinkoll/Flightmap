@@ -25,20 +25,21 @@ FMAirport* CKitchen::AddAirport(CHAR* Code)
 	if (strlen(Code)!=3)
 		return NULL;
 
-	FMAirport* pAirport;
-	if (m_FlightAirports.Lookup(Code, pAirport))
+	FlightAirport Airport;
+	if (m_FlightAirports.Lookup(Code, Airport))
 	{
 		m_FlightAirportCounts[Code]++;
-		return pAirport;
+		return Airport.pAirport;
 	}
 
-	if (!FMIATAGetAirportByCode(Code, &pAirport))
+	ZeroMemory(&Airport, sizeof(Airport));
+	if (!FMIATAGetAirportByCode(Code, &Airport.pAirport))
 		return NULL;
 
-	m_FlightAirports[Code] = pAirport;
+	m_FlightAirports[Code] = Airport;
 	m_FlightAirportCounts[Code] = 1;
 
-	return pAirport;
+	return Airport.pAirport;
 }
 
 void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)

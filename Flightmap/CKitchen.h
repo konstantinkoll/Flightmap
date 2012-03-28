@@ -12,6 +12,12 @@
 // CKitchen
 //
 
+struct FlightAirport
+{
+	FMAirport* pAirport;
+	LPVOID lpAirport;
+};
+
 struct FlightRoute
 {
 	FMAirport* pFrom;
@@ -27,7 +33,7 @@ struct FlightSegments
 	DOUBLE Points[1][3];
 };
 
-typedef CMap<CStringA, LPCSTR, FMAirport*, FMAirport*&> CFlightAirports;
+typedef CMap<CStringA, LPCSTR, FlightAirport, FlightAirport> CFlightAirports;
 typedef CMap<CStringA, LPCSTR, UINT, UINT> CFlightCounts;
 typedef CMap<CStringA, LPCSTR, FlightRoute, FlightRoute&> CFlightRoutes;
 

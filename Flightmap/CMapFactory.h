@@ -7,6 +7,16 @@
 #include "CKitchen.h"
 
 
+// CColor
+//
+
+class CColor : public Color
+{
+public:
+	CColor(COLORREF clr);
+};
+
+
 // CMapFactory
 //
 

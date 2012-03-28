@@ -9,8 +9,8 @@
 #define IDB_BLUEMARBLE_2048             133
 #define IDB_BLUEMARBLE_4096             134
 #define IDB_BLUEMARBLE_8192             135
-#define IDB_GRAY_8192                   136
-#define IDB_NIGHT_8192                  137
+#define IDB_NIGHT_8192                  136
+#define IDB_GRAY_8192                   137
 #define IDB_DOCKED                      138
 #define IDB_PDZVOR                      139
 #define IDB_SANTA                       140
