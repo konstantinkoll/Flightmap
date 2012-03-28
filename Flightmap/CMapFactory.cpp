@@ -20,6 +20,10 @@ CColor::CColor(COLORREF clr)
 // CMapFactory
 //
 
+#define BGWIDTH        8192
+#define BGHEIGHT       4096
+#define WRAPMARGIN     2500
+
 struct FactoryAirportData
 {
 	RECT Spot;
@@ -37,8 +41,8 @@ CMapFactory::CMapFactory(MapSettings* pSettings)
 CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 {
 	// Initialize
-	INT MinS = 8192;
-	INT MinZ = 4096;
+	INT MinS = BGWIDTH;
+	INT MinZ = BGHEIGHT;
 	INT MaxS = 0;
 	INT MaxZ = 0;
 	DOUBLE Upscale = 2.0;
@@ -116,7 +120,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			{
 				const FactoryAirportData* pFrom = (FactoryAirportData*)pPair2->value.lpFrom;
 				const FactoryAirportData* pTo = (FactoryAirportData*)pPair2->value.lpTo;
-				if (((pFrom->S<2500.0) && (pTo->S>5500.0)) || ((pFrom->S>5500.0) && (pTo->S<2500.0)))
+				if (((pFrom->S<WRAPMARGIN) && (pTo->S>BGWIDTH-WRAPMARGIN)) || ((pFrom->S>BGWIDTH-WRAPMARGIN) && (pTo->S<WRAPMARGIN)))
 				{
 					WrapAround = TRUE;
 					break;
@@ -156,6 +160,35 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	// Draw routes
 	if (m_Settings.ShowFlightRoutes)
 	{
+		if (!m_Settings.StraightLines)
+		{
+			// Tesselated routes
+			for (UINT a=0; a<RouteCount; a++)
+			{
+				Pen pen(CColor(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color), (REAL)(6.0*Upscale));
+
+				for (UINT b=1; b<RouteData[a]->PointCount; b++)
+					DrawLine(g, pen,
+						RouteData[a]->Points[b-1][1]*BGWIDTH/(2*PI)+BGWIDTH/2, RouteData[a]->Points[b-1][0]*BGHEIGHT/PI+BGHEIGHT/2, 
+						RouteData[a]->Points[b][1]*BGWIDTH/(2*PI)+BGWIDTH/2, RouteData[a]->Points[b][0]*BGHEIGHT/PI+BGHEIGHT/2,
+						MinS, MinZ);
+			}
+		}
+		else
+		{
+			// Straight routes
+			pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+			while (pPair2)
+			{
+				const FactoryAirportData* pFrom = (FactoryAirportData*)pPair2->value.lpFrom;
+				const FactoryAirportData* pTo = (FactoryAirportData*)pPair2->value.lpTo;
+
+				Pen pen(CColor(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color), (REAL)(6.0*Upscale));
+				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ);
+
+				pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
+			}
+		}
 	}
 
 	// Draw locations
@@ -222,8 +255,8 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Width, INT Height)
 	ASSERT(Top>=0);
 	ASSERT(Width>=0);
 	ASSERT(Height>=0);
-	ASSERT(Left+Width<=8192);
-	ASSERT(Top+Height<=4096);
+	ASSERT(Left+Width<=BGWIDTH);
+	ASSERT(Top+Height<=BGHEIGHT);
 
 	CBitmap* pBitmap = CreateBitmap(Width, Height);
 
@@ -241,12 +274,41 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Width, INT Height)
 		CGdiPlusBitmapResource img(ResID[m_Settings.Background], m_Settings.Background==2 ? _T("PNG") : _T("JPG"));
 
 		Graphics g(dc);
-		g.DrawImage(img.m_pBitmap, -Left, -Top, 8192, 4096);
+		g.DrawImage(img.m_pBitmap, -Left, -Top, BGWIDTH, BGHEIGHT);
 	}
 
 	dc.SelectObject(pOldBitmap);
 
 	return pBitmap;
+}
+
+void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ)
+{
+#define Line(pen, x1, y1, x2, y2) \
+	g.DrawLine(&pen, (REAL)x1, (REAL)y1, (REAL)x2, (REAL)y2); \
+	g.DrawLine(&pen, (REAL)x1, (REAL)(y1+1.0), (REAL)x2, (REAL)(y2+1.0)); \
+	g.DrawLine(&pen, (REAL)(x1+1.0), (REAL)y1, (REAL)(x2+1.0), (REAL)y2);
+
+	x1 -= MinS;
+	x2 -= MinS;
+	y1 -= MinZ;
+	y2 -= MinZ;
+
+	if ((x1<WRAPMARGIN-MinS) && (x2>BGWIDTH-WRAPMARGIN-MinS))
+	{
+		Line(pen, x1, y1, x2-BGWIDTH, y2);
+		Line(pen, x1+BGWIDTH, y1, x2, y2);
+	}
+	else
+		if ((x1>BGWIDTH-WRAPMARGIN-MinS) && (x2<WRAPMARGIN-MinS))
+		{
+			Line(pen, x1-BGWIDTH, y1, x2, y2);
+			Line(pen, x1, y1, x2+BGWIDTH, y2);
+		}
+		else
+		{
+			Line(pen, x1, y1, x2, y2);
+		}
 }
 
 __forceinline void CMapFactory::Deface(CBitmap* pBitmap)

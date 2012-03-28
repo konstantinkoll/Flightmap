@@ -30,6 +30,7 @@ public:
 protected:
 	static CBitmap* CreateBitmap(INT Width, INT Height);
 	CBitmap* LoadBackground(INT Left, INT Top, INT Width, INT Height);
+	static void DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS=0, INT MinZ=0);
 	static void Deface(CBitmap* pBitmap);
 
 	MapSettings m_Settings;
