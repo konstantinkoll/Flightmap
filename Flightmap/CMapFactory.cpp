@@ -203,7 +203,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	// Compute upscale
 	CSize sz = pBitmap->GetBitmapDimension();
 	const DOUBLE FinalScale = max((DOUBLE)m_Settings.Width/(DOUBLE)sz.cx, (DOUBLE)m_Settings.Height/(DOUBLE)sz.cy);
-	const DOUBLE Upscale = max(1.0, 1.0+((1.0/FinalScale)-1.0)*0.4);
+	const DOUBLE Upscale = max(1.0, 1.0+((1.0/FinalScale)-1.0)*0.75);
 
 	// Obtain device context and graphics surface
 	CDC dc;
@@ -418,6 +418,27 @@ Skip:
 
 	// Clean up GDI
 	dc.SelectObject(pOldBitmap);
+
+	// Final scale
+	if (FinalScale<1.0)
+	{
+		INT L = (INT)(Width*FinalScale);
+		INT H = (INT)(Height*FinalScale);
+
+		CBitmap* pBitmap2 = CreateBitmap(L, H);
+		pOldBitmap = dc.SelectObject(pBitmap2);
+
+		Graphics g(dc);
+		g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+
+		Bitmap bmp((HBITMAP)pBitmap->m_hObject, NULL);
+		g.DrawImage(&bmp, Rect(-1, -1, L+1, H+1), 0, 0, Width, Height, UnitPixel);
+
+		dc.SelectObject(pOldBitmap);
+
+		delete pBitmap;
+		pBitmap = pBitmap2;
+	}
 
 	// Deface
 #ifndef _DEBUG
