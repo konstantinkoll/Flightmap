@@ -233,20 +233,57 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 						MinS, MinZ, Scale);
 			}
 		}
-		else
-		{
-			// Straight routes
-			pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
-			while (pPair2)
-			{
-				const FactoryAirportData* pFrom = (FactoryAirportData*)pPair2->value.lpFrom;
-				const FactoryAirportData* pTo = (FactoryAirportData*)pPair2->value.lpTo;
 
+		pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+		while (pPair2)
+		{
+			FactoryAirportData* pFrom = (FactoryAirportData*)pPair2->value.lpFrom;
+			FactoryAirportData* pTo = (FactoryAirportData*)pPair2->value.lpTo;
+
+			// Recommend label placement
+			if ((pFrom->S<WRAPMARGIN) && (pTo->S>BGWIDTH-WRAPMARGIN))
+			{
+				pFrom->TBLR |= 4;
+				pTo->TBLR |= 8;
+			}
+			else
+				if ((pFrom->S>BGWIDTH-WRAPMARGIN) && (pTo->S<WRAPMARGIN))
+				{
+					pFrom->TBLR |= 8;
+					pTo->TBLR |= 4;
+				}
+				else
+					if (pFrom->S>pTo->S)
+					{
+						pFrom->TBLR |= 4;
+						pTo->TBLR |= 8;
+					}
+					else
+					{
+						pFrom->TBLR |= 8;
+						pTo->TBLR |= 4;
+					}
+
+			if (abs(pFrom->Z-pTo->Z)>abs(pFrom->S-pTo->S))
+				if (pFrom->S>pTo->S)
+				{
+					pFrom->TBLR |= 1;
+					pTo->TBLR |= 2;
+				}
+				else
+				{
+					pFrom->TBLR |= 2;
+					pTo->TBLR |= 1;
+				}
+
+			// Straight routes
+			if (m_Settings.StraightLines)
+			{
 				Pen pen(CColor(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color), (REAL)(4.0*Upscale));
 				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale);
-
-				pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
 			}
+
+			pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
 		}
 	}
 
