@@ -211,8 +211,10 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	CBitmap* pOldBitmap = dc.SelectObject(pBitmap);
 
 	Graphics g(dc);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
+	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetPixelOffsetMode(PixelOffsetModeHighQuality);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
 	// Draw routes
 	if (m_Settings.ShowFlightRoutes)
@@ -249,19 +251,131 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	}
 
 	// Draw locations
+	const DOUBLE Radius = 5.5*Upscale;
 	if (m_Settings.ShowLocations)
 	{
 		SolidBrush brush(CColor(m_Settings.LocationInnerColor));
 		Pen pen(CColor(m_Settings.LocationOuterColor), (REAL)(2.0*Upscale));
-		const DOUBLE Radius = 11.0*Upscale;
 
 		for (UINT a=0; a<AirportCount; a++)
 		{
 			const DOUBLE S = (AirportData[a].S-MinS)/Scale;
 			const DOUBLE Z = (AirportData[a].Z-MinZ)/Scale;
 
-			g.FillEllipse(&brush, (REAL)(S-Radius/2.0), (REAL)(Z-Radius/2.0), (REAL)(Radius-1.0), (REAL)(Radius-1.0));
-			g.DrawEllipse(&pen, (REAL)(S-Radius/2.0), (REAL)(Z-Radius/2.0), (REAL)Radius, (REAL)Radius);
+			AirportData[a].Spot.left = (INT)(S-Radius);
+			AirportData[a].Spot.right = (INT)(S+Radius);
+			AirportData[a].Spot.top = (INT)(Z-Radius);
+			AirportData[a].Spot.bottom = (INT)(Z+Radius);
+
+			g.FillEllipse(&brush, (REAL)(S-Radius), (REAL)(Z-Radius), (REAL)(Radius*2.0-1.0), (REAL)(Radius*2.0-1.0));
+			g.DrawEllipse(&pen, (REAL)(S-Radius), (REAL)(Z-Radius), (REAL)(Radius*2.0), (REAL)(Radius*2.0));
+		}
+	}
+
+	// Draw IATA codes
+	if (m_Settings.ShowIATACodes)
+	{
+		FontFamily font(_T("Arial"));
+		Pen pen(CColor(m_Settings.IATAOuterColor), (REAL)(2.0*Upscale+0.5));
+		SolidBrush brush(CColor(m_Settings.IATAInnerColor));
+
+		pen.SetLineJoin(LineJoinRound);
+
+		pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
+		while (pPair1)
+		{
+			FactoryAirportData* pData = (FactoryAirportData*)pPair1->value.lpAirport;
+			const INT S = (INT)((pData->S-MinS)/Scale);
+			const INT Z = (INT)((pData->Z-MinZ)/Scale);
+
+			// Prepare path
+			WCHAR pszBuf[4];
+			MultiByteToWideChar(CP_ACP, 0, pPair1->value.pAirport->Code, -1, pszBuf, 4);
+
+			StringFormat strformat;
+			GraphicsPath TextPath;
+			TextPath.Reset();
+			TextPath.AddString(pszBuf, (INT)wcslen(pszBuf), &font, FontStyleRegular, (REAL)(16.0*Upscale), Gdiplus::Point(0, 0), &strformat);
+
+			Rect rectPath;
+			TextPath.GetBounds(&rectPath);
+			const INT L = rectPath.Width+(INT)(5.5*Upscale);
+			const INT H = rectPath.Height+(INT)(4.5*Upscale);
+
+			// Find location
+			for (UINT a=0; a<16; a++)
+			{
+				CRect rectLabel(S, Z, S+L, Z+H);
+
+				switch (a%7)
+				{
+				case 0:
+					if (((a&8)==0) && (pData->TBLR & 8))
+						continue;
+					rectLabel.OffsetRect((INT)(Radius*1.5), -H/2);
+					break;
+				case 1:
+					if (((a&8)==0) && (pData->TBLR & 4))
+						continue;
+					rectLabel.OffsetRect(-L-(INT)(Radius*1.5), -H/2);
+					break;
+				case 2:
+					if (((a&8)==0) && (pData->TBLR & 2))
+						continue;
+					rectLabel.OffsetRect(-L/2, (INT)(Radius*1.5));
+					break;
+				case 3:
+					if (((a&8)==0) && (pData->TBLR & 1))
+						continue;
+					rectLabel.OffsetRect(-L/2, -H-(INT)(Radius*1.5));
+					break;
+				case 4:
+					if (((a&8)==0) && (pData->TBLR & 2))
+						continue;
+					rectLabel.OffsetRect(-L-(INT)(Radius*1.5), (INT)(Radius*1.5));
+					break;
+				case 5:
+					if (((a&8)==0) && (pData->TBLR & 1))
+						continue;
+					rectLabel.OffsetRect(-L-(INT)(Radius*1.5), -H-(INT)(Radius*1.5));
+					break;				
+				case 6:
+					if (((a&8)==0) && (pData->TBLR & 2))
+						continue;
+					rectLabel.OffsetRect((INT)(Radius*1.5), (INT)(Radius*1.5));
+					break;
+				case 7:
+					if (((a&8)==0) && (pData->TBLR & 1))
+						continue;
+					rectLabel.OffsetRect((INT)(Radius*1.5), -H-(INT)(Radius*1.5));
+					break;
+				}
+
+				for (UINT b=0; b<AirportCount; b++)
+				{
+					RECT rect;
+					if (IntersectRect(&rect, rectLabel, &AirportData[b].Spot))
+						goto Skip;
+					if (IntersectRect(&rect, rectLabel, &AirportData[b].IATA))
+						goto Skip;
+				}
+
+				{
+					Matrix m;
+					m.Translate((REAL)rectLabel.left, (REAL)rectLabel.top);
+					TextPath.Transform(&m);
+				}
+
+				g.DrawPath(&pen, &TextPath);
+				g.FillPath(&brush, &TextPath);
+
+				pData->IATA = rectLabel;
+				break;
+Skip:
+				continue;
+			}
+
+			pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
 		}
 	}
 
@@ -335,7 +449,6 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 
 		Graphics g(dc);
 		g.DrawImage(img.m_pBitmap, Rect(0, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
-//			, (REAL)(-Left/Scale), (REAL)(-Top/Scale), (REAL)(BGWIDTH/Scale), (REAL)(BGHEIGHT/Scale));
 	}
 
 	dc.SelectObject(pOldBitmap);
