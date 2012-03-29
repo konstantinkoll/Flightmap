@@ -45,7 +45,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	INT MinZ = BGHEIGHT;
 	INT MaxS = 0;
 	INT MaxZ = 0;
-	DOUBLE Upscale = 2.0;
+	DOUBLE Scale = 1.0;
 
 	UINT AirportCount = pKitchen->m_FlightAirports.GetCount();
 	FactoryAirportData* AirportData = new FactoryAirportData[AirportCount];
@@ -54,7 +54,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	UINT RouteCount = pKitchen->m_FlightRoutes.GetCount();
 	FlightSegments** RouteData = NULL;
 
-	// Convert coordinates to row/column, and compute background boundaries
+	// Convert coordinates to row/column, and compute minimum background boundaries
 	CFlightAirports::CPair* pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
 	UINT Cnt = 0;
 	while (pPair1)
@@ -143,10 +143,67 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	MaxS = min(8191, MaxS+94);
 	MaxZ = min(4095, MaxZ+54);
 
+	// Compute true boundaries and scale
+	if (((m_Settings.Width<BGWIDTH) || (m_Settings.Height<BGHEIGHT)) && (MaxZ>0))
+	{
+		INT S = (MinS+MaxS)/2;
+		INT Z = (MinZ+MaxZ)/2;
+		DOUBLE L = MaxS-MinS+1;
+		DOUBLE H = MaxZ-MinZ+1;
+		const DOUBLE ScX = L/m_Settings.Width;
+		const DOUBLE ScY = H/m_Settings.Height;
+
+		Scale = max(ScX, ScY);
+		if (Scale<0.5)
+			Scale = 0.5;
+
+		MinS = S-(INT)(m_Settings.Width*Scale/2.0);
+		MaxS = S+(INT)(m_Settings.Width*Scale/2.0)-1;
+		MinZ = Z-(INT)(m_Settings.Height*Scale/2.0);
+		MaxZ = Z+(INT)(m_Settings.Height*Scale/2.0)-1;
+
+		if (MinS<0)
+		{
+			MaxS += -MinS;
+			MinS = 0;
+		}
+		if (MinZ<0)
+		{
+			MaxZ += -MinZ;
+			MinZ = 0;
+		}
+
+		if (MaxS>BGWIDTH-1)
+		{
+			if (MinS>MaxS-BGWIDTH+1)
+				MinS -= MaxS-BGWIDTH+1;
+			MaxZ = BGHEIGHT-1;
+		}
+		if (MaxZ>BGHEIGHT-1)
+		{
+			if (MinZ>MaxZ-BGHEIGHT+1)
+				MinZ -= MaxZ-BGHEIGHT+1;
+			MaxZ = BGHEIGHT-1;
+		}
+	}
+	else
+	{
+		MinS = 0; MaxS = BGWIDTH-1;
+		MinZ = 0; MaxZ = BGHEIGHT-1;
+	}
+
 	// Background
-	INT Width = MaxS-MinS+1;
-	INT Height = MaxZ-MinZ+1;
-	CBitmap* pBitmap = LoadBackground(MinS, MinZ, Width, Height);
+
+	const INT Width = Scale<1.0 ? m_Settings.Width : MaxS-MinS+1;
+	const INT Height = Scale<1.0 ? m_Settings.Height : MaxZ-MinZ+1;
+	CBitmap* pBitmap = LoadBackground(MinS, MinZ, MaxS, MaxZ, Width, Height);
+
+	Scale = min(1.0, Scale);
+
+	// Compute upscale
+	CSize sz = pBitmap->GetBitmapDimension();
+	const DOUBLE FinalScale = max((DOUBLE)m_Settings.Width/(DOUBLE)sz.cx, (DOUBLE)m_Settings.Height/(DOUBLE)sz.cy);
+	const DOUBLE Upscale = max(1.0, 1.0+((1.0/FinalScale)-1.0)*0.4);
 
 	// Obtain device context and graphics surface
 	CDC dc;
@@ -165,13 +222,13 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Tesselated routes
 			for (UINT a=0; a<RouteCount; a++)
 			{
-				Pen pen(CColor(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color), (REAL)(6.0*Upscale));
+				Pen pen(CColor(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color), (REAL)(4.0*Upscale));
 
 				for (UINT b=1; b<RouteData[a]->PointCount; b++)
 					DrawLine(g, pen,
 						RouteData[a]->Points[b-1][1]*BGWIDTH/(2*PI)+BGWIDTH/2, RouteData[a]->Points[b-1][0]*BGHEIGHT/PI+BGHEIGHT/2, 
 						RouteData[a]->Points[b][1]*BGWIDTH/(2*PI)+BGWIDTH/2, RouteData[a]->Points[b][0]*BGHEIGHT/PI+BGHEIGHT/2,
-						MinS, MinZ);
+						MinS, MinZ, Scale);
 			}
 		}
 		else
@@ -183,8 +240,8 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 				const FactoryAirportData* pFrom = (FactoryAirportData*)pPair2->value.lpFrom;
 				const FactoryAirportData* pTo = (FactoryAirportData*)pPair2->value.lpTo;
 
-				Pen pen(CColor(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color), (REAL)(6.0*Upscale));
-				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ);
+				Pen pen(CColor(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color), (REAL)(4.0*Upscale));
+				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale);
 
 				pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
 			}
@@ -196,12 +253,15 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	{
 		SolidBrush brush(CColor(m_Settings.LocationInnerColor));
 		Pen pen(CColor(m_Settings.LocationOuterColor), (REAL)(2.0*Upscale));
-		DOUBLE Radius = 11.0*Upscale;
+		const DOUBLE Radius = 11.0*Upscale;
 
 		for (UINT a=0; a<AirportCount; a++)
 		{
-			g.FillEllipse(&brush, (REAL)(AirportData[a].S-MinS-Radius/2.0), (REAL)(AirportData[a].Z-MinZ-Radius/2.0), (REAL)(Radius-1.0), (REAL)(Radius-1.0));
-			g.DrawEllipse(&pen, (REAL)(AirportData[a].S-MinS-Radius/2.0), (REAL)(AirportData[a].Z-MinZ-Radius/2.0), (REAL)Radius, (REAL)Radius);
+			const DOUBLE S = (AirportData[a].S-MinS)/Scale;
+			const DOUBLE Z = (AirportData[a].Z-MinZ)/Scale;
+
+			g.FillEllipse(&brush, (REAL)(S-Radius/2.0), (REAL)(Z-Radius/2.0), (REAL)(Radius-1.0), (REAL)(Radius-1.0));
+			g.DrawEllipse(&pen, (REAL)(S-Radius/2.0), (REAL)(Z-Radius/2.0), (REAL)Radius, (REAL)Radius);
 		}
 	}
 
@@ -249,7 +309,7 @@ CBitmap* CMapFactory::CreateBitmap(INT Width, INT Height)
 	return pBitmap;
 }
 
-CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Width, INT Height)
+CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, INT Width, INT Height)
 {
 	ASSERT(Left>=0);
 	ASSERT(Top>=0);
@@ -274,7 +334,8 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Width, INT Height)
 		CGdiPlusBitmapResource img(ResID[m_Settings.Background], m_Settings.Background==2 ? _T("PNG") : _T("JPG"));
 
 		Graphics g(dc);
-		g.DrawImage(img.m_pBitmap, -Left, -Top, BGWIDTH, BGHEIGHT);
+		g.DrawImage(img.m_pBitmap, Rect(0, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
+//			, (REAL)(-Left/Scale), (REAL)(-Top/Scale), (REAL)(BGWIDTH/Scale), (REAL)(BGHEIGHT/Scale));
 	}
 
 	dc.SelectObject(pOldBitmap);
@@ -282,12 +343,12 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Width, INT Height)
 	return pBitmap;
 }
 
-void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ)
+void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ, DOUBLE Scale)
 {
 #define Line(pen, x1, y1, x2, y2) \
-	g.DrawLine(&pen, (REAL)x1, (REAL)y1, (REAL)x2, (REAL)y2); \
-	g.DrawLine(&pen, (REAL)x1, (REAL)(y1+1.0), (REAL)x2, (REAL)(y2+1.0)); \
-	g.DrawLine(&pen, (REAL)(x1+1.0), (REAL)y1, (REAL)(x2+1.0), (REAL)y2);
+	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1), (REAL)(x2), (REAL)(y2)); \
+	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1+1.0), (REAL)(x2), (REAL)(y2+1.0)); \
+	g.DrawLine(&pen, (REAL)(x1+1.0), (REAL)(y1), (REAL)(x2+1.0), (REAL)(y2));
 
 	x1 -= MinS;
 	x2 -= MinS;
@@ -307,7 +368,7 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 		}
 		else
 		{
-			Line(pen, x1, y1, x2, y2);
+			Line(pen, x1/Scale, y1/Scale, x2/Scale, y2/Scale);
 		}
 }
 
