@@ -224,7 +224,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Tesselated routes
 			for (UINT a=0; a<RouteCount; a++)
 			{
-				Pen pen(CColor(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color), (REAL)(4.0*Upscale));
+				Pen pen(CColor(((RouteData[a]->Route.Color==(COLORREF)-1) || (!m_Settings.UseColors)) ? m_Settings.RouteColor : RouteData[a]->Route.Color), (REAL)(4.0*Upscale));
 
 				for (UINT b=1; b<RouteData[a]->PointCount; b++)
 					DrawLine(g, pen,
