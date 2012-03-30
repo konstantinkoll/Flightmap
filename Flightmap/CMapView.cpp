@@ -280,7 +280,7 @@ void CMapView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = min(-1, -rect.Height());
 		break;
 	case SB_PAGEDOWN:
-		nInc = max(1, -rect.Height());
+		nInc = max(1, rect.Height());
 		break;
 	case SB_THUMBTRACK:
 		ZeroMemory(&si, sizeof(si));
@@ -416,134 +416,40 @@ BOOL CMapView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CMapView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	/*if (m_Rows)
+	switch (nChar)
 	{
-		CRect rect;
-		GetClientRect(&rect);
-
-		CPoint item(m_SelectedItem);
-
-		switch (nChar)
-		{
-		case VK_LEFT:
-			if (GetKeyState(VK_CONTROL)<0)
-			{
-				if (m_Tree[MAKEPOSI(item)].Flags & CF_CANCOLLAPSE)
-					Collapse(item.y, item.x);
-			}
-			else
-				if (item.x)
-				{
-					item.x--;
-					for (INT row=item.y; row>=0; row--)
-						if (m_Tree[MAKEPOS(row, item.x)].pItem)
-						{
-							item.y = row;
-							break;
-						}
-				}
-
-			break;
-		case VK_RIGHT:
-			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
-				Expand(item.y, item.x, FALSE);
-
-			if ((item.x<(INT)m_Cols-1) && (GetKeyState(VK_CONTROL)>=0))
-				for (INT row=item.y; row<(INT)m_Rows; row++)
-					if (m_Tree[MAKEPOS(row, item.x+1)].pItem)
-					{
-						item.x++;
-						item.y = row;
-						break;
-					}
-
-			break;
-		case VK_UP:
-			for (INT row=item.y-1; row>=0; row--)
-				if (m_Tree[MAKEPOS(row, item.x)].pItem)
-				{
-					item.y = row;
-					break;
-				}
-
-			break;
-		case VK_PRIOR:
-			for (INT row=item.y-1; row>=0; row--)
-				if (m_Tree[MAKEPOS(row, item.x)].pItem)
-				{
-					item.y = row;
-					if (row<=m_SelectedItem.y-rect.Height()/(INT)m_RowHeight)
-						break;
-				}
-
-			break;
-		case VK_DOWN:
-			for (INT row=item.y+1; row<(INT)m_Rows; row++)
-				if (m_Tree[MAKEPOS(row, item.x)].pItem)
-				{
-					item.y = row;
-					break;
-				}
-
-			break;
-		case VK_NEXT:
-			for (INT row=item.y+1; row<(INT)m_Rows; row++)
-				if (m_Tree[MAKEPOS(row, item.x)].pItem)
-				{
-					item.y = row;
-					if (row>=m_SelectedItem.y+rect.Height()/(INT)m_RowHeight)
-						break;
-				}
-
-			break;
-		case VK_HOME:
-			if (GetKeyState(VK_CONTROL)<0)
-			{
-				item.x = item.y = 0;
-			}
-			else
-				for (INT col=item.x; col>=0; col--)
-					if (m_Tree[MAKEPOS(item.y, col)].pItem)
-					{
-						item.x = col;
-					}
-					else
-						break;
-
-			break;
-		case VK_END:
-			if (GetKeyState(VK_CONTROL)<0)
-			{
-				item.x = m_Cols-1;
-				item.y = m_Rows-1;
-				while ((item.x>0) || (item.y>0))
-				{
-					if (m_Tree[MAKEPOS(item.y, item.x)].pItem)
-						break;
-
-					item.y--;
-					if (item.y<0)
-					{
-						item.y = m_Rows-1;
-						item.x--;
-					}
-				}
-			}
-			else
-				for (INT col=item.x; col<(INT)m_Cols; col++)
-					if (m_Tree[MAKEPOS(item.y, col)].pItem)
-					{
-						item.x = col;
-					}
-					else
-						break;
-
-			break;
-		default:
-			CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
-			return;
-		}
-	}*/
+	case VK_LEFT:
+		OnHScroll(SB_LINEUP, 0, NULL);
+		break;
+	case VK_RIGHT:
+		OnHScroll(SB_LINEDOWN, 0, NULL);
+		break;
+	case VK_UP:
+		OnVScroll(SB_LINEUP, 0, NULL);
+		break;
+	case VK_DOWN:
+		OnVScroll(SB_LINEDOWN, 0, NULL);
+		break;
+	case VK_PRIOR:
+		OnVScroll(SB_PAGEUP, 0, NULL);
+		break;
+	case VK_NEXT:
+		OnVScroll(SB_PAGEDOWN, 0, NULL);
+		break;
+	case VK_HOME:
+		if (GetKeyState(VK_CONTROL)<0)
+			OnVScroll(SB_TOP, 0, NULL);
+		OnHScroll(SB_TOP, 0, NULL);
+		break;
+	case VK_END:
+		if (GetKeyState(VK_CONTROL)<0)
+			OnVScroll(SB_BOTTOM, 0, NULL);
+		OnHScroll(SB_BOTTOM, 0, NULL);
+		break;
+	default:
+		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		return;
+	}
 }
 
 void CMapView::OnContextMenu(CWnd* pWnd, CPoint pos)
