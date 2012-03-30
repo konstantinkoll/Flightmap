@@ -13,10 +13,15 @@
 
 #define MARGIN     5
 
+static const DOUBLE ZoomFactors[] = { 0.125, 0.25, 1.0/3.0, 0.5, 2.0/3.0, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0 };
+
 CMapView::CMapView()
 {
 	p_Bitmap = NULL;
 	m_Hover = FALSE;
+	m_ScrollWidth = m_ScrollHeight = 0;
+	m_ZoomFactor = theApp.m_MapZoomFactor;
+	m_Autosize = theApp.m_MapAutosize;
 }
 
 CMapView::~CMapView()
@@ -31,32 +36,6 @@ BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
-}
-
-BOOL CMapView::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_KEYDOWN:
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
-		break;
-	}
-
-	return CWnd::PreTranslateMessage(pMsg);
 }
 
 void CMapView::SetBitmap(CBitmap* pBitmap)
@@ -85,28 +64,48 @@ void CMapView::AdjustScrollbars()
 	CRect rect;
 	GetWindowRect(&rect);
 
-	INT ScrollHeight = 0;
-	INT ScrollWidth = 0;
 	if (p_Bitmap)
 	{
+		ASSERT(m_ZoomFactor>=0);
+		ASSERT(m_ZoomFactor<=11);
+
 		CSize sz = p_Bitmap->GetBitmapDimension();
-		ScrollHeight = sz.cy;
-		ScrollWidth = sz.cx;
+		DOUBLE ZoomFactor;
+		if (m_Autosize)
+		{
+			DOUBLE sx = (DOUBLE)rect.Width()/(DOUBLE)sz.cx;
+			DOUBLE sy = (DOUBLE)rect.Height()/(DOUBLE)sz.cy;
+			ZoomFactor = min(sx, sy);
+			if (ZoomFactor>1.0)
+				ZoomFactor = 1.0;
+		}
+		else
+		{
+			ZoomFactor = ZoomFactors[m_ZoomFactor];
+		}
+
+		m_ScrollWidth = (INT)((DOUBLE)sz.cx*ZoomFactor);
+		m_ScrollHeight = (INT)((DOUBLE)sz.cy*ZoomFactor);
+		if (m_Autosize)
+		{
+			m_ScrollWidth = min(m_ScrollWidth, rect.Width());
+			m_ScrollHeight = min(m_ScrollHeight, rect.Height());
+		}
 	}
 
 	BOOL HScroll = FALSE;
-	if (ScrollWidth>rect.Width())
+	if (m_ScrollWidth>rect.Width())
 	{
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
 		HScroll = TRUE;
 	}
-	if (ScrollHeight>rect.Height())
+	if (m_ScrollHeight>rect.Height())
 		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
-	if ((ScrollWidth>rect.Width()) && (!HScroll))
+	if ((m_ScrollWidth>rect.Width()) && (!HScroll))
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
 
 	INT oldVScrollPos = m_VScrollPos;
-	m_VScrollMax = max(0, ScrollHeight-rect.Height());
+	m_VScrollMax = max(0, m_ScrollHeight-rect.Height());
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
 	SCROLLINFO si;
@@ -115,12 +114,12 @@ void CMapView::AdjustScrollbars()
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height();
 	si.nMin = 0;
-	si.nMax = ScrollHeight-1;
+	si.nMax = m_ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
 
 	INT oldHScrollPos = m_HScrollPos;
-	m_HScrollMax = max(0, ScrollWidth-rect.Width());
+	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 
 	ZeroMemory(&si, sizeof(si));
@@ -128,7 +127,7 @@ void CMapView::AdjustScrollbars()
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Width();
 	si.nMin = 0;
-	si.nMax = ScrollWidth-1;
+	si.nMax = m_ScrollWidth-1;
 	si.nPos = m_HScrollPos;
 	SetScrollInfo(SB_HORZ, &si);
 
@@ -151,14 +150,17 @@ BEGIN_MESSAGE_MAP(CMapView, CWnd)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
+
+	ON_COMMAND(IDM_MAPVIEW_ZOOMIN, OnZoomIn)
+	ON_COMMAND(IDM_MAPVIEW_ZOOMOUT, OnZoomOut)
+	ON_COMMAND(IDM_MAPVIEW_AUTOSIZE, OnAutosize)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAPVIEW_ZOOMIN, IDM_MAPVIEW_AUTOSIZE, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CMapView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
-
-	m_TooltipCtrl.Create(this);
 
 	ResetScrollbars();
 
@@ -188,20 +190,20 @@ void CMapView::OnPaint()
 	BOOL Themed = IsCtrlThemed();
 	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
 
+	Graphics g(dc);
+
 	if (p_Bitmap)
 	{
-		CSize sz = p_Bitmap->GetBitmapDimension();
-		INT x = sz.cx<rect.Width() ? (rect.Width()-sz.cx)/2 : -m_HScrollPos;
-		INT y = sz.cy<rect.Height() ? (rect.Height()-sz.cy)/2 : -m_VScrollPos;
+		INT x = m_ScrollWidth<rect.Width() ? (rect.Width()-m_ScrollWidth)/2 : -m_HScrollPos;
+		INT y = m_ScrollHeight<rect.Height() ? (rect.Height()-m_ScrollHeight)/2 : -m_VScrollPos;
 
-		CRect rectBorder(x, y, x+sz.cx, y+sz.cy);
+		CRect rectBorder(x, y, x+m_ScrollWidth, y+m_ScrollHeight);
 
 		if (Themed && theApp.m_UseBgImages)
 		{
 			CRect rectShadow(rectBorder);
 			rectShadow.InflateRect(MARGIN+1, MARGIN+1);
 
-			Graphics g(dc);
 			SolidBrush brush(Color(0x08, 0x00, 0x00, 0x00));
 
 			for (UINT a=0; a<6; a++)
@@ -223,17 +225,27 @@ void CMapView::OnPaint()
 			dc.Draw3dRect(rectBorder, 0x000000, 0x000000);
 		}
 
-		CDC dcMap;
-		dcMap.CreateCompatibleDC(&pDC);
+		if ((!m_Autosize) && (ZoomFactors[m_ZoomFactor]==1.0))
+		{
+			CDC dcMap;
+			dcMap.CreateCompatibleDC(&pDC);
 
-		CBitmap* pOldBitmap = dcMap.SelectObject(p_Bitmap);
-		dc.BitBlt(x, y, sz.cx, sz.cy, &dcMap, 0, 0, SRCCOPY);
-		dcMap.SelectObject(pOldBitmap);
+			CBitmap* pOldBitmap = dcMap.SelectObject(p_Bitmap);
+			dc.BitBlt(x, y, m_ScrollWidth, m_ScrollHeight, &dcMap, 0, 0, SRCCOPY);
+			dcMap.SelectObject(pOldBitmap);
+		}
+		else
+		{
+			CSize sz = p_Bitmap->GetBitmapDimension();
+			g.SetInterpolationMode((m_ScrollWidth==sz.cx) || (m_ScrollWidth>=2*sz.cx) ? InterpolationModeNearestNeighbor : InterpolationModeHighQualityBicubic);
+
+			Bitmap bmp((HBITMAP)p_Bitmap->m_hObject, NULL);
+			g.DrawImage(&bmp, Rect(x, y, m_ScrollWidth, m_ScrollHeight), 0, 0, sz.cx, sz.cy, UnitPixel);
+		}
 	}
 
 	if (Themed && theApp.m_UseBgImages)
 	{
-		Graphics g(dc);
 		SolidBrush brush(Color(0x14, 0x00, 0x00, 0x00));
 		for (INT a=0; a<5; a++)
 			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
@@ -361,55 +373,16 @@ BOOL CMapView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 	return TRUE;
 }
 
-void CMapView::OnMouseMove(UINT nFlags, CPoint point)
+BOOL CMapView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 {
-	if (!m_Hover)
+	if (zDelta<0)
 	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = FMHOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-}
-
-void CMapView::OnMouseLeave()
-{
-	m_TooltipCtrl.Deactivate();
-
-	m_Hover = FALSE;
-}
-
-void CMapView::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		CString caption;
-		CString hint;
-		//TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_HotItem)].pItem->pidlFQ, &theApp.m_SystemImageListExtraLarge, hIcon, size, caption, hint);
-
-		ClientToScreen(&point);
-		m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), caption, hint);
+		OnZoomOut();
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		OnZoomIn();
 	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = FMHOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
-}
-
-BOOL CMapView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
-{
-	//m_TooltipCtrl.Deactivate();
 
 	return TRUE;
 }
@@ -446,13 +419,23 @@ void CMapView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			OnVScroll(SB_BOTTOM, 0, NULL);
 		OnHScroll(SB_BOTTOM, 0, NULL);
 		break;
+	case VK_ADD:
+	case VK_OEM_PLUS:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			OnZoomIn();
+		break;
+	case VK_SUBTRACT:
+	case VK_OEM_MINUS:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			OnZoomOut();
+		break;
 	default:
 		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 		return;
 	}
 }
 
-void CMapView::OnContextMenu(CWnd* pWnd, CPoint pos)
+void CMapView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	if ((pos.x<0) || (pos.y<0))
 	{
@@ -469,7 +452,51 @@ void CMapView::OnContextMenu(CWnd* pWnd, CPoint pos)
 	pPopup->AddCommand(IDM_MAPVIEW_ZOOMIN, 0, CDMB_SMALL, FALSE);
 	pPopup->AddCommand(IDM_MAPVIEW_ZOOMOUT, 1, CDMB_SMALL, FALSE);
 	pPopup->AddSeparator();
-	pPopup->AddCheckbox(IDM_MAPVIEW_AUTOSIZE);
+	pPopup->AddCheckbox(IDM_MAPVIEW_AUTOSIZE, FALSE, TRUE);
 
 	pPopup->Track(pos);
+}
+
+
+void CMapView::OnZoomIn()
+{
+	if (m_ZoomFactor<11)
+	{
+		theApp.m_MapZoomFactor = m_ZoomFactor++;
+		AdjustLayout();
+	}
+}
+
+void CMapView::OnZoomOut()
+{
+	if (m_ZoomFactor>0)
+	{
+		theApp.m_MapZoomFactor = m_ZoomFactor--;
+		AdjustLayout();
+	}
+}
+
+void CMapView::OnAutosize()
+{
+	theApp.m_MapAutosize = m_Autosize = !m_Autosize;
+	AdjustLayout();
+}
+
+void CMapView::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = TRUE;
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_MAPVIEW_ZOOMIN:
+		b = (!m_Autosize) && (m_ZoomFactor<11);
+		break;
+	case IDM_MAPVIEW_ZOOMOUT:
+		b = (!m_Autosize) && (m_ZoomFactor>0);
+		break;
+	case IDM_MAPVIEW_AUTOSIZE:
+		pCmdUI->SetCheck(m_Autosize);
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }

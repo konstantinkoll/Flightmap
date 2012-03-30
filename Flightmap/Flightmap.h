@@ -71,6 +71,9 @@ public:
 
 	MapSettings m_MapSettings;
 
+	// Map view
+	INT m_MapZoomFactor;
+	BOOL m_MapAutosize;
 	// Viewport
 	INT m_GlobeLatitude;
 	INT m_GlobeLongitude;

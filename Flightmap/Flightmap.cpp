@@ -58,6 +58,8 @@ BOOL CFlightmapApp::InitInstance()
 	m_UseBgImages = GetInt(_T("UseBgImages"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), FMTextureAuto);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
+	m_MapZoomFactor = GetInt(_T("MapZoomFactor"), 6);
+	m_MapAutosize= GetInt(_T("MapAutosize"), TRUE);
 	m_GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_GlobeZoom = GetInt(_T("GlobeZoom"), 600);
@@ -135,6 +137,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("UseBgImages"), m_UseBgImages);
 		WriteInt(_T("TextureSize"), m_nTextureSize);
 		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+		WriteInt(_T("MapZoomFactor"), m_MapZoomFactor);
+		WriteInt(_T("MapAudosize"), m_MapAutosize);
 		WriteInt(_T("GlobeLatitude"), m_GlobeLatitude);
 		WriteInt(_T("GlobeLongitude"), m_GlobeLongitude);
 		WriteInt(_T("GlobeZoom"), m_GlobeZoom);

@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "FMCommDlg.h"
 
 
 // CMapView
@@ -19,11 +18,12 @@ public:
 	void SetBitmap(CBitmap* pBitmap);
 
 protected:
-	FMTooltip m_TooltipCtrl;
 	CBitmap* p_Bitmap;
 	BOOL m_Hover;
-
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	INT m_ScrollWidth;
+	INT m_ScrollHeight;
+	INT m_ZoomFactor;
+	BOOL m_Autosize;
 
 	void AdjustLayout();
 	void ResetScrollbars();
@@ -36,13 +36,14 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
+
+	afx_msg void OnZoomIn();
+	afx_msg void OnZoomOut();
+	afx_msg void OnAutosize();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:
