@@ -46,11 +46,15 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
 {
 	FMAirport* pFrom = AddAirport(From);
 	FMAirport* pTo = AddAirport(To);
+	BYTE Arrow = ARROW_FT;
 
 	if ((pFrom!=NULL) && (pTo!=NULL))
 	{
 		if (pFrom>pTo)
+		{
 			std::swap(pFrom, pTo);
+			Arrow <<= 1;
+		}
 
 		CHAR ID[7];
 		strcpy_s(ID, 7, pFrom->Code);
@@ -60,6 +64,7 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
 		if (m_FlightRoutes.Lookup(ID, Route))
 		{
 			Route.Count++;
+			Route.Arrows |= Arrow;
 			if (Color!=Route.Color)
 				Route.Color = (COLORREF)-1;
 		}
@@ -70,6 +75,7 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
 			Route.pTo = pTo;
 			Route.Count = 1;
 			Route.Color = Color;
+			Route.Arrows = Arrow;
 		}
 
 		m_FlightRoutes[ID] = Route;

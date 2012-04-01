@@ -233,13 +233,34 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Tesselated routes
 			for (UINT a=0; a<RouteCount; a++)
 			{
-				Pen pen(CColor(((RouteData[a]->Route.Color==(COLORREF)-1) || (!m_Settings.UseColors)) ? m_Settings.RouteColor : RouteData[a]->Route.Color), (REAL)(4.0*Upscale));
+				CColor col(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color);
+				Pen pen(col, (REAL)(4.0*Upscale));
+				const FlightSegments* pSegments = RouteData[a];
 
-				for (UINT b=1; b<RouteData[a]->PointCount; b++)
+#define CompS(s) s*BGWIDTH/(2*PI)+BGWIDTH/2
+#define CompZ(z) z*BGHEIGHT/PI+BGHEIGHT/2
+
+				for (UINT b=1; b<pSegments->PointCount; b++)
 					DrawLine(g, pen,
-						RouteData[a]->Points[b-1][1]*BGWIDTH/(2*PI)+BGWIDTH/2, RouteData[a]->Points[b-1][0]*BGHEIGHT/PI+BGHEIGHT/2, 
-						RouteData[a]->Points[b][1]*BGWIDTH/(2*PI)+BGWIDTH/2, RouteData[a]->Points[b][0]*BGHEIGHT/PI+BGHEIGHT/2,
+						CompS(pSegments->Points[b-1][1]), CompZ(pSegments->Points[b-1][0]), 
+						CompS(pSegments->Points[b][1]), CompZ(pSegments->Points[b][0]),
 						MinS, MinZ, Scale);
+
+				if (m_Settings.Arrows)
+				{
+					SolidBrush brush(col);
+
+					if (pSegments->Route.Arrows & ARROW_FT)
+						DrawArrow(g, brush,
+							CompS(pSegments->Points[pSegments->PointCount-1][1]), CompZ(pSegments->Points[pSegments->PointCount-1][0]),
+							CompS(pSegments->Points[pSegments->PointCount-2][1]), CompZ(pSegments->Points[pSegments->PointCount-2][0]),
+							Scale, Upscale);
+					if (pSegments->Route.Arrows & ARROW_TF)
+						DrawArrow(g, brush,
+							CompS(pSegments->Points[0][1]), CompZ(pSegments->Points[0][0]),
+							CompS(pSegments->Points[1][1]), CompZ(pSegments->Points[1][0]),
+							Scale, Upscale);
+				}
 			}
 		}
 
@@ -288,8 +309,20 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Straight routes
 			if (m_Settings.StraightLines)
 			{
-				Pen pen(CColor(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color), (REAL)(4.0*Upscale));
+				CColor col(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color);
+				Pen pen(col, (REAL)(4.0*Upscale));
+
 				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale);
+
+				if (m_Settings.Arrows)
+				{
+					SolidBrush brush(col);
+
+					if (pPair2->value.Arrows & ARROW_FT)
+						DrawArrow(g, brush, pTo->S, pTo->Z, pFrom->S, pFrom->Z, Scale);
+					if (pPair2->value.Arrows & ARROW_TF)
+						DrawArrow(g, brush, pFrom->S, pFrom->Z, pTo->S, pTo->Z, Scale);
+				}
 			}
 
 			pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
@@ -555,6 +588,23 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 		{
 			Line(pen, x1/Scale, y1/Scale, x2/Scale, y2/Scale);
 		}
+}
+
+void CMapFactory::DrawArrow(Graphics& g, Brush& brush, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, DOUBLE Scale, DOUBLE Upscale)
+{
+	if ((x1==x2) && (y1==y2))
+		return;
+
+	const DOUBLE Angle = atan2(y2-y1, x2-x1);
+	x1 /= Scale;
+	y1 /= Scale;
+
+	PointF points[3];
+	points[0] = PointF((REAL)(4.0*Upscale*cos(Angle)+x1), (REAL)(4.0*Upscale*sin(Angle)+y1));
+	points[1] = PointF((REAL)(20.0*Upscale*cos(Angle+PI/7)+x1), (REAL)(20.0*Upscale*sin(Angle+PI/7)+y1));
+	points[2] = PointF((REAL)(20.0*Upscale*cos(Angle-PI/7)+x1), (REAL)(20.0*Upscale*sin(Angle-PI/7)+y1));
+
+	g.FillPolygon(&brush, points, 3);
 }
 
 __forceinline void CMapFactory::Deface(CBitmap* pBitmap)

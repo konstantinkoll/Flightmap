@@ -106,6 +106,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected)
 	pKitchen->AddFlight("NRT", "JNB", (COLORREF)-1);
 	pKitchen->AddFlight("CPT", "JNB", (COLORREF)-1);
 	pKitchen->AddFlight("EZE", "CPT", (COLORREF)-1);
+	pKitchen->AddFlight("CPT", "EZE", (COLORREF)-1);
 	pKitchen->AddFlight("MUC", "DUS", (COLORREF)-1);
 
 	return pKitchen;

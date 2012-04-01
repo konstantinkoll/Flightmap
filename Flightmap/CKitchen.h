@@ -12,6 +12,9 @@
 // CKitchen
 //
 
+#define ARROW_FT     1
+#define ARROW_TF     2
+
 struct FlightAirport
 {
 	FMAirport* pAirport;
@@ -26,6 +29,7 @@ struct FlightRoute
 	LPVOID lpTo;
 	COLORREF Color;
 	INT Count;
+	BYTE Arrows;
 };
 
 struct FlightSegments
