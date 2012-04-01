@@ -462,7 +462,7 @@ void CMapView::OnZoomIn()
 {
 	if (m_ZoomFactor<11)
 	{
-		theApp.m_MapZoomFactor = m_ZoomFactor++;
+		theApp.m_MapZoomFactor = ++m_ZoomFactor;
 		AdjustLayout();
 	}
 }
@@ -471,7 +471,7 @@ void CMapView::OnZoomOut()
 {
 	if (m_ZoomFactor>0)
 	{
-		theApp.m_MapZoomFactor = m_ZoomFactor--;
+		theApp.m_MapZoomFactor = --m_ZoomFactor;
 		AdjustLayout();
 	}
 }

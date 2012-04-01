@@ -138,7 +138,7 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("TextureSize"), m_nTextureSize);
 		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 		WriteInt(_T("MapZoomFactor"), m_MapZoomFactor);
-		WriteInt(_T("MapAudosize"), m_MapAutosize);
+		WriteInt(_T("MapAutosize"), m_MapAutosize);
 		WriteInt(_T("GlobeLatitude"), m_GlobeLatitude);
 		WriteInt(_T("GlobeLongitude"), m_GlobeLongitude);
 		WriteInt(_T("GlobeZoom"), m_GlobeZoom);
