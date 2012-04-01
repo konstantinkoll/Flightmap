@@ -48,11 +48,11 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	INT MapOffset = m_Settings.CenterPacific ? 4700 : 0;
 	DOUBLE Scale = 1.0;
 
-	UINT AirportCount = pKitchen->m_FlightAirports.GetCount();
+	UINT AirportCount = (UINT)pKitchen->m_FlightAirports.GetCount();
 	FactoryAirportData* AirportData = new FactoryAirportData[AirportCount];
 	ZeroMemory(AirportData, AirportCount*sizeof(FactoryAirportData));
 
-	UINT RouteCount = pKitchen->m_FlightRoutes.GetCount();
+	UINT RouteCount = (UINT)pKitchen->m_FlightRoutes.GetCount();
 	FlightSegments** RouteData = NULL;
 
 	// Convert coordinates to row/column, and compute minimum background boundaries
