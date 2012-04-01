@@ -45,6 +45,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	INT MinZ = BGHEIGHT;
 	INT MaxS = 0;
 	INT MaxZ = 0;
+	INT MapOffset = m_Settings.CenterPacific ? 4700 : 0;
 	DOUBLE Scale = 1.0;
 
 	UINT AirportCount = pKitchen->m_FlightAirports.GetCount();
@@ -60,7 +61,9 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	while (pPair1)
 	{
 		AirportData[Cnt].Z = (pPair1->value.pAirport->Location.Latitude*2048.0)/90.0+2048.0;
-		AirportData[Cnt].S = (pPair1->value.pAirport->Location.Longitude*4096.0)/180.0+4096.0;
+		AirportData[Cnt].S = (pPair1->value.pAirport->Location.Longitude*4096.0)/180.0+4096.0+MapOffset;
+		if (AirportData[Cnt].S>=BGWIDTH)
+			AirportData[Cnt].S -= BGWIDTH;
 
 		MinS = min(MinS, (INT)AirportData[Cnt].S);
 		MinZ = min(MinZ, (INT)AirportData[Cnt].Z);
@@ -97,6 +100,8 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			RouteData = new FlightSegments*[RouteCount];
 			ZeroMemory(RouteData, RouteCount*sizeof(FlightSegments*));
 
+			const DOUBLE Offs = (2.0*PI*MapOffset)/BGWIDTH;
+
 			pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
 			UINT Cnt = 0;
 			while (pPair2)
@@ -104,6 +109,10 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 				FlightSegments* pSegments = RouteData[Cnt++] = pKitchen->Tesselate(pPair2->value);
 				for (UINT b=0; b<pSegments->PointCount; b++)
 				{
+					pSegments->Points[b][1] += Offs;
+					if (pSegments->Points[b][1]>=PI)
+						pSegments->Points[b][1] -= 2*PI;
+
 					if (b>0)
 						WrapAround |= ((pSegments->Points[b-1][1]<-2.0) && (pSegments->Points[b][1]>2.0)) ||
 							((pSegments->Points[b-1][1]>2.0) && (pSegments->Points[b][1]<-2.0));
@@ -196,7 +205,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 
 	const INT Width = Scale<1.0 ? m_Settings.Width : MaxS-MinS+1;
 	const INT Height = Scale<1.0 ? m_Settings.Height : MaxZ-MinZ+1;
-	CBitmap* pBitmap = LoadBackground(MinS, MinZ, MaxS, MaxZ, Width, Height);
+	CBitmap* pBitmap = LoadBackground(MinS, MinZ, MaxS, MaxZ, Width, Height, MapOffset);
 
 	Scale = min(1.0, Scale);
 
@@ -442,7 +451,7 @@ Skip:
 
 	// Deface
 #ifndef _DEBUG
-	if (TRUE)
+	if (!FMIsLicensed())
 		Deface(pBitmap);
 #endif
 
@@ -481,7 +490,7 @@ CBitmap* CMapFactory::CreateBitmap(INT Width, INT Height)
 	return pBitmap;
 }
 
-CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, INT Width, INT Height)
+CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, INT Width, INT Height, INT MapOffset)
 {
 	ASSERT(Left>=0);
 	ASSERT(Top>=0);
@@ -506,7 +515,9 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 		CGdiPlusBitmapResource img(ResID[m_Settings.Background], m_Settings.Background==2 ? _T("PNG") : _T("JPG"));
 
 		Graphics g(dc);
-		g.DrawImage(img.m_pBitmap, Rect(0, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
+		g.DrawImage(img.m_pBitmap, Rect(MapOffset, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
+		if (MapOffset)
+			g.DrawImage(img.m_pBitmap, Rect(MapOffset-BGWIDTH+1, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
 	}
 
 	dc.SelectObject(pOldBitmap);
