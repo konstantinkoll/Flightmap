@@ -13,14 +13,14 @@
     <ROW Property="AI_STARTUP_SH" Type="4" MsiKey="AI_STARTUP_SH"/>
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2"/>
-    <ROW Property="ARPCONTACT" Value="author@flightmap.net"/>
-    <ROW Property="ARPHELPLINK" Value="http://flightmap.net/tour.htm"/>
+    <ROW Property="ARPCONTACT" Value="support@flightmap.net"/>
+    <ROW Property="ARPHELPLINK" Value="http://flightmap.net/tour"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPNOREPAIR" Value="1"/>
     <ROW Property="ARPPRODUCTICON" Value="Flightmap_1.exe" Type="8"/>
     <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://flightmap.net/"/>
-    <ROW Property="ARPURLUPDATEINFO" Value="http://flightmap.net/download.htm"/>
+    <ROW Property="ARPURLUPDATEINFO" Value="http://flightmap.net/download"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="Background" Value="Hintergrund5.bmp" Type="1" MsiKey="Background"/>
     <ROW Property="CTRLS" Value="2"/>
@@ -35,10 +35,10 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{AC241FD1-44CB-4F7C-9B44-185071D2EA4D} 1031:{D67C65D0-5F5D-40BF-9678-978552138B42} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{87DEDBFA-E812-4CB0-9F18-50493244D997} 1031:{439B4B48-62D2-4814-B7CA-F17D24561F72} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Flightmap" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="0.0.1"/>
+    <ROW Property="ProductVersion" Value="2.0.0"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="ShortcutLogoIcon" Value="Shortcuts.ico" Type="1" MsiKey="ShortcutLogoIcon"/>
@@ -434,18 +434,18 @@
     <ROW Registry="AIShRegAnswer" Root="-1" Key="Software\Caphyon\Advanced Installer\Installs\[ProductCode]" Name="AIShRegAnswer" Value="[AI_SHORTCUTSREG]" Component_="AIShRegAnswer"/>
     <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="AI_ExePath"/>
     <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Comments" Component_="AI_CustomARPName"/>
-    <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="author@flightmap.net" Component_="AI_CustomARPName"/>
+    <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@flightmap.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="Flightmap" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="0.0.1" Component_="AI_CustomARPName"/>
-    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://flightmap.net/tour.htm" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="2.0.0" Component_="AI_CustomARPName"/>
+    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://flightmap.net/tour" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://flightmap.net/" Component_="AI_CustomARPName"/>
-    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://flightmap.net/download.htm" Component_="AI_CustomARPName"/>
+    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://flightmap.net/download" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
