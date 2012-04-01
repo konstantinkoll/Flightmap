@@ -421,6 +421,13 @@ void CMainWnd::OnFileQuit()
 
 void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
+	// TODO
+	if (pCmdUI->m_nID!=IDM_FILE_QUIT)
+	{
+		pCmdUI->Enable(FALSE);
+		return;
+	}
+
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_FILE_SAVE:
