@@ -291,8 +291,31 @@
     <ROW Dialog_="MsiRMFilesInUse" Control="List" Type="ListBox" X="55" Y="120" Width="340" Height="140" Attributes="7" Property="FileInUseProcess" Control_Next="Options" MsiKey="MsiRMFilesInUse#List"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Options" Type="RadioButtonGroup" X="55" Y="265" Width="340" Height="48" Attributes="3" Property="AppsShutdownOption" Control_Next="Title" MsiKey="MsiRMFilesInUse#Options"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Text" Type="Text" X="55" Y="100" Width="340" Height="25" Attributes="65539" Text="The following applications are using files that need to be updated by this setup." Control_Next="List" TextLocId="Control.Text.MsiRMFilesInUse#Text" MsiKey="MsiRMFilesInUse#Text"/>
-    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="1" Y="0" Width="449" Height="360" Attributes="1048577" Text="Hintergrund4.bmp" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
-    <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1048577" Text="Hintergrund4.bmp" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
+    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="1" Y="0" Width="449" Height="360" Attributes="1" Text="Hintergrund4.bmp" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
+    <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="Hintergrund4.bmp" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
+    <ROW Dialog_="FolderDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="FolderDlg#Bitmap"/>
+    <ROW Dialog_="ShortcutsDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="ShortcutsDlg#Bitmap"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="PathEdit" MsiKey="AdminBrowseDlg#Bitmap"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Text" MsiKey="AdminInstallPointDlg#Bitmap"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="AdminWelcomeDlg#Bitmap"/>
+    <ROW Dialog_="BrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="PathEdit" MsiKey="BrowseDlg#Bitmap"/>
+    <ROW Dialog_="CustomizeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Back" MsiKey="CustomizeDlg#Bitmap"/>
+    <ROW Dialog_="DiskCostDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="OK" MsiKey="DiskCostDlg#Bitmap"/>
+    <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[ExitBackground]" Control_Next="LaunchProdCheckBox" MsiKey="ExitDialog#Bitmap"/>
+    <ROW Dialog_="FatalError" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Finish" MsiKey="FatalError#Bitmap"/>
+    <ROW Dialog_="FilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Retry" MsiKey="FilesInUse#Bitmap"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="ChangeLabel" MsiKey="MaintenanceTypeDlg#Bitmap"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="MaintenanceWelcomeDlg#Bitmap"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="OK" MsiKey="OutOfDiskDlg#Bitmap"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="OkButton" MsiKey="OutOfRbDiskDlg#Bitmap"/>
+    <ROW Dialog_="ProgressDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Back" MsiKey="ProgressDlg#Bitmap"/>
+    <ROW Dialog_="ResumeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Install" MsiKey="ResumeDlg#Bitmap"/>
+    <ROW Dialog_="UserExit" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Finish" MsiKey="UserExit#Bitmap"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Install" MsiKey="VerifyReadyDlg#Bitmap"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="PatchWelcomeDlg#Bitmap"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="OK" MsiKey="MsiRMFilesInUse#Bitmap"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="FileAssociationsDlg#Bitmap"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="LicenseAgreementDlg#Bitmap"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
