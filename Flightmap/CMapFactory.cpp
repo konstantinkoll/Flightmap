@@ -75,6 +75,12 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 		pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
 	}
 
+	if (AirportCount==0)
+	{
+		MinS = 0;
+		MaxS = 8191;
+	}
+
 	// Match routes with airport data
 	CFlightRoutes::CPair* pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
 	while (pPair2)
