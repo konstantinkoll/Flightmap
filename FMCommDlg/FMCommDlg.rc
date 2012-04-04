@@ -217,7 +217,7 @@ BEGIN
     CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
     CTEXT           "Shareware-Version",IDC_CAPTION1,11,149,128,8
     CTEXT           "Vollversion",IDC_CAPTION2,169,149,128,8
-    LTEXT           "- Der Dateiexport in die Formaten .csv, .ics, .klm oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,364,8
+    LTEXT           "- Der Dateiexport in die Formaten .csv, .ics oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,364,8
     LTEXT           "- Auf Ausdrucken und PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“",IDC_TEXTROW4,7,169,364,8
     LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_TEXTROW5,7,178,364,8
     LTEXT           "- Und zuletzt ermöglichen Sie uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_TEXTROW6,7,187,364,8
@@ -619,7 +619,7 @@ BEGIN
     CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
     CTEXT           "Shareware version",IDC_CAPTION1,11,149,128,8
     CTEXT           "Full version",IDC_CAPTION2,169,149,128,8
-    LTEXT           "- Saving as .csv, .ics, .klm or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,335,8
+    LTEXT           "- Saving as .csv, .ics or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,335,8
     LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,335,8
     LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,335,8
     LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,335,8
