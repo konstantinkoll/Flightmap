@@ -153,6 +153,7 @@ private:
 	CString m_YouLookAt;
 	CString m_FlightCount_Singular;
 	CString m_FlightCount_Plural;
+	CString m_DisplayName;
 	FMTooltip m_TooltipCtrl;
 
 	BOOL CursorOnGlobe(CPoint point);

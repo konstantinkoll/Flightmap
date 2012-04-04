@@ -152,11 +152,14 @@ BEGIN
     IDS_BACKGROUND_NIGHT    "Nacht"
     IDS_BACKGROUND_ABSTRACT "Abstrakt"
     IDS_BACKGROUND_COLOR    "Einfarbig"
+    IDS_EMPTYITINERARY      "(Neuer Flugplan)"
+    IDS_SAMPLEITINERARY     "(Beispiel-Flugplan)"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_FILEFILTER_BMP      "Windows Bitmap"
+    IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
     IDS_FILEFILTER_PNG      "Portable Network Graphics"
@@ -355,11 +358,14 @@ BEGIN
     IDS_BACKGROUND_NIGHT    "City lights"
     IDS_BACKGROUND_ABSTRACT "Abstract"
     IDS_BACKGROUND_COLOR    "Solid color"
+    IDS_EMPTYITINERARY      "(New itinerary)"
+    IDS_SAMPLEITINERARY     "(Sample itinerary)"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_FILEFILTER_BMP      "Windows Bitmap"
+    IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
     IDS_FILEFILTER_PNG      "Portable Network Graphics"

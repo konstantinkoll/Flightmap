@@ -86,7 +86,7 @@ void CGoogleEarthFile::WriteRoute(FlightSegments* pSegments, BOOL UseColors, BOO
 
 	WriteString(_T("</name>\n<description>"));
 
-	sprintf_s(tmpBuf, 256, "%s &#8212; %s", pSegments->Route.pFrom->Name, pSegments->Route.pTo->Name);
+	sprintf_s(tmpBuf, 256, "%s &#8211; %s", pSegments->Route.pFrom->Name, pSegments->Route.pTo->Name);
 	tmpStr = tmpBuf;
 	WriteString(tmpStr);
 

@@ -218,6 +218,7 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 {
 	// Reset
 	m_Airports.m_ItemCount = 0;
+	m_DisplayName = pKitchen->m_DisplayName;
 
 	// Airports
 	CFlightAirports::CPair* pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
@@ -1439,7 +1440,7 @@ void CGlobeView::OnSaveAs()
 	{
 		CGoogleEarthFile f;
 
-		if (!f.Open(dlg.GetPathName(), _T("Test")))
+		if (!f.Open(dlg.GetPathName(), m_DisplayName))
 		{
 			FMErrorBox(IDS_DRIVENOTREADY);
 		}

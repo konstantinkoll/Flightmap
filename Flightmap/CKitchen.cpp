@@ -11,8 +11,9 @@
 // CKitchen
 //
 
-CKitchen::CKitchen()
+CKitchen::CKitchen(CString DisplayName)
 {
+	m_DisplayName = DisplayName;
 	m_FlightAirports.InitHashTable(2048);
 	m_FlightAirportCounts.InitHashTable(2048);
 	m_FlightRoutes.InitHashTable(4096);
@@ -80,6 +81,11 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
 
 		m_FlightRoutes[ID] = Route;
 	}
+}
+
+void CKitchen::AddFlight(AIRX_Flight& Flight)
+{
+	AddFlight(Flight.From.Code, Flight.To.Code, Flight.Color);
 }
 
 FlightSegments* CKitchen::Tesselate(FlightRoute& Route)

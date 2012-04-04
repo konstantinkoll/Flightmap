@@ -63,6 +63,17 @@ void CGlobeWnd::AdjustLayout()
 
 void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 {
+	CString caption;
+	ENSURE(caption.LoadString(IDR_GLOBE));
+
+	if (pKitchen)
+		if (!pKitchen->m_DisplayName.IsEmpty())
+		{
+			caption.Insert(0, _T(" - "));
+			caption.Insert(0, pKitchen->m_DisplayName);
+		}
+
+	SetWindowText(caption);
 	m_wndGlobeView.SetFlights(pKitchen);
 }
 

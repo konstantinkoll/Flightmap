@@ -21,7 +21,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create();
-	void SetBitmap(CBitmap* pBitmap);
+	void SetBitmap(CBitmap* pBitmap, CString DisplayName=_T(""));
 
 protected:
 	HICON m_hIcon;

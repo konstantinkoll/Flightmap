@@ -42,11 +42,21 @@ BOOL CMapWnd::Create()
 	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
-void CMapWnd::SetBitmap(CBitmap* pBitmap)
+void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName)
 {
 	if (m_pBitmap)
 		delete m_pBitmap;
 
+	CString caption;
+	ENSURE(caption.LoadString(IDR_MAP));
+
+	if (!DisplayName.IsEmpty())
+	{
+		caption.Insert(0, _T(" - "));
+		caption.Insert(0, DisplayName);
+	}
+
+	SetWindowText(caption);
 	m_wndMapView.SetBitmap(m_pBitmap=pBitmap);
 }
 

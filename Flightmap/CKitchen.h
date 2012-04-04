@@ -5,6 +5,7 @@
 #pragma once
 #include "Flightmap.h"
 #include "FMCommDlg.h"
+#include "CItinerary.h"
 #include <hash_map>
 #include <math.h>
 
@@ -46,12 +47,14 @@ typedef CMap<CStringA, LPCSTR, FlightRoute, FlightRoute&> CFlightRoutes;
 class CKitchen
 {
 public:
-	CKitchen();
+	CKitchen(CString DisplayName);
 
 	virtual void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
 
+	void AddFlight(AIRX_Flight& Flight);
 	static FlightSegments* Tesselate(FlightRoute& Route);
 
+	CString m_DisplayName;
 	CFlightAirports m_FlightAirports;
 	CFlightCounts m_FlightAirportCounts;
 	CFlightRoutes m_FlightRoutes;

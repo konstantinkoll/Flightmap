@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CCalendarFile.h"
 #include "CGoogleEarthFile.h"
 #include "CKitchen.h"
 #include "CLoungeView.h"
@@ -21,6 +22,7 @@ CMainWnd::CMainWnd()
 {
 	m_hIcon = NULL;
 	m_pWndMainView = NULL;
+	m_pItinerary = NULL;
 }
 
 CMainWnd::~CMainWnd()
@@ -71,7 +73,7 @@ void CMainWnd::AdjustLayout()
 	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CMainWnd::OpenMainView(BOOL Empty)
+void CMainWnd::UpdateWindowStatus()
 {
 	if (m_pWndMainView)
 	{
@@ -79,7 +81,10 @@ void CMainWnd::OpenMainView(BOOL Empty)
 		delete m_pWndMainView;
 	}
 
-	if (Empty)
+	CString caption;
+	ENSURE(caption.LoadString(IDR_APPLICATION));
+
+	if (!m_pItinerary)
 	{
 		m_pWndMainView = new CLoungeView();
 		((CLoungeView*)m_pWndMainView)->Create(this, 2);
@@ -87,27 +92,43 @@ void CMainWnd::OpenMainView(BOOL Empty)
 	else
 	{
 		m_pWndMainView = NULL;	// TODO
+
+		if (!m_pItinerary->m_DisplayName.IsEmpty())
+		{
+			caption.Insert(0, _T(" - "));
+			caption.Insert(0, m_pItinerary->m_DisplayName);
+		}
 	}
 
+	SetWindowText(caption);
 	AdjustLayout();
 	SetFocus();
 }
 
+BOOL CMainWnd::CloseFile()
+{
+	if (m_pItinerary)
+	{
+		if (m_pItinerary->m_IsModified)
+		{
+		}
+
+		delete m_pItinerary;
+		m_pItinerary = NULL;
+
+		UpdateWindowStatus();
+	}
+
+	return TRUE;
+}
+
 CKitchen* CMainWnd::GetKitchen(BOOL Selected)
 {
-	CKitchen* pKitchen = new CKitchen();
+	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_DisplayName : _T(""));
 
-	pKitchen->AddFlight("DUS", "FRA", (COLORREF)-1);
-	pKitchen->AddFlight("FRA", "JFK", 0x0000FF);
-	pKitchen->AddFlight("EWR", "SFO", (COLORREF)-1);
-	pKitchen->AddFlight("SFO", "MUC", (COLORREF)-1);
-	pKitchen->AddFlight("SFO", "HNL", (COLORREF)-1);
-	pKitchen->AddFlight("HNL", "NRT", (COLORREF)-1);
-	pKitchen->AddFlight("NRT", "JNB", (COLORREF)-1);
-	pKitchen->AddFlight("CPT", "JNB", (COLORREF)-1);
-	pKitchen->AddFlight("EZE", "CPT", (COLORREF)-1);
-	pKitchen->AddFlight("CPT", "EZE", (COLORREF)-1);
-	pKitchen->AddFlight("MUC", "DUS", (COLORREF)-1);
+	if (m_pItinerary)
+		for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
+			pKitchen->AddFlight(m_pItinerary->m_Flights.m_Items[a]);
 
 	return pKitchen;
 }
@@ -125,11 +146,34 @@ void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected)
 	theApp.SaveBitmap(GetMap(Selected), Filename, guidFileType);
 }
 
+void CMainWnd::ExportCalendar(CString FileName)
+{
+	ASSERT(m_pItinerary);
+
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
+	CCalendarFile f;
+
+	if (!f.Open(FileName, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
+	else
+	{
+		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
+
+		for (UINT a=0; a<Limit; a++)
+			f.WriteRoute(m_pItinerary->m_Flights.m_Items[a]);
+
+		f.Close();
+	}
+}
+
 BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Selected)
 {
 	CGoogleEarthFile f;
 
-	if (!f.Open(FileName, _T("Test")))
+	if (!f.Open(FileName, m_pItinerary ? m_pItinerary->m_DisplayName : NULL))
 	{
 		FMErrorBox(IDS_DRIVENOTREADY);
 		return FALSE;
@@ -174,7 +218,12 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_MESSAGE(WM_GALLERYCHANGED, OnGalleryChanged)
 	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
 
+	ON_COMMAND(IDM_FILE_NEW, OnFileNew)
+	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
+	ON_COMMAND(IDM_FILE_NEWSAMPLE2, OnFileNewSample2)
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
+	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
+	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
 
@@ -193,7 +242,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_EXPORT_JPEG, OnMapExportJPEG)
 	ON_COMMAND(IDM_MAP_EXPORT_PNG, OnMapExportPNG)
 	ON_COMMAND(IDM_MAP_EXPORT_TIFF, OnMapExportTIFF)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAP_EXPORT_BMP, IDM_MAP_EXPORT_TIFF, OnUpdateMapExportCommands)
 
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
@@ -227,7 +275,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	theApp.AddFrame(this);
 
-	OpenMainView(TRUE);
+	UpdateWindowStatus();
 
 	return 0;
 }
@@ -409,10 +457,54 @@ LRESULT CMainWnd::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 // File commands
 
+void CMainWnd::OnFileNew()
+{
+	if (CloseFile())
+	{
+		m_pItinerary = new CItinerary();
+		UpdateWindowStatus();
+	}
+}
+
+void CMainWnd::OnFileNewSample1()
+{
+	if (CloseFile())
+	{
+		m_pItinerary = new CItinerary();
+		m_pItinerary->NewSampleAtlantic();
+		UpdateWindowStatus();
+	}
+}
+
+void CMainWnd::OnFileNewSample2()
+{
+	if (CloseFile())
+	{
+		m_pItinerary = new CItinerary();
+		m_pItinerary->NewSampleAtlantic();
+		UpdateWindowStatus();
+	}
+}
+
 void CMainWnd::OnFileOpen()
 {
 	CFileDialog dlg(TRUE, _T(".airx"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, _T("Flightmap itinerary (*.airx; *.air)|*.airx; *.air||"), this);
 	dlg.DoModal();
+}
+
+void CMainWnd::OnFileSaveICS()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("ics"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportCalendar(dlg.GetPathName());
+}
+
+void CMainWnd::OnFileClose()
+{
+	CloseFile();
 }
 
 void CMainWnd::OnFileQuit()
@@ -422,19 +514,24 @@ void CMainWnd::OnFileQuit()
 
 void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
-	// TODO
-	if (pCmdUI->m_nID!=IDM_FILE_QUIT)
-	{
-		pCmdUI->Enable(FALSE);
-		return;
-	}
-
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
+	case IDM_FILE_SAVEAS_AIRX:
+	case IDM_FILE_SAVEAS_ICS:
+	case IDM_FILE_SAVEAS_CSV:
+	case IDM_FILE_SAVEAS_TXT:
+	case IDM_FILE_SAVEAS_OTHER:
+	case IDM_FILE_PRINT:
+	case IDM_FILE_PRINT_PREVIEW:
+	case IDM_FILE_PRINT_QUICK:
+	case IDM_FILE_PREPARE:
+	case IDM_FILE_PREPARE_PROPERTIES:
+	case IDM_FILE_PREPARE_INSPECT:
+	case IDM_FILE_PREPARE_ATTACHMENTS:
 	case IDM_FILE_CLOSE:
-		pCmdUI->Enable(TRUE);
+		pCmdUI->Enable(m_pItinerary!=NULL);
 		break;
 	default:
 		pCmdUI->Enable(TRUE);
@@ -448,11 +545,13 @@ void CMainWnd::OnMapOpen()
 {
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
+	CWaitCursor csr;
+
 	CBitmap* pBitmap = GetMap();
 
 	CMapWnd* pFrame = new CMapWnd();
 	pFrame->Create();
-	pFrame->SetBitmap(pBitmap);
+	pFrame->SetBitmap(pBitmap, m_pItinerary->m_DisplayName);
 	pFrame->ShowWindow(SW_SHOW);
 }
 
@@ -504,6 +603,13 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_MAP_OPEN:
+	case IDM_MAP_EXPORT_BMP:
+	case IDM_MAP_EXPORT_JPEG:
+	case IDM_MAP_EXPORT_PNG:
+	case IDM_MAP_EXPORT_TIFF:
+		b = (m_pItinerary!=NULL);
+		break;
 	case IDM_MAP_SELECTEDONLY:
 		b = FALSE;
 		break;
@@ -598,11 +704,6 @@ void CMainWnd::OnMapExportTIFF()
 		ExportMap(dlg.GetPathName(), ImageFormatTIFF);
 }
 
-void CMainWnd::OnUpdateMapExportCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(TRUE);
-}
-
 
 // Globe commands
 
@@ -620,7 +721,7 @@ void CMainWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GLOBE_OPEN:
-		pCmdUI->Enable(TRUE);
+		pCmdUI->Enable(m_pItinerary!=NULL);
 		break;
 	default:
 		pCmdUI->Enable(TRUE);
@@ -636,6 +737,8 @@ void CMainWnd::OnGoogleEarthOpen()
 	TCHAR Pathname[MAX_PATH];
 	if (!GetTempPath(MAX_PATH, Pathname))
 		return;
+
+	theApp.ShowNagScreen(NAG_FORCE, this);
 
 	CString szTempName;
 	srand(rand());
@@ -672,7 +775,10 @@ void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GOOGLEEARTH_OPEN:
-		b = !theApp.m_PathGoogleEarth.IsEmpty();
+		b = (m_pItinerary!=NULL) && !theApp.m_PathGoogleEarth.IsEmpty();
+		break;
+	case IDM_GOOGLEEARTH_EXPORT:
+		b = m_pItinerary!=NULL;
 		break;
 	case IDM_GOOGLEEARTH_SELECTEDONLY:
 		b = FALSE;

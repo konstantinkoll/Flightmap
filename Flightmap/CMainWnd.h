@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMCommDlg.h"
+#include "CItinerary.h"
 #include "CKitchen.h"
 
 
@@ -26,11 +27,14 @@ public:
 protected:
 	HICON m_hIcon;
 	CWnd* m_pWndMainView;
+	CItinerary* m_pItinerary;
 
-	void OpenMainView(BOOL Empty);
+	void UpdateWindowStatus();
+	BOOL CloseFile();
 	CKitchen* GetKitchen(BOOL Selected=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE);
 	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE);
+	void ExportCalendar(CString FileName);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -39,7 +43,12 @@ protected:
 	afx_msg LRESULT OnGalleryChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 
+	afx_msg void OnFileNew();
+	afx_msg void OnFileNewSample1();
+	afx_msg void OnFileNewSample2();
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileSaveICS();
+	afx_msg void OnFileClose();
 	afx_msg void OnFileQuit();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 
@@ -58,7 +67,6 @@ protected:
 	afx_msg void OnMapExportJPEG();
 	afx_msg void OnMapExportPNG();
 	afx_msg void OnMapExportTIFF();
-	afx_msg void OnUpdateMapExportCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnGlobeOpen();
 	afx_msg void OnUpdateGlobeCommands(CCmdUI* pCmdUI);

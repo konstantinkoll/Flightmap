@@ -376,6 +376,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCalendarFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeView.cpp"
 				>
 			</File>
@@ -385,6 +389,10 @@
 			</File>
 			<File
 				RelativePath=".\CGoogleEarthFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CItinerary.cpp"
 				>
 			</File>
 			<File
@@ -474,6 +482,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCalendarFile.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeView.h"
 				>
 			</File>
@@ -483,6 +495,10 @@
 			</File>
 			<File
 				RelativePath=".\CGoogleEarthFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CItinerary.h"
 				>
 			</File>
 			<File
