@@ -984,7 +984,7 @@ void CDialogMenuPopup::SetParentMenu(CWnd* pWnd, BOOL Keyboard)
 			{
 				if (IsWindow(GetSafeHwnd()))
 				{
-					SelectItem(a);
+					SelectItem(a, Keyboard);
 				}
 				else
 				{
