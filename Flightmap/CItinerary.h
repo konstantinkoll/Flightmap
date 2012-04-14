@@ -84,6 +84,9 @@ public:
 
 	void NewSampleAtlantic();
 	void NewSamplePacific();
+	void AppendAIRX(CString FileName);
+	void AppendAIR(CString FileName);
+	void AppendCSV(CString FileName);
 
 	void AddFlight();
 

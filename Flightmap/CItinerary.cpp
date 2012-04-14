@@ -7,6 +7,97 @@
 #include "CItinerary.h"
 
 
+__forceinline UINT ReadUTF7UINT(CFile& f)
+{
+	UINT Res = 0;
+	UINT Shift = 0;
+	BYTE b;
+
+	do
+	{
+		if (f.Read(&b, 1)!=1)
+			return 0;
+
+		Res |= (b & 0x7F) << Shift;
+		Shift += 7;
+	}
+	while (b & 0x80);
+
+	return Res;
+}
+
+CString ReadUTF7String(CFile& f)
+{
+	UINT nCount = ReadUTF7UINT(f);
+	if (!nCount)
+		return _T("");
+
+	LPBYTE Buffer = new BYTE[nCount];
+	CString Result;
+
+	try
+	{
+		if (f.Read(Buffer, nCount)!=nCount)
+			goto Finish;
+	}
+	catch(CFileException ex)
+	{
+		goto Finish;
+	}
+
+	WCHAR Ch = L'\0';
+	UINT Shift = 0;
+	UINT Ptr = 0;
+
+	while (nCount)
+	{
+		Ch |= (Buffer[Ptr] & 0x7F) << Shift;
+
+		if ((Buffer[Ptr++] & 0x80)==0)
+		{
+			Result.AppendChar(Ch);
+			Ch = L'\0';
+			Shift = 0;
+		}
+		else
+		{
+			Shift += 7;
+		}
+
+		nCount --;
+	}
+
+Finish:
+	free(Buffer);
+	return Result;
+}
+
+__forceinline void ReadUTF7WCHAR(CFile& f, WCHAR* pChar, UINT cCount)
+{
+	wcscpy_s(pChar, cCount, ReadUTF7String(f));
+}
+
+__forceinline void ReadUTF7CHAR(CFile& f, CHAR* pChar, UINT cCount)
+{
+	WideCharToMultiByte(CP_ACP, 0, ReadUTF7String(f), -1, pChar, cCount, NULL, NULL);
+}
+
+void ReadUTF7FILETIME(CFile& f, FILETIME& Time)
+{
+	ReadUTF7String(f);
+}
+
+__forceinline void ReadUTF7COLORREF(CFile& f, COLORREF& Color)
+{
+	ReadUTF7String(f);
+}
+
+void ReadUTF7Number(CFile& f, UINT& Number)
+{
+	ReadUTF7String(f);
+}
+
+
 // CItinerary
 //
 
@@ -44,6 +135,69 @@ void CItinerary::NewSamplePacific()
 
 	m_DisplayName.LoadString(IDS_SAMPLEITINERARY);
 	m_IsOpen = TRUE;
+}
+
+void CItinerary::AppendAIRX(CString FileName)
+{
+}
+
+void CItinerary::AppendAIR(CString FileName)
+{
+	CFile f;
+	if (f.Open(FileName, CFile::modeRead))
+	{
+		try
+		{
+			UINT Count = 0;
+			f.Read(&Count, sizeof(Count));
+
+			for (UINT a=0; a<Count; a++)
+			{
+				AIRX_Flight Flight;
+				ResetFlight(Flight);
+
+				ReadUTF7CHAR(f, Flight.From.Code, 4);
+				ReadUTF7CHAR(f, Flight.To.Code, 4);
+				ReadUTF7WCHAR(f, Flight.Carrier, 64);
+				ReadUTF7WCHAR(f, Flight.Equipment, 64);
+				ReadUTF7CHAR(f, Flight.FlightNo, 8);
+
+				CString Class = ReadUTF7String(f);
+				Flight.Class = (Class==_T("Y")) ? AIRX_Economy : (Class==_T("Y+")) ? AIRX_EconomyPlus : (Class==_T("J")) ? AIRX_Business : (Class==_T("F")) ? AIRX_First : (Class==_T("C")) ? AIRX_Crew : AIRX_Unknown;
+
+				ReadUTF7FILETIME(f, Flight.From.Time);
+				ReadUTF7COLORREF(f, Flight.Color);
+				ReadUTF7CHAR(f, Flight.Seat, 4);
+				ReadUTF7CHAR(f, Flight.Registration, 16);
+				ReadUTF7WCHAR(f, Flight.Name, 64);
+
+				if (ReadUTF7String(f)==_T("A"))
+					Flight.Flags = AIRX_AwardFlight;
+
+				ReadUTF7Number(f, Flight.MilesAward);
+				ReadUTF7Number(f, Flight.MilesStatus);
+				ReadUTF7FILETIME(f, Flight.To.Time);
+				ReadUTF7CHAR(f, Flight.EtixCode, 7);
+				ReadUTF7WCHAR(f, Flight.Fare, 16);
+
+				for (UINT b=0; b<15; b++)
+					ReadUTF7String(f);
+
+				m_Flights.AddItem(Flight);
+			}
+
+			f.Close();
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(IDS_DRIVENOTREADY);
+			f.Close();
+		}
+	}
+}
+
+void CItinerary::AppendCSV(CString FileName)
+{
 }
 
 void CItinerary::ResetFlight(AIRX_Flight& Flight)

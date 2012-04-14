@@ -158,7 +158,9 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILEFILTER_AIRX     "Flugplan"
     IDS_FILEFILTER_BMP      "Windows Bitmap"
+    IDS_FILEFILTER_CSV      "Comma Separated Values"
     IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
@@ -364,7 +366,9 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_FILEFILTER_AIRX     "Itinerary"
     IDS_FILEFILTER_BMP      "Windows Bitmap"
+    IDS_FILEFILTER_CSV      "Comma Separated Values"
     IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"

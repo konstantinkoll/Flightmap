@@ -29,6 +29,8 @@ CMainWnd::~CMainWnd()
 {
 	if (m_hIcon)
 		DestroyIcon(m_hIcon);
+	if (m_pItinerary)
+		delete m_pItinerary;
 }
 
 BOOL CMainWnd::Create()
@@ -488,8 +490,28 @@ void CMainWnd::OnFileNewSample2()
 
 void CMainWnd::OnFileOpen()
 {
-	CFileDialog dlg(TRUE, _T(".airx"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, _T("Flightmap itinerary (*.airx; *.air)|*.airx; *.air||"), this);
-	dlg.DoModal();
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_AIRX, _T("airx; *.air"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"), TRUE);
+
+	CFileDialog dlg(TRUE, _T("airx"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		if (!CloseFile())
+			return;
+
+		m_pItinerary = new CItinerary();
+
+		CString Ext = dlg.GetFileExt().MakeLower();
+		if (Ext==_T("airx"))
+			m_pItinerary->AppendAIRX(dlg.GetPathName());
+		if (Ext==_T("air"))
+			m_pItinerary->AppendAIR(dlg.GetPathName());
+		if (Ext==_T("csv"))
+			m_pItinerary->AppendCSV(dlg.GetPathName());
+
+		UpdateWindowStatus();
+	}
 }
 
 void CMainWnd::OnFileSaveICS()
