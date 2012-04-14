@@ -260,12 +260,12 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 						DrawArrow(g, brush,
 							CompS(pSegments->Points[pSegments->PointCount-1][1]), CompZ(pSegments->Points[pSegments->PointCount-1][0]),
 							CompS(pSegments->Points[pSegments->PointCount-2][1]), CompZ(pSegments->Points[pSegments->PointCount-2][0]),
-							Scale, Upscale);
+							MinS, MinZ, Scale, Upscale);
 					if (pSegments->Route.Arrows & ARROW_TF)
 						DrawArrow(g, brush,
 							CompS(pSegments->Points[0][1]), CompZ(pSegments->Points[0][0]),
 							CompS(pSegments->Points[1][1]), CompZ(pSegments->Points[1][0]),
-							Scale, Upscale);
+							MinS, MinZ, Scale, Upscale);
 				}
 			}
 		}
@@ -325,9 +325,9 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 					SolidBrush brush(col);
 
 					if (pPair2->value.Arrows & ARROW_FT)
-						DrawArrow(g, brush, pTo->S, pTo->Z, pFrom->S, pFrom->Z, Scale);
+						DrawArrow(g, brush, pTo->S, pTo->Z, pFrom->S, pFrom->Z, MinS, MinZ, Scale, Upscale);
 					if (pPair2->value.Arrows & ARROW_TF)
-						DrawArrow(g, brush, pFrom->S, pFrom->Z, pTo->S, pTo->Z, Scale);
+						DrawArrow(g, brush, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale, Upscale);
 				}
 			}
 
@@ -596,14 +596,14 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 		}
 }
 
-void CMapFactory::DrawArrow(Graphics& g, Brush& brush, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, DOUBLE Scale, DOUBLE Upscale)
+void CMapFactory::DrawArrow(Graphics& g, Brush& brush, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ, DOUBLE Scale, DOUBLE Upscale)
 {
 	if ((x1==x2) && (y1==y2))
 		return;
 
 	const DOUBLE Angle = atan2(y2-y1, x2-x1);
-	x1 /= Scale;
-	y1 /= Scale;
+	x1 = (x1-MinS)/Scale;
+	y1 = (y1-MinZ)/Scale;
 
 	PointF points[3];
 	points[0] = PointF((REAL)(4.0*Upscale*cos(Angle)+x1), (REAL)(4.0*Upscale*sin(Angle)+y1));
