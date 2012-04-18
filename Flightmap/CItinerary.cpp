@@ -139,6 +139,17 @@ void ReadUTF7UINT(CFile& f, UINT& Number)
 }
 
 
+BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
+{
+	UINT Read = BufferSize ? f.Read(buf, min(BufferSize, OnDiscSize)) : 0;
+
+	if (OnDiscSize>BufferSize)
+		f.Seek(OnDiscSize-BufferSize, CFile::current);
+
+	return Read==min(BufferSize, OnDiscSize);
+}
+
+
 // CItinerary
 //
 
@@ -153,7 +164,7 @@ CItinerary::~CItinerary()
 {
 	for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
 		if (m_Attachments.m_Items[a].pData)
-			delete m_Attachments.m_Items[a].pData;
+			free(m_Attachments.m_Items[a].pData);
 }
 
 void CItinerary::NewSampleAtlantic()
@@ -178,15 +189,83 @@ void CItinerary::NewSamplePacific()
 	m_IsOpen = TRUE;
 }
 
-void CItinerary::AppendAIRX(CString FileName)
+void CItinerary::OpenAIRX(CString FileName)
 {
+	ASSERT(!m_IsOpen);
+
+	LPVOID pData = NULL;
+
+	CFile f;
+	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
+	{
+		SetDisplayName(FileName);
+
+		try
+		{
+			AIRX_Header Header;
+			ZeroMemory(&Header, sizeof(Header));
+
+			if (f.Read(&Header, sizeof(Header))==sizeof(Header))
+				if (Header.Magic==0x58524941)
+				{
+					ReadRecord(f, &m_Metadata, sizeof(m_Metadata), Header.MetadataRecordSize);
+
+					for (UINT a=0; a<Header.FlightCount; a++)
+					{
+						AIRX_Flight Flight;
+						ResetFlight(Flight);
+
+						if (ReadRecord(f, &Flight, sizeof(Flight), Header.FlightRecordSize))
+						{
+							m_Flights.AddItem(Flight);
+						}
+					}
+
+					for (UINT a=0; a<Header.AttachmentCount; a++)
+					{
+						AIRX_Attachment Attachment;
+						ZeroMemory(&Attachment, sizeof(Attachment));
+
+						if (ReadRecord(f, &Attachment, sizeof(Attachment), Header.AttachmentRecordSize))
+						{
+							if (pData)
+								free(pData);
+
+							pData = malloc(Attachment.Size);
+							if (pData)
+								if (f.Read(pData, Attachment.Size)==Attachment.Size)
+								{
+									Attachment.pData = pData;
+									pData = NULL;
+
+									m_Attachments.AddItem(Attachment);
+								}
+						}
+					}
+				}
+
+			f.Close();
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(IDS_DRIVENOTREADY);
+			f.Close();
+		}
+	}
+
+	if (pData)
+		free(pData);
 }
 
-void CItinerary::AppendAIR(CString FileName)
+void CItinerary::OpenAIR(CString FileName)
 {
+	ASSERT(!m_IsOpen);
+
 	CFile f;
-	if (f.Open(FileName, CFile::modeRead))
+	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
 	{
+		SetDisplayName(FileName);
+
 		try
 		{
 			UINT Count = 0;
@@ -237,8 +316,56 @@ void CItinerary::AppendAIR(CString FileName)
 	}
 }
 
-void CItinerary::AppendCSV(CString FileName)
+void CItinerary::OpenCSV(CString FileName)
 {
+	ASSERT(!m_IsOpen);
+
+}
+
+void CItinerary::SaveAIRX(CString FileName)
+{
+	CFile f;
+	if (f.Open(FileName, CFile::modeCreate | CFile::modeWrite | CFile::osSequentialScan))
+	{
+		m_FileName = FileName;
+		SetDisplayName(FileName);
+
+		try
+		{
+			AIRX_Header Header;
+			ZeroMemory(&Header, sizeof(Header));
+			Header.Magic = 0x58524941;
+			Header.MetadataRecordSize = sizeof(m_Metadata);
+			Header.FlightCount = m_Flights.m_ItemCount;
+			Header.FlightRecordSize = sizeof(AIRX_Flight);
+			Header.AttachmentCount = m_Attachments.m_ItemCount;
+			Header.AttachmentRecordSize = sizeof(AIRX_Attachment);
+
+			f.Write(&Header, sizeof(Header));
+			f.Write(&m_Metadata, sizeof(m_Metadata));
+			f.Write(&m_Flights.m_Items[0], Header.FlightCount*Header.FlightRecordSize);
+
+			for (UINT a=0; a<Header.AttachmentCount; a++)
+			{
+				AIRX_Attachment Attachment = m_Attachments.m_Items[a];
+
+				if (Attachment.pData==NULL)
+					Attachment.Size = 0;
+				Attachment.pData = NULL;
+
+				f.Write(&Attachment, sizeof(Attachment));
+				if ((m_Attachments.m_Items[a].pData) && (Attachment.Size!=0))
+					f.Write(m_Attachments.m_Items[a].pData, Attachment.Size);
+			}
+
+			f.Close();
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(IDS_DRIVENOTREADY);
+			f.Close();
+		}
+	}
 }
 
 void CItinerary::ResetFlight(AIRX_Flight& Flight)
@@ -293,4 +420,10 @@ void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipmen
 	Flight.From.Time = Departure;
 
 	m_Flights.AddItem(Flight);
+}
+
+void CItinerary::SetDisplayName(CString FileName)
+{
+	const WCHAR* pChar = wcsrchr(FileName, L'\\');
+	m_DisplayName = pChar ? pChar+1 : FileName;
 }

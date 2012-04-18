@@ -224,6 +224,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE2, OnFileNewSample2)
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
+	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -507,11 +508,27 @@ void CMainWnd::OnFileOpen()
 
 		CString Ext = dlg.GetFileExt().MakeLower();
 		if (Ext==_T("airx"))
-			m_pItinerary->AppendAIRX(dlg.GetPathName());
+			m_pItinerary->OpenAIRX(dlg.GetPathName());
 		if (Ext==_T("air"))
-			m_pItinerary->AppendAIR(dlg.GetPathName());
+			m_pItinerary->OpenAIR(dlg.GetPathName());
 		if (Ext==_T("csv"))
-			m_pItinerary->AppendCSV(dlg.GetPathName());
+			m_pItinerary->OpenCSV(dlg.GetPathName());
+
+		UpdateWindowStatus();
+	}
+}
+
+void CMainWnd::OnFileSaveAs()
+{
+	ASSERT(m_pItinerary);
+
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_AIRX, _T("airx"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		m_pItinerary->SaveAIRX(dlg.GetPathName());
 
 		UpdateWindowStatus();
 	}

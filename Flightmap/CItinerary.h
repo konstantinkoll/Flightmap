@@ -16,6 +16,8 @@ struct AIRX_Header
 	UINT FlightCount;
 	UINT FlightRecordSize;
 	UINT AttachmentCount;
+	UINT AttachmentRecordSize;
+	UINT Unused[2];
 };
 
 struct AIRX_Metadata
@@ -72,8 +74,8 @@ struct AIRX_Attachment
 	WCHAR Name[MAX_PATH];
 	FILETIME Created;
 	FILETIME Modified;
-	INT64 Size;
-	LPVOID* pData;
+	UINT Size;
+	LPVOID pData;
 };
 
 class CItinerary
@@ -84,9 +86,10 @@ public:
 
 	void NewSampleAtlantic();
 	void NewSamplePacific();
-	void AppendAIRX(CString FileName);
-	void AppendAIR(CString FileName);
-	void AppendCSV(CString FileName);
+	void OpenAIRX(CString FileName);
+	void OpenAIR(CString FileName);
+	void OpenCSV(CString FileName);
+	void SaveAIRX(CString FileName);
 
 	void AddFlight();
 
@@ -102,6 +105,7 @@ private:
 	static void ResetFlight(AIRX_Flight& Flight);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
+	void SetDisplayName(CString FileName);
 
 	BOOL m_IsOpen;
 };

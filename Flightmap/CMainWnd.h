@@ -47,6 +47,7 @@ protected:
 	afx_msg void OnFileNewSample1();
 	afx_msg void OnFileNewSample2();
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileSaveAs();
 	afx_msg void OnFileSaveICS();
 	afx_msg void OnFileClose();
 	afx_msg void OnFileQuit();
