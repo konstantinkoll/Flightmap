@@ -277,6 +277,7 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = theApp.m_GlobeZoom;
 
 		m_ShowSpots = theApp.m_GlobeShowSpots;
+		m_ShowAirportIATA = theApp.m_GlobeShowAirportIATA;
 		m_ShowAirportNames = theApp.m_GlobeShowAirportNames;
 		m_ShowGPS = theApp.m_GlobeShowGPS;
 		m_ShowFlightCount = theApp.m_GlobeShowFlightCount;
@@ -557,8 +558,8 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 		if (ga->Alpha>0.0f)
 		{
 			// Beschriftung
-			CHAR* Caption = ga->pAirport->Code;
-			CHAR* Subcaption = (m_ShowAirportNames ? ga->NameString : NULL);
+			CHAR* Caption = (m_ShowAirportIATA ? ga->pAirport->Code : m_ShowAirportNames ? ga->NameString : NULL);
+			CHAR* Subcaption = ((m_ShowAirportIATA && m_ShowAirportNames) ? ga->NameString : NULL);
 			CHAR* Coordinates = (m_ShowGPS ? ga->CoordString : NULL);
 			WCHAR* Count = (m_ShowFlightCount ? ga->CountString : NULL);
 
@@ -705,7 +706,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* 
 	if (Subcaption)
 		y += m_Fonts[0].Render(Subcaption, x, y);
 
-	if (!(Focused && m_IsSelected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
+	if (!(Focused && m_IsSelected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000) && ((Caption!=NULL) || (Subcaption!=NULL)))
 		glColor4f(TextColor[0], TextColor[1], TextColor[2], ga->Alpha/2);
 	if (Coordinates)
 		y += m_Fonts[0].Render(Coordinates, x, y);
@@ -909,7 +910,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glDisable(GL_TEXTURE_2D);
 
 	// Label zeichnen
-	if (m_Airports.m_ItemCount)
+	if (m_Airports.m_ItemCount && (m_ShowAirportIATA || m_ShowAirportNames || m_ShowGPS || m_ShowFlightCount))
 		CalcAndDrawLabel();
 
 	// Statuszeile
@@ -1028,6 +1029,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_COMMAND(IDM_GLOBEVIEW_COLORS, OnColors)
 	ON_COMMAND(IDM_GLOBEVIEW_CLAMP, OnClamp)
 	ON_COMMAND(IDM_GLOBEVIEW_SPOTS, OnSpots)
+	ON_COMMAND(IDM_GLOBEVIEW_AIRPORTIATA, OnAirportIATA)
 	ON_COMMAND(IDM_GLOBEVIEW_AIRPORTNAMES, OnAirportNames)
 	ON_COMMAND(IDM_GLOBEVIEW_GPS, OnGPS)
 	ON_COMMAND(IDM_GLOBEVIEW_FLIGHTCOUNT, OnFlightCount)
@@ -1528,6 +1530,12 @@ void CGlobeView::OnSpots()
 	Invalidate();
 }
 
+void CGlobeView::OnAirportIATA()
+{
+	theApp.m_GlobeShowAirportIATA = m_ShowAirportIATA = !m_ShowAirportIATA;
+	Invalidate();
+}
+
 void CGlobeView::OnAirportNames()
 {
 	theApp.m_GlobeShowAirportNames = m_ShowAirportNames = !m_ShowAirportNames;
@@ -1598,6 +1606,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_GLOBEVIEW_SPOTS:
 		pCmdUI->SetCheck(m_ShowSpots);
+		break;
+	case IDM_GLOBEVIEW_AIRPORTIATA:
+		pCmdUI->SetCheck(m_ShowAirportIATA);
 		break;
 	case IDM_GLOBEVIEW_AIRPORTNAMES:
 		pCmdUI->SetCheck(m_ShowAirportNames);

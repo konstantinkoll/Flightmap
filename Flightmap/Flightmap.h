@@ -71,6 +71,8 @@ public:
 
 	MapSettings m_MapSettings;
 
+	// Map
+	BOOL m_MapMergeMetro;
 	// Map view
 	INT m_MapZoomFactor;
 	BOOL m_MapAutosize;
@@ -85,15 +87,18 @@ public:
 	BOOL m_GlobeAtmosphere;
 	BOOL m_GlobeShadows;
 	// User view settings
+	BOOL m_GlobeMergeMetro;
 	BOOL m_GlobeUseColors;
 	BOOL m_GlobeClamp;
 	BOOL m_GlobeShowSpots;
+	BOOL m_GlobeShowAirportIATA;
 	BOOL m_GlobeShowAirportNames;
 	BOOL m_GlobeShowGPS;
 	BOOL m_GlobeShowFlightCount;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 
+	BOOL m_GoogleEarthMergeMetro;
 	BOOL m_GoogleEarthUseColors;
 	BOOL m_GoogleEarthClamp;
 

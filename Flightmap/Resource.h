@@ -102,7 +102,7 @@
 #define IDM_MAP_EXPORT_JPEG             3203
 #define IDM_MAP_EXPORT_PNG              3204
 #define IDM_MAP_EXPORT_TIFF             3205
-#define IDM_MAP_SELECTEDONLY            3206
+#define IDM_MAP_MERGEMETRO              3206
 #define IDM_MAP_BACKGROUND              3207
 #define IDM_MAP_BACKGROUNDCOLOR         3208
 #define IDM_MAP_RESOLUTION              3209
@@ -121,11 +121,11 @@
 #define IDM_MAP_IATAOUTERCOLOR          3222
 #define IDM_GLOBE                       3300
 #define IDM_GLOBE_OPEN                  3301
-#define IDM_GLOBE_SELECTEDONLY          3302
+#define IDM_GLOBE_MERGEMETRO            3302
 #define IDM_GOOGLEEARTH                 3400
 #define IDM_GOOGLEEARTH_OPEN            3401
 #define IDM_GOOGLEEARTH_EXPORT          3402
-#define IDM_GOOGLEEARTH_SELECTEDONLY    3403
+#define IDM_GOOGLEEARTH_MERGEMETRO      3403
 #define IDM_GOOGLEEARTH_COLORS          3404
 #define IDM_GOOGLEEARTH_CLAMP           3405
 #define IDM_STATISTICS                  3500
@@ -151,12 +151,13 @@
 #define IDM_GLOBEVIEW_COLORS            3906
 #define IDM_GLOBEVIEW_CLAMP             3907
 #define IDM_GLOBEVIEW_SPOTS             3908
-#define IDM_GLOBEVIEW_AIRPORTNAMES      3909
-#define IDM_GLOBEVIEW_GPS               3910
-#define IDM_GLOBEVIEW_FLIGHTCOUNT       3911
-#define IDM_GLOBEVIEW_VIEWPORT          3912
-#define IDM_GLOBEVIEW_CROSSHAIRS        3913
-#define IDM_GLOBEVIEW_3DSETTINGS        3914
+#define IDM_GLOBEVIEW_AIRPORTIATA       3909
+#define IDM_GLOBEVIEW_AIRPORTNAMES      3910
+#define IDM_GLOBEVIEW_GPS               3911
+#define IDM_GLOBEVIEW_FLIGHTCOUNT       3912
+#define IDM_GLOBEVIEW_VIEWPORT          3913
+#define IDM_GLOBEVIEW_CROSSHAIRS        3914
+#define IDM_GLOBEVIEW_3DSETTINGS        3915
 #define IDM_GLOBEITEM                   4000
 #define IDM_GLOBEITEM_OPENGOOGLEEARTH   4001
 

@@ -208,7 +208,6 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	}
 
 	// Background
-
 	const INT Width = Scale<1.0 ? m_Settings.Width : MaxS-MinS+1;
 	const INT Height = Scale<1.0 ? m_Settings.Height : MaxZ-MinZ+1;
 	CBitmap* pBitmap = LoadBackground(MinS, MinZ, MaxS, MaxZ, Width, Height, MapOffset);
@@ -240,7 +239,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			for (UINT a=0; a<RouteCount; a++)
 			{
 				CColor col(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color);
-				Pen pen(col, (REAL)(4.0*Upscale));
+				Pen pen(col, (REAL)(3.2*Upscale));
 				const FlightSegments* pSegments = RouteData[a];
 
 #define CompS(s) s*BGWIDTH/(2*PI)+BGWIDTH/2
@@ -316,7 +315,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			if (m_Settings.StraightLines)
 			{
 				CColor col(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color);
-				Pen pen(col, (REAL)(4.0*Upscale));
+				Pen pen(col, (REAL)(3.2*Upscale));
 
 				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale);
 
@@ -607,8 +606,8 @@ void CMapFactory::DrawArrow(Graphics& g, Brush& brush, DOUBLE x1, DOUBLE y1, DOU
 
 	PointF points[3];
 	points[0] = PointF((REAL)(4.0*Upscale*cos(Angle)+x1), (REAL)(4.0*Upscale*sin(Angle)+y1));
-	points[1] = PointF((REAL)(20.0*Upscale*cos(Angle+PI/7)+x1), (REAL)(20.0*Upscale*sin(Angle+PI/7)+y1));
-	points[2] = PointF((REAL)(20.0*Upscale*cos(Angle-PI/7)+x1), (REAL)(20.0*Upscale*sin(Angle-PI/7)+y1));
+	points[1] = PointF((REAL)(16.0*Upscale*cos(Angle+PI/7)+x1), (REAL)(16.0*Upscale*sin(Angle+PI/7)+y1));
+	points[2] = PointF((REAL)(16.0*Upscale*cos(Angle-PI/7)+x1), (REAL)(16.0*Upscale*sin(Angle-PI/7)+y1));
 
 	g.FillPolygon(&brush, points, 3);
 }

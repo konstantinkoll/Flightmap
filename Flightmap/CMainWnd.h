@@ -22,7 +22,7 @@ public:
 
 	BOOL Create();
 
-	BOOL ExportKML(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE);
+	BOOL ExportKML(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL MergeMetro=FALSE);
 
 protected:
 	HICON m_hIcon;
@@ -31,9 +31,9 @@ protected:
 
 	void UpdateWindowStatus();
 	BOOL CloseFile();
-	CKitchen* GetKitchen(BOOL Selected=FALSE);
-	CBitmap* GetMap(BOOL Selected=FALSE);
-	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE);
+	CKitchen* GetKitchen(BOOL MergeMetro=FALSE);
+	CBitmap* GetMap(BOOL MergeMetro=FALSE);
+	void ExportMap(CString Filename, GUID guidFileType, BOOL MergeMetro=FALSE);
 	void ExportCalendar(CString FileName);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -53,6 +53,7 @@ protected:
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnMapOpen();
+	afx_msg void OnMapMergeMetro();
 	afx_msg void OnMapCenterAtlantic();
 	afx_msg void OnMapCenterPacific();
 	afx_msg void OnMapShowFlightRoutes();
@@ -69,12 +70,15 @@ protected:
 	afx_msg void OnMapExportTIFF();
 
 	afx_msg void OnGlobeOpen();
+	afx_msg void OnGlobeMergeMetro();
 	afx_msg void OnUpdateGlobeCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnGoogleEarthOpen();
-	afx_msg void OnGoogleEarthExport();
+	afx_msg void OnGoogleEarthMergeMetro();
 	afx_msg void OnGoogleEarthColors();
 	afx_msg void OnGoogleEarthClamp();
 	afx_msg void OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnGoogleEarthExport();
 	DECLARE_MESSAGE_MAP()
 };

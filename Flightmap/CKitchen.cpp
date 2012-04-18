@@ -11,9 +11,11 @@
 // CKitchen
 //
 
-CKitchen::CKitchen(CString DisplayName)
+CKitchen::CKitchen(CString DisplayName, BOOL MergeMetro)
 {
 	m_DisplayName = DisplayName;
+	m_MergeMetro = MergeMetro;
+
 	m_FlightAirports.InitHashTable(2048);
 	m_FlightAirportCounts.InitHashTable(2048);
 	m_FlightRoutes.InitHashTable(4096);
@@ -26,21 +28,28 @@ FMAirport* CKitchen::AddAirport(CHAR* Code)
 	if (strlen(Code)!=3)
 		return NULL;
 
+	FMAirport* pAirport = NULL;
+	if (!FMIATAGetAirportByCode(Code, &pAirport))
+		return NULL;
+
+	if ((m_MergeMetro) && (pAirport->MetroCode[0]!='\0'))
+		if (strcmp(pAirport->Code, pAirport->MetroCode)!=0)
+			FMIATAGetAirportByCode(pAirport->MetroCode, &pAirport);
+
 	FlightAirport Airport;
-	if (m_FlightAirports.Lookup(Code, Airport))
+	if (m_FlightAirports.Lookup(pAirport->Code, Airport))
 	{
-		m_FlightAirportCounts[Code]++;
+		m_FlightAirportCounts[pAirport->Code]++;
 		return Airport.pAirport;
 	}
 
 	ZeroMemory(&Airport, sizeof(Airport));
-	if (!FMIATAGetAirportByCode(Code, &Airport.pAirport))
-		return NULL;
+	Airport.pAirport = pAirport;
 
-	m_FlightAirports[Code] = Airport;
-	m_FlightAirportCounts[Code] = 1;
+	m_FlightAirports[pAirport->Code] = Airport;
+	m_FlightAirportCounts[pAirport->Code] = 1;
 
-	return Airport.pAirport;
+	return pAirport;
 }
 
 void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)

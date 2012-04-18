@@ -50,6 +50,7 @@ protected:
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;
 	BOOL m_ShowSpots;
+	BOOL m_ShowAirportIATA;
 	BOOL m_ShowAirportNames;
 	BOOL m_ShowGPS;
 	BOOL m_ShowFlightCount;
@@ -116,6 +117,7 @@ protected:
 	afx_msg void OnColors();
 	afx_msg void OnClamp();
 	afx_msg void OnSpots();
+	afx_msg void OnAirportIATA();
 	afx_msg void OnAirportNames();
 	afx_msg void OnGPS();
 	afx_msg void OnFlightCount();

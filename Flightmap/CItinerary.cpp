@@ -7,7 +7,48 @@
 #include "CItinerary.h"
 
 
-__forceinline UINT ReadUTF7UINT(CFile& f)
+void ScanDate(LPCWSTR str, FILETIME& ft)
+{
+	UINT Year;
+	UINT Month;
+	UINT Day;
+	UINT Hour;
+	UINT Minute;
+
+	INT c = swscanf_s(str, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
+	if (c>=3)
+	{
+		SYSTEMTIME st;
+		ZeroMemory(&st, sizeof(st));
+
+		st.wYear = (WORD)Year;
+		st.wMonth = (WORD)Month;
+		st.wDay = (WORD)Day;
+
+		if (c==5)
+		{
+			st.wHour = (WORD)Hour;
+			st.wMinute = (WORD)Minute;
+		}
+
+		SystemTimeToFileTime(&st, &ft);
+	}
+}
+
+void ScanColor(LPCWSTR str, COLORREF& col)
+{
+	if (swscanf_s(str, L"%06x", &col)==1)
+		if (col!=(COLORREF)-1)
+			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
+}
+
+__forceinline void ScanNumber(LPCWSTR str, UINT& num)
+{
+	swscanf_s(str, L"%d", &num);
+}
+
+
+__forceinline UINT ReadUTF7Length(CFile& f)
 {
 	UINT Res = 0;
 	UINT Shift = 0;
@@ -28,7 +69,7 @@ __forceinline UINT ReadUTF7UINT(CFile& f)
 
 CString ReadUTF7String(CFile& f)
 {
-	UINT nCount = ReadUTF7UINT(f);
+	UINT nCount = ReadUTF7Length(f);
 	if (!nCount)
 		return _T("");
 
@@ -84,17 +125,17 @@ __forceinline void ReadUTF7CHAR(CFile& f, CHAR* pChar, UINT cCount)
 
 void ReadUTF7FILETIME(CFile& f, FILETIME& Time)
 {
-	ReadUTF7String(f);
+	ScanDate(ReadUTF7String(f), Time);
 }
 
 __forceinline void ReadUTF7COLORREF(CFile& f, COLORREF& Color)
 {
-	ReadUTF7String(f);
+	ScanColor(ReadUTF7String(f), Color);
 }
 
-void ReadUTF7Number(CFile& f, UINT& Number)
+void ReadUTF7UINT(CFile& f, UINT& Number)
 {
-	ReadUTF7String(f);
+	ScanNumber(ReadUTF7String(f), Number);
 }
 
 
@@ -171,11 +212,11 @@ void CItinerary::AppendAIR(CString FileName)
 				ReadUTF7CHAR(f, Flight.Registration, 16);
 				ReadUTF7WCHAR(f, Flight.Name, 64);
 
-				if (ReadUTF7String(f)==_T("A"))
+				if (ReadUTF7String(f).MakeUpper()==_T("A"))
 					Flight.Flags = AIRX_AwardFlight;
 
-				ReadUTF7Number(f, Flight.MilesAward);
-				ReadUTF7Number(f, Flight.MilesStatus);
+				ReadUTF7UINT(f, Flight.MilesAward);
+				ReadUTF7UINT(f, Flight.MilesStatus);
 				ReadUTF7FILETIME(f, Flight.To.Time);
 				ReadUTF7CHAR(f, Flight.EtixCode, 7);
 				ReadUTF7WCHAR(f, Flight.Fare, 16);

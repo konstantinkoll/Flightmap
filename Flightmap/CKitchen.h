@@ -47,7 +47,7 @@ typedef CMap<CStringA, LPCSTR, FlightRoute, FlightRoute&> CFlightRoutes;
 class CKitchen
 {
 public:
-	CKitchen(CString DisplayName);
+	CKitchen(CString DisplayName, BOOL MergeMetro=FALSE);
 
 	virtual void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
 
@@ -58,6 +58,9 @@ public:
 	CFlightAirports m_FlightAirports;
 	CFlightCounts m_FlightAirportCounts;
 	CFlightRoutes m_FlightRoutes;
+
+protected:
+	BOOL m_MergeMetro;
 
 private:
 	FMAirport* AddAirport(CHAR* Code);

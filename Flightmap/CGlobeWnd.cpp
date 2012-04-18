@@ -150,6 +150,8 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_CLAMP);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_SPOTS);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_AIRPORTIATA);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_AIRPORTNAMES);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_GPS);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_FLIGHTCOUNT);

@@ -124,9 +124,9 @@ BOOL CMainWnd::CloseFile()
 	return TRUE;
 }
 
-CKitchen* CMainWnd::GetKitchen(BOOL Selected)
+CKitchen* CMainWnd::GetKitchen(BOOL MergeMetro)
 {
-	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_DisplayName : _T(""));
+	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_DisplayName : _T(""), MergeMetro);
 
 	if (m_pItinerary)
 		for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
@@ -135,17 +135,17 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected)
 	return pKitchen;
 }
 
-CBitmap* CMainWnd::GetMap(BOOL Selected)
+CBitmap* CMainWnd::GetMap(BOOL MergeMetro)
 {
 	CMapFactory f(&theApp.m_MapSettings);
-	return f.RenderMap(GetKitchen(Selected));
+	return f.RenderMap(GetKitchen(MergeMetro));
 }
 
-void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected)
+void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL MergeMetro)
 {
 	CWaitCursor csr;
 
-	theApp.SaveBitmap(GetMap(Selected), Filename, guidFileType);
+	theApp.SaveBitmap(GetMap(MergeMetro), Filename, guidFileType);
 }
 
 void CMainWnd::ExportCalendar(CString FileName)
@@ -171,7 +171,7 @@ void CMainWnd::ExportCalendar(CString FileName)
 	}
 }
 
-BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Selected)
+BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL MergeMetro)
 {
 	CGoogleEarthFile f;
 
@@ -183,7 +183,7 @@ BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Sele
 	else
 	{
 		BOOL Res = FALSE;
-		CKitchen* pKitchen = GetKitchen(Selected);
+		CKitchen* pKitchen = GetKitchen(MergeMetro);
 
 		try
 		{
@@ -230,6 +230,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
 
 	ON_COMMAND(IDM_MAP_OPEN, OnMapOpen)
+	ON_COMMAND(IDM_MAP_MERGEMETRO, OnMapMergeMetro)
 	ON_COMMAND(IDM_MAP_CENTERATLANTIC, OnMapCenterAtlantic)
 	ON_COMMAND(IDM_MAP_CENTERPACIFIC, OnMapCenterPacific)
 	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
@@ -246,10 +247,12 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_EXPORT_TIFF, OnMapExportTIFF)
 
 	ON_COMMAND(IDM_GLOBE_OPEN, OnGlobeOpen)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_OPEN, OnUpdateGlobeCommands)
+	ON_COMMAND(IDM_GLOBE_MERGEMETRO, OnGlobeMergeMetro)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_OPEN, IDM_GLOBE_MERGEMETRO, OnUpdateGlobeCommands)
 
 	ON_COMMAND(IDM_GOOGLEEARTH_OPEN, OnGoogleEarthOpen)
 	ON_COMMAND(IDM_GOOGLEEARTH_EXPORT, OnGoogleEarthExport)
+	ON_COMMAND(IDM_GOOGLEEARTH_MERGEMETRO, OnGoogleEarthMergeMetro)
 	ON_COMMAND(IDM_GOOGLEEARTH_COLORS, OnGoogleEarthColors)
 	ON_COMMAND(IDM_GOOGLEEARTH_CLAMP, OnGoogleEarthClamp)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_CLAMP, OnUpdateGoogleEarthCommands)
@@ -376,7 +379,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUMAP_32, IDB_MENUMAP_16);
 		pPopup->AddSubmenu(IDM_MAP_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
-		pPopup->AddCheckbox(IDM_MAP_SELECTEDONLY);
+		pPopup->AddCheckbox(IDM_MAP_MERGEMETRO);
 		pPopup->AddCaption(IDS_BACKGROUND);
 		pPopup->AddGallery(IDM_MAP_BACKGROUND, IDB_BACKGROUNDS, CSize(96, 48), IDS_BACKGROUND_DEFAULT, 4, 2, theApp.m_MapSettings.BackgroundColor, FALSE);
 		pPopup->AddColor(IDM_MAP_BACKGROUNDCOLOR, &theApp.m_MapSettings.BackgroundColor);
@@ -412,13 +415,13 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
 		pPopup->AddCommand(IDM_GLOBE_OPEN, 0, CDMB_LARGE);
 		pPopup->AddSeparator(TRUE);
-		pPopup->AddCheckbox(IDM_GLOBE_SELECTEDONLY);
+		pPopup->AddCheckbox(IDM_GLOBE_MERGEMETRO);
 		break;
 	case IDM_GOOGLEEARTH:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddSubmenu(IDM_GOOGLEEARTH_OPEN, 0, CDMB_LARGE, TRUE);
 		pPopup->AddSeparator(TRUE);
-		pPopup->AddCheckbox(IDM_GOOGLEEARTH_SELECTEDONLY);
+		pPopup->AddCheckbox(IDM_GOOGLEEARTH_MERGEMETRO);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_COLORS);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_CLAMP);
@@ -569,12 +572,17 @@ void CMainWnd::OnMapOpen()
 
 	CWaitCursor csr;
 
-	CBitmap* pBitmap = GetMap();
+	CBitmap* pBitmap = GetMap(theApp.m_MapMergeMetro);
 
 	CMapWnd* pFrame = new CMapWnd();
 	pFrame->Create();
 	pFrame->SetBitmap(pBitmap, m_pItinerary->m_DisplayName);
 	pFrame->ShowWindow(SW_SHOW);
+}
+
+void CMainWnd::OnMapMergeMetro()
+{
+	theApp.m_MapMergeMetro = !theApp.m_MapMergeMetro;
 }
 
 void CMainWnd::OnMapCenterAtlantic()
@@ -590,8 +598,6 @@ void CMainWnd::OnMapCenterPacific()
 void CMainWnd::OnMapShowFlightRoutes()
 {
 	theApp.m_MapSettings.ShowFlightRoutes = !theApp.m_MapSettings.ShowFlightRoutes;
-	if (theApp.m_MapSettings.ShowFlightRoutes)
-		theApp.m_MapSettings.ShowLocations = TRUE;
 }
 
 void CMainWnd::OnMapStraightLines()
@@ -632,8 +638,8 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 	case IDM_MAP_EXPORT_TIFF:
 		b = (m_pItinerary!=NULL);
 		break;
-	case IDM_MAP_SELECTEDONLY:
-		b = FALSE;
+	case IDM_MAP_MERGEMETRO:
+		pCmdUI->SetCheck(theApp.m_MapMergeMetro);
 		break;
 	case IDM_MAP_BACKGROUND:
 		pCmdUI->SetCheck(theApp.m_MapSettings.Background);
@@ -665,7 +671,6 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_SHOWLOCATIONS:
 		pCmdUI->SetCheck(theApp.m_MapSettings.ShowLocations);
-		b = !theApp.m_MapSettings.ShowFlightRoutes;
 		break;
 	case IDM_MAP_LOCATIONINNERCOLOR:
 	case IDM_MAP_LOCATIONOUTERCOLOR:
@@ -693,7 +698,7 @@ void CMainWnd::OnMapExportBMP()
 
 	CFileDialog dlg(FALSE, _T("bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatBMP);
+		ExportMap(dlg.GetPathName(), ImageFormatBMP, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportJPEG()
@@ -703,7 +708,7 @@ void CMainWnd::OnMapExportJPEG()
 
 	CFileDialog dlg(FALSE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+		ExportMap(dlg.GetPathName(), ImageFormatJPEG, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportPNG()
@@ -713,7 +718,7 @@ void CMainWnd::OnMapExportPNG()
 
 	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatPNG);
+		ExportMap(dlg.GetPathName(), ImageFormatPNG, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportTIFF()
@@ -723,7 +728,7 @@ void CMainWnd::OnMapExportTIFF()
 
 	CFileDialog dlg(FALSE, _T("tif"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+		ExportMap(dlg.GetPathName(), ImageFormatTIFF, theApp.m_MapMergeMetro);
 }
 
 
@@ -734,20 +739,30 @@ void CMainWnd::OnGlobeOpen()
 	CGlobeWnd* pFrame = new CGlobeWnd();
 
 	pFrame->Create();
-	pFrame->SetFlights(GetKitchen());
+	pFrame->SetFlights(GetKitchen(theApp.m_GlobeMergeMetro));
 	pFrame->ShowWindow(SW_SHOW);
+}
+
+void CMainWnd::OnGlobeMergeMetro()
+{
+	theApp.m_GlobeMergeMetro = !theApp.m_GlobeMergeMetro;
 }
 
 void CMainWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
 {
+	BOOL b = TRUE;
+
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GLOBE_OPEN:
-		pCmdUI->Enable(m_pItinerary!=NULL);
+		b = (m_pItinerary!=NULL);
 		break;
-	default:
-		pCmdUI->Enable(TRUE);
+	case IDM_GLOBE_MERGEMETRO:
+		pCmdUI->SetCheck(theApp.m_GlobeMergeMetro);
+		break;
 	}
+
+	pCmdUI->Enable(b);
 }
 
 
@@ -766,18 +781,13 @@ void CMainWnd::OnGoogleEarthOpen()
 	srand(rand());
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
-	if (ExportKML(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp))
+	if (ExportKML(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro))
 		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
 }
 
-void CMainWnd::OnGoogleEarthExport()
+void CMainWnd::OnGoogleEarthMergeMetro()
 {
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"), TRUE);
-
-	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportKML(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
+	theApp.m_GoogleEarthMergeMetro = !theApp.m_GoogleEarthMergeMetro;
 }
 
 void CMainWnd::OnGoogleEarthColors()
@@ -802,8 +812,8 @@ void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
 	case IDM_GOOGLEEARTH_EXPORT:
 		b = m_pItinerary!=NULL;
 		break;
-	case IDM_GOOGLEEARTH_SELECTEDONLY:
-		b = FALSE;
+	case IDM_GOOGLEEARTH_MERGEMETRO:
+		pCmdUI->SetCheck(theApp.m_GoogleEarthMergeMetro);
 		break;
 	case IDM_GOOGLEEARTH_COLORS:
 		pCmdUI->SetCheck(theApp.m_GoogleEarthUseColors);
@@ -814,4 +824,17 @@ void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
+}
+
+
+// Google Earth export command
+
+void CMainWnd::OnGoogleEarthExport()
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"), TRUE);
+
+	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportKML(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro);
 }
