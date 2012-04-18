@@ -37,6 +37,7 @@ protected:
 	void ExportCalendar(CString FileName);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
@@ -47,6 +48,7 @@ protected:
 	afx_msg void OnFileNewSample1();
 	afx_msg void OnFileNewSample2();
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileSave();
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnFileSaveICS();
 	afx_msg void OnFileClose();

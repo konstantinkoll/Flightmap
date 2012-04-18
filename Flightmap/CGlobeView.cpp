@@ -1460,8 +1460,8 @@ void CGlobeView::OnSaveAs()
 			}
 			catch(CFileException ex)
 			{
-				FMErrorBox(IDS_DRIVENOTREADY);
 				f.Close();
+				FMErrorBox(IDS_DRIVENOTREADY);
 			}
 		}
 	}

@@ -113,6 +113,15 @@ BOOL CMainWnd::CloseFile()
 	{
 		if (m_pItinerary->m_IsModified)
 		{
+			switch (MessageBox(_T("XX"), m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONQUESTION))
+			{
+			case IDCANCEL:
+				return FALSE;
+			case IDYES:
+				OnFileSave();
+				if (m_pItinerary->m_IsModified)
+					return FALSE;
+			}
 		}
 
 		delete m_pItinerary;
@@ -202,8 +211,8 @@ BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Merg
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(IDS_DRIVENOTREADY);
 			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 
 		delete pKitchen;
@@ -214,6 +223,7 @@ BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Merg
 
 BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
+	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
@@ -224,6 +234,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE2, OnFileNewSample2)
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
+	ON_COMMAND(IDM_FILE_SAVE, OnFileSave)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
@@ -284,6 +295,15 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	UpdateWindowStatus();
 
 	return 0;
+}
+
+void CMainWnd::OnClose()
+{
+	if (m_pItinerary)
+		if (!CloseFile())
+			return;
+
+	CMainWindow::OnClose();
 }
 
 void CMainWnd::OnDestroy()
@@ -513,6 +533,22 @@ void CMainWnd::OnFileOpen()
 			m_pItinerary->OpenAIR(dlg.GetPathName());
 		if (Ext==_T("csv"))
 			m_pItinerary->OpenCSV(dlg.GetPathName());
+
+		UpdateWindowStatus();
+	}
+}
+
+void CMainWnd::OnFileSave()
+{
+	ASSERT(m_pItinerary);
+
+	if (m_pItinerary->m_FileName.IsEmpty())
+	{
+		OnFileSaveAs();
+	}
+	else
+	{
+		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
 
 		UpdateWindowStatus();
 	}

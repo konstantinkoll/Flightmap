@@ -248,8 +248,8 @@ void CItinerary::OpenAIRX(CString FileName)
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(IDS_DRIVENOTREADY);
 			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
 
@@ -310,8 +310,8 @@ void CItinerary::OpenAIR(CString FileName)
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(IDS_DRIVENOTREADY);
 			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
 }
@@ -359,11 +359,13 @@ void CItinerary::SaveAIRX(CString FileName)
 			}
 
 			f.Close();
+
+			m_IsModified = FALSE;
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(IDS_DRIVENOTREADY);
 			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
 }

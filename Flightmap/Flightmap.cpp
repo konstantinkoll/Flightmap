@@ -215,15 +215,7 @@ void CFlightmapApp::KillFrame(CMainWindow* pVictim)
 void CFlightmapApp::Quit()
 {
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		POSITION pl = p;
-		CMainWindow* pFrame = m_MainFrames.GetNext(p);
-		m_MainFrames.RemoveAt(pl);
-
-		pFrame->SendMessage(WM_CLOSE);
-	}
-
-	m_pMainWnd = m_pActiveWnd = NULL;
+		m_MainFrames.GetNext(p)->SendMessage(WM_CLOSE);
 }
 
 void CFlightmapApp::Broadcast(UINT message)
