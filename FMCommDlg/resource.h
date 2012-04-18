@@ -133,6 +133,11 @@
 #define IDC_USERDEFINEDRES              21702
 #define IDC_WIDTH                       21703
 #define IDC_HEIGHT                      21704
+#define IDD_PROPERTIES                  21800
+#define IDC_TITLE                       21801
+#define IDC_AUTHOR                      21802
+#define IDC_KEYWORDS                    21803
+#define IDC_COMMENTS                    21804
 
 // Next default values for new objects
 // 

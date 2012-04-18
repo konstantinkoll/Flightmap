@@ -501,6 +501,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\FileProperties_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Flightmap.ico"
 			>
 		</File>

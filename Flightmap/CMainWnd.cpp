@@ -4,14 +4,15 @@
 
 #include "stdafx.h"
 #include "CCalendarFile.h"
+#include "CGlobeWnd.h"
 #include "CGoogleEarthFile.h"
 #include "CKitchen.h"
 #include "CLoungeView.h"
 #include "CMainWnd.h"
 #include "CMapFactory.h"
 #include "CMapWnd.h"
-#include "CGlobeWnd.h"
 #include "Flightmap.h"
+#include "PropertiesDlg.h"
 
 
 // CMainWnd
@@ -237,6 +238,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_SAVE, OnFileSave)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
+	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
@@ -572,12 +574,22 @@ void CMainWnd::OnFileSaveAs()
 
 void CMainWnd::OnFileSaveICS()
 {
+	ASSERT(m_pItinerary);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"), TRUE);
 
 	CFileDialog dlg(FALSE, _T("ics"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 		ExportCalendar(dlg.GetPathName());
+}
+
+void CMainWnd::OnFileProperties()
+{
+	ASSERT(m_pItinerary);
+
+	PropertiesDlg dlg(m_pItinerary, this);
+	dlg.DoModal();
 }
 
 void CMainWnd::OnFileClose()
@@ -594,6 +606,13 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_FILE_PRINT:
+	case IDM_FILE_PRINT_PREVIEW:
+	case IDM_FILE_PRINT_QUICK:
+	case IDM_FILE_PREPARE_INSPECT:
+	case IDM_FILE_PREPARE_ATTACHMENTS:
+		pCmdUI->Enable(FALSE);	// TODO
+		break;
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_SAVEAS_AIRX:
@@ -601,13 +620,8 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_SAVEAS_CSV:
 	case IDM_FILE_SAVEAS_TXT:
 	case IDM_FILE_SAVEAS_OTHER:
-	case IDM_FILE_PRINT:
-	case IDM_FILE_PRINT_PREVIEW:
-	case IDM_FILE_PRINT_QUICK:
 	case IDM_FILE_PREPARE:
 	case IDM_FILE_PREPARE_PROPERTIES:
-	case IDM_FILE_PREPARE_INSPECT:
-	case IDM_FILE_PREPARE_ATTACHMENTS:
 	case IDM_FILE_CLOSE:
 		pCmdUI->Enable(m_pItinerary!=NULL);
 		break;
@@ -746,6 +760,8 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnMapExportBMP()
 {
+	ASSERT(m_pItinerary);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"), TRUE);
 
@@ -756,6 +772,8 @@ void CMainWnd::OnMapExportBMP()
 
 void CMainWnd::OnMapExportJPEG()
 {
+	ASSERT(m_pItinerary);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"), TRUE);
 
@@ -766,6 +784,8 @@ void CMainWnd::OnMapExportJPEG()
 
 void CMainWnd::OnMapExportPNG()
 {
+	ASSERT(m_pItinerary);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"), TRUE);
 
@@ -776,6 +796,8 @@ void CMainWnd::OnMapExportPNG()
 
 void CMainWnd::OnMapExportTIFF()
 {
+	ASSERT(m_pItinerary);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
 
@@ -823,6 +845,8 @@ void CMainWnd::OnUpdateGlobeCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnGoogleEarthOpen()
 {
+	ASSERT(m_pItinerary);
+
 	// Dateinamen finden
 	TCHAR Pathname[MAX_PATH];
 	if (!GetTempPath(MAX_PATH, Pathname))
@@ -884,6 +908,8 @@ void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnGoogleEarthExport()
 {
+	ASSERT(m_pItinerary);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"), TRUE);
 

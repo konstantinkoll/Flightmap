@@ -432,6 +432,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PropertiesDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -547,6 +551,10 @@
 			</File>
 			<File
 				RelativePath=".\GLTexture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropertiesDlg.h"
 				>
 			</File>
 			<File

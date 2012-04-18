@@ -72,6 +72,7 @@ IDD_REGISTER            ICON                    "res\\Wallet_Tiny.ico"
 IDD_3DSETTINGS          ICON                    "res\\3DSettings_Tiny.ico"
 IDD_CHOOSECOLOR         ICON                    "res\\ChooseColor_Tiny.ico"
 IDD_RESOLUTION          ICON                    "res\\Resolution_Tiny.ico"
+IDD_PROPERTIES          ICON                    "res\\FileProperties_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -293,6 +294,24 @@ BEGIN
     LTEXT           "Höhe:",IDC_STATIC,14,240,35,8
 END
 
+IDD_PROPERTIES DIALOGEX 0, 0, 365, 130
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Eigenschaften von %s"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,351,94
+    LTEXT           "Titel:",IDC_STATIC,14,20,45,8
+    EDITTEXT        IDC_TITLE,72,18,279,14,ES_AUTOHSCROLL
+    LTEXT           "Autor:",IDC_STATIC,14,40,45,8
+    EDITTEXT        IDC_AUTHOR,72,38,279,14,ES_AUTOHSCROLL
+    LTEXT           "Schlüsselworte:",IDC_STATIC,14,60,55,8
+    EDITTEXT        IDC_KEYWORDS,72,58,279,14,ES_AUTOHSCROLL
+    LTEXT           "Kommentar:",IDC_STATIC,14,80,45,8
+    EDITTEXT        IDC_COMMENTS,72,78,279,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,251,108,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,308,108,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -380,6 +399,14 @@ BEGIN
         RIGHTMARGIN, 309
         TOPMARGIN, 7
         BOTTOMMARGIN, 280
+    END
+
+    IDD_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 358
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 123
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -694,6 +721,24 @@ BEGIN
     LTEXT           "Height:",IDC_STATIC,14,240,35,8
 END
 
+IDD_PROPERTIES DIALOGEX 0, 0, 355, 129
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Properties of %s"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Properties",IDC_STATIC,7,7,341,94
+    LTEXT           "Title:",IDC_STATIC,14,20,45,8
+    EDITTEXT        IDC_TITLE,62,18,279,14,ES_AUTOHSCROLL
+    LTEXT           "Author:",IDC_STATIC,14,40,45,8
+    EDITTEXT        IDC_AUTHOR,62,38,279,14,ES_AUTOHSCROLL
+    LTEXT           "Keywords:",IDC_STATIC,14,60,45,8
+    EDITTEXT        IDC_KEYWORDS,62,58,279,14,ES_AUTOHSCROLL
+    LTEXT           "Comments:",IDC_STATIC,14,80,45,8
+    EDITTEXT        IDC_COMMENTS,62,78,279,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,241,108,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,298,108,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -782,6 +827,14 @@ BEGIN
         RIGHTMARGIN, 309
         TOPMARGIN, 7
         BOTTOMMARGIN, 280
+    END
+
+    IDD_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 348
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
     END
 END
 #endif    // APSTUDIO_INVOKED
