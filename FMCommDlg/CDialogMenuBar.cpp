@@ -110,7 +110,7 @@ BOOL CDialogMenuBar::PreTranslateMessage(MSG* pMsg)
 
 UINT CDialogMenuBar::GetPreferredHeight()
 {
-	return IsCtrlThemed() ? m_MenuHeight : m_MenuHeight+2;
+	return IsCtrlThemed() ? m_MenuHeight : m_MenuHeight+3;
 }
 
 INT CDialogMenuBar::GetMinWidth()
@@ -325,6 +325,8 @@ void CDialogMenuBar::SetTheme()
 BEGIN_MESSAGE_MAP(CDialogMenuBar, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_NCCALCSIZE()
+	ON_WM_NCPAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -361,6 +363,33 @@ void CDialogMenuBar::OnDestroy()
 		p_App->zCloseThemeData(hTheme);
 
 	CWnd::OnDestroy();
+}
+
+void CDialogMenuBar::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+{
+	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
+
+	if (IsCtrlThemed())
+		lpncsp->rgrc[0].bottom--;
+}
+
+void CDialogMenuBar::OnNcPaint()
+{
+	CWindowDC pDC(this);
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+	ClientToScreen(rectClient);
+
+	CRect rectWindow;
+	GetWindowRect(&rectWindow);
+
+	rectClient.OffsetRect(-rectWindow.TopLeft());
+	rectWindow.OffsetRect(-rectWindow.TopLeft());
+
+	pDC.ExcludeClipRect(rectClient);
+	pDC.FillSolidRect(rectWindow, GetSysColor(COLOR_3DSHADOW));
+	pDC.SelectClipRgn(NULL);
 }
 
 BOOL CDialogMenuBar::OnEraseBkgnd(CDC* /*pDC*/)

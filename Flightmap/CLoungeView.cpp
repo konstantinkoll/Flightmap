@@ -60,9 +60,6 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	else
 	{
 		dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
-
-		if ((theApp.OSVersion==OS_XP) || (!Themed))
-			dc.FillSolidRect(rect.left, rect.top, rect.Width(), 1, GetSysColor(COLOR_SCROLLBAR));
 	}
 }
 

@@ -250,11 +250,6 @@ void CMapView::OnPaint()
 		for (INT a=0; a<5; a++)
 			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
 	}
-	else
-	{
-		if ((theApp.OSVersion==OS_XP) || (!Themed))
-			dc.FillSolidRect(rect.left, rect.top, rect.Width(), 1, GetSysColor(COLOR_SCROLLBAR));
-	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
