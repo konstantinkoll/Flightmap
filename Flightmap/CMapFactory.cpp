@@ -555,10 +555,11 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 		const UINT ResID[3] = { IDB_BLUEMARBLE_8192, IDB_NIGHT_8192, IDB_GRAY_8192 };
 		CGdiPlusBitmapResource img(ResID[m_Settings.Background], m_Settings.Background==2 ? _T("PNG") : _T("JPG"));
 
+		ImageAttributes ImgAttr;
+		ImgAttr.SetWrapMode(WrapModeTile);
+
 		Graphics g(dc);
-		g.DrawImage(img.m_pBitmap, Rect(MapOffset, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
-		if (MapOffset)
-			g.DrawImage(img.m_pBitmap, Rect(MapOffset-BGWIDTH+1, 0, Width, Height), Left, Top, Right-Left, Bottom-Top, UnitPixel);
+		g.DrawImage(img.m_pBitmap, Rect(0, 0, Width, Height), Left-MapOffset, Top, Right-Left, Bottom-Top, UnitPixel, &ImgAttr);
 	}
 
 	dc.SelectObject(pOldBitmap);
