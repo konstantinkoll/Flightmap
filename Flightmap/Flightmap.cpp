@@ -116,7 +116,7 @@ BOOL CFlightmapApp::InitInstance()
 		m_MapSettings.Height = 4096;
 
 	CMainWnd* pFrame = new CMainWnd();
-	pFrame->Create();
+	pFrame->Create(new CItinerary());
 	pFrame->ShowWindow(SW_SHOW);
 	pFrame->UpdateWindow();
 
@@ -124,9 +124,6 @@ BOOL CFlightmapApp::InitInstance()
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
 	FMCheckForUpdate(FALSE, pFrame);
-
-	//FMProgressDlg dlg(NULL, NULL, NULL);
-	//dlg.DoModal();
 
 	m_AppInitialized = TRUE;
 

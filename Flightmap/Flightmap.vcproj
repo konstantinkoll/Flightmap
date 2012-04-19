@@ -380,6 +380,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CDataGrid.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeView.cpp"
 				>
 			</File>
@@ -487,6 +491,10 @@
 			</File>
 			<File
 				RelativePath=".\CCalendarFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CDataGrid.h"
 				>
 			</File>
 			<File

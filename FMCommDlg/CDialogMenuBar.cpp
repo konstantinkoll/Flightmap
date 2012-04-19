@@ -388,7 +388,7 @@ void CDialogMenuBar::OnNcPaint()
 	rectWindow.OffsetRect(-rectWindow.TopLeft());
 
 	pDC.ExcludeClipRect(rectClient);
-	pDC.FillSolidRect(rectWindow, GetSysColor(COLOR_3DSHADOW));
+	pDC.FillSolidRect(rectWindow, GetSysColor(COLOR_SCROLLBAR));
 	pDC.SelectClipRgn(NULL);
 }
 

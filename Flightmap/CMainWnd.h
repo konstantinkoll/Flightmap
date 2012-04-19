@@ -20,7 +20,7 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
-	BOOL Create();
+	BOOL Create(CItinerary* pItinerary);
 
 	BOOL ExportKML(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL MergeMetro=FALSE);
 

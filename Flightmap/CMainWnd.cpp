@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CCalendarFile.h"
+#include "CDataGrid.h"
 #include "CGlobeWnd.h"
 #include "CGoogleEarthFile.h"
 #include "CKitchen.h"
@@ -34,8 +35,10 @@ CMainWnd::~CMainWnd()
 		delete m_pItinerary;
 }
 
-BOOL CMainWnd::Create()
+BOOL CMainWnd::Create(CItinerary* pItinerary)
 {
+	m_pItinerary = pItinerary;
+
 	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
@@ -94,7 +97,8 @@ void CMainWnd::UpdateWindowStatus()
 	}
 	else
 	{
-		m_pWndMainView = NULL;	// TODO
+		m_pWndMainView = new CDataGrid();
+		((CDataGrid*)m_pWndMainView)->Create(this, 2);
 
 		if (!m_pItinerary->m_DisplayName.IsEmpty())
 		{
