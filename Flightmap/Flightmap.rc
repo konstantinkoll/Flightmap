@@ -134,8 +134,8 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
-    IDS_SAMPLEITINERARIES   "Beispiele"
     IDS_RECENTFILES         "Zuletzt verwendete Flugpläne"
+    IDS_SAMPLEITINERARIES   "Beispiele"
     IDS_SAVECOPY            "Kopie des Flugplans speichern"
     IDS_EXPORT              "Den Flugplan exportieren"
     IDS_PRINTPREVIEW        "Flugplan in der Vorschau anzeigen und drucken"
@@ -154,6 +154,7 @@ BEGIN
     IDS_BACKGROUND_COLOR    "Einfarbig"
     IDS_EMPTYITINERARY      "(Neuer Flugplan)"
     IDS_SAMPLEITINERARY     "(Beispiel-Flugplan)"
+    IDS_NOTSAVED            "Möchten Sie die Änderungen speichern?"
 END
 
 STRINGTABLE 
@@ -342,8 +343,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
-    IDS_SAMPLEITINERARIES   "Sample itineraries"
     IDS_RECENTFILES         "Recently used itineraries"
+    IDS_SAMPLEITINERARIES   "Sample itineraries"
     IDS_SAVECOPY            "Save a copy of the itinerary"
     IDS_EXPORT              "Export the itinerary"
     IDS_PRINTPREVIEW        "Preview and print the itinerary"
@@ -362,6 +363,7 @@ BEGIN
     IDS_BACKGROUND_COLOR    "Solid color"
     IDS_EMPTYITINERARY      "(New itinerary)"
     IDS_SAMPLEITINERARY     "(Sample itinerary)"
+    IDS_NOTSAVED            "The itinerary has been modified. Save?"
 END
 
 STRINGTABLE 

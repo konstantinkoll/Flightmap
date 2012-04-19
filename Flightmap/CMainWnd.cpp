@@ -118,7 +118,10 @@ BOOL CMainWnd::CloseFile()
 	{
 		if (m_pItinerary->m_IsModified)
 		{
-			switch (MessageBox(_T("XX"), m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONQUESTION))
+			CString msg;
+			ENSURE(msg.LoadString(IDS_NOTSAVED));
+
+			switch (MessageBox(msg, m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONWARNING))
 			{
 			case IDCANCEL:
 				return FALSE;
@@ -355,10 +358,10 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_FILE_OPEN:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
+		pPopup->AddCaption(IDS_RECENTFILES);
 		pPopup->AddCaption(IDS_SAMPLEITINERARIES);
 		pPopup->AddCommand(IDM_FILE_NEWSAMPLE1, 1, CDMB_LARGE);
 		pPopup->AddCommand(IDM_FILE_NEWSAMPLE2, 1, CDMB_LARGE);
-		pPopup->AddCaption(IDS_RECENTFILES);
 		break;
 	case IDM_FILE_SAVEAS:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
@@ -513,7 +516,7 @@ void CMainWnd::OnFileNewSample2()
 	if (CloseFile())
 	{
 		m_pItinerary = new CItinerary();
-		m_pItinerary->NewSampleAtlantic();
+		m_pItinerary->NewSamplePacific();
 		UpdateWindowStatus();
 	}
 }

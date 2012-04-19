@@ -36,8 +36,8 @@
 #define IDB_MENUGLOBEVIEW_32            160
 #define IDB_MENUGLOBEITEM_16            161
 #define IDB_MENUGLOBEITEM_32            162
-#define IDS_SAMPLEITINERARIES           1000
-#define IDS_RECENTFILES                 1001
+#define IDS_RECENTFILES                 1000
+#define IDS_SAMPLEITINERARIES           1001
 #define IDS_SAVECOPY                    1002
 #define IDS_EXPORT                      1003
 #define IDS_PRINTPREVIEW                1004
@@ -56,6 +56,7 @@
 #define IDS_BACKGROUND_COLOR            1017
 #define IDS_EMPTYITINERARY              1018
 #define IDS_SAMPLEITINERARY             1019
+#define IDS_NOTSAVED                    1020
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
