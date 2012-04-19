@@ -435,7 +435,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 					break;
 				}
 
-				if ((rectLabel.left<0) || (rectLabel.top<0) || (rectLabel.right>=BGWIDTH) || (rectLabel.bottom>=BGHEIGHT))
+				if ((rectLabel.left<0) || (rectLabel.top<0) || (rectLabel.right>=Width) || (rectLabel.bottom>=Height))
 					continue;
 
 				for (UINT b=0; b<AirportCount; b++)
