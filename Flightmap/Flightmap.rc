@@ -167,6 +167,7 @@ BEGIN
     IDS_FILEFILTER_KML      "Google Earth Overlay"
     IDS_FILEFILTER_PNG      "Portable Network Graphics"
     IDS_FILEFILTER_TIFF     "TIFF"
+    IDS_FILEFILTER_TXT      "Textdatei"
 END
 
 STRINGTABLE 
@@ -376,6 +377,7 @@ BEGIN
     IDS_FILEFILTER_KML      "Google Earth Overlay"
     IDS_FILEFILTER_PNG      "Portable Network Graphics"
     IDS_FILEFILTER_TIFF     "TIFF"
+    IDS_FILEFILTER_TXT      "Text Document"
 END
 
 STRINGTABLE 

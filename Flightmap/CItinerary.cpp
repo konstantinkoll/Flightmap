@@ -377,6 +377,18 @@ void CItinerary::SaveAIRX(CString FileName)
 	}
 }
 
+CString CItinerary::Flight2Text(AIRX_Flight& Flight)
+{
+	return _T("X\n");
+}
+
+CString CItinerary::Flight2Text(UINT Idx)
+{
+	ASSERT(Idx<m_Flights.m_ItemCount);
+
+	return Flight2Text(m_Flights.m_Items[Idx]);
+}
+
 void CItinerary::ResetFlight(AIRX_Flight& Flight)
 {
 	ZeroMemory(&Flight, sizeof(AIRX_Flight));

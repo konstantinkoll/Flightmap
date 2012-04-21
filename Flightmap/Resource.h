@@ -66,6 +66,7 @@
 #define IDS_FILEFILTER_KML              1106
 #define IDS_FILEFILTER_PNG              1107
 #define IDS_FILEFILTER_TIFF             1108
+#define IDS_FILEFILTER_TXT              1109
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002

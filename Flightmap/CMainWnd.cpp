@@ -188,7 +188,7 @@ void CMainWnd::ExportCalendar(CString FileName)
 	}
 }
 
-BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL MergeMetro)
+BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, BOOL MergeMetro)
 {
 	CGoogleEarthFile f;
 
@@ -228,6 +228,37 @@ BOOL CMainWnd::ExportKML(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Merg
 	}
 }
 
+void CMainWnd::ExportText(CString FileName)
+{
+	ASSERT(m_pItinerary);
+
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
+	CStdioFile f;
+
+	if (!f.Open(FileName, CFile::modeCreate | CFile::modeWrite))
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
+	else
+	{
+		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
+
+		try
+		{
+			for (UINT a=0; a<Limit; a++)
+				f.WriteString(m_pItinerary->Flight2Text(a));
+
+			f.Close();
+		}
+		catch(CFileException ex)
+		{
+			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY);
+		}
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
@@ -245,6 +276,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_SAVE, OnFileSave)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
+	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
 	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -591,6 +623,18 @@ void CMainWnd::OnFileSaveICS()
 		ExportCalendar(dlg.GetPathName());
 }
 
+void CMainWnd::OnFileSaveTXT()
+{
+	ASSERT(m_pItinerary);
+
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TXT, _T("txt"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportText(dlg.GetPathName());
+}
+
 void CMainWnd::OnFileProperties()
 {
 	ASSERT(m_pItinerary);
@@ -865,7 +909,7 @@ void CMainWnd::OnGoogleEarthOpen()
 	srand(rand());
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
-	if (ExportKML(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro))
+	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro))
 		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
 }
 
@@ -922,5 +966,5 @@ void CMainWnd::OnGoogleEarthExport()
 
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportKML(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro);
+		ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro);
 }

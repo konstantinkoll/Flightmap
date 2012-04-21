@@ -22,7 +22,6 @@ public:
 
 	BOOL Create(CItinerary* pItinerary);
 
-	BOOL ExportKML(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL MergeMetro=FALSE);
 
 protected:
 	HICON m_hIcon;
@@ -35,6 +34,8 @@ protected:
 	CBitmap* GetMap(BOOL MergeMetro=FALSE);
 	void ExportMap(CString Filename, GUID guidFileType, BOOL MergeMetro=FALSE);
 	void ExportCalendar(CString FileName);
+	BOOL ExportGoogleEarth(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL MergeMetro=FALSE);
+	void ExportText(CString FileName);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
@@ -51,6 +52,7 @@ protected:
 	afx_msg void OnFileSave();
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnFileSaveICS();
+	afx_msg void OnFileSaveTXT();
 	afx_msg void OnFileProperties();
 	afx_msg void OnFileClose();
 	afx_msg void OnFileQuit();

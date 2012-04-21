@@ -91,6 +91,9 @@ public:
 	void OpenCSV(CString FileName);
 	void SaveAIRX(CString FileName);
 
+	CString Flight2Text(AIRX_Flight& Flight);
+	CString Flight2Text(UINT Idx);
+
 	void AddFlight();
 
 	AIRX_Metadata m_Metadata;
