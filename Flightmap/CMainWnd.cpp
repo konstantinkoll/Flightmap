@@ -141,7 +141,7 @@ BOOL CMainWnd::CloseFile()
 	return TRUE;
 }
 
-CKitchen* CMainWnd::GetKitchen(BOOL MergeMetro)
+CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 {
 	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_DisplayName : _T(""), MergeMetro);
 
@@ -152,17 +152,17 @@ CKitchen* CMainWnd::GetKitchen(BOOL MergeMetro)
 	return pKitchen;
 }
 
-CBitmap* CMainWnd::GetMap(BOOL MergeMetro)
+CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro)
 {
 	CMapFactory f(&theApp.m_MapSettings);
-	return f.RenderMap(GetKitchen(MergeMetro));
+	return f.RenderMap(GetKitchen(Selected, MergeMetro));
 }
 
-void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL MergeMetro)
+void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
 {
 	CWaitCursor csr;
 
-	theApp.SaveBitmap(GetMap(MergeMetro), Filename, guidFileType);
+	theApp.SaveBitmap(GetMap(Selected, MergeMetro), Filename, guidFileType);
 }
 
 void CMainWnd::ExportCalendar(CString FileName)
@@ -188,7 +188,7 @@ void CMainWnd::ExportCalendar(CString FileName)
 	}
 }
 
-BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, BOOL MergeMetro)
+BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Selected, BOOL MergeMetro)
 {
 	CGoogleEarthFile f;
 
@@ -200,7 +200,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, B
 	else
 	{
 		BOOL Res = FALSE;
-		CKitchen* pKitchen = GetKitchen(MergeMetro);
+		CKitchen* pKitchen = GetKitchen(Selected, MergeMetro);
 
 		try
 		{
@@ -277,6 +277,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
 	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
+	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveOther)
 	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -635,6 +636,47 @@ void CMainWnd::OnFileSaveTXT()
 		ExportText(dlg.GetPathName());
 }
 
+void CMainWnd::OnFileSaveOther()
+{
+	ASSERT(m_pItinerary);
+
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_AIRX, _T("airx"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TXT, _T("txt"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		CString Ext = dlg.GetFileExt().MakeLower();
+		if (Ext==_T("airx"))
+		{
+			m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
+			UpdateWindowStatus();
+		}
+		if (Ext==_T("bmp"))
+			ExportMap(dlg.GetPathName(), ImageFormatBMP);
+		if (Ext==_T("ics"))
+			ExportCalendar(dlg.GetPathName());
+		if (Ext==_T("kml"))
+			ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
+		if (Ext==_T("jpg"))
+			ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+		if (Ext==_T("png"))
+			ExportMap(dlg.GetPathName(), ImageFormatPNG);
+		if (Ext==_T("tif"))
+			ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+		if (Ext==_T("txt"))
+			ExportText(dlg.GetPathName());
+	}
+}
+
 void CMainWnd::OnFileProperties()
 {
 	ASSERT(m_pItinerary);
@@ -690,7 +732,7 @@ void CMainWnd::OnMapOpen()
 
 	CWaitCursor csr;
 
-	CBitmap* pBitmap = GetMap(theApp.m_MapMergeMetro);
+	CBitmap* pBitmap = GetMap(TRUE, theApp.m_MapMergeMetro);
 
 	CMapWnd* pFrame = new CMapWnd();
 	pFrame->Create();
@@ -818,7 +860,7 @@ void CMainWnd::OnMapExportBMP()
 
 	CFileDialog dlg(FALSE, _T("bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatBMP, theApp.m_MapMergeMetro);
+		ExportMap(dlg.GetPathName(), ImageFormatBMP, TRUE, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportJPEG()
@@ -830,7 +872,7 @@ void CMainWnd::OnMapExportJPEG()
 
 	CFileDialog dlg(FALSE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatJPEG, theApp.m_MapMergeMetro);
+		ExportMap(dlg.GetPathName(), ImageFormatJPEG, TRUE, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportPNG()
@@ -842,7 +884,7 @@ void CMainWnd::OnMapExportPNG()
 
 	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatPNG, theApp.m_MapMergeMetro);
+		ExportMap(dlg.GetPathName(), ImageFormatPNG, TRUE, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportTIFF()
@@ -854,7 +896,7 @@ void CMainWnd::OnMapExportTIFF()
 
 	CFileDialog dlg(FALSE, _T("tif"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatTIFF, theApp.m_MapMergeMetro);
+		ExportMap(dlg.GetPathName(), ImageFormatTIFF, TRUE, theApp.m_MapMergeMetro);
 }
 
 
@@ -865,7 +907,7 @@ void CMainWnd::OnGlobeOpen()
 	CGlobeWnd* pFrame = new CGlobeWnd();
 
 	pFrame->Create();
-	pFrame->SetFlights(GetKitchen(theApp.m_GlobeMergeMetro));
+	pFrame->SetFlights(GetKitchen(TRUE, theApp.m_GlobeMergeMetro));
 	pFrame->ShowWindow(SW_SHOW);
 }
 
