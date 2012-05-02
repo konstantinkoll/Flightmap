@@ -172,6 +172,33 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_COLUMN0             "Von"
+    IDS_COLUMN1             "Abflugzeit"
+    IDS_COLUMN2             "Abfluggate"
+    IDS_COLUMN3             "Nach"
+    IDS_COLUMN4             "Ankunftszeit"
+    IDS_COLUMN5             "Ankunftsgate"
+    IDS_COLUMN6             "Entfernung"
+    IDS_COLUMN7             "Fluglinie"
+    IDS_COLUMN8             "Flugnummer"
+    IDS_COLUMN9             "Codeshares"
+    IDS_COLUMN10            "Equipment"
+    IDS_COLUMN11            "Registrierung"
+    IDS_COLUMN12            "Flugzeugname"
+    IDS_COLUMN13            "Klasse"
+    IDS_COLUMN14            "Sitz"
+    IDS_COLUMN15            "Farbe"
+    IDS_COLUMN16            "Buchungscode"
+    IDS_COLUMN17            "Preis"
+    IDS_COLUMN18            "Prämienmeilen"
+    IDS_COLUMN19            "Statusmeilen"
+    IDS_COLUMN20            "Attribute"
+    IDS_COLUMN21            "Bewertung"
+    IDS_COLUMN22            "Kommentar"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE                "&Datei"
     IDM_EDIT                "&Bearbeiten"
     IDM_MAP                 "&Karte"
@@ -378,6 +405,33 @@ BEGIN
     IDS_FILEFILTER_PNG      "Portable Network Graphics"
     IDS_FILEFILTER_TIFF     "TIFF"
     IDS_FILEFILTER_TXT      "Text Document"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_COLUMN0             "From"
+    IDS_COLUMN1             "Dept. time"
+    IDS_COLUMN2             "Dept. gate"
+    IDS_COLUMN3             "To"
+    IDS_COLUMN4             "Arr. time"
+    IDS_COLUMN5             "Arr. gate"
+    IDS_COLUMN6             "Distance"
+    IDS_COLUMN7             "Airline"
+    IDS_COLUMN8             "Flight"
+    IDS_COLUMN9             "Codeshares"
+    IDS_COLUMN10            "Equipment"
+    IDS_COLUMN11            "Registration"
+    IDS_COLUMN12            "Aircraft name"
+    IDS_COLUMN13            "Class"
+    IDS_COLUMN14            "Seat"
+    IDS_COLUMN15            "Color"
+    IDS_COLUMN16            "Etix code"
+    IDS_COLUMN17            "Fare"
+    IDS_COLUMN18            "Award miles"
+    IDS_COLUMN19            "Status miles"
+    IDS_COLUMN20            "Flags"
+    IDS_COLUMN21            "Rating"
+    IDS_COLUMN22            "Comments"
 END
 
 STRINGTABLE 
