@@ -49,6 +49,7 @@ protected:
 	afx_msg void OnFileNewSample1();
 	afx_msg void OnFileNewSample2();
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileOpenRecent(UINT CmdID);
 	afx_msg void OnFileSave();
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnFileSaveICS();

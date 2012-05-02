@@ -111,6 +111,7 @@
 #define IDM_FILE_PREPARE_ATTACHMENTS    3018
 #define IDM_FILE_CLOSE                  3019
 #define IDM_FILE_QUIT                   3020
+#define IDM_FILE_RECENT                 3050
 #define IDM_EDIT                        3100
 #define IDM_EDIT_CUT                    3101
 #define IDM_EDIT_COPY                   3102

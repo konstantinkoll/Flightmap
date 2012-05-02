@@ -273,6 +273,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE2, OnFileNewSample2)
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
+	ON_COMMAND_RANGE(IDM_FILE_RECENT, IDM_FILE_RECENT+9, OnFileOpenRecent)
 	ON_COMMAND(IDM_FILE_SAVE, OnFileSave)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
@@ -282,6 +283,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_RECENT, IDM_FILE_RECENT+9, OnUpdateFileCommands)
 
 	ON_COMMAND(IDM_MAP_OPEN, OnMapOpen)
 	ON_COMMAND(IDM_MAP_MERGEMETRO, OnMapMergeMetro)
@@ -391,7 +393,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_FILE_OPEN:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
-		pPopup->AddCaption(IDS_RECENTFILES);
+		theApp.AddRecentList(pPopup);
 		pPopup->AddCaption(IDS_SAMPLEITINERARIES);
 		pPopup->AddCommand(IDM_FILE_NEWSAMPLE1, 1, CDMB_LARGE);
 		pPopup->AddCommand(IDM_FILE_NEWSAMPLE2, 1, CDMB_LARGE);
@@ -577,6 +579,45 @@ void CMainWnd::OnFileOpen()
 			m_pItinerary->OpenCSV(dlg.GetPathName());
 
 		UpdateWindowStatus();
+	}
+}
+
+void CMainWnd::OnFileOpenRecent(UINT CmdID)
+{
+	ASSERT(CmdID>=IDM_FILE_RECENT);
+
+	if (!CloseFile())
+		return;
+
+	CmdID -= IDM_FILE_RECENT;
+
+	UINT a=0;
+	for (POSITION p=theApp.m_RecentFiles.GetHeadPosition(); p; a++)
+	{
+		CString FileName = theApp.m_RecentFiles.GetNext(p);
+		if (CmdID==a)
+		{
+			m_pItinerary = new CItinerary();
+
+			CString Ext = FileName;
+			Ext.MakeLower();
+			INT pos = Ext.ReverseFind(L'\\');
+			if (pos!=-1)
+				Ext.Delete(0, pos+1);
+			pos = Ext.ReverseFind(L'.');
+			if (pos!=-1)
+				Ext.Delete(0, pos+1);
+
+			if (Ext==_T("airx"))
+				m_pItinerary->OpenAIRX(FileName);
+			if (Ext==_T("air"))
+				m_pItinerary->OpenAIR(FileName);
+			if (Ext==_T("csv"))
+				m_pItinerary->OpenCSV(FileName);
+
+			UpdateWindowStatus();
+			break;
+		}
 	}
 }
 

@@ -100,6 +100,16 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.IATAInnerColor = GetInt(_T("MapIATAInnerColor"), 0xFFFFFF);
 	m_MapSettings.IATAOuterColor = GetInt(_T("MapIATAOuterColor"), 0x000000);
 
+	for (UINT a=0; a<10; a++)
+	{
+		CString tmpStr;
+		tmpStr.Format(_T("RecentFile%d"), a);
+		
+		CString FileName = GetString(tmpStr);
+		if (!FileName.IsEmpty())
+			m_RecentFiles.AddTail(FileName);
+	}
+
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
@@ -179,6 +189,14 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapShowIATACodes"), m_MapSettings.ShowIATACodes);
 		WriteInt(_T("MapIATAInnerColor"), m_MapSettings.IATAInnerColor);
 		WriteInt(_T("MapIATAOuterColor"), m_MapSettings.IATAOuterColor);
+
+		UINT a=0;
+		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)
+		{
+			CString tmpStr;
+			tmpStr.Format(_T("RecentFile%d"), a);
+			WriteString(tmpStr, m_RecentFiles.GetNext(p));
+		}
 	}
 
 	return FMApplication::ExitInstance();
@@ -219,6 +237,30 @@ void CFlightmapApp::Broadcast(UINT message)
 {
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 		m_MainFrames.GetNext(p)->PostMessage(message);
+}
+
+void CFlightmapApp::AddToRecentList(CString FileName)
+{
+	for (POSITION p=m_RecentFiles.GetHeadPosition(); p; )
+	{
+		POSITION pl = p;
+		if (m_RecentFiles.GetNext(p)==FileName)
+			m_RecentFiles.RemoveAt(pl);
+	}
+
+	m_RecentFiles.AddHead(FileName);
+}
+
+void CFlightmapApp::AddRecentList(CDialogMenuPopup* pPopup)
+{
+	if (!m_RecentFiles.IsEmpty())
+	{
+		pPopup->AddCaption(IDS_RECENTFILES);
+
+		UINT a=0;
+		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)
+			pPopup->AddFile(IDM_FILE_RECENT+a, m_RecentFiles.GetNext(p));
+	}
 }
 
 void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)

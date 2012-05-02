@@ -58,10 +58,13 @@ public:
 	void KillFrame(CMainWindow* pVictim);
 	void Quit();
 	void Broadcast(UINT message);
+	void AddToRecentList(CString FileName);
+	void AddRecentList(CDialogMenuPopup* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
 
 	CList<CMainWindow*> m_MainFrames;
+	CList<CString> m_RecentFiles;
 	CString m_PathGoogleEarth;
 
 	BOOL m_UseStatuteMiles;

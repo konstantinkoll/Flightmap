@@ -5,6 +5,7 @@
 #pragma once
 #include "stdafx.h"
 #include "CItinerary.h"
+#include "Flightmap.h"
 
 
 void ScanDate(LPCWSTR str, FILETIME& ft)
@@ -205,7 +206,9 @@ void CItinerary::OpenAIRX(CString FileName)
 	CFile f;
 	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
 	{
+		m_FileName = FileName;
 		SetDisplayName(FileName);
+		theApp.AddToRecentList(FileName);
 
 		try
 		{
@@ -272,6 +275,7 @@ void CItinerary::OpenAIR(CString FileName)
 	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
 	{
 		SetDisplayName(FileName);
+		theApp.AddToRecentList(FileName);
 
 		try
 		{
@@ -327,6 +331,23 @@ void CItinerary::OpenCSV(CString FileName)
 {
 	ASSERT(!m_IsOpen);
 
+	CFile f;
+	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
+	{
+		SetDisplayName(FileName);
+		theApp.AddToRecentList(FileName);
+
+		try
+		{
+			f.Close();
+		}
+		catch(CFileException ex)
+		{
+			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY);
+		}
+	}
+
 }
 
 void CItinerary::SaveAIRX(CString FileName)
@@ -336,6 +357,7 @@ void CItinerary::SaveAIRX(CString FileName)
 	{
 		m_FileName = FileName;
 		SetDisplayName(FileName);
+		theApp.AddToRecentList(FileName);
 
 		try
 		{

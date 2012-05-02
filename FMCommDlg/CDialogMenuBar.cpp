@@ -1940,7 +1940,8 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_CloseOnExecute = CloseOnExecute;
 	m_pSubmenu = NULL;
 
-	ENSURE(m_Caption.LoadString(CmdID));
+	if (CmdID)
+		ENSURE(m_Caption.LoadString(CmdID));
 
 	INT pos = m_Caption.Find(L'\n');
 	if (pos!=-1)
@@ -2285,9 +2286,11 @@ void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOO
 //
 
 CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CString Path, UINT PreferredSize)
-	: CDialogMenuFileType(pParentPopup, CmdID, Path, PreferredSize, TRUE)
+	: CDialogMenuFileType(pParentPopup, 0, Path, PreferredSize, TRUE)
 {
 	// Filename
+	m_CmdID = CmdID;
+
 	m_Caption = Path;
 	INT pos = Path.ReverseFind(L'\\');
 	if (pos!=-1)
