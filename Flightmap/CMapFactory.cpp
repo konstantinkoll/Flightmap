@@ -238,7 +238,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Tesselated routes
 			for (UINT a=0; a<RouteCount; a++)
 			{
-				CColor col(RouteData[a]->Route.Color==(COLORREF)-1 ? m_Settings.RouteColor : RouteData[a]->Route.Color);
+				CColor col(((RouteData[a]->Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : RouteData[a]->Route.Color);
 				Pen pen(col, (REAL)(3.2*Upscale));
 				const FlightSegments* pSegments = RouteData[a];
 
@@ -314,7 +314,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Straight routes
 			if (m_Settings.StraightLines)
 			{
-				CColor col(pPair2->value.Color==(COLORREF)-1 ? m_Settings.RouteColor : pPair2->value.Color);
+				CColor col(((pPair2->value.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : pPair2->value.Color);
 				Pen pen(col, (REAL)(3.2*Upscale));
 
 				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale);
