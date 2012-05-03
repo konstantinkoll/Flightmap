@@ -112,6 +112,31 @@ void CMainWnd::UpdateWindowStatus()
 	SetFocus();
 }
 
+void CMainWnd::Open(CString FileName)
+{
+	ASSERT(m_pItinerary==NULL);
+
+	m_pItinerary = new CItinerary();
+
+	CString Ext = FileName;
+	Ext.MakeLower();
+	INT pos = Ext.ReverseFind(L'\\');
+	if (pos!=-1)
+		Ext.Delete(0, pos+1);
+	pos = Ext.ReverseFind(L'.');
+	if (pos!=-1)
+		Ext.Delete(0, pos+1);
+
+	if (Ext==_T("airx"))
+		m_pItinerary->OpenAIRX(FileName);
+	if (Ext==_T("air"))
+		m_pItinerary->OpenAIR(FileName);
+	if (Ext==_T("csv"))
+		m_pItinerary->OpenCSV(FileName);
+
+	UpdateWindowStatus();
+}
+
 BOOL CMainWnd::CloseFile()
 {
 	if (m_pItinerary)
@@ -568,17 +593,7 @@ void CMainWnd::OnFileOpen()
 		if (!CloseFile())
 			return;
 
-		m_pItinerary = new CItinerary();
-
-		CString Ext = dlg.GetFileExt().MakeLower();
-		if (Ext==_T("airx"))
-			m_pItinerary->OpenAIRX(dlg.GetPathName());
-		if (Ext==_T("air"))
-			m_pItinerary->OpenAIR(dlg.GetPathName());
-		if (Ext==_T("csv"))
-			m_pItinerary->OpenCSV(dlg.GetPathName());
-
-		UpdateWindowStatus();
+		Open(dlg.GetPathName());
 	}
 }
 
@@ -597,25 +612,7 @@ void CMainWnd::OnFileOpenRecent(UINT CmdID)
 		CString FileName = theApp.m_RecentFiles.GetNext(p);
 		if (CmdID==a)
 		{
-			m_pItinerary = new CItinerary();
-
-			CString Ext = FileName;
-			Ext.MakeLower();
-			INT pos = Ext.ReverseFind(L'\\');
-			if (pos!=-1)
-				Ext.Delete(0, pos+1);
-			pos = Ext.ReverseFind(L'.');
-			if (pos!=-1)
-				Ext.Delete(0, pos+1);
-
-			if (Ext==_T("airx"))
-				m_pItinerary->OpenAIRX(FileName);
-			if (Ext==_T("air"))
-				m_pItinerary->OpenAIR(FileName);
-			if (Ext==_T("csv"))
-				m_pItinerary->OpenCSV(FileName);
-
-			UpdateWindowStatus();
+			Open(FileName);
 			break;
 		}
 	}

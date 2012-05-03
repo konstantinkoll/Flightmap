@@ -29,6 +29,7 @@ protected:
 	CItinerary* m_pItinerary;
 
 	void UpdateWindowStatus();
+	void Open(CString FileName);
 	BOOL CloseFile();
 	CKitchen* GetKitchen(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
