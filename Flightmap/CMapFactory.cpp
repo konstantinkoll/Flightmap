@@ -435,6 +435,15 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 					break;
 				}
 
+				if (rectLabel.left<0)
+					rectLabel.OffsetRect(-rectLabel.left, 0);
+				if (rectLabel.top<0)
+					rectLabel.OffsetRect(0, -rectLabel.top);
+				if (rectLabel.right>=Width)
+					rectLabel.OffsetRect(-(rectLabel.right-Width), 0);
+				if (rectLabel.bottom>=Height)
+					rectLabel.OffsetRect(0, -(rectLabel.bottom-Height));
+
 				if ((rectLabel.left<0) || (rectLabel.top<0) || (rectLabel.right>=Width) || (rectLabel.bottom>=Height))
 					continue;
 
