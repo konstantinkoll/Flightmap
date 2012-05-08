@@ -339,6 +339,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CImageListTransparent.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CMainWindow.cpp"
 				>
 			</File>
@@ -356,6 +360,10 @@
 			</File>
 			<File
 				RelativePath=".\CStripCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CTooltipHeader.cpp"
 				>
 			</File>
 			<File
@@ -461,6 +469,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CImageListTransparent.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CMainWindow.h"
 				>
 			</File>
@@ -478,6 +490,10 @@
 			</File>
 			<File
 				RelativePath=".\CStripCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTooltipHeader.h"
 				>
 			</File>
 			<File
@@ -656,6 +672,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Strip.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Table_Tiny.ico"
 				>
 			</File>
 			<File

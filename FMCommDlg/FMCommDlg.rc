@@ -73,6 +73,7 @@ IDD_3DSETTINGS          ICON                    "res\\3DSettings_Tiny.ico"
 IDD_CHOOSECOLOR         ICON                    "res\\ChooseColor_Tiny.ico"
 IDD_RESOLUTION          ICON                    "res\\Resolution_Tiny.ico"
 IDD_PROPERTIES          ICON                    "res\\FileProperties_Tiny.ico"
+IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -312,6 +313,22 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,308,108,50,14,WS_GROUP
 END
 
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Details auswählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
+    LTEXT           "Wählen Sie die anzuzeigenden Spalten aus:",IDC_STATIC,14,17,183,9
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
+    PUSHBUTTON      "Nach &oben",IDC_MOVEUP,137,27,58,14,WS_GROUP
+    PUSHBUTTON      "Nach &unten",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
+    PUSHBUTTON      "&Alle wählen",IDC_CHECKALL,137,70,58,14,WS_GROUP
+    PUSHBUTTON      "&Keine wählen",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,93,255,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,151,255,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -407,6 +424,14 @@ BEGIN
         RIGHTMARGIN, 358
         TOPMARGIN, 7
         BOTTOMMARGIN, 123
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -739,6 +764,22 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,298,108,50,14,WS_GROUP
 END
 
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose details"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
+    LTEXT           "Choose the columns to display:",IDC_STATIC,14,17,183,9
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
+    PUSHBUTTON      "Move &up",IDC_MOVEUP,137,27,58,14,WS_GROUP
+    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,137,70,58,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,93,255,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,151,255,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -835,6 +876,14 @@ BEGIN
         RIGHTMARGIN, 348
         TOPMARGIN, 7
         BOTTOMMARGIN, 122
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
     END
 END
 #endif    // APSTUDIO_INVOKED

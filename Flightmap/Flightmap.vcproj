@@ -396,6 +396,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChooseDetailsDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CItinerary.cpp"
 				>
 			</File>
@@ -507,6 +511,10 @@
 			</File>
 			<File
 				RelativePath=".\CGoogleEarthFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseDetailsDlg.h"
 				>
 			</File>
 			<File

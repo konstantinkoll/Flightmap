@@ -138,6 +138,12 @@
 #define IDC_AUTHOR                      21802
 #define IDC_KEYWORDS                    21803
 #define IDC_COMMENTS                    21804
+#define IDD_CHOOSEDETAILS               21900
+#define IDC_VIEWATTRIBUTES              21901
+#define IDC_CHECKALL                    21902
+#define IDC_UNCHECKALL                  21903
+#define IDC_MOVEUP                      21904
+#define IDC_MOVEDOWN                    21905
 
 // Next default values for new objects
 // 

@@ -3,8 +3,46 @@
 //
 
 #pragma once
-#include "Flightmap.h"
+#include "FMCommDlg.h"
+#include "Resource.h"
 
+
+// Attributes
+//
+
+#define FMAttributeCount 23
+
+struct FMAttribute
+{
+	UINT nNameID;
+	UINT RecommendedWidth;
+};
+
+static const FMAttribute FMAttributes[FMAttributeCount] = {
+	{ IDS_COLUMN0, 100 },
+	{ IDS_COLUMN1, 100 },
+	{ IDS_COLUMN2, 100 },
+	{ IDS_COLUMN3, 100 },
+	{ IDS_COLUMN4, 100 },
+	{ IDS_COLUMN5, 100 },
+	{ IDS_COLUMN6, 100 },
+	{ IDS_COLUMN7, 100 },
+	{ IDS_COLUMN8, 100 },
+	{ IDS_COLUMN9, 100 },
+	{ IDS_COLUMN10, 100 },
+	{ IDS_COLUMN11, 100 },
+	{ IDS_COLUMN12, 100 },
+	{ IDS_COLUMN13, 100 },
+	{ IDS_COLUMN14, 100 },
+	{ IDS_COLUMN15, 100 },
+	{ IDS_COLUMN16, 100 },
+	{ IDS_COLUMN17, 100 },
+	{ IDS_COLUMN18, 100 },
+	{ IDS_COLUMN19, 100 },
+	{ IDS_COLUMN20, 100 },
+	{ IDS_COLUMN21, 100 },
+	{ IDS_COLUMN22, 100 }
+};
 
 // CItinerary
 //

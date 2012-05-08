@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CItinerary.h"
 #include "Database.h"
 #include "FMCommDlg.h"
 #include "resource.h"
