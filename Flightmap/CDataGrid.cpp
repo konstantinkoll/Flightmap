@@ -17,7 +17,6 @@
 
 #define BORDER       3
 #define MARGIN       4
-#define GUTTER       13
 
 CDataGrid::CDataGrid()
 {
@@ -140,7 +139,7 @@ void CDataGrid::AdjustLayout()
 		pParentFolder->Release();
 	}
 
-	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-5, y, x+m_ViewParameters.ColumnWidth[m_ViewParemeters.ColumnOrder[item.x]], y+m_RowHeight);
+	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+BORDER+2*MARGIN-5, y, x+m_ViewParameters.ColumnWidth[m_ViewParemeters.ColumnOrder[item.x]], y+m_RowHeight);
 
 	p_Edit = new CEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
@@ -223,7 +222,7 @@ void CDataGrid::AdjustScrollbars()
 	GetWindowRect(&rect);
 
 	INT ScrollHeight = m_Rows*m_RowHeight;
-	INT ScrollWidth = (m_Cols<FMAttributeCount) ? GUTTER : 0;
+	INT ScrollWidth = 0;
 	for (UINT a=0; a<FMAttributeCount; a++)
 		ScrollWidth += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
@@ -332,7 +331,7 @@ void CDataGrid::AutosizeColumn(UINT col)
 		if (m_Tree[MAKEPOS(row, col)].pItem)
 			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);*/
 
-	//Width += GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN;
+	//Width += 2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN;
 	/*m_ViewParameters.ColumnWidth[col] = min(OnlyEnlarge ? max(Width, m_ViewParameters.ColumnWidth[col]) : Width, MAXWIDTH);*/
 }
 
@@ -549,8 +548,6 @@ void CDataGrid::OnPaint()
 			CRect rectIntersect;
 			if (rectIntersect.IntersectRect(rectItem, rectUpdate))
 			{
-				rectItem.left += GUTTER;
-
 				BOOL Hot = (m_HotItem.x==(INT)col) && (m_HotItem.y==(INT)row);
 				BOOL Selected = (m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row);
 
@@ -593,7 +590,7 @@ void CDataGrid::OnPaint()
 					rectItem.left += m_IconSize.cx+MARGIN;
 					rectItem.right -= BORDER;
 
-					CRect rectButton(x+GUTTER+BORDER, y+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, y+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
+					CRect rectButton(x+BORDER, y+(m_RowHeight-m_CheckboxSize.cy)/2, x+BORDER+m_CheckboxSize.cx, y+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
 					if (hThemeButton)
 					{
 						INT uiStyle;
@@ -625,12 +622,12 @@ void CDataGrid::OnPaint()
 
 					dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-					dc.MoveTo(x+((curCell->Flags & CF_ISSIBLING) ? GUTTER/2 : 0), y+m_RowHeight/2);
-					dc.LineTo(x+GUTTER+BORDER-1, y+m_RowHeight/2);
+					dc.MoveTo(x, y+m_RowHeight/2);
+					dc.LineTo(x+BORDER-1, y+m_RowHeight/2);
 
 					if (curCell->Flags & (CF_HASCHILDREN | CF_CANEXPAND))
 					{
-						INT right = x+GUTTER+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
+						INT right = x+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
 						if (right<x+m_ViewParameters.ColumnWidth[col])
 						{
 							dc.MoveTo(x+m_ViewParameters.ColumnWidth[col], y+m_RowHeight/2);
@@ -641,14 +638,14 @@ void CDataGrid::OnPaint()
 
 				if (curCell->Flags & CF_HASSIBLINGS)
 				{
-					dc.MoveTo(x+GUTTER/2, y+m_RowHeight/2);
-					dc.LineTo(x+GUTTER/2, y+m_RowHeight);
+					dc.MoveTo(x/2, y+m_RowHeight/2);
+					dc.LineTo(x/2, y+m_RowHeight);
 				}
 
 				if (curCell->Flags & CF_ISSIBLING)
 				{
-					dc.MoveTo(x+GUTTER/2, y);
-					dc.LineTo(x+GUTTER/2, y+m_RowHeight/2);
+					dc.MoveTo(x/2, y);
+					dc.LineTo(x/2, y+m_RowHeight/2);
 				}
 
 				if (col)
@@ -1209,11 +1206,11 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
 
 		CDialogMenuPopup* pPopup = new CDialogMenuPopup();
-		pPopup->Create(this);
-		pPopup->AddCommand(IDM_DETAILS_AUTOSIZEALL);
+		pPopup->Create(this, IDB_MENUDETAILS_32, IDB_MENUDETAILS_16);
+		pPopup->AddCommand(IDM_DETAILS_AUTOSIZEALL, 0);
 		pPopup->AddCommand(IDM_DETAILS_AUTOSIZE);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_DETAILS_CHOOSE);
+		pPopup->AddCommand(IDM_DETAILS_CHOOSE, 1);
 
 		pPopup->Track(point);
 
@@ -1232,7 +1229,7 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		item = m_SelectedItem;
 
-		point.x = GUTTER;
+		point.x = 0;
 		for (INT a=0; a<item.x; a++)
 			point.x += m_ViewParameters.ColumnWidth[a];
 		point.y = (item.y+1)*m_RowHeight+m_HeaderHeight+1;

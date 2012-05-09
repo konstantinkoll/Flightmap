@@ -640,6 +640,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuDetails_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuDetails_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\MenuEdit_16.bmp"
 				>
 			</File>

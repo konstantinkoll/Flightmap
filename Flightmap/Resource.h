@@ -36,6 +36,8 @@
 #define IDB_MENUGLOBEVIEW_32            160
 #define IDB_MENUGLOBEITEM_16            161
 #define IDB_MENUGLOBEITEM_32            162
+#define IDB_MENUDETAILS_16              163
+#define IDB_MENUDETAILS_32              164
 #define IDS_RECENTFILES                 1000
 #define IDS_SAMPLEITINERARIES           1001
 #define IDS_SAVECOPY                    1002

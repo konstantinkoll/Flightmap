@@ -51,6 +51,8 @@ IDB_MENUGLOBEVIEW_16    BITMAP                  "res\\MenuGlobeView_16.bmp"
 IDB_MENUGLOBEVIEW_32    BITMAP                  "res\\MenuGlobeView_32.bmp"
 IDB_MENUGLOBEITEM_16    BITMAP                  "res\\MenuGlobeItem_16.bmp"
 IDB_MENUGLOBEITEM_32    BITMAP                  "res\\MenuGlobeItem_32.bmp"
+IDB_MENUDETAILS_16      BITMAP                  "res\\MenuDetails_16.bmp"
+IDB_MENUDETAILS_32      BITMAP                  "res\\MenuDetails_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
