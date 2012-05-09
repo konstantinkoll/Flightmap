@@ -23,7 +23,6 @@ public:
 	~CDataGrid();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void AdjustLayout();
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 
 protected:
@@ -48,6 +47,8 @@ protected:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	void AdjustLayout();
+	void AdjustHeader();
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* item);

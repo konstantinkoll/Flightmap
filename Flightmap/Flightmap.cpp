@@ -103,7 +103,7 @@ BOOL CFlightmapApp::InitInstance()
 	for (UINT a=0; a<FMAttributeCount; a++)
 	{
 		m_ViewParameters.ColumnOrder[a] = a;
-		m_ViewParameters.ColumnWidth[a] = 150;
+		m_ViewParameters.ColumnWidth[a] = FMAttributes[a].DefaultVisible ? FMAttributes[a].RecommendedWidth : 0;
 	}
 	GetBinary(_T("ColumnOrder"), &m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
 	GetBinary(_T("ColumnWidth"), &m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));

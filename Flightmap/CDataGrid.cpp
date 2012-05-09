@@ -103,6 +103,53 @@ void CDataGrid::AdjustLayout()
 	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
+void CDataGrid::AdjustHeader()
+{
+	m_wndHeader.SetRedraw(FALSE);
+	m_IgnoreHeaderItemChange = TRUE;
+
+	VERIFY(m_wndHeader.SetOrderArray(FMAttributeCount, m_ViewParameters.ColumnOrder));
+
+	// Width
+	for (UINT a=0; a<FMAttributeCount; a++)
+	{
+		HDITEM HdItem;
+		HdItem.mask = HDI_WIDTH;
+		HdItem.cxy = m_ViewParameters.ColumnWidth[a];
+
+		if (HdItem.cxy)
+/*			if (theApp.m_Attributes[a]->Type==LFTypeRating)
+			{
+				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
+			}
+			else*/
+			if (HdItem.cxy<MINWIDTH)
+				m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINWIDTH;
+
+		m_wndHeader.SetItem(a, &HdItem);
+	}
+
+/*	// Sort indicator
+	HDITEM hdi;
+	hdi.mask = HDI_FORMAT;
+
+	if ((m_HeaderItemSort!=(INT)p_ViewParameters->SortBy) && (m_HeaderItemSort!=-1))
+	{
+		hdi.fmt = 0;
+		m_wndHeader.SetItem(m_HeaderItemSort, &hdi);
+	}
+
+	hdi.fmt = p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
+	m_wndHeader.SetItem(p_ViewParameters->SortBy, &hdi);
+
+	m_HeaderItemSort = p_ViewParameters->SortBy;*/
+
+	m_wndHeader.SetRedraw(TRUE);
+	m_wndHeader.Invalidate();
+
+	m_IgnoreHeaderItemChange = FALSE;
+}
+
 /*void CDataGrid::EditLabel(CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
@@ -1258,7 +1305,7 @@ void CDataGrid::OnAutosizeAll()
 		if (m_ViewParameters.ColumnWidth[a])
 			AutosizeColumn(a);
 
-	//AdjustHeader(TRUE);
+	AdjustHeader();
 	AdjustLayout();
 }
 
@@ -1267,7 +1314,8 @@ void CDataGrid::OnAutosize()
 	if (m_HeaderItemClicked!=-1)
 	{
 		AutosizeColumn(m_HeaderItemClicked);
-		//AdjustHeader(TRUE);
+
+		AdjustHeader();
 		AdjustLayout();
 	}
 }
@@ -1279,7 +1327,7 @@ void CDataGrid::OnChooseDetails()
 	{
 		theApp.m_ViewParameters = m_ViewParameters;
 
-//		AdjustHeader(TRUE);
+		AdjustHeader();
 		AdjustLayout();
 	}
 }

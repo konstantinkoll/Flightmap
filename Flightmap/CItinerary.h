@@ -7,44 +7,7 @@
 #include "Resource.h"
 
 
-// Attributes
-//
-
-#define FMAttributeCount 23
-
-struct FMAttribute
-{
-	UINT nNameID;
-	UINT RecommendedWidth;
-};
-
-static const FMAttribute FMAttributes[FMAttributeCount] = {
-	{ IDS_COLUMN0, 100 },
-	{ IDS_COLUMN1, 100 },
-	{ IDS_COLUMN2, 100 },
-	{ IDS_COLUMN3, 100 },
-	{ IDS_COLUMN4, 100 },
-	{ IDS_COLUMN5, 100 },
-	{ IDS_COLUMN6, 100 },
-	{ IDS_COLUMN7, 100 },
-	{ IDS_COLUMN8, 100 },
-	{ IDS_COLUMN9, 100 },
-	{ IDS_COLUMN10, 100 },
-	{ IDS_COLUMN11, 100 },
-	{ IDS_COLUMN12, 100 },
-	{ IDS_COLUMN13, 100 },
-	{ IDS_COLUMN14, 100 },
-	{ IDS_COLUMN15, 100 },
-	{ IDS_COLUMN16, 100 },
-	{ IDS_COLUMN17, 100 },
-	{ IDS_COLUMN18, 100 },
-	{ IDS_COLUMN19, 100 },
-	{ IDS_COLUMN20, 100 },
-	{ IDS_COLUMN21, 100 },
-	{ IDS_COLUMN22, 100 }
-};
-
-// CItinerary
+// AIRX format
 //
 
 struct AIRX_Header
@@ -104,7 +67,7 @@ struct AIRX_Flight
 	UINT MilesAward;
 	UINT MilesStatus;
 	WCHAR Fare[16];
-	WCHAR Codeshare[64];
+	WCHAR Codeshares[64];
 };
 
 struct AIRX_Attachment
@@ -115,6 +78,52 @@ struct AIRX_Attachment
 	UINT Size;
 	LPVOID pData;
 };
+
+
+// Attributes
+//
+
+#define FMAttributeCount 23
+
+struct FMAttribute
+{
+	UINT nNameID;
+	UINT Offset;
+	UINT DataParameter;
+	UINT RecommendedWidth;
+	BOOL DefaultVisible;
+	BOOL Sortable;
+};
+
+static const FMAttribute FMAttributes[FMAttributeCount] = {
+	{ IDS_COLUMN0, offsetof(AIRX_Flight, From.Code), 4, 100, TRUE, TRUE },			// From
+	{ IDS_COLUMN1, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE },			// Departure time
+	{ IDS_COLUMN2, offsetof(AIRX_Flight, From.Gate), 8, 100, FALSE, TRUE },			// Departure gate
+	{ IDS_COLUMN3, offsetof(AIRX_Flight, To.Code), 4, 100, TRUE, TRUE },			// To
+	{ IDS_COLUMN4, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE },			// Arrival time
+	{ IDS_COLUMN5, offsetof(AIRX_Flight, To.Gate), 8, 100, FALSE, TRUE },			// Arrival gate
+	{ IDS_COLUMN6, offsetof(AIRX_Flight, DistanceNM), 0, 100, TRUE, TRUE },			// Distance
+	{ IDS_COLUMN7, offsetof(AIRX_Flight, Carrier), 64, 100, TRUE, TRUE },			// Carrier
+	{ IDS_COLUMN8, offsetof(AIRX_Flight, FlightNo), 8, 100, FALSE, TRUE },			// Flight no
+	{ IDS_COLUMN9, offsetof(AIRX_Flight, Codeshares), 64, 100, FALSE, FALSE },		// Codeshares
+	{ IDS_COLUMN10, offsetof(AIRX_Flight, Equipment), 64, 100, TRUE, TRUE },		// Equipment
+	{ IDS_COLUMN11, offsetof(AIRX_Flight, Registration), 16, 100, FALSE, TRUE },	// Registration
+	{ IDS_COLUMN12, offsetof(AIRX_Flight, Name), 64, 100, FALSE, TRUE },			// Name
+	{ IDS_COLUMN13, offsetof(AIRX_Flight, Class), 0, 100, TRUE, TRUE },				// Class
+	{ IDS_COLUMN14, offsetof(AIRX_Flight, Seat), 4, 100, TRUE, TRUE },				// Seat
+	{ IDS_COLUMN15, offsetof(AIRX_Flight, Color), 0, 100, TRUE, FALSE },			// Color
+	{ IDS_COLUMN16, offsetof(AIRX_Flight, EtixCode), 7, 100, FALSE, TRUE },			// Etix code
+	{ IDS_COLUMN17, offsetof(AIRX_Flight, Fare), 16, 100, FALSE, TRUE },			// Fare
+	{ IDS_COLUMN18, offsetof(AIRX_Flight, MilesAward), 0 ,100, FALSE, TRUE },		// Award miles
+	{ IDS_COLUMN19, offsetof(AIRX_Flight, MilesStatus), 0, 100, FALSE, TRUE },		// Status miles
+	{ IDS_COLUMN20, offsetof(AIRX_Flight, Flags), 0, 100, FALSE, FALSE },			// Flags
+	{ IDS_COLUMN21, offsetof(AIRX_Flight, Flags), 29, 100, FALSE, TRUE },			// Rating
+	{ IDS_COLUMN22,offsetof(AIRX_Flight, Comments), 256, 100, TRUE, TRUE }			// Comments
+};
+
+
+// CItinerary
+//
 
 class CItinerary
 {
