@@ -299,8 +299,10 @@ BEGIN
     IDM_GLOBEVIEW_3DSETTINGS "3D-&Einstellungen..."
     IDM_GLOBEITEM_OPENGOOGLEEARTH 
                             "In Google Earth ö&ffnen\nÖffnet den Ort\nin Google Earth."
+    IDM_DETAILS_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
+    IDM_DETAILS_AUTOSIZE    "&Spaltenbreite anpassen"
+    IDM_DETAILS_CHOOSE      "&Details aus&wählen..."
 END
-
 #endif    // Deutsch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -536,6 +538,9 @@ BEGIN
     IDM_GLOBEVIEW_3DSETTINGS "3&D settings..."
     IDM_GLOBEITEM_OPENGOOGLEEARTH 
                             "&Open in Google Earth\nOpen the location\nin Google Earth."
+    IDM_DETAILS_AUTOSIZEALL "Size all &columns to fit"
+    IDM_DETAILS_AUTOSIZE    "Size column to &fit"
+    IDM_DETAILS_CHOOSE      "Choose &details..."
 END
 
 #endif    // Englisch (USA) resources

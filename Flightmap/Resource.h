@@ -186,6 +186,10 @@
 #define IDM_GLOBEVIEW_3DSETTINGS        3915
 #define IDM_GLOBEITEM                   4000
 #define IDM_GLOBEITEM_OPENGOOGLEEARTH   4001
+#define IDM_DETAILS                     4100
+#define IDM_DETAILS_AUTOSIZEALL         4101
+#define IDM_DETAILS_AUTOSIZE            4102
+#define IDM_DETAILS_CHOOSE              4103
 
 // Next default values for new objects
 // 

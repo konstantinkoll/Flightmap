@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CDataGrid.h"
 #include "CItinerary.h"
 #include "Database.h"
 #include "FMCommDlg.h"
@@ -75,6 +76,8 @@ public:
 
 	MapSettings m_MapSettings;
 
+	// Spreadsheet
+	ViewParameters m_ViewParameters;
 	// Map
 	BOOL m_MapMergeMetro;
 	// Map view

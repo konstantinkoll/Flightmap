@@ -100,6 +100,14 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.IATAInnerColor = GetInt(_T("MapIATAInnerColor"), 0xFFFFFF);
 	m_MapSettings.IATAOuterColor = GetInt(_T("MapIATAOuterColor"), 0x000000);
 
+	for (UINT a=0; a<FMAttributeCount; a++)
+	{
+		m_ViewParameters.ColumnOrder[a] = a;
+		m_ViewParameters.ColumnWidth[a] = 150;
+	}
+	GetBinary(_T("ColumnOrder"), &m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
+	GetBinary(_T("ColumnWidth"), &m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
+
 	for (UINT a=0; a<10; a++)
 	{
 		CString tmpStr;
@@ -189,6 +197,9 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapShowIATACodes"), m_MapSettings.ShowIATACodes);
 		WriteInt(_T("MapIATAInnerColor"), m_MapSettings.IATAInnerColor);
 		WriteInt(_T("MapIATAOuterColor"), m_MapSettings.IATAOuterColor);
+
+		WriteBinary(_T("ColumnOrder"), (LPBYTE)m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
+		WriteBinary(_T("ColumnWidth"), (LPBYTE)m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
 
 		UINT a=0;
 		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)

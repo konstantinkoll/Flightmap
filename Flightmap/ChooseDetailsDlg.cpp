@@ -34,10 +34,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		}
 
 		// Reihenfolge
-		p_ViewParameters->ColumnOrder[0] = 0;
-		p_ViewParameters->ColumnWidth[0] = OldWidth[0];
-		UINT cnt = 1;
-
+		UINT cnt = 0;
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 			if (m_ShowAttributes.GetCheck(a))
 				p_ViewParameters->ColumnOrder[cnt++] = (INT)m_ShowAttributes.GetItemData(a);

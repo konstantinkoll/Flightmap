@@ -4,7 +4,7 @@
 
 
 #pragma once
-#include "Flightmap.h"
+#include "CItinerary.h"
 
 
 // CDataGrid
@@ -24,7 +24,6 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void AdjustLayout();
-	void AutosizeColumns();
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 
 protected:
@@ -44,6 +43,7 @@ protected:
 	CPoint m_EditLabel;
 	BOOL m_Hover;
 	BOOL m_SpacePressed;
+	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -52,7 +52,6 @@ protected:
 	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* item);
 	void InvalidateItem(CPoint Item);
-	void TrackMenu(UINT nID, CPoint point, INT col=-1);
 	void SelectItem(CPoint Item);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -78,6 +77,10 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnAutosizeAll();
+	afx_msg void OnAutosize();
+	afx_msg void OnChooseDetails();
+	afx_msg void OnUpdateDetailsCommands(CCmdUI* pCmdUI);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
@@ -92,7 +95,6 @@ private:
 	INT m_HScrollPos;
 	INT m_VScrollPos;
 
-	void AutosizeColumn(UINT col, BOOL OnlyEnlarge=FALSE);
-	void ExpandColumn(UINT col);
+	void AutosizeColumn(UINT col);
 	void DestroyEdit(BOOL Accept=FALSE);
 };

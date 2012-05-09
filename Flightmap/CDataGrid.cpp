@@ -24,8 +24,9 @@ CDataGrid::CDataGrid()
 	p_Edit = NULL;
 	m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = NULL;
-	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_EditLabel.x = m_EditLabel.y = -1;
+	m_HeaderItemClicked = m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_EditLabel.x = m_EditLabel.y = -1;
 	m_Hover = m_SpacePressed = m_IgnoreHeaderItemChange = FALSE;
+	m_ViewParameters = theApp.m_ViewParameters;
 }
 
 CDataGrid::~CDataGrid()
@@ -103,20 +104,6 @@ void CDataGrid::AdjustLayout()
 	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
-void CDataGrid::AutosizeColumns()
-{
-	m_wndHeader.SetRedraw(FALSE);
-
-	for (UINT col=0; col<m_Cols; col++)
-		AutosizeColumn(col);
-
-	m_wndHeader.SetRedraw(TRUE);
-	m_wndHeader.Invalidate();
-
-	AdjustScrollbars();
-	Invalidate();
-}
-
 /*void CDataGrid::EditLabel(CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
@@ -137,7 +124,7 @@ void CDataGrid::AutosizeColumns()
 	INT y = m_HeaderHeight+item.y*m_RowHeight;
 	INT x = 0;
 	for (INT a=0; a<item.x; a++)
-		x += m_ViewParameters.ColumnWidth[a];
+		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
 	WCHAR Name[MAX_PATH];
 	wcscpy_s(Name, MAX_PATH, m_Tree[MAKEPOSI(item)].pItem->Name);
@@ -153,7 +140,7 @@ void CDataGrid::AutosizeColumns()
 		pParentFolder->Release();
 	}
 
-	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-5, y, x+m_ViewParameters.ColumnWidth[item.x], y+m_RowHeight);
+	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-5, y, x+m_ViewParameters.ColumnWidth[m_ViewParemeters.ColumnOrder[item.x]], y+m_RowHeight);
 
 	p_Edit = new CEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
@@ -199,11 +186,11 @@ void CDataGrid::EnsureVisible(CPoint item)
 	// Horizontal
 	INT x = 0;
 	for (INT a=0; a<item.x; a++)
-		x += m_ViewParameters.ColumnWidth[a];
+		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
 	nInc = 0;
-	if (x+m_ViewParameters.ColumnWidth[item.x]>m_HScrollPos+rect.Width())
-		nInc = x+m_ViewParameters.ColumnWidth[item.x]-rect.Width()-m_HScrollPos;
+	if (x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[item.x]]>m_HScrollPos+rect.Width())
+		nInc = x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[item.x]]-rect.Width()-m_HScrollPos;
 	if (x<m_HScrollPos+nInc)
 		nInc = x-m_HScrollPos;
 
@@ -237,8 +224,8 @@ void CDataGrid::AdjustScrollbars()
 
 	INT ScrollHeight = m_Rows*m_RowHeight;
 	INT ScrollWidth = (m_Cols<FMAttributeCount) ? GUTTER : 0;
-	for (UINT col=0; col<m_Cols; col++)
-		ScrollWidth += m_ViewParameters.ColumnWidth[col];
+	for (UINT a=0; a<FMAttributeCount; a++)
+		ScrollWidth += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
 	BOOL HScroll = FALSE;
 	if (ScrollWidth>rect.Width())
@@ -295,14 +282,14 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* item)
 
 		for (UINT a=0; a<min(m_Cols+1, FMAttributeCount); a++)
 		{
-			if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[a]))
+			if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]]))
 			{
 				item->x = a;
 				item->y = row;
 				return TRUE;
 			}
 
-			x += m_ViewParameters.ColumnWidth[a];
+			x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 		}
 	}
 
@@ -315,59 +302,11 @@ void CDataGrid::InvalidateItem(CPoint Item)
 	{
 		INT x = -m_HScrollPos;
 		for (UINT a=0; a<(UINT)Item.x; a++)
-			x += m_ViewParameters.ColumnWidth[a];
+			x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
-		CRect rect(x, m_HeaderHeight+Item.y*m_RowHeight-m_VScrollPos, x+m_ViewParameters.ColumnWidth[Item.x], m_HeaderHeight-m_VScrollPos+(Item.y+1)*m_RowHeight);
+		CRect rect(x, m_HeaderHeight+Item.y*m_RowHeight-m_VScrollPos, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]], m_HeaderHeight-m_VScrollPos+(Item.y+1)*m_RowHeight);
 		InvalidateRect(rect);
 	}
-}
-
-void CDataGrid::TrackMenu(UINT nID, CPoint point, INT col)
-{
-/*	CMenu menu;
-	ENSURE(menu.LoadMenu(nID));
-
-	CMenu* pPopup = menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	if (!col)
-		pPopup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
-
-	if ((!col) || (m_ColumnMapping[col]==-1))
-		pPopup->EnableMenuItem(IDM_TREE_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
-
-	BOOL Enable = FALSE;
-	for (UINT row=0; row<m_Rows; row++)
-		if (m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND)
-		{
-			Enable = TRUE;
-			break;
-		}
-
-	if (!Enable)
-		pPopup->EnableMenuItem(IDM_TREE_EXPANDCOLUMN, MF_GRAYED | MF_DISABLED);
-
-	switch (pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this))
-	{
-	case IDM_TREE_AUTOSIZE:
-		AutosizeColumn(col);
-		AdjustScrollbars();
-		Invalidate();
-		break;
-	case IDM_VIEW_AUTOSIZEALL:
-		AutosizeColumns();
-		break;
-	case IDM_TREE_EXPANDCOLUMN:
-		ExpandColumn(col);
-		break;
-	case IDD_CHOOSEPROPERTY:
-		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)col);
-		break;
-	case IDM_TREE_RESETPROPERTY:
-		m_ColumnMapping[col] = -1;
-		UpdateColumnCaption(col);
-		break;
-	}*/
 }
 
 void CDataGrid::SelectItem(CPoint Item)
@@ -384,19 +323,7 @@ void CDataGrid::SelectItem(CPoint Item)
 	ReleaseCapture();
 }
 
-/*void CDataGrid::UpdateColumnCaption(UINT col)
-{
-	ASSERT(col<m_Cols);
-
-	CString caption = GetColumnCaption(col);
-
-	HDITEM HdItem;
-	HdItem.mask = HDI_TEXT;
-	HdItem.pszText = caption.GetBuffer();
-	m_wndHeader.SetItem(col, &HdItem);
-}*/
-
-void CDataGrid::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
+void CDataGrid::AutosizeColumn(UINT col)
 {
 	DestroyEdit();
 
@@ -406,12 +333,7 @@ void CDataGrid::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
 			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);*/
 
 	//Width += GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN;
-	m_ViewParameters.ColumnWidth[col] = min(OnlyEnlarge ? max(Width, m_ViewParameters.ColumnWidth[col]) : Width, MAXWIDTH);
-
-	HDITEM HdItem;
-	HdItem.mask = HDI_WIDTH;
-	HdItem.cxy = m_ViewParameters.ColumnWidth[col];
-	m_wndHeader.SetItem(col, &HdItem);
+	/*m_ViewParameters.ColumnWidth[col] = min(OnlyEnlarge ? max(Width, m_ViewParameters.ColumnWidth[col]) : Width, MAXWIDTH);*/
 }
 
 void CDataGrid::DestroyEdit(BOOL Accept)
@@ -486,6 +408,10 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_COMMAND(IDM_DETAILS_AUTOSIZEALL, OnAutosizeAll)
+	ON_COMMAND(IDM_DETAILS_AUTOSIZE, OnAutosize)
+	ON_COMMAND(IDM_DETAILS_CHOOSE, OnChooseDetails)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_DETAILS_AUTOSIZEALL, IDM_DETAILS_CHOOSE, OnUpdateDetailsCommands)
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
 	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
@@ -515,11 +441,12 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		HDITEM HdItem;
 		HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
 		HdItem.fmt = HDF_STRING | HDF_CENTER;
-		HdItem.cxy = MINWIDTH;//m_ColumnWidth[idx];
+		HdItem.cxy = m_ViewParameters.ColumnWidth[a];
 		HdItem.pszText = tmpStr.GetBuffer();
 		m_wndHeader.InsertItem(a, &HdItem);
 	}
 
+	VERIFY(m_wndHeader.SetOrderArray(FMAttributeCount, m_ViewParameters.ColumnOrder));
 	m_IgnoreHeaderItemChange = FALSE;
 
 	m_TooltipCtrl.Create(this);
@@ -542,9 +469,6 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
 	m_RowHeight = (4+max(abs(lf.lfHeight), m_IconSize.cy)) & ~1;
-
-	for (UINT a=0; a<FMAttributeCount; a++)
-		m_ViewParameters.ColumnWidth[a] = MINWIDTH;
 
 	ResetScrollbars();
 
@@ -1275,7 +1199,29 @@ void CDataGrid::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-/*	CPoint item(-1, -1);
+	if (pWnd->GetSafeHwnd()==m_wndHeader)
+	{
+		CPoint ptClient(point);
+		ScreenToClient(&ptClient);
+
+		HDHITTESTINFO htt;
+		htt.pt = ptClient;
+		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
+
+		CDialogMenuPopup* pPopup = new CDialogMenuPopup();
+		pPopup->Create(this);
+		pPopup->AddCommand(IDM_DETAILS_AUTOSIZEALL);
+		pPopup->AddCommand(IDM_DETAILS_AUTOSIZE);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_DETAILS_CHOOSE);
+
+		pPopup->Track(point);
+
+		return;
+	}
+
+
+	/*	CPoint item(-1, -1);
 	if ((point.x<0) || (point.y<0))
 	{
 		if ((m_SelectedItem.x==-1) || (m_SelectedItem.y==-1))
@@ -1292,148 +1238,10 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 		point.y = (item.y+1)*m_RowHeight+m_HeaderHeight+1;
 		ClientToScreen(&point);
 	}
-	else
-	{
-		CPoint ptClient(point);
-		ScreenToClient(&ptClient);
-
-		if (pWnd->GetSafeHwnd()==m_wndHeader)
-		{
-			HDHITTESTINFO htt;
-			htt.pt = ptClient;
-			TrackMenu(IDM_HEADER, point, m_wndHeader.HitTest(&htt));
-			return;
-		}
-
-		if (!HitTest(ptClient, &item))
-		{
-			GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
-			return;
-		}
-	}
 
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
-
-	Cell* cell = &m_Tree[MAKEPOSI(item)];
-	if (!cell->pItem)
-		return;
-
-	IShellFolder* pParentFolder = NULL;
-	if (FAILED(SHBindToParent(cell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
-		return;
-
-	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
-	{
-		HMENU hPopup = CreatePopupMenu();
-		if (hPopup)
-		{
-			UINT uFlags = CMF_NORMAL | CMF_CANRENAME;
-			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
-			{
-				InsertMenu(hPopup, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-
-				CString tmpStr;
-				ENSURE(tmpStr.LoadString(IDS_INCLUDEBRANCH));
-				InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7001, tmpStr);
-
-				ENSURE(tmpStr.LoadString(IDS_EXCLUDEBRANCH));
-				InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7002, tmpStr);
-
-				if (cell->Flags & CF_CANEXPAND)
-				{
-					ENSURE(tmpStr.LoadString(IDS_EXPAND));
-					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7003, tmpStr);
-
-					ENSURE(tmpStr.LoadString(IDS_EXPANDBRANCH));
-					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7004, tmpStr);
-
-					SetMenuDefaultItem(hPopup, 0x7003, FALSE);
-				}
-
-				if (cell->Flags & CF_CANCOLLAPSE)
-				{
-					ENSURE(tmpStr.LoadString(IDS_COLLAPSE));
-					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7005, tmpStr);
-				}
-
-				if (item.x)
-				{
-					CString tmpStr;
-					ENSURE(tmpStr.LoadString(IDS_CHOOSEPROPERTY));
-					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
-
-					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-				}
-
-				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
-				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
-				if (m_pContextMenu2)
-				{
-					m_pContextMenu2->Release();
-					m_pContextMenu2 = NULL;
-				}
-
-				switch (idCmd)
-				{
-				case 0x7000:
-					OnChooseProperty((WPARAM)item.x, NULL);
-					break;
-				case 0x7001:
-					SetBranchCheck(TRUE, item);
-					break;
-				case 0x7002:
-					SetBranchCheck(FALSE, item);
-					break;
-				case 0x7003:
-					ExpandFolder(item, FALSE);
-					break;
-				case 0x7004:
-					ExpandFolder(item, TRUE);
-					break;
-				case 0x7005:
-					Collapse(item.y, item.x);
-					break;
-				case 0:
-					break;
-				default:
-					{
-						CHAR Verb[256] = "";
-						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
-
-						if (strcmp(Verb, "rename")==0)
-						{
-							EditLabel(item);
-						}
-						else
-						{
-							CWaitCursor wait;
-
-							CMINVOKECOMMANDINFO cmi;
-							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-							cmi.fMask = 0;
-							cmi.hwnd = GetSafeHwnd();
-							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
-							cmi.lpParameters = NULL;
-							cmi.lpDirectory = NULL;
-							cmi.nShow = SW_SHOWNORMAL;
-							cmi.dwHotKey = 0;
-							cmi.hIcon = NULL;
-
-							pcm->InvokeCommand(&cmi);
-
-							SetFocus();
-						}
-					}
-				}
-			}
-		}
-
-		pcm->Release();
-	}
-
-	pParentFolder->Release();*/
+*/
 }
 
 void CDataGrid::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -1447,42 +1255,42 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 	InvalidateItem(m_SelectedItem);
 }
 
-/*void CDataGrid::OnAutosizeAll()
+void CDataGrid::OnAutosizeAll()
 {
-	for (UINT a=0; a<LFAttributeCount; a++)
+	for (UINT a=0; a<FMAttributeCount; a++)
 		if (m_ViewParameters.ColumnWidth[a])
 			AutosizeColumn(a);
 
-	AdjustHeader(TRUE);
+	//AdjustHeader(TRUE);
 	AdjustLayout();
-}*/
+}
 
-/*void CDataGrid::OnAutosize()
+void CDataGrid::OnAutosize()
 {
 	if (m_HeaderItemClicked!=-1)
 	{
 		AutosizeColumn(m_HeaderItemClicked);
-		AdjustHeader(TRUE);
+		//AdjustHeader(TRUE);
 		AdjustLayout();
 	}
-}*/
+}
 
-/*void CDataGrid::OnChooseDetails()
+void CDataGrid::OnChooseDetails()
 {
-	ChooseDetailsDlg dlg(this, m_Context);
+	ChooseDetailsDlg dlg(&m_ViewParameters, this);
 	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions(m_Context);
-}*/
+	{
+		theApp.m_ViewParameters = m_ViewParameters;
 
-/*void CDataGrid::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
+//		AdjustHeader(TRUE);
+		AdjustLayout();
+	}
+}
+
+void CDataGrid::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_ViewParameters.Mode==LFViewDetails);
-
-	if (pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE)
-		b &= (m_HeaderItemClicked!=-1);
-
-	pCmdUI->Enable(b);
-}*/
+	pCmdUI->Enable((pCmdUI->m_nID!=IDM_DETAILS_AUTOSIZE) || (m_HeaderItemClicked!=-1));
+}
 
 void CDataGrid::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -1512,7 +1320,8 @@ void CDataGrid::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
 			m_ViewParameters.ColumnOrder[a] = m_ViewParameters.ColumnOrder[a-1];
 
 		m_ViewParameters.ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
-		//UpdateViewOptions(m_Context);
+		memcpy_s(theApp.m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder), m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder));
+		AdjustLayout();
 
 		*pResult = FALSE;
 	}
@@ -1535,7 +1344,7 @@ void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 //		if (pHdr->pitem->cxy<MINWIDTH)
 //			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? MINWIDTH : 0;
 
-		m_ViewParameters.ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
+		m_ViewParameters.ColumnWidth[pHdr->iItem] = theApp.m_ViewParameters.ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
 		AdjustLayout();
 
 		*pResult = FALSE;
