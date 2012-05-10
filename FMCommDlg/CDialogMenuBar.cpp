@@ -293,7 +293,7 @@ void CDialogMenuBar::SetTheme()
 
 	// Default font
 	NONCLIENTMETRICS ncm;
-	ncm.cbSize = sizeof(NONCLIENTMETRICS)-sizeof(ncm.iPaddedBorderWidth); 
+	ncm.cbSize = sizeof(NONCLIENTMETRICS)-sizeof(ncm.iPaddedBorderWidth);
 	if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
 	{
 		m_MenuLogFont = m_NormalLogFont = ncm.lfMenuFont;
@@ -369,7 +369,7 @@ void CDialogMenuBar::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncs
 {
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
 
-	if (IsCtrlThemed())
+	if (IsCtrlThemed() && (hTheme==NULL))
 		lpncsp->rgrc[0].bottom--;
 }
 
