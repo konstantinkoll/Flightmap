@@ -25,6 +25,7 @@ CMainWnd::CMainWnd()
 	m_hIcon = NULL;
 	m_pWndMainView = NULL;
 	m_pItinerary = NULL;
+	m_CurrentMainView = 0;
 }
 
 CMainWnd::~CMainWnd()
@@ -79,27 +80,43 @@ void CMainWnd::AdjustLayout()
 	m_pWndMainView->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CMainWnd::UpdateWindowStatus()
+void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 {
-	if (m_pWndMainView)
+	BOOL Change = (m_pWndMainView==NULL) ||
+		((m_CurrentMainView==LoungeView) && (m_pItinerary!=NULL)) ||
+		((m_CurrentMainView==DataGrid) && (m_pItinerary==NULL) && AllowLoungeView);
+
+	if (Change)
 	{
-		m_pWndMainView->DestroyWindow();
-		delete m_pWndMainView;
+		if (m_pWndMainView)
+		{
+			m_pWndMainView->DestroyWindow();
+			delete m_pWndMainView;
+		}
+
+		if (!m_pItinerary)
+		{
+			m_pWndMainView = new CLoungeView();
+			((CLoungeView*)m_pWndMainView)->Create(this, 2);
+
+			m_CurrentMainView = LoungeView;
+		}
+		else
+		{
+			m_pWndMainView = new CDataGrid();
+			((CDataGrid*)m_pWndMainView)->Create(this, 2);
+
+			m_CurrentMainView = DataGrid;
+		}
 	}
+
+	if (m_CurrentMainView==DataGrid)
+		((CDataGrid*)m_pWndMainView)->SetItinerary(m_pItinerary);
 
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
-
-	if (!m_pItinerary)
+	if (m_pItinerary)
 	{
-		m_pWndMainView = new CLoungeView();
-		((CLoungeView*)m_pWndMainView)->Create(this, 2);
-	}
-	else
-	{
-		m_pWndMainView = new CDataGrid();
-		((CDataGrid*)m_pWndMainView)->Create(this, 2);
-
 		if (!m_pItinerary->m_DisplayName.IsEmpty())
 		{
 			caption.Insert(0, _T(" - "));
@@ -137,7 +154,7 @@ void CMainWnd::Open(CString FileName)
 	UpdateWindowStatus();
 }
 
-BOOL CMainWnd::CloseFile()
+BOOL CMainWnd::CloseFile(BOOL AllowLoungeView)
 {
 	if (m_pItinerary)
 	{
@@ -160,7 +177,7 @@ BOOL CMainWnd::CloseFile()
 		delete m_pItinerary;
 		m_pItinerary = NULL;
 
-		UpdateWindowStatus();
+		UpdateWindowStatus(AllowLoungeView);
 	}
 
 	return TRUE;
@@ -361,7 +378,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	theApp.AddFrame(this);
 
-	UpdateWindowStatus();
+	UpdateWindowStatus(TRUE);
 
 	return 0;
 }
@@ -725,7 +742,7 @@ void CMainWnd::OnFileProperties()
 
 void CMainWnd::OnFileClose()
 {
-	CloseFile();
+	CloseFile(TRUE);
 }
 
 void CMainWnd::OnFileQuit()

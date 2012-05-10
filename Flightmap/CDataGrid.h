@@ -23,9 +23,10 @@ public:
 	~CDataGrid();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void EnsureVisible(CPoint item=CPoint(-1, -1));
+	void SetItinerary(CItinerary* pItinerary);
 
 protected:
+	CItinerary* p_Itinerary;
 	CEdit* p_Edit;
 	CTooltipHeader m_wndHeader;
 	ViewParameters m_ViewParameters;
@@ -33,10 +34,7 @@ protected:
 	HTHEME hThemeButton;
 	FMTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
-	UINT m_Rows;
-	UINT m_Cols;
 	UINT m_RowHeight;
-	CSize m_IconSize;
 	CPoint m_SelectedItem;
 	CPoint m_HotItem;
 	CPoint m_EditLabel;
@@ -49,6 +47,7 @@ protected:
 
 	void AdjustLayout();
 	void AdjustHeader();
+	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* item);

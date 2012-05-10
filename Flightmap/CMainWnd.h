@@ -11,6 +11,9 @@
 // CMainWnd
 //
 
+#define LoungeView     1
+#define DataGrid       2
+
 class CMainWnd : public CMainWindow
 {
 public:
@@ -26,11 +29,12 @@ public:
 protected:
 	HICON m_hIcon;
 	CWnd* m_pWndMainView;
+	UINT m_CurrentMainView;
 	CItinerary* m_pItinerary;
 
-	void UpdateWindowStatus();
+	void UpdateWindowStatus(BOOL AllowLoungeView=FALSE);
 	void Open(CString FileName);
-	BOOL CloseFile();
+	BOOL CloseFile(BOOL AllowLoungeView=FALSE);
 	CKitchen* GetKitchen(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);

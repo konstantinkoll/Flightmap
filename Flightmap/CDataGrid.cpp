@@ -20,8 +20,8 @@
 
 CDataGrid::CDataGrid()
 {
+	p_Itinerary = NULL;
 	p_Edit = NULL;
-	m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = NULL;
 	m_HeaderItemClicked = m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_EditLabel.x = m_EditLabel.y = -1;
 	m_Hover = m_SpacePressed = m_IgnoreHeaderItemChange = FALSE;
@@ -82,6 +82,13 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CWnd::PreTranslateMessage(pMsg);
+}
+
+void CDataGrid::SetItinerary(CItinerary* pItinerary)
+{
+	p_Itinerary = pItinerary;
+
+	AdjustLayout();
 }
 
 void CDataGrid::AdjustLayout()
@@ -152,9 +159,12 @@ void CDataGrid::AdjustHeader()
 
 /*void CDataGrid::EditLabel(CPoint item)
 {
+	if (!p_Itinerary)
+		return;
+
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=FMAttributeCount) || (item.y>=(INT)(p_Itinerary->m_Flights.m_ItemCount+1)))
 	{
 		m_EditLabel.x = m_EditLabel.y = -1;
 		return;
@@ -198,9 +208,12 @@ void CDataGrid::AdjustHeader()
 
 void CDataGrid::EnsureVisible(CPoint item)
 {
+	if (!p_Itinerary)
+		return;
+
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=FMAttributeCount) || (item.y>=(INT)(p_Itinerary->m_Flights.m_ItemCount+1)))
 		return;
 
 	CRect rect;
@@ -268,7 +281,7 @@ void CDataGrid::AdjustScrollbars()
 	CRect rect;
 	GetWindowRect(&rect);
 
-	INT ScrollHeight = m_Rows*m_RowHeight;
+	INT ScrollHeight = p_Itinerary ? (p_Itinerary->m_Flights.m_ItemCount+1)*m_RowHeight : 0;
 	INT ScrollWidth = 0;
 	for (UINT a=0; a<FMAttributeCount; a++)
 		ScrollWidth += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
@@ -326,7 +339,7 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* item)
 	{
 		INT x = -m_HScrollPos;
 
-		for (UINT a=0; a<min(m_Cols+1, FMAttributeCount); a++)
+		for (UINT a=0; a<FMAttributeCount; a++)
 		{
 			if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]]))
 			{
@@ -507,14 +520,9 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 	}
 
-	IMAGEINFO ii;
-	theApp.m_SystemImageListSmall.GetImageInfo(0, &ii);
-	m_IconSize.cx = ii.rcImage.right-ii.rcImage.left;
-	m_IconSize.cy = ii.rcImage.bottom-ii.rcImage.top;
-
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (4+max(abs(lf.lfHeight), m_IconSize.cy)) & ~1;
+	m_RowHeight = (4+max(abs(lf.lfHeight), 16)) & ~1;
 
 	ResetScrollbars();
 
@@ -998,7 +1006,7 @@ void CDataGrid::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (m_Rows)
+	if (p_Itinerary)
 	{
 		CRect rect;
 		GetClientRect(&rect);
@@ -1160,7 +1168,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CDataGrid::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (m_Rows)
+	if (p_Itinerary)
 		switch (nChar)
 		{
 		case VK_SPACE:
