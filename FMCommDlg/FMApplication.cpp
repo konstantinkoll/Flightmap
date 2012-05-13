@@ -60,6 +60,7 @@ FMApplication::FMApplication()
 
 	// Messages
 	msgUseBgImagesChanged = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
+	msgDistanceSettingChanged = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
 
 	// Custom colors
 	ZeroMemory(&m_CustomColors, sizeof(m_CustomColors));

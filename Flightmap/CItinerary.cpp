@@ -8,6 +8,116 @@
 #include "Flightmap.h"
 
 
+void CalcDistance(AIRX_Flight& Flight, BOOL Force)
+{
+	if ((Flight.Flags & AIRX_DistanceCalculated) && !Force)
+		return;
+
+	Flight.Flags |= AIRX_DistanceCalculated;
+
+	FMAirport* pFrom = NULL;
+	FMAirport* pTo = NULL;
+
+	if (FMIATAGetAirportByCode(Flight.From.Code, &pFrom) && FMIATAGetAirportByCode(Flight.To.Code, &pTo))
+	{
+		const DOUBLE Lat1 = PI*pFrom->Location.Latitude/180;
+		const DOUBLE Lon1 = PI*pFrom->Location.Longitude/180;
+		const DOUBLE Lat2 = PI*pTo->Location.Latitude/180;
+		const DOUBLE Lon2 = PI*pTo->Location.Longitude/180;
+
+		const DOUBLE DeltaLon = abs(Lon1-Lon2);
+		const DOUBLE tmp1 = cos(Lat1)*sin(DeltaLon);
+		const DOUBLE tmp2 = cos(Lat2)*sin(Lat1)-sin(Lat2)*cos(Lat1)*cos(DeltaLon);
+		const DOUBLE T = sqrt(tmp1*tmp1+tmp2*tmp2);
+		const DOUBLE B = sin(Lat2)*sin(Lat1)+cos(Lat2)*cos(Lat1)*cos(DeltaLon);
+		const DOUBLE GreatCircle = atan(T/B);
+
+		Flight.DistanceNM = 3438.461*GreatCircle;
+		Flight.Flags |= AIRX_DistanceValid;
+	}
+	else
+	{
+		Flight.DistanceNM = 0.0;
+		Flight.Flags &= ~AIRX_DistanceValid;
+	}
+}
+
+
+// ToString
+//
+
+void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
+{
+	if (theApp.m_UseStatuteMiles)
+	{
+		swprintf(pBuffer, cCount, L"%d mi (%d km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
+	}
+	else
+	{
+		swprintf(pBuffer, cCount, L"%d nm (%d km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
+	}
+}
+
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount, BOOL Force)
+{
+	ASSERT(Attr<FMAttributeCount);
+	ASSERT(pBuffer);
+	ASSERT(cCount>=1);
+
+	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
+	*pBuffer = L'\0';
+
+	switch (FMAttributes[Attr].Type)
+	{
+	case FMTypeUnicodeString:
+		wcscpy_s(pBuffer, cCount, (WCHAR*)pData);
+		break;
+	case FMTypeAnsiString:
+		MultiByteToWideChar(CP_ACP, 0, (CHAR*)pData, -1, pBuffer, (INT)cCount);
+		break;
+	case FMTypeUINT:
+		if ((*((UINT*)pData)) || Force)
+			swprintf(pBuffer, cCount, L"%d", *((UINT*)pData));
+		break;
+	case FMTypeDistance:
+		if (Flight.Flags & AIRX_DistanceValid)
+			DistanceToString(pBuffer, cCount, Flight.DistanceNM);
+		break;
+	case FMTypeClass:
+		switch (*((CHAR*)pData))
+		{
+		case AIRX_Economy:
+			wcscpy_s(pBuffer, cCount, L"Y");
+			break;
+		case AIRX_EconomyPlus:
+			wcscpy_s(pBuffer, cCount, L"Y+");
+			break;
+		case AIRX_Business:
+			wcscpy_s(pBuffer, cCount, L"J");
+			break;
+		case AIRX_First:
+			wcscpy_s(pBuffer, cCount, L"F");
+			break;
+		case AIRX_Crew:
+			wcscpy_s(pBuffer, cCount, L"Crew/DCM");
+			break;
+		}
+		break;
+	case FMTypeColor:
+		if ((*((COLORREF*)pData)!=(COLORREF)-1) || Force)
+			swprintf(pBuffer, cCount, L"%06X", *((COLORREF*)pData));
+		break;
+	}
+}
+
+
+// FromString
+//
+
+
+// Other
+//
+
 void ScanDate(LPCWSTR str, FILETIME& ft)
 {
 	UINT Year;
@@ -38,7 +148,7 @@ void ScanDate(LPCWSTR str, FILETIME& ft)
 
 void ScanColor(LPCWSTR str, COLORREF& col)
 {
-	if (swscanf_s(str, L"%06x", &col)==1)
+	if (swscanf_s(str, L"%06X", &col)==1)
 		if (col!=(COLORREF)-1)
 			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
 }
@@ -176,7 +286,7 @@ void CItinerary::NewSampleAtlantic()
 	m_IsOpen = TRUE;
 
 	AddFlight("DUS", "FRA", L"Lufthansa", L"Boeing 737", "LH 803", AIRX_Economy, "9F", "", L"", 500, (COLORREF)-1, MakeTime(2007, 1, 25, 6, 15));
-	AddFlight("FRA", "JFK", L"Lufthansa", L"Airbus A340", "LH 400", AIRX_Crew, "FD", "D-AIHD", L"Stuttgart", 2565, (COLORREF)-1, MakeTime(2007, 1, 25, 9, 35));
+	AddFlight("FRA", "JFK", L"Lufthansa", L"Airbus A340", "LH 400", AIRX_Crew, "F/D", "D-AIHD", L"Stuttgart", 2565, (COLORREF)-1, MakeTime(2007, 1, 25, 9, 35));
 	AddFlight("EWR", "SFO", L"Continental Airlines", L"Boeing 737", "CO 572", AIRX_Economy, "15F", "", L"", 0, 0xFFC0A0, MakeTime(2007, 1, 28, 11, 45));
 	AddFlight("SFO", "MUC", L"Lufthansa", L"Airbus A340", "LH 459", AIRX_Economy, "38H", "D-AIHB", L"Bremerhaven", 5864, (COLORREF)-1, MakeTime(2007, 2, 5, 21, 50));
 	AddFlight("MUC", "DUS", L"Lufthansa", L"Airbus A320", "LH 848", AIRX_Economy, "21A", "", L"", 500, (COLORREF)-1, MakeTime(2007, 2, 6, 19, 30));
@@ -227,6 +337,7 @@ void CItinerary::OpenAIRX(CString FileName)
 
 						if (ReadRecord(f, &Flight, sizeof(Flight), Header.FlightRecordSize))
 						{
+							CalcDistance(Flight, TRUE);
 							m_Flights.AddItem(Flight);
 						}
 					}
@@ -314,6 +425,7 @@ void CItinerary::OpenAIR(CString FileName)
 				for (UINT b=0; b<15; b++)
 					ReadUTF7String(f);
 
+				CalcDistance(Flight, TRUE);
 				m_Flights.AddItem(Flight);
 			}
 
@@ -414,8 +526,7 @@ CString CItinerary::Flight2Text(UINT Idx)
 void CItinerary::ResetFlight(AIRX_Flight& Flight)
 {
 	ZeroMemory(&Flight, sizeof(AIRX_Flight));
-	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = 0.0;
-	Flight.DistanceNM = -1.0;
+	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
 	Flight.Color = (COLORREF)-1;
 }
 
@@ -461,6 +572,8 @@ void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipmen
 	Flight.MilesAward = Flight.MilesStatus = Miles;
 	Flight.Color = Color;
 	Flight.From.Time = Departure;
+
+	CalcDistance(Flight);
 
 	m_Flights.AddItem(Flight);
 }

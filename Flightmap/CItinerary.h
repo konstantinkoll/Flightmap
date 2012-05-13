@@ -36,16 +36,18 @@ struct AIRX_Location
 	WCHAR Gate[8];
 };
 
-#define AIRX_AwardFlight      1
-#define AIRX_BusinessTrip     2
-#define AIRX_LeisureTrip      4
+#define AIRX_AwardFlight            1
+#define AIRX_BusinessTrip           2
+#define AIRX_LeisureTrip            4
+#define AIRX_DistanceCalculated     8
+#define AIRX_DistanceValid          16
 
-#define AIRX_Unknown          '\0'
-#define AIRX_Economy          'Y'
-#define AIRX_EconomyPlus      '+'
-#define AIRX_Business         'J'
-#define AIRX_First            'F'
-#define AIRX_Crew             'C'
+#define AIRX_Unknown         '\0'
+#define AIRX_Economy         'Y'
+#define AIRX_EconomyPlus     '+'
+#define AIRX_Business        'J'
+#define AIRX_First           'F'
+#define AIRX_Crew            'C'
 
 struct AIRX_Flight
 {
@@ -132,6 +134,10 @@ static const FMAttribute FMAttributes[FMAttributeCount] = {
 	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 29, 100, FALSE, TRUE, TRUE },			// Rating
 	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 256, 100, TRUE, TRUE, TRUE }		// Comments
 };
+
+void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
+void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount, BOOL Force=FALSE);
 
 
 // CItinerary

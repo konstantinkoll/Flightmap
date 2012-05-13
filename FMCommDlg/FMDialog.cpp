@@ -248,8 +248,10 @@ void FMDialog::OnSysColorChange()
 		m_BackBufferL = m_BackBufferH = 0;
 }
 
-LRESULT FMDialog::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT FMDialog::OnUseBgImagesChanged(WPARAM wParam, LPARAM /*lParam*/)
 {
+	((FMApplication*)AfxGetApp())->m_UseBgImages = (BOOL)wParam;
+
 	if (IsCtrlThemed())
 	{
 		m_BackBufferL = m_BackBufferH = 0;

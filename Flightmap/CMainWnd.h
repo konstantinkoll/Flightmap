@@ -49,6 +49,7 @@ protected:
 	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnGalleryChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnDistanceSettingChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnFileNew();
 	afx_msg void OnFileNewSample1();

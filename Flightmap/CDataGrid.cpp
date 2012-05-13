@@ -15,6 +15,8 @@
 #define MINWIDTH     75
 #define MAXWIDTH     750
 
+#define MARGIN       2
+
 CDataGrid::CDataGrid()
 {
 	p_Itinerary = NULL;
@@ -384,32 +386,44 @@ void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT col, CRect rect)
 	ASSERT(col<FMAttributeCount);
 
 	// Background
-	if (!FMAttributes[col].Editable)
-	{
-		dc.FillSolidRect(rect, 0xF5F5F5);
-	}
-	else
-		if (FMAttributes[col].Type==FMTypeClass)
-			switch (Flight.Class)
-			{
-			case AIRX_Economy:
-			case AIRX_EconomyPlus:
-				dc.FillSolidRect(rect, 0xE0FFE0);
-				break;
-			case AIRX_Business:
-				dc.FillSolidRect(rect, 0xFFF0E0);
-				break;
-			case AIRX_First:
-				dc.FillSolidRect(rect, 0xE0E0FF);
-				break;
-			case AIRX_Crew:
-				dc.FillSolidRect(rect, 0xD8FFFF);
-				break;
-			}
+	if (FMAttributes[col].Type==FMTypeClass)
+		switch (Flight.Class)
+		{
+		case AIRX_Economy:
+		case AIRX_EconomyPlus:
+			dc.FillSolidRect(rect, 0xE0FFE0);
+			break;
+		case AIRX_Business:
+			dc.FillSolidRect(rect, 0xFFF0E0);
+			break;
+		case AIRX_First:
+			dc.FillSolidRect(rect, 0xE0E0FF);
+			break;
+		case AIRX_Crew:
+			dc.FillSolidRect(rect, 0xD8FFFF);
+			break;
+		}
 
 	// Foreground
-	rect.left += 2;
-	dc.DrawText(_T("X"), rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+	rect.DeflateRect(MARGIN, 0);
+
+	if (FMAttributes[col].Type==FMTypeColor)
+	{
+		if (Flight.Color!=(COLORREF)-1)
+		{
+			CRect rectColor(rect.left, rect.top+MARGIN, rect.right, rect.bottom-MARGIN);
+			dc.Draw3dRect(rectColor, 0x000000, 0x000000);
+			rectColor.DeflateRect(1, 1);
+			dc.FillSolidRect(rectColor, Flight.Color);
+		}
+	}
+	else
+	{
+		WCHAR tmpStr[256];
+		AttributeToString(Flight, col, tmpStr, 256);
+
+		dc.DrawText(tmpStr, -1, rect, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[col].Type==FMTypeDistance) || (FMAttributes[col].Type==FMTypeUINT)) ? DT_RIGHT : DT_LEFT));
+	}
 }
 
 void CDataGrid::AutosizeColumn(UINT col)
@@ -552,7 +566,7 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (5+max(abs(lf.lfHeight), 16)) & ~1;
+	m_RowHeight = (2*MARGIN+max(abs(lf.lfHeight), 16)) & ~1;
 
 	ResetScrollbars();
 
@@ -629,6 +643,9 @@ void CDataGrid::OnPaint()
 				CRect rectIntersect;
 				if (rectIntersect.IntersectRect(rectItem, rectUpdate))
 				{
+					if (!FMAttributes[m_ViewParameters.ColumnOrder[col]].Editable)
+						dc.FillSolidRect(rectItem, 0xF5F5F5);
+
 					BOOL Selected = (m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row);
 
 					/*if (Selected && (!p_Edit))

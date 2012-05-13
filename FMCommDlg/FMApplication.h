@@ -67,6 +67,7 @@ public:
 	CLIPFORMAT CF_FILECONTENTS;
 	BOOL m_UseBgImages;
 	UINT msgUseBgImagesChanged;
+	UINT msgDistanceSettingChanged;
 	COLORREF m_CustomColors[16];
 
 	PFNSETWINDOWTHEME zSetWindowTheme;

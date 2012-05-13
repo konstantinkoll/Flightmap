@@ -9,7 +9,7 @@
 #include "FMCommDlg.h"
 #include "resource.h"
 
-#define PI                3.14159265358979323846
+#define PI     3.14159265358979323846
 
 
 // Globe textures

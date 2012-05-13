@@ -310,6 +310,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 	ON_MESSAGE(WM_GALLERYCHANGED, OnGalleryChanged)
 	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
+	ON_REGISTERED_MESSAGE(theApp.msgDistanceSettingChanged, OnDistanceSettingChanged)
 
 	ON_COMMAND(IDM_FILE_NEW, OnFileNew)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
@@ -561,9 +562,21 @@ LRESULT CMainWnd::OnGalleryChanged(WPARAM wParam, LPARAM lParam)
 	return NULL;
 }
 
-LRESULT CMainWnd::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CMainWnd::OnUseBgImagesChanged(WPARAM wParam, LPARAM /*lParam*/)
 {
+	theApp.m_UseBgImages = (BOOL)wParam;
+
 	return m_pWndMainView ? m_pWndMainView->SendMessage(theApp.msgUseBgImagesChanged) : NULL;
+}
+
+LRESULT CMainWnd::OnDistanceSettingChanged(WPARAM wParam, LPARAM /*lParam*/)
+{
+	theApp.m_UseStatuteMiles = (BOOL)wParam;
+
+	if (m_pWndMainView)
+		m_pWndMainView->Invalidate();
+
+	return NULL;
 }
 
 

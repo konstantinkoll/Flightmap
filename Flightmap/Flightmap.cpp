@@ -340,12 +340,16 @@ void CFlightmapApp::OnAppAbout()
 	AboutDlg dlg(m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
 	{
-		m_UseStatuteMiles = dlg.m_UseStatuteMiles;
-
 		if (m_UseBgImages!=dlg.m_UseBgImages)
 		{
 			m_UseBgImages = dlg.m_UseBgImages;
-			SendMessage(HWND_BROADCAST, msgUseBgImagesChanged, NULL, NULL);
+			SendMessage(HWND_BROADCAST, msgUseBgImagesChanged, (WPARAM)m_UseBgImages, NULL);
+		}
+
+		if (m_UseStatuteMiles!=dlg.m_UseStatuteMiles)
+		{
+			m_UseStatuteMiles = dlg.m_UseStatuteMiles;
+			SendMessage(HWND_BROADCAST, msgDistanceSettingChanged, (WPARAM)m_UseStatuteMiles, NULL);
 		}
 	}
 }

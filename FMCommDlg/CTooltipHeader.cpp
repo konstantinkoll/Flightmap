@@ -111,19 +111,29 @@ void CTooltipHeader::OnPaint()
 
 			if (GetItem(a, &hdi) && (hdi.cxy))
 			{
+				const COLORREF colBorder = IsXP ? GetSysColor(COLOR_SCROLLBAR) : 0xBAB5B1;
+				dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), colBorder);
+				dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, colBorder);
+
 				if (Themed)
 				{
-					COLORREF colFill = IsXP ? GetSysColor(COLOR_MENUBAR) : 0xE8E3DF;
-					COLORREF colBorder = IsXP ? GetSysColor(COLOR_SCROLLBAR) : 0xBAB5B1;
+					rectItem.right--;
+					rectItem.bottom--;
 
-					dc.FillSolidRect(rectItem, m_PressedItem==a ? colBorder : colFill);
-					dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), colBorder);
-					dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, colBorder);
+					if (IsXP || (m_PressedItem==a))
+					{
+						dc.FillSolidRect(rectItem, m_PressedItem==a ? colBorder : GetSysColor(COLOR_MENUBAR));
+					}
+					else
+					{
+						LinearGradientBrush brush(Point(0, rectItem.top), Point(0, rectItem.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xDC, 0xE6, 0xF4));
+						g.FillRectangle(&brush, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
+					}
 
 					if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
 						m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
 
-					rectItem.bottom -= 2;
+					rectItem.bottom --;
 				}
 				else
 				{
@@ -160,7 +170,7 @@ void CTooltipHeader::OnPaint()
 					break;
 				}
 
-				dc.SetTextColor(Themed ? IsXP ? GetSysColor(COLOR_MENUTEXT) : 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
+				dc.SetTextColor(Themed ? IsXP ? GetSysColor(COLOR_MENUTEXT) : m_PressedItem==a ? 0x000000 : 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
 				dc.DrawText(lpBuffer, rectItem, nFormat);
 
 				if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
