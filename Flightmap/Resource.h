@@ -123,7 +123,6 @@
 #define IDM_EDIT_INSERT_ITINERARY       3106
 #define IDM_EDIT_DELETE                 3107
 #define IDM_EDIT_SELECTALL              3108
-#define IDM_EDIT_GOTO                   3109
 #define IDM_MAP                         3200
 #define IDM_MAP_OPEN                    3201
 #define IDM_MAP_EXPORT_BMP              3202

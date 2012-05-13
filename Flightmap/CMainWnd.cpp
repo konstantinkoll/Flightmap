@@ -474,8 +474,6 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_EDIT_DELETE, 4, CDMB_SMALL);
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_EDIT_SELECTALL, 5, CDMB_SMALL);
-		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_EDIT_GOTO, 6, CDMB_SMALL);
 		break;
 	case IDM_EDIT_PASTE:
 		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);

@@ -7,6 +7,10 @@
 #include "CGdiPlusBitmap.h"
 #include <uxtheme.h>
 
+#define RatingBitmapWidth        88
+#define RatingBitmapHeight       15
+#define MaxRating                10
+
 #define OS_XP                     0
 #define OS_Vista                  1
 #define OS_Seven                  2
@@ -56,6 +60,7 @@ public:
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
 	CImageList m_SystemImageListExtraLarge;
+	HBITMAP m_RatingBitmaps[MaxRating+1];
 	CFont m_DefaultFont;
 	CFont m_BoldFont;
 	CFont m_ItalicFont;

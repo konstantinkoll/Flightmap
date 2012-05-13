@@ -603,10 +603,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\ExplorerGradient.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FileProperties_Tiny.ico"
 				>
 			</File>
@@ -660,6 +656,50 @@
 			</File>
 			<File
 				RelativePath=".\res\Plane_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating0.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating1.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating10.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating3.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating4.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating5.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating6.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating7.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating8.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Rating9.bmp"
 				>
 			</File>
 			<File

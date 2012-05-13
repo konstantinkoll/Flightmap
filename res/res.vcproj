@@ -236,14 +236,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Goto_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Goto_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Inspect_16.png"
 				>
 			</File>
@@ -505,10 +497,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\ExplorerGradient.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\FileProperties_Tiny.ico"
 			>
 		</File>
@@ -606,6 +594,54 @@
 		</File>
 		<File
 			RelativePath=".\Plane_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating0.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating1.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating10.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating2.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating3.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating4.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating5.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating6.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating7.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating8.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Rating9.png"
 			>
 		</File>
 		<File

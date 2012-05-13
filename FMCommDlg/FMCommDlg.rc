@@ -50,7 +50,17 @@ IDB_NRT_UNREGISTERED    PNG                     "res\\NRT_Unregistered.png"
 // Bitmap
 //
 
-IDB_EXPLORERGRADIENT    BITMAP                  "res\\ExplorerGradient.bmp"
+IDB_RATING0             BITMAP                  "res\\Rating0.bmp"
+IDB_RATING1             BITMAP                  "res\\Rating1.bmp"
+IDB_RATING2             BITMAP                  "res\\Rating2.bmp"
+IDB_RATING3             BITMAP                  "res\\Rating3.bmp"
+IDB_RATING4             BITMAP                  "res\\Rating4.bmp"
+IDB_RATING5             BITMAP                  "res\\Rating5.bmp"
+IDB_RATING6             BITMAP                  "res\\Rating6.bmp"
+IDB_RATING7             BITMAP                  "res\\Rating7.bmp"
+IDB_RATING8             BITMAP                  "res\\Rating8.bmp"
+IDB_RATING9             BITMAP                  "res\\Rating9.bmp"
+IDB_RATING10            BITMAP                  "res\\Rating10.bmp"
 IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 
 /////////////////////////////////////////////////////////////////////////////

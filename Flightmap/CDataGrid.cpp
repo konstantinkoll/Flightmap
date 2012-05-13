@@ -12,7 +12,7 @@
 // CDataGrid
 //
 
-#define MINWIDTH     75
+#define MINWIDTH     50
 #define MAXWIDTH     750
 
 #define MARGIN       2
@@ -124,13 +124,13 @@ void CDataGrid::AdjustHeader()
 		HdItem.cxy = m_ViewParameters.ColumnWidth[a];
 
 		if (HdItem.cxy)
-/*			if (theApp.m_Attributes[a]->Type==LFTypeRating)
+			if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor))
 			{
-				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
+				HdItem.cxy = m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
 			}
-			else*/
-			if (HdItem.cxy<MINWIDTH)
-				m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINWIDTH;
+			else
+				if (HdItem.cxy<MINWIDTH)
+					m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINWIDTH;
 
 		m_wndHeader.SetItem(a, &HdItem);
 	}
@@ -1325,7 +1325,7 @@ void CDataGrid::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->pitem->mask & HDI_WIDTH)
-		*pResult = /*(theApp.m_Attributes[pHdr->iItem]->Type==LFTypeRating) ||*/ (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+		*pResult = (FMAttributes[pHdr->iItem].Type==FMTypeRating) || (FMAttributes[pHdr->iItem].Type==FMTypeColor) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1334,8 +1334,8 @@ void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if ((pHdr->pitem->mask & HDI_WIDTH) && (!m_IgnoreHeaderItemChange))
 	{
-//		if (pHdr->pitem->cxy<MINWIDTH)
-//			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? MINWIDTH : 0;
+		if (pHdr->pitem->cxy<MINWIDTH)
+			pHdr->pitem->cxy = (pHdr->iItem==0) || (pHdr->iItem==3) ? MINWIDTH : pHdr->pitem->cxy<15 ? 0 : MINWIDTH;
 
 		m_ViewParameters.ColumnWidth[pHdr->iItem] = theApp.m_ViewParameters.ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
 		AdjustLayout();
