@@ -14,8 +14,16 @@
 
 #define MINWIDTH     50
 #define MAXWIDTH     750
-
 #define MARGIN       2
+#define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
+                                            INT h = min(rect.Height(), RatingBitmapHeight);
+#define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
+                                            HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
+                                            AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
+                                            SelectObject(hdcMem, hbmOld); \
+                                            DeleteDC(hdcMem); }
+
+static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 CDataGrid::CDataGrid()
 {
@@ -381,12 +389,12 @@ void CDataGrid::SelectItem(CPoint Item)
 	ReleaseCapture();
 }
 
-void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT col, CRect rect)
+void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect)
 {
 	ASSERT(col<FMAttributeCount);
 
 	// Background
-	if (FMAttributes[col].Type==FMTypeClass)
+	if (FMAttributes[Attr].Type==FMTypeClass)
 		switch (Flight.Class)
 		{
 		case AIRX_Economy:
@@ -407,22 +415,33 @@ void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT col, CRect rect)
 	// Foreground
 	rect.DeflateRect(MARGIN, 0);
 
-	if (FMAttributes[col].Type==FMTypeColor)
+	switch (FMAttributes[Attr].Type)
 	{
-		if (Flight.Color!=(COLORREF)-1)
+	case FMTypeColor:
+		if (*((COLORREF*)(((BYTE*)&Flight)+FMAttributes[Attr].Offset))!=(COLORREF)-1)
 		{
 			CRect rectColor(rect.left, rect.top+MARGIN, rect.right, rect.bottom-MARGIN);
 			dc.Draw3dRect(rectColor, 0x000000, 0x000000);
 			rectColor.DeflateRect(1, 1);
 			dc.FillSolidRect(rectColor, Flight.Color);
 		}
-	}
-	else
-	{
-		WCHAR tmpStr[256];
-		AttributeToString(Flight, col, tmpStr, 256);
+		break;
+	case FMTypeRating:
+		{
+			rect.top += (rect.Height()-RatingBitmapHeight-1)/2;
 
-		dc.DrawText(tmpStr, -1, rect, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[col].Type==FMTypeDistance) || (FMAttributes[col].Type==FMTypeUINT)) ? DT_RIGHT : DT_LEFT));
+			UCHAR Rating = (UCHAR)(*((UINT*)(((BYTE*)&Flight)+FMAttributes[Attr].Offset))>>FMAttributes[Attr].DataParameter);
+			PrepareBlend();
+			Blend(dc, rect, Rating, theApp.m_RatingBitmaps);
+		}
+		break;
+	default:
+		{
+			WCHAR tmpStr[256];
+			AttributeToString(Flight, Attr, tmpStr, 256);
+
+			dc.DrawText(tmpStr, -1, rect, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[Attr].Type==FMTypeDistance) || (FMAttributes[Attr].Type==FMTypeUINT)) ? DT_RIGHT : DT_LEFT));
+		}
 	}
 }
 

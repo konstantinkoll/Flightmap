@@ -129,10 +129,6 @@ FMApplication::FMApplication()
 		m_AeroLibLoaded = FALSE;
 	}
 
-	// Rating bitmaps
-	for (UINT a=0; a<=MaxRating; a++)
-		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
-
 	// Fonts
 	CString face = GetDefaultFontFace();
 
@@ -172,9 +168,6 @@ FMApplication::FMApplication()
 
 FMApplication::~FMApplication()
 {
-	for (UINT a=0; a<=MaxRating; a++)
-		DeleteObject(m_RatingBitmaps[a]);
-
 	if (hModThemes)
 		FreeLibrary(hModThemes);
 	if (hModAero)
@@ -206,6 +199,10 @@ BOOL FMApplication::InitInstance()
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
+	// Rating bitmaps
+	for (UINT a=0; a<=MaxRating; a++)
+		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
+
 	SetRegistryKey(_T(""));
 
 	// Zähler zurücksetzen
@@ -216,6 +213,9 @@ BOOL FMApplication::InitInstance()
 
 INT FMApplication::ExitInstance()
 {
+	for (UINT a=0; a<=MaxRating; a++)
+		DeleteObject(m_RatingBitmaps[a]);
+
 	GdiplusShutdown(m_gdiplusToken);
 
 	if (hModThemes)
