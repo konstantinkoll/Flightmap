@@ -124,7 +124,7 @@ void CDataGrid::AdjustHeader()
 		HdItem.cxy = m_ViewParameters.ColumnWidth[a];
 
 		if (HdItem.cxy)
-			if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor))
+			if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor) || (FMAttributes[a].Type==FMTypeFlags))
 			{
 				HdItem.cxy = m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
 			}
@@ -1282,7 +1282,13 @@ void CDataGrid::OnChooseDetails()
 
 void CDataGrid::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((pCmdUI->m_nID!=IDM_DETAILS_AUTOSIZE) || (m_HeaderItemClicked!=-1));
+	BOOL b = (pCmdUI->m_nID!=IDM_DETAILS_AUTOSIZE);
+
+	if (pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE)
+		if (m_HeaderItemClicked!=-1)
+			b = (FMAttributes[m_HeaderItemClicked].Type!=FMTypeRating) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeColor) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeFlags) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeFlags);
+
+	pCmdUI->Enable(b);
 }
 
 void CDataGrid::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1325,7 +1331,7 @@ void CDataGrid::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->pitem->mask & HDI_WIDTH)
-		*pResult = (FMAttributes[pHdr->iItem].Type==FMTypeRating) || (FMAttributes[pHdr->iItem].Type==FMTypeColor) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+		*pResult = (FMAttributes[pHdr->iItem].Type==FMTypeRating) || (FMAttributes[pHdr->iItem].Type==FMTypeColor) || (FMAttributes[pHdr->iItem].Type==FMTypeFlags) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)

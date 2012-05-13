@@ -2,7 +2,7 @@
 // StarAlliance
 //
 
-#define AllianceStarCount 31
+#define AllianceStarCount     31
 
 static const WCHAR AllianceStar[AllianceStarCount][64] = {
 	L"Adria Airways",
@@ -42,7 +42,7 @@ static const WCHAR AllianceStar[AllianceStarCount][64] = {
 // SkyTeam
 //
 
-#define AllianceSkyTeamCount 20
+#define AllianceSkyTeamCount     20
 
 static const WCHAR AllianceSkyTeam[AllianceSkyTeamCount][64] = {
 	L"Aeroflot",
@@ -71,7 +71,7 @@ static const WCHAR AllianceSkyTeam[AllianceSkyTeamCount][64] = {
 // OneWorld
 //
 
-#define AllianceOneWorldCount 15
+#define AllianceOneWorldCount     15
 
 static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
 	L"Air Berlin",
@@ -95,7 +95,7 @@ static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
 // Equipment
 //
 
-#define EquipmentCount       34
+#define EquipmentCount     34
 
 static const WCHAR Equipment[EquipmentCount][32] = {
 	L"Airbus A300",

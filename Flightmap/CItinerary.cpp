@@ -30,7 +30,7 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 		const DOUBLE tmp2 = cos(Lat2)*sin(Lat1)-sin(Lat2)*cos(Lat1)*cos(DeltaLon);
 		const DOUBLE T = sqrt(tmp1*tmp1+tmp2*tmp2);
 		const DOUBLE B = sin(Lat2)*sin(Lat1)+cos(Lat2)*cos(Lat1)*cos(DeltaLon);
-		const DOUBLE GreatCircle = atan(T/B);
+		const DOUBLE GreatCircle = atan2(T, B);
 
 		Flight.DistanceNM = 3438.461*GreatCircle;
 		Flight.Flags |= AIRX_DistanceValid;
