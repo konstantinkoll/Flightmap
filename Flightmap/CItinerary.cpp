@@ -58,7 +58,7 @@ void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
 	}
 }
 
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount, BOOL Force)
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount)
 {
 	ASSERT(Attr<FMAttributeCount);
 	ASSERT(pBuffer);
@@ -78,12 +78,20 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		MultiByteToWideChar(CP_ACP, 0, (CHAR*)pData, -1, pBuffer, (INT)cCount);
 		break;
 	case FMTypeUINT:
-		if ((*((UINT*)pData)) || Force)
+		if (*((UINT*)pData))
 			swprintf(pBuffer, cCount, L"%d", *((UINT*)pData));
 		break;
 	case FMTypeDistance:
 		if (Flight.Flags & AIRX_DistanceValid)
-			DistanceToString(pBuffer, cCount, Flight.DistanceNM);
+			DistanceToString(pBuffer, cCount, *((DOUBLE*)pData));
+		break;
+	case FMTypeFlags:
+		if (Flight.Flags & AIRX_AwardFlight)
+			wcscat_s(pBuffer, cCount, L"A");
+		if (Flight.Flags & AIRX_BusinessTrip)
+			wcscat_s(pBuffer, cCount, L"B");
+		if (Flight.Flags & AIRX_LeisureTrip)
+			wcscat_s(pBuffer, cCount, L"L");
 		break;
 	case FMTypeTime:
 		if ((((FILETIME*)pData)->dwHighDateTime!=0) || (((FILETIME*)pData)->dwLowDateTime!=0))
@@ -120,7 +128,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		}
 		break;
 	case FMTypeColor:
-		if ((*((COLORREF*)pData)!=(COLORREF)-1) || Force)
+		if (*((COLORREF*)pData)!=(COLORREF)-1)
 			swprintf(pBuffer, cCount, L"%06X", *((COLORREF*)pData));
 		break;
 	}
@@ -408,6 +416,10 @@ void CItinerary::OpenAIRX(CString FileName)
 			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
+	else
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
 
 	if (pData)
 		free(pData);
@@ -472,6 +484,10 @@ void CItinerary::OpenAIR(CString FileName)
 			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
+	else
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
 }
 
 void CItinerary::OpenCSV(CString FileName)
@@ -494,7 +510,10 @@ void CItinerary::OpenCSV(CString FileName)
 			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
-
+	else
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
 }
 
 void CItinerary::SaveAIRX(CString FileName)
@@ -544,11 +563,17 @@ void CItinerary::SaveAIRX(CString FileName)
 			FMErrorBox(IDS_DRIVENOTREADY);
 		}
 	}
+	else
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
 }
 
 CString CItinerary::Flight2Text(AIRX_Flight& Flight)
 {
-	return _T("X\n");
+	CString tmpStr;
+
+	return tmpStr;
 }
 
 CString CItinerary::Flight2Text(UINT Idx)

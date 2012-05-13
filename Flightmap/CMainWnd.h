@@ -38,6 +38,7 @@ protected:
 	CKitchen* GetKitchen(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	void ExportExcel(CString FileName);
 	void ExportCalendar(CString FileName);
 	BOOL ExportGoogleEarth(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportText(CString FileName);
@@ -58,6 +59,7 @@ protected:
 	afx_msg void OnFileOpenRecent(UINT CmdID);
 	afx_msg void OnFileSave();
 	afx_msg void OnFileSaveAs();
+	afx_msg void OnFileSaveCSV();
 	afx_msg void OnFileSaveICS();
 	afx_msg void OnFileSaveTXT();
 	afx_msg void OnFileSaveOther();

@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CCalendarFile.h"
 #include "CDataGrid.h"
+#include "CExcelFile.h"
 #include "CGlobeWnd.h"
 #include "CGoogleEarthFile.h"
 #include "CKitchen.h"
@@ -207,6 +208,29 @@ void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected, BOO
 	theApp.SaveBitmap(GetMap(Selected, MergeMetro), Filename, guidFileType);
 }
 
+void CMainWnd::ExportExcel(CString FileName)
+{
+	ASSERT(m_pItinerary);
+
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
+	CExcelFile f;
+
+	if (!f.Open(FileName))
+	{
+		FMErrorBox(IDS_DRIVENOTREADY);
+	}
+	else
+	{
+		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
+
+		for (UINT a=0; a<Limit; a++)
+			f.WriteRoute(m_pItinerary->m_Flights.m_Items[a]);
+
+		f.Close();
+	}
+}
+
 void CMainWnd::ExportCalendar(CString FileName)
 {
 	ASSERT(m_pItinerary);
@@ -319,6 +343,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND_RANGE(IDM_FILE_RECENT, IDM_FILE_RECENT+9, OnFileOpenRecent)
 	ON_COMMAND(IDM_FILE_SAVE, OnFileSave)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
+	ON_COMMAND(IDM_FILE_SAVEAS_CSV, OnFileSaveCSV)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
 	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
 	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveOther)
@@ -444,11 +469,11 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	case IDM_FILE_SAVEAS:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
 		pPopup->AddCaption(IDS_SAVECOPY);
-		pPopup->AddFileType(IDM_FILE_SAVEAS_AIRX, _T(".airx"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_AIRX, _T("airx"), CDMB_LARGE);
 		pPopup->AddCaption(IDS_EXPORT);
-		pPopup->AddFileType(IDM_FILE_SAVEAS_CSV, _T(".csv"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_FILE_SAVEAS_ICS, _T(".ics"), CDMB_LARGE);
-		pPopup->AddFileType(IDM_FILE_SAVEAS_TXT, _T(".txt"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_CSV, _T("csv"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_ICS, _T("ics"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_FILE_SAVEAS_TXT, _T("txt"), CDMB_LARGE);
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_FILE_SAVEAS_OTHER, 4, CDMB_LARGE);
 		break;
@@ -479,7 +504,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
 		pPopup->AddCommand(IDM_EDIT_INSERT_FLIGHT, 3, CDMB_LARGE);
 		pPopup->AddCommand(IDM_EDIT_INSERT_ROUTE, 3, CDMB_LARGE);
-		pPopup->AddFileType(IDM_EDIT_INSERT_ITINERARY, _T(".airx"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_EDIT_INSERT_ITINERARY, _T("airx"), CDMB_LARGE);
 		break;
 	case IDM_MAP:
 		pPopup->Create(this, IDB_MENUMAP_32, IDB_MENUMAP_16);
@@ -678,6 +703,18 @@ void CMainWnd::OnFileSaveAs()
 	}
 }
 
+void CMainWnd::OnFileSaveCSV()
+{
+	ASSERT(m_pItinerary);
+
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("csv"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+		ExportExcel(dlg.GetPathName());
+}
+
 void CMainWnd::OnFileSaveICS()
 {
 	ASSERT(m_pItinerary);
@@ -728,6 +765,8 @@ void CMainWnd::OnFileSaveOther()
 		}
 		if (Ext==_T("bmp"))
 			ExportMap(dlg.GetPathName(), ImageFormatBMP);
+		if (Ext==_T("csv"))
+			ExportExcel(dlg.GetPathName());
 		if (Ext==_T("ics"))
 			ExportCalendar(dlg.GetPathName());
 		if (Ext==_T("kml"))
@@ -775,8 +814,8 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_SAVEAS_AIRX:
-	case IDM_FILE_SAVEAS_ICS:
 	case IDM_FILE_SAVEAS_CSV:
+	case IDM_FILE_SAVEAS_ICS:
 	case IDM_FILE_SAVEAS_TXT:
 	case IDM_FILE_SAVEAS_OTHER:
 	case IDM_FILE_PREPARE:

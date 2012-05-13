@@ -384,6 +384,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExcelFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeView.cpp"
 				>
 			</File>
@@ -499,6 +503,10 @@
 			</File>
 			<File
 				RelativePath=".\CDataGrid.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CExcelFile.h"
 				>
 			</File>
 			<File

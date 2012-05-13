@@ -124,7 +124,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN10, FMTypeUnicodeString, offsetof(AIRX_Flight, Equipment), 64, 150, TRUE, TRUE, TRUE },			// Equipment
 	{ IDS_COLUMN11, FMTypeAnsiString, offsetof(AIRX_Flight, Registration), 16, 100, FALSE, TRUE, TRUE },		// Registration
 	{ IDS_COLUMN12, FMTypeUnicodeString, offsetof(AIRX_Flight, Name), 64, 100, FALSE, TRUE, TRUE },				// Name
-	{ IDS_COLUMN13, FMTypeClass, offsetof(AIRX_Flight, Class), 0, 50, TRUE, TRUE, TRUE },						// Class
+	{ IDS_COLUMN13, FMTypeClass, offsetof(AIRX_Flight, Class), 0, 75, TRUE, TRUE, TRUE },						// Class
 	{ IDS_COLUMN14, FMTypeAnsiString, offsetof(AIRX_Flight, Seat), 4, 50, TRUE, TRUE, TRUE },					// Seat
 	{ IDS_COLUMN15, FMTypeColor, offsetof(AIRX_Flight, Color), 0, 50, TRUE, FALSE, TRUE },						// Color
 	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 7, 100, FALSE, TRUE, TRUE },				// Etix code
@@ -138,7 +138,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount, BOOL Force=FALSE);
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
 
 
 // CItinerary

@@ -7,13 +7,6 @@
 #include "CCalendarFile.h"
 
 
-/*void CookAttributeString(CString& tmpStr)
-{
-	tmpStr.Replace(_T(":"), _T("_"));
-	tmpStr.Replace(_T(";"), _T("_"));
-}*/
-
-
 // CCalendarFile
 //
 
