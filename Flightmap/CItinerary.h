@@ -70,6 +70,7 @@ struct AIRX_Flight
 	UINT MilesStatus;
 	WCHAR Fare[16];
 	WCHAR Codeshares[64];
+	UINT FlightTime;
 };
 
 struct AIRX_Attachment
@@ -85,7 +86,7 @@ struct AIRX_Attachment
 // Attributes
 //
 
-#define FMAttributeCount 23
+#define FMAttributeCount 24
 
 #define FMTypeUnicodeString     0
 #define FMTypeAnsiString        1
@@ -93,9 +94,10 @@ struct AIRX_Attachment
 #define FMTypeUINT              3
 #define FMTypeDistance          4
 #define FMTypeFlags             5
-#define FMTypeTime              6
-#define FMTypeClass             7
-#define FMTypeColor             8
+#define FMTypeDateTime          6
+#define FMTypeTime              7
+#define FMTypeClass             8
+#define FMTypeColor             9
 
 struct FMAttribute
 {
@@ -112,10 +114,10 @@ struct FMAttribute
 static const FMAttribute FMAttributes[FMAttributeCount] =
 {
 	{ IDS_COLUMN0, FMTypeAnsiString, offsetof(AIRX_Flight, From.Code), 4, 50, TRUE, TRUE, TRUE },				// From
-	{ IDS_COLUMN1, FMTypeTime, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },					// Departure time
+	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },					// Departure time
 	{ IDS_COLUMN2, FMTypeUnicodeString, offsetof(AIRX_Flight, From.Gate), 8, 50, FALSE, TRUE, TRUE },			// Departure gate
 	{ IDS_COLUMN3, FMTypeAnsiString, offsetof(AIRX_Flight, To.Code), 4, 50, TRUE, TRUE, TRUE },					// To
-	{ IDS_COLUMN4, FMTypeTime, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },						// Arrival time
+	{ IDS_COLUMN4, FMTypeDateTime, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },						// Arrival time
 	{ IDS_COLUMN5, FMTypeUnicodeString, offsetof(AIRX_Flight, To.Gate), 8, 50, FALSE, TRUE, TRUE },				// Arrival gate
 	{ IDS_COLUMN6, FMTypeDistance, offsetof(AIRX_Flight, DistanceNM), 0, 140, TRUE, TRUE, FALSE },				// Distance
 	{ IDS_COLUMN7, FMTypeUnicodeString, offsetof(AIRX_Flight, Carrier), 64, 150, TRUE, TRUE, TRUE },			// Carrier
@@ -133,7 +135,8 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 70, FALSE, TRUE, TRUE },					// Status miles
 	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 100, FALSE, FALSE, FALSE },					// Flags
 	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 29, RatingBitmapWidth+5, FALSE, TRUE, TRUE },	// Rating
-	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 256, 100, TRUE, TRUE, TRUE }			// Comments
+	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 256, 100, TRUE, TRUE, TRUE },			// Comments
+	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, Comments), 0, 100, FALSE, TRUE, TRUE }					// Flight time
 };
 
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);

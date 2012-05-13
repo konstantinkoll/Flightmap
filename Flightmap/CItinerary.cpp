@@ -93,7 +93,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		if (Flight.Flags & AIRX_LeisureTrip)
 			wcscat_s(pBuffer, cCount, L"L");
 		break;
-	case FMTypeTime:
+	case FMTypeDateTime:
 		if ((((FILETIME*)pData)->dwHighDateTime!=0) || (((FILETIME*)pData)->dwLowDateTime!=0))
 		{
 			FileTimeToSystemTime((FILETIME*)pData, &st);
@@ -106,6 +106,10 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 				swprintf(pBuffer, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
 			}
 		}
+		break;
+	case FMTypeTime:
+		if (*((UINT*)pData))
+			swprintf(pBuffer, cCount, L"%02d:%02d", *((UINT*)pData)/60, *((UINT*)pData)%60);
 		break;
 	case FMTypeClass:
 		switch (*((CHAR*)pData))

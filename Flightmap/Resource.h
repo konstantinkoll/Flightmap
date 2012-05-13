@@ -92,6 +92,7 @@
 #define IDS_COLUMN20                    1220
 #define IDS_COLUMN21                    1221
 #define IDS_COLUMN22                    1222
+#define IDS_COLUMN23                    1223
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002

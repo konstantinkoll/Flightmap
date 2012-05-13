@@ -197,6 +197,7 @@ BEGIN
     IDS_COLUMN20            "Attribute"
     IDS_COLUMN21            "Bewertung"
     IDS_COLUMN22            "Kommentar"
+    IDS_COLUMN23            "Flugzeit"
 END
 
 STRINGTABLE 
@@ -435,6 +436,7 @@ BEGIN
     IDS_COLUMN20            "Flags"
     IDS_COLUMN21            "Rating"
     IDS_COLUMN22            "Comments"
+    IDS_COLUMN23            "Flight time"
 END
 
 STRINGTABLE 
