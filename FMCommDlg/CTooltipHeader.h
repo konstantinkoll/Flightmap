@@ -32,8 +32,6 @@ protected:
 
 private:
 	BOOL m_Hover;
-	INT m_HoverItem;
 	INT m_PressedItem;
-	INT m_TrackItem;
 	INT m_TooltipItem;
 };

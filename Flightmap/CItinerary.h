@@ -85,9 +85,20 @@ struct AIRX_Attachment
 
 #define FMAttributeCount 23
 
+#define FMTypeUnicodeString     0
+#define FMTypeAnsiString        1
+#define FMTypeRating            2
+#define FMTypeUINT              3
+#define FMTypeDistance          4
+#define FMTypeFlags             5
+#define FMTypeTime              6
+#define FMTypeClass             7
+#define FMTypeColor             8
+
 struct FMAttribute
 {
 	UINT nNameID;
+	UINT Type;
 	UINT Offset;
 	UINT DataParameter;
 	UINT RecommendedWidth;
@@ -97,29 +108,29 @@ struct FMAttribute
 };
 
 static const FMAttribute FMAttributes[FMAttributeCount] = {
-	{ IDS_COLUMN0, offsetof(AIRX_Flight, From.Code), 4, 100, TRUE, TRUE, TRUE },		// From
-	{ IDS_COLUMN1, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },		// Departure time
-	{ IDS_COLUMN2, offsetof(AIRX_Flight, From.Gate), 8, 100, FALSE, TRUE, TRUE },		// Departure gate
-	{ IDS_COLUMN3, offsetof(AIRX_Flight, To.Code), 4, 100, TRUE, TRUE, TRUE },			// To
-	{ IDS_COLUMN4, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },			// Arrival time
-	{ IDS_COLUMN5, offsetof(AIRX_Flight, To.Gate), 8, 100, FALSE, TRUE, TRUE },			// Arrival gate
-	{ IDS_COLUMN6, offsetof(AIRX_Flight, DistanceNM), 0, 100, TRUE, TRUE, FALSE },		// Distance
-	{ IDS_COLUMN7, offsetof(AIRX_Flight, Carrier), 64, 100, TRUE, TRUE, TRUE },			// Carrier
-	{ IDS_COLUMN8, offsetof(AIRX_Flight, FlightNo), 8, 100, FALSE, TRUE, TRUE },		// Flight no
-	{ IDS_COLUMN9, offsetof(AIRX_Flight, Codeshares), 64, 100, FALSE, FALSE, TRUE },	// Codeshares
-	{ IDS_COLUMN10, offsetof(AIRX_Flight, Equipment), 64, 100, TRUE, TRUE, TRUE },		// Equipment
-	{ IDS_COLUMN11, offsetof(AIRX_Flight, Registration), 16, 100, FALSE, TRUE, TRUE },	// Registration
-	{ IDS_COLUMN12, offsetof(AIRX_Flight, Name), 64, 100, FALSE, TRUE, TRUE },			// Name
-	{ IDS_COLUMN13, offsetof(AIRX_Flight, Class), 0, 100, TRUE, TRUE, TRUE },			// Class
-	{ IDS_COLUMN14, offsetof(AIRX_Flight, Seat), 4, 100, TRUE, TRUE, TRUE },			// Seat
-	{ IDS_COLUMN15, offsetof(AIRX_Flight, Color), 0, 100, TRUE, FALSE, TRUE },			// Color
-	{ IDS_COLUMN16, offsetof(AIRX_Flight, EtixCode), 7, 100, FALSE, TRUE, TRUE },		// Etix code
-	{ IDS_COLUMN17, offsetof(AIRX_Flight, Fare), 16, 100, FALSE, TRUE, TRUE },			// Fare
-	{ IDS_COLUMN18, offsetof(AIRX_Flight, MilesAward), 0 ,100, FALSE, TRUE, TRUE },		// Award miles
-	{ IDS_COLUMN19, offsetof(AIRX_Flight, MilesStatus), 0, 100, FALSE, TRUE, TRUE },	// Status miles
-	{ IDS_COLUMN20, offsetof(AIRX_Flight, Flags), 0, 100, FALSE, FALSE, FALSE },		// Flags
-	{ IDS_COLUMN21, offsetof(AIRX_Flight, Flags), 29, 100, FALSE, TRUE, TRUE },			// Rating
-	{ IDS_COLUMN22,offsetof(AIRX_Flight, Comments), 256, 100, TRUE, TRUE, TRUE }		// Comments
+	{ IDS_COLUMN0, FMTypeAnsiString, offsetof(AIRX_Flight, From.Code), 4, 100, TRUE, TRUE, TRUE },		// From
+	{ IDS_COLUMN1, FMTypeTime, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },		// Departure time
+	{ IDS_COLUMN2, FMTypeUnicodeString, offsetof(AIRX_Flight, From.Gate), 8, 100, FALSE, TRUE, TRUE },		// Departure gate
+	{ IDS_COLUMN3, FMTypeAnsiString, offsetof(AIRX_Flight, To.Code), 4, 100, TRUE, TRUE, TRUE },			// To
+	{ IDS_COLUMN4, FMTypeTime, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },			// Arrival time
+	{ IDS_COLUMN5, FMTypeUnicodeString, offsetof(AIRX_Flight, To.Gate), 8, 100, FALSE, TRUE, TRUE },			// Arrival gate
+	{ IDS_COLUMN6, FMTypeDistance, offsetof(AIRX_Flight, DistanceNM), 0, 100, TRUE, TRUE, FALSE },		// Distance
+	{ IDS_COLUMN7, FMTypeUnicodeString, offsetof(AIRX_Flight, Carrier), 64, 100, TRUE, TRUE, TRUE },			// Carrier
+	{ IDS_COLUMN8, FMTypeAnsiString, offsetof(AIRX_Flight, FlightNo), 8, 100, FALSE, TRUE, TRUE },		// Flight no
+	{ IDS_COLUMN9, FMTypeUnicodeString, offsetof(AIRX_Flight, Codeshares), 64, 100, FALSE, FALSE, TRUE },	// Codeshares
+	{ IDS_COLUMN10, FMTypeUnicodeString, offsetof(AIRX_Flight, Equipment), 64, 100, TRUE, TRUE, TRUE },		// Equipment
+	{ IDS_COLUMN11, FMTypeAnsiString, offsetof(AIRX_Flight, Registration), 16, 100, FALSE, TRUE, TRUE },	// Registration
+	{ IDS_COLUMN12, FMTypeUnicodeString, offsetof(AIRX_Flight, Name), 64, 100, FALSE, TRUE, TRUE },			// Name
+	{ IDS_COLUMN13, FMTypeClass, offsetof(AIRX_Flight, Class), 0, 100, TRUE, TRUE, TRUE },			// Class
+	{ IDS_COLUMN14, FMTypeAnsiString, offsetof(AIRX_Flight, Seat), 4, 100, TRUE, TRUE, TRUE },			// Seat
+	{ IDS_COLUMN15, FMTypeColor, offsetof(AIRX_Flight, Color), 0, 100, TRUE, FALSE, TRUE },			// Color
+	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 7, 100, FALSE, TRUE, TRUE },		// Etix code
+	{ IDS_COLUMN17, FMTypeUINT, offsetof(AIRX_Flight, Fare), 16, 100, FALSE, TRUE, TRUE },			// Fare
+	{ IDS_COLUMN18, FMTypeUINT, offsetof(AIRX_Flight, MilesAward), 0 ,100, FALSE, TRUE, TRUE },		// Award miles
+	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 100, FALSE, TRUE, TRUE },	// Status miles
+	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 100, FALSE, FALSE, FALSE },		// Flags
+	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 29, 100, FALSE, TRUE, TRUE },			// Rating
+	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 256, 100, TRUE, TRUE, TRUE }		// Comments
 };
 
 

@@ -53,6 +53,7 @@ protected:
 	BOOL HitTest(CPoint point, CPoint* item);
 	void InvalidateItem(CPoint Item);
 	void SelectItem(CPoint Item);
+	void DrawItem(CDC& dc, AIRX_Flight& Flight, UINT col, CRect rect);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

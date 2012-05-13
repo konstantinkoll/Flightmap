@@ -15,9 +15,6 @@
 #define MINWIDTH     75
 #define MAXWIDTH     750
 
-#define BORDER       3
-#define MARGIN       4
-
 CDataGrid::CDataGrid()
 {
 	p_Itinerary = NULL;
@@ -102,7 +99,7 @@ void CDataGrid::AdjustLayout()
 	HdLayout.pwpos = &wp;
 	m_wndHeader.Layout(&HdLayout);
 
-	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
+	m_HeaderHeight = wp.cy + (wp.cy ? 1 : 0);
 
 	AdjustScrollbars();
 	Invalidate();
@@ -382,6 +379,39 @@ void CDataGrid::SelectItem(CPoint Item)
 	ReleaseCapture();
 }
 
+void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT col, CRect rect)
+{
+	ASSERT(col<FMAttributeCount);
+
+	// Background
+	if (!FMAttributes[col].Editable)
+	{
+		dc.FillSolidRect(rect, 0xF5F5F5);
+	}
+	else
+		if (FMAttributes[col].Type==FMTypeClass)
+			switch (Flight.Class)
+			{
+			case AIRX_Economy:
+			case AIRX_EconomyPlus:
+				dc.FillSolidRect(rect, 0xE0FFE0);
+				break;
+			case AIRX_Business:
+				dc.FillSolidRect(rect, 0xFFF0E0);
+				break;
+			case AIRX_First:
+				dc.FillSolidRect(rect, 0xE0E0FF);
+				break;
+			case AIRX_Crew:
+				dc.FillSolidRect(rect, 0xD8FFFF);
+				break;
+			}
+
+	// Foreground
+	rect.left += 2;
+	dc.DrawText(_T("X"), rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+}
+
 void CDataGrid::AutosizeColumn(UINT col)
 {
 	DestroyEdit();
@@ -522,7 +552,7 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (4+max(abs(lf.lfHeight), 16)) & ~1;
+	m_RowHeight = (5+max(abs(lf.lfHeight), 16)) & ~1;
 
 	ResetScrollbars();
 
@@ -581,170 +611,63 @@ void CDataGrid::OnPaint()
 
 	BOOL Themed = IsCtrlThemed();
 	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
+	COLORREF lineCol = Themed ? 0xDDDCDA : GetSysColor(COLOR_3DFACE);
 	dc.FillSolidRect(rect, bkCol);
 
-	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-
-	LOGBRUSH brsh;
-	brsh.lbColor = 0x808080;
-	brsh.lbStyle = PS_SOLID;
-	CPen pen(PS_COSMETIC | PS_ALTERNATE, 1, &brsh);
-	CPen* pOldPen = dc.SelectObject(&pen);
-
-	INT start = m_VScrollPos/m_RowHeight;
-/*	INT y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
-	Cell* curCell = &m_Tree[MAKEPOS(start, 0)];
-	for (UINT row=start; row<m_Rows; row++)
+	if (p_Itinerary)
 	{
-		INT x = -m_HScrollPos;
-		for (UINT col=0; col<FMAttributeCount; col++)
+		CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+
+		INT start = m_VScrollPos/m_RowHeight;
+		INT y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
+		for (UINT row=start; row<=p_Itinerary->m_Flights.m_ItemCount; row++)
 		{
-			CRect rectItem(x, y, x+m_ViewParameters.ColumnWidth[col], y+m_RowHeight);
-			CRect rectIntersect;
-			if (rectIntersect.IntersectRect(rectItem, rectUpdate))
+			INT x = -m_HScrollPos;
+			for (UINT col=0; col<FMAttributeCount; col++)
 			{
-				BOOL Hot = (m_HotItem.x==(INT)col) && (m_HotItem.y==(INT)row);
-				BOOL Selected = (m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row);
-
-				if (curCell->pItem)
+				CRect rectItem(x, y, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]]-1, y+m_RowHeight-1);
+				CRect rectIntersect;
+				if (rectIntersect.IntersectRect(rectItem, rectUpdate))
 				{
-					if (hThemeList)
-					{
-						if (Hot | Selected)
-						{
-							const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-							UINT State = 0;
-							if (Hot)
-								State |= 1;
-							if (Selected)
-								State |= 2;
-								theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
-						}
+					BOOL Selected = (m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row);
 
-						dc.SetTextColor(curCell->pItem->Path[0] ? 0x000000 : 0x808080);
-					}
-					else
-						if (Selected)
+					/*if (Selected && (!p_Edit))
+						if (hThemeList)
+						{
+							theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, rectItem, rectItem);
+							//dc.SetTextColor(curCell->pItem->Path[0] ? 0x000000 : 0x808080);
+						}
+						else
 						{
 							dc.FillSolidRect(rectItem, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
-							dc.SetTextColor(GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
+							//dc.SetTextColor(GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
 
 							if (GetFocus()==this)
 							{
 								dc.SetBkColor(0x000000);
 								dc.DrawFocusRect(rectItem);
 							}
-						}
-						else
-						{
-							dc.SetTextColor(curCell->pItem->Path[0] ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0x808080 : GetSysColor(COLOR_GRAYTEXT));
-						}
+						}*/
 
-					rectItem.left += m_CheckboxSize.cx+BORDER+MARGIN;
-					theApp.m_SystemImageListSmall.Draw(&dc, Selected ? curCell->pItem->IconIDSelected : curCell->pItem->IconIDNormal, CPoint(rectItem.left, y+(m_RowHeight-m_IconSize.cy)/2), ILD_TRANSPARENT);
-					rectItem.left += m_IconSize.cx+MARGIN;
-					rectItem.right -= BORDER;
-
-					CRect rectButton(x+BORDER, y+(m_RowHeight-m_CheckboxSize.cy)/2, x+BORDER+m_CheckboxSize.cx, y+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
-					if (hThemeButton)
-					{
-						INT uiStyle;
-						if (curCell->pItem->Path[0])
-						{
-							uiStyle = (Selected && (m_SpacePressed || m_CheckboxPressed)) ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
-							if (curCell->Flags & CF_CHECKED)
-								uiStyle += 4;
-						}
-						else
-						{
-							uiStyle = CBS_UNCHECKEDDISABLED;
-						}
-						theApp.zDrawThemeBackground(hThemeButton, dc, BP_CHECKBOX, uiStyle, rectButton, rectButton);
-					}
-					else
-					{
-						UINT uiStyle = DFCS_BUTTONCHECK;
-						if (curCell->pItem->Path[0])
-						{
-							uiStyle |= (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | ((Selected && (m_SpacePressed || m_CheckboxPressed)) ? DFCS_PUSHED : 0);
-						}
-						else
-						{
-							uiStyle |= DFCS_INACTIVE;
-						}
-						dc.DrawFrameControl(rectButton, DFC_BUTTON, uiStyle);
-					}
-
-					dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-					dc.MoveTo(x, y+m_RowHeight/2);
-					dc.LineTo(x+BORDER-1, y+m_RowHeight/2);
-
-					if (curCell->Flags & (CF_HASCHILDREN | CF_CANEXPAND))
-					{
-						INT right = x+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
-						if (right<x+m_ViewParameters.ColumnWidth[col])
-						{
-							dc.MoveTo(x+m_ViewParameters.ColumnWidth[col], y+m_RowHeight/2);
-							dc.LineTo(right, y+m_RowHeight/2);
-						}
-					}
+					if (row<p_Itinerary->m_Flights.m_ItemCount)
+						DrawItem(dc, p_Itinerary->m_Flights.m_Items[row], m_ViewParameters.ColumnOrder[col], rectItem);
 				}
 
-				if (curCell->Flags & CF_HASSIBLINGS)
-				{
-					dc.MoveTo(x/2, y+m_RowHeight/2);
-					dc.LineTo(x/2, y+m_RowHeight);
-				}
-
-				if (curCell->Flags & CF_ISSIBLING)
-				{
-					dc.MoveTo(x/2, y);
-					dc.LineTo(x/2, y+m_RowHeight/2);
-				}
-
-				if (col)
-					if ((curCell-1)->Flags & (CF_CANEXPAND | CF_CANCOLLAPSE))
-					{
-						dc.MoveTo(x, y+m_RowHeight/2);
-						dc.LineTo(x+2, y+m_RowHeight/2);
-
-						CRect rectGlyph(x, y+(m_RowHeight-m_GlyphSize.cy)/2, x+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy);
-						if (hThemeTree)
-						{
-							if (theApp.OSVersion==OS_XP)
-							{
-								rectGlyph.OffsetRect(2, 1);
-							}
-							else
-							{
-								rectGlyph.OffsetRect(1-m_GlyphSize.cx/4, 0);
-							}
-
-							BOOL Hot = (m_HotExpando.x==(INT)col) && (m_HotExpando.y==(INT)row) && (theApp.OSVersion>OS_XP);
-							theApp.zDrawThemeBackground(hThemeTree, dc, Hot ? TVP_HOTGLYPH : TVP_GLYPH, (curCell-1)->Flags & CF_CANEXPAND ? GLPS_CLOSED : GLPS_OPENED, rectGlyph, rectGlyph);
-						}
-						else
-						{
-							rectGlyph.OffsetRect(1, 0);
-							m_DefaultGlyphs.Draw(&dc, (curCell-1)->Flags & CF_CANEXPAND ? 0 : 1, rectGlyph.TopLeft(), 0);
-						}
-					}
+				x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]];
+				dc.FillSolidRect(x-1, y, 1, m_RowHeight-1, lineCol);
 			}
 
-			x += m_ViewParameters.ColumnWidth[col];
-			curCell++;
-		}
+			y += m_RowHeight;
+			dc.FillSolidRect(0, y-1, x, 1, lineCol);
 
-		y += m_RowHeight;
-		if (y>rect.Height())
-			break;
+			if (y>rect.Height())
+				break;
+			}
+
+		dc.SelectObject(pOldFont);
 	}
 
-*/
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldPen);
-	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
 }
 
