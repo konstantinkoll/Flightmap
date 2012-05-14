@@ -142,11 +142,12 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 // FromString
 //
 
+__forceinline void ScanUINT(LPCWSTR str, UINT& num)
+{
+	swscanf_s(str, L"%d", &num);
+}
 
-// Other
-//
-
-void ScanDate(LPCWSTR str, FILETIME& ft)
+void ScanDateTime(LPCWSTR str, FILETIME& ft)
 {
 	UINT Year;
 	UINT Month;
@@ -193,6 +194,21 @@ void ScanDate(LPCWSTR str, FILETIME& ft)
 	}
 }
 
+void ScanTime(LPCWSTR str, UINT& time)
+{
+	UINT Hour;
+	UINT Minute;
+
+	INT c = swscanf_s(str, L"%u:%u", &Hour, &Minute);
+	if (c>=1)
+	{
+		time = Hour*60;
+
+		if (c==2)
+			time += max(Minute, 59);
+	}
+}
+
 void ScanColor(LPCWSTR str, COLORREF& col)
 {
 	if (swscanf_s(str, L"%06X", &col)==1)
@@ -200,11 +216,51 @@ void ScanColor(LPCWSTR str, COLORREF& col)
 			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
 }
 
-__forceinline void ScanNumber(LPCWSTR str, UINT& num)
+void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 {
-	swscanf_s(str, L"%d", &num);
+	ASSERT(Attr<FMAttributeCount);
+	ASSERT(pStr);
+
+	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
+
+	switch (FMAttributes[Attr].Type)
+	{
+	case FMTypeUnicodeString:
+		wcscpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (WCHAR*)pStr);
+		break;
+	case FMTypeAnsiString:
+		WideCharToMultiByte(CP_ACP, 0, pStr, -1, (CHAR*)pData, FMAttributes[Attr].DataParameter, NULL, NULL);
+		break;
+	case FMTypeUINT:
+		ScanUINT(pStr, *((UINT*)pData));
+		break;
+	case FMTypeFlags:
+		Flight.Flags &= ~(AIRX_AwardFlight | AIRX_BusinessTrip | AIRX_LeisureTrip);
+		if (wcschr(pStr, L'A'))
+			Flight.Flags |= AIRX_AwardFlight;
+		if (wcschr(pStr, L'B'))
+			Flight.Flags |= AIRX_BusinessTrip;
+		if (wcschr(pStr, L'L'))
+			Flight.Flags |= AIRX_LeisureTrip;
+		break;
+	case FMTypeDateTime:
+		ScanDateTime(pStr, *((FILETIME*)pData));
+		break;
+	case FMTypeTime:
+		ScanTime(pStr, *((UINT*)pData));
+		break;
+	case FMTypeClass:
+		*((CHAR*)pData) = (wcscmp(L"Y", pStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", pStr)==0) ? AIRX_EconomyPlus : (wcscmp(L"J", pStr)==0) ? AIRX_Business : (wcscmp(L"F", pStr)==0) ? AIRX_First : ((wcscmp(L"C", pStr)==0) || (wcscmp(L"Crew/DCM", pStr)==0)) ? AIRX_Crew : AIRX_Unknown;
+		break;
+	case FMTypeColor:
+		ScanColor(pStr, *((COLORREF*)pData));
+		break;
+	}
 }
 
+
+// Other
+//
 
 __forceinline UINT ReadUTF7Length(CFile& f)
 {
@@ -283,7 +339,7 @@ __forceinline void ReadUTF7CHAR(CFile& f, CHAR* pChar, UINT cCount)
 
 void ReadUTF7FILETIME(CFile& f, FILETIME& Time)
 {
-	ScanDate(ReadUTF7String(f), Time);
+	ScanDateTime(ReadUTF7String(f), Time);
 }
 
 __forceinline void ReadUTF7COLORREF(CFile& f, COLORREF& Color)
@@ -293,7 +349,7 @@ __forceinline void ReadUTF7COLORREF(CFile& f, COLORREF& Color)
 
 void ReadUTF7UINT(CFile& f, UINT& Number)
 {
-	ScanNumber(ReadUTF7String(f), Number);
+	ScanUINT(ReadUTF7String(f), Number);
 }
 
 
@@ -498,7 +554,7 @@ void CItinerary::OpenCSV(CString FileName)
 {
 	ASSERT(!m_IsOpen);
 
-	CFile f;
+	CStdioFile f;
 	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
 	{
 		SetDisplayName(FileName);
@@ -506,6 +562,149 @@ void CItinerary::OpenCSV(CString FileName)
 
 		try
 		{
+			CString caption;
+			if (f.ReadString(caption))
+			{
+				CMap<CString, LPCTSTR, INT, INT&> map;
+				map[L"FROM"] = 0;
+				map[L"FRM IATA"] = 0;
+				map[L"FROM IATA"] = 0;
+				map[L"ORT VON"] = 0;
+				map[L"START"] = 0;
+				map[L"DATE & TIME"] = 1;
+				map[L"DATE"] = 1;
+				map[L"DATUM"] = 1;
+				map[L"DEPARTURE"] = 1;
+				map[L"DEPT. TIME"] = 1;
+				map[L"ZEIT VON"] = 1;
+				map[L"DEPT. GATE"] = 2;
+				map[L"TO"] = 3;
+				map[L"TO IATA"] = 3;
+				map[L"ORT BIS"] = 3;
+				map[L"ZIEL"] = 3;
+				map[L"ARRIVAL"] = 4;
+				map[L"ARR. TIME"] = 4;
+				map[L"ZEIT BIS"] = 4;
+				map[L"ARR. GATE"] = 5;
+				map[L"AIRLINE"] = 7;
+				map[L"CARRIER"] = 7;
+				map[L"OPERATOR"] = 7;
+				map[L"FLIGHT #"] = 8;
+				map[L"FLIGHT_NUMBER"] = 8;
+				map[L"FLUGNR"] = 8;
+				map[L"CODESHARE"] = 9;
+				map[L"CODESHARES"] = 9;
+				map[L"EQUIPMENT"] = 10;
+				map[L"MUSTER"] = 10;
+				map[L"PLANE"] = 10;
+				map[L"TYPE"] = 10;
+				map[L"AIRCRAFT REGISTRATION"] = 11;
+				map[L"REGISTRATION"] = 11;
+				map[L"TAIL"] = 11;
+				map[L"AIRCRAFT NAME"] = 12;
+				map[L"CLASS"] = 13;
+				map[L"KLASSE"] = 13;
+				map[L"SEAT"] = 14;
+				map[L"SITZ"] = 14;
+				map[L"COLOR"] = 15;
+				map[L"ETIX"] = 16;
+				map[L"BOOKING"] = 16;
+				map[L"ETIX CODE"] = 16;
+				map[L"ETIX BOOKING CODE"] = 16;
+				map[L"FARE"] = 17;
+				map[L"PRICE"] = 17;
+				map[L"AWARD MILES"] = 18;
+				map[L"STATUS MILES"] = 19;
+				map[L"FLAGS"] = 20;
+				map[L"RATING"] = 21;
+				map[L"COMMENTS"] = 22;
+				map[L"FLIGHT TIME"] = 23;
+
+				INT RouteMapping = -1;
+				INT Mapping[100];
+				for (UINT a=0; a<100; a++)
+					Mapping[a] = -1;
+
+				// Header
+				INT Pos = 0;
+				UINT Column = 0;
+				CString resToken = caption.Tokenize(_T(";"), Pos);
+				while ((resToken!=_T("")) && (Column<100))
+				{
+					resToken.MakeUpper();
+
+					if (resToken==_T("ROUTE"))
+					{
+						RouteMapping = Column;
+					}
+					else
+					{
+						map.Lookup(resToken, Mapping[Column]);
+					}
+
+					resToken = caption.Tokenize(_T(";"), Pos);
+					Column++;
+				}
+
+				// Flights
+				CString line;
+				CString route;
+				while (f.ReadString(line))
+				{
+					AIRX_Flight Flight;
+					ResetFlight(Flight);
+					route.Empty();
+
+					Pos = 0;
+					Column = 0;
+
+					resToken = line.Tokenize(_T(";"), Pos);
+					while ((resToken!=_T("")) && (Column<100))
+					{
+						if ((INT)Column==RouteMapping)
+						{
+							route = resToken;
+						}
+						else
+							if (Mapping[Column]!=-1)
+								StringToAttribute(resToken.GetBuffer(), Flight, Mapping[Column]);
+
+						resToken = line.Tokenize(_T(";"), Pos);
+						Column++;
+					}
+
+					if (route.IsEmpty())
+					{
+						CalcDistance(Flight, TRUE);
+						m_Flights.AddItem(Flight);
+					}
+					else
+					{
+						CString From;
+						CString To;
+						Pos = 0;
+
+						resToken = route.Tokenize(_T("-/"), Pos);
+						while (resToken!=_T(""))
+						{
+							From = To;
+							To = resToken;
+
+							if ((!From.IsEmpty()) && (!To.IsEmpty()))
+							{
+								StringToAttribute(From.GetBuffer(), Flight, 0);
+								StringToAttribute(To.GetBuffer(), Flight, 3);
+
+								CalcDistance(Flight, TRUE);
+								m_Flights.AddItem(Flight);
+							}
+
+							resToken = route.Tokenize(_T("-/"), Pos);
+						}
+					}
+				}
+			}
+
 			f.Close();
 		}
 		catch(CFileException ex)

@@ -114,10 +114,10 @@ struct FMAttribute
 static const FMAttribute FMAttributes[FMAttributeCount] =
 {
 	{ IDS_COLUMN0, FMTypeAnsiString, offsetof(AIRX_Flight, From.Code), 4, 50, TRUE, TRUE, TRUE },				// From
-	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },					// Departure time
+	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },				// Departure time
 	{ IDS_COLUMN2, FMTypeUnicodeString, offsetof(AIRX_Flight, From.Gate), 8, 50, FALSE, TRUE, TRUE },			// Departure gate
 	{ IDS_COLUMN3, FMTypeAnsiString, offsetof(AIRX_Flight, To.Code), 4, 50, TRUE, TRUE, TRUE },					// To
-	{ IDS_COLUMN4, FMTypeDateTime, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },						// Arrival time
+	{ IDS_COLUMN4, FMTypeDateTime, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },					// Arrival time
 	{ IDS_COLUMN5, FMTypeUnicodeString, offsetof(AIRX_Flight, To.Gate), 8, 50, FALSE, TRUE, TRUE },				// Arrival gate
 	{ IDS_COLUMN6, FMTypeDistance, offsetof(AIRX_Flight, DistanceNM), 0, 140, TRUE, TRUE, FALSE },				// Distance
 	{ IDS_COLUMN7, FMTypeUnicodeString, offsetof(AIRX_Flight, Carrier), 64, 150, TRUE, TRUE, TRUE },			// Carrier
@@ -142,6 +142,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
+void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);
 
 
 // CItinerary
