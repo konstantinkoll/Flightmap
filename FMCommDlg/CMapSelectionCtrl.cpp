@@ -36,7 +36,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	if (!Map)
 	{
 		Map = new CGdiPlusBitmapResource();
-		ENSURE(Map->Load(IDB_EARTHMAP_1024, _T("PNG"), AfxGetResourceHandle()));
+		ENSURE(Map->Load(IDB_EARTHMAP_1024, _T("JPG"), AfxGetResourceHandle()));
 	}
 	m_Indicator = new CGdiPlusBitmapResource();
 	ENSURE(m_Indicator->Load(IDB_LOCATIONINDICATOR_8, _T("PNG"), AfxGetResourceHandle()));

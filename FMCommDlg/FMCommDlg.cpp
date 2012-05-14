@@ -194,7 +194,7 @@ FMCommDlg_API HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UI
 	if (!MapBackground)
 	{
 		MapBackground = new CGdiPlusBitmapResource();
-		ENSURE(MapBackground->Load(IDB_EARTHMAP_2048, _T("PNG"), AfxGetResourceHandle()));
+		ENSURE(MapBackground->Load(IDB_EARTHMAP_2048, _T("JPG"), AfxGetResourceHandle()));
 	}
 	if (!MapIndicator)
 	{

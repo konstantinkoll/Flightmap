@@ -894,16 +894,43 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 				//EditLabel(m_EditLabel);
 			}
 			else
-				if (!m_TooltipCtrl.IsWindowVisible())
+				if (!m_TooltipCtrl.IsWindowVisible() && (m_HotItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
 				{
-					/*HICON hIcon = NULL;
-					CSize size(0, 0);
-					CString caption;
-					CString hint;
-					TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_HotItem)].pItem->pidlFQ, &theApp.m_SystemImageListExtraLarge, hIcon, size, caption, hint);
-
 					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, size, caption, hint);*/
+					const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[m_HotItem.y];
+					UINT Attr = m_ViewParameters.ColumnOrder[m_HotItem.x];
+					WCHAR tmpStr[256];
+
+					switch (Attr)
+					{
+					case 0:
+						if (strlen(pFlight->From.Code)==3)
+							m_TooltipCtrl.Track(point, (CHAR*)&pFlight->From.Code, _T(""));
+						break;
+					case 3:
+						if (strlen(pFlight->To.Code)==3)
+							m_TooltipCtrl.Track(point, (CHAR*)&pFlight->To.Code, _T(""));
+						break;
+					default:
+						AttributeToString(p_Itinerary->m_Flights.m_Items[m_HotItem.y], Attr, tmpStr, 256);
+
+						if (tmpStr[0]!=L'\0')
+							if (FMAttributes[Attr].Type==FMTypeColor)
+							{
+								m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), _T(""), tmpStr);
+							}
+							else
+							{
+								CClientDC dc(this);
+
+								CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+								CSize szText = dc.GetTextExtent(tmpStr, wcslen(tmpStr));
+								dc.SelectObject(pOldFont);
+
+								if (szText.cx>m_ViewParameters.ColumnWidth[Attr]-2*MARGIN-1)
+									m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), _T(""), tmpStr);
+							}
+					}
 				}
 	}
 	else

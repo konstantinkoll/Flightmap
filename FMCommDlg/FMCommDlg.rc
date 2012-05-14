@@ -29,6 +29,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // JPG
 //
 
+IDB_EARTHMAP_1024       JPG                     "res\\Earthmap_1024.jpg"
+IDB_EARTHMAP_2048       JPG                     "res\\Earthmap_2048.jpg"
 IDB_PROGRESSSTRIP       JPG                     "res\\Strip.jpg"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -40,8 +42,6 @@ IDB_FLIGHTMAP           PNG                     "res\\Flightmap.png"
 IDB_BACKDROP_BLUE       PNG                     "res\\Backdrop_Blue.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
-IDB_EARTHMAP_1024       PNG                     "res\\Earthmap_1024.jpg"
-IDB_EARTHMAP_2048       PNG                     "res\\Earthmap_2048.jpg"
 IDB_NRT_REGISTERED      PNG                     "res\\NRT_Registered.png"
 IDB_NRT_UNREGISTERED    PNG                     "res\\NRT_Unregistered.png"
 
