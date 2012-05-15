@@ -130,11 +130,9 @@ void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 	SetFocus();
 }
 
-void CMainWnd::Open(CString FileName)
+CItinerary* CMainWnd::Load(CString FileName)
 {
-	ASSERT(m_pItinerary==NULL);
-
-	m_pItinerary = new CItinerary();
+	CItinerary* pItinerary = new CItinerary();
 
 	CString Ext = FileName;
 	Ext.MakeLower();
@@ -146,11 +144,18 @@ void CMainWnd::Open(CString FileName)
 		Ext.Delete(0, pos+1);
 
 	if (Ext==_T("airx"))
-		m_pItinerary->OpenAIRX(FileName);
+		pItinerary->OpenAIRX(FileName);
 	if (Ext==_T("air"))
-		m_pItinerary->OpenAIR(FileName);
+		pItinerary->OpenAIR(FileName);
 	if (Ext==_T("csv"))
-		m_pItinerary->OpenCSV(FileName);
+		pItinerary->OpenCSV(FileName);
+
+	return pItinerary;
+}
+
+void CMainWnd::Open(CString FileName)
+{
+	m_pItinerary = Load(FileName);
 
 	UpdateWindowStatus();
 }
