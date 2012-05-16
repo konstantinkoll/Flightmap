@@ -264,7 +264,7 @@ void CMapView::OnSize(UINT nType, INT cx, INT cy)
 void CMapView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	SCROLLINFO si;
 

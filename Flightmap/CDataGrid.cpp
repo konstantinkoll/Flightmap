@@ -134,11 +134,11 @@ void CDataGrid::AdjustHeader()
 		if (HdItem.cxy)
 			if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor) || (FMAttributes[a].Type==FMTypeFlags))
 			{
-				HdItem.cxy = m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
+				HdItem.cxy = m_ViewParameters.ColumnWidth[a] = theApp.m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
 			}
 			else
 				if (HdItem.cxy<MINWIDTH)
-					m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINWIDTH;
+					m_ViewParameters.ColumnWidth[a] = theApp.m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINWIDTH;
 
 		m_wndHeader.SetItem(a, &HdItem);
 	}
@@ -224,7 +224,7 @@ void CDataGrid::EnsureVisible(CPoint item)
 		return;
 
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	SCROLLINFO si;
 	INT nInc;
@@ -391,7 +391,7 @@ void CDataGrid::SelectItem(CPoint Item)
 
 void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect)
 {
-	ASSERT(col<FMAttributeCount);
+	ASSERT(Attr<FMAttributeCount);
 
 	// Background
 	if (FMAttributes[Attr].Type==FMTypeClass)
@@ -440,22 +440,36 @@ void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect)
 			WCHAR tmpStr[256];
 			AttributeToString(Flight, Attr, tmpStr, 256);
 
-			dc.DrawText(tmpStr, -1, rect, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[Attr].Type==FMTypeDistance) || (FMAttributes[Attr].Type==FMTypeUINT)) ? DT_RIGHT : DT_LEFT));
+			dc.DrawText(tmpStr, -1, rect, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[Attr].Type==FMTypeDistance) || (FMAttributes[Attr].Type==FMTypeUINT) || (Attr==14)) ? DT_RIGHT : DT_LEFT));
 		}
 	}
 }
 
-void CDataGrid::AutosizeColumn(UINT col)
+void CDataGrid::AutosizeColumn(UINT Attr)
 {
 	DestroyEdit();
 
-	INT Width = 0;
-/*	for (UINT row=0; row<m_Rows; row++)
-		if (m_Tree[MAKEPOS(row, col)].pItem)
-			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);*/
+	INT Width = MINWIDTH;
 
-	//Width += 2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN;
-	/*m_ViewParameters.ColumnWidth[col] = min(OnlyEnlarge ? max(Width, m_ViewParameters.ColumnWidth[col]) : Width, MAXWIDTH);*/
+	if (p_Itinerary)
+	{
+		CClientDC dc(this);
+		CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+
+		for (UINT row=0; row<p_Itinerary->m_Flights.m_ItemCount; row++)
+		{
+			WCHAR tmpStr[256];
+			AttributeToString(p_Itinerary->m_Flights.m_Items[row], Attr, tmpStr, 256);
+			CSize szText = dc.GetTextExtent(tmpStr, wcslen(tmpStr));
+
+			Width = max(Width, szText.cx);
+		}
+
+		dc.SelectObject(pOldFont);
+	}
+
+	Width += 2*MARGIN+1;
+	m_ViewParameters.ColumnWidth[Attr] = theApp.m_ViewParameters.ColumnWidth[Attr] = min(Width, MAXWIDTH);
 }
 
 void CDataGrid::DestroyEdit(BOOL Accept)
@@ -716,7 +730,7 @@ void CDataGrid::OnSize(UINT nType, INT cx, INT cy)
 void CDataGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
 
 	SCROLLINFO si;
 
@@ -995,7 +1009,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (p_Itinerary)
 	{
 		CRect rect;
-		GetClientRect(&rect);
+		GetClientRect(rect);
 
 		CPoint item(m_SelectedItem);
 

@@ -198,8 +198,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapIATAInnerColor"), m_MapSettings.IATAInnerColor);
 		WriteInt(_T("MapIATAOuterColor"), m_MapSettings.IATAOuterColor);
 
-		WriteBinary(_T("ColumnOrder"), (LPBYTE)m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
-		WriteBinary(_T("ColumnWidth"), (LPBYTE)m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
+		WriteBinary(_T("ColumnOrder"), (LPBYTE)&m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
+		WriteBinary(_T("ColumnWidth"), (LPBYTE)&m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
 
 		UINT a=0;
 		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)

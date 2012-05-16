@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "CItinerary.h"
 #include "Flightmap.h"
+#include <math.h>
 
 
 void CalcDistance(AIRX_Flight& Flight, BOOL Force)

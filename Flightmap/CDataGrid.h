@@ -96,6 +96,6 @@ private:
 	INT m_HScrollPos;
 	INT m_VScrollPos;
 
-	void AutosizeColumn(UINT col);
+	void AutosizeColumn(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);
 };
