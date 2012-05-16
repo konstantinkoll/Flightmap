@@ -339,10 +339,13 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* item)
 {
 	ASSERT(item);
 
+	if (!p_Itinerary)
+		return FALSE;
+
 	point.y -= m_HeaderHeight-m_VScrollPos;
 
 	INT row = (point.y>=0) ? point.y/m_RowHeight : -1;
-	if (row!=-1)
+	if ((row!=-1) && (row<=p_Itinerary->m_Flights.m_ItemCount))
 	{
 		INT x = -m_HScrollPos;
 
