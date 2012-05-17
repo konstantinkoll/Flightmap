@@ -175,10 +175,18 @@ void CDataGrid::EditCell(BOOL Delete, CPoint item)
 		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=FMAttributeCount) || (item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
 		return;
-	if (!FMAttributes[m_ViewParameters.ColumnOrder[item.x]].Editable)
+
+	const UINT Attr = m_ViewParameters.ColumnOrder[item.x];
+	if (!FMAttributes[Attr].Editable)
 		return;
 
 	EnsureVisible(item);
+	const BOOL NewLine = (item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount);
+	Delete |= NewLine;
+
+	if (FMAttributes[Attr].Type==FMTypeColor)
+	{
+	}
 
 	INT y = item.y*m_RowHeight+m_HeaderHeight-m_VScrollPos;
 	INT x = -m_HScrollPos;
@@ -186,10 +194,10 @@ void CDataGrid::EditCell(BOOL Delete, CPoint item)
 		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
 	WCHAR tmpBuf[256] = L"";
-	if ((!Delete) && (item.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
-		AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], m_ViewParameters.ColumnOrder[item.x], tmpBuf, 256);
+	if (!Delete)
+		AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], Attr, tmpBuf, 256);
 
-	CRect rect(x-2, y-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[item.x]]+1, y+m_RowHeight+1);
+	CRect rect(x-2, y-2, x+m_ViewParameters.ColumnWidth[Attr]+1, y+m_RowHeight+1);
 
 	p_Edit = new CEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
