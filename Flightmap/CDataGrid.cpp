@@ -14,7 +14,7 @@
 
 #define MINWIDTH     50
 #define MAXWIDTH     750
-#define MARGIN       2
+#define MARGIN       3
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
@@ -602,7 +602,7 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (2*MARGIN+max(abs(lf.lfHeight), 16)) & ~1;
+	m_RowHeight = (2*(MARGIN-1)+max(abs(lf.lfHeight), 16)) & ~1;
 
 	ResetScrollbars();
 

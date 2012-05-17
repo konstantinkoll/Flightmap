@@ -184,7 +184,7 @@ BEGIN
     IDS_COLUMN7             "Fluglinie"
     IDS_COLUMN8             "Flugnummer"
     IDS_COLUMN9             "Codeshares"
-    IDS_COLUMN10            "Flugzeugtyp"
+    IDS_COLUMN10            "Flugzeugmuster"
     IDS_COLUMN11            "Registrierung"
     IDS_COLUMN12            "Flugzeugname"
     IDS_COLUMN13            "Klasse"
