@@ -368,21 +368,29 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 // CItinerary
 //
 
-CItinerary::CItinerary(BOOL LoadAuthorFromRegistry)
+CItinerary::CItinerary(BOOL LoadAuthor)
 {
 	m_IsModified = m_IsOpen = FALSE;
 	m_DisplayName.LoadString(IDS_EMPTYITINERARY);
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
 
-	if (LoadAuthorFromRegistry)
+	if (LoadAuthor)
 	{
-		HKEY hKey;
-		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+		FMLicense License;
+		if (FMIsLicensed(&License))
 		{
-			DWORD Length = 256;
-			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);
+			wcscpy_s(m_Metadata.Author, 256, License.RegName);
+		}
+		else
+		{
+			HKEY hKey;
+			if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+			{
+				DWORD Length = 256;
+				RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);
 
-			RegCloseKey(hKey);
+				RegCloseKey(hKey);
+			}
 		}
 	}
 }

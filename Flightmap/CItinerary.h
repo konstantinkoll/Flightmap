@@ -151,7 +151,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);
 class CItinerary
 {
 public:
-	CItinerary(BOOL LoadAuthorFromRegistry=FALSE);
+	CItinerary(BOOL LoadAuthor=FALSE);
 	~CItinerary();
 
 	void NewSampleAtlantic();
