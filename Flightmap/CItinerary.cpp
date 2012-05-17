@@ -251,7 +251,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		ScanTime(pStr, *((UINT*)pData));
 		break;
 	case FMTypeClass:
-		*((CHAR*)pData) = (wcscmp(L"Y", pStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", pStr)==0) ? AIRX_EconomyPlus : (wcscmp(L"J", pStr)==0) ? AIRX_Business : (wcscmp(L"F", pStr)==0) ? AIRX_First : ((wcscmp(L"C", pStr)==0) || (wcscmp(L"Crew/DCM", pStr)==0)) ? AIRX_Crew : AIRX_Unknown;
+		*((CHAR*)pData) = (wcscmp(L"Y", pStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", pStr)==0) ? AIRX_EconomyPlus : (wcscmp(L"J", pStr)==0) ? AIRX_Business : (wcscmp(L"F", pStr)==0) ? AIRX_First : ((wcscmp(L"C", pStr)==0) || (wcscmp(L"Crew", pStr)==0) || (wcscmp(L"Crew/DCM", pStr)==0)) ? AIRX_Crew : AIRX_Unknown;
 		break;
 	case FMTypeColor:
 		ScanColor(pStr, *((COLORREF*)pData));
@@ -262,6 +262,27 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 
 // Other
 //
+
+BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter)
+{
+	if (Pos>=strSrc.GetLength())
+		return FALSE;
+
+	strDst = _T("");
+
+	while (Pos<strSrc.GetLength())
+	{
+		if (Delimiter.Find(strSrc[Pos])!=-1)
+		{
+			Pos++;
+			return TRUE;
+		}
+
+		strDst.AppendChar(strSrc[Pos++]);
+	}
+
+	return TRUE;
+}
 
 __forceinline UINT ReadUTF7Length(CFile& f)
 {
@@ -659,8 +680,8 @@ void CItinerary::OpenCSV(CString FileName)
 				// Header
 				INT Pos = 0;
 				UINT Column = 0;
-				CString resToken = caption.Tokenize(_T(";"), Pos);
-				while ((resToken!=_T("")) && (Column<100))
+				CString resToken;
+				while (Tokenize(caption, resToken, Pos, _T(";")) && (Column<100))
 				{
 					resToken.MakeUpper();
 
@@ -673,7 +694,6 @@ void CItinerary::OpenCSV(CString FileName)
 						map.Lookup(resToken, Mapping[Column]);
 					}
 
-					resToken = caption.Tokenize(_T(";"), Pos);
 					Column++;
 				}
 
@@ -689,8 +709,8 @@ void CItinerary::OpenCSV(CString FileName)
 					Pos = 0;
 					Column = 0;
 
-					resToken = line.Tokenize(_T(";"), Pos);
-					while ((resToken!=_T("")) && (Column<100))
+					//resToken = line.Tokenize(_T(";"), Pos);
+					while (Tokenize(line, resToken, Pos, _T(";")) && (Column<100))
 					{
 						if ((INT)Column==RouteMapping)
 						{
@@ -698,9 +718,11 @@ void CItinerary::OpenCSV(CString FileName)
 						}
 						else
 							if (Mapping[Column]!=-1)
+							{
 								StringToAttribute(resToken.GetBuffer(), Flight, Mapping[Column]);
+							}
 
-						resToken = line.Tokenize(_T(";"), Pos);
+					//	resToken = line.Tokenize(_T(";"), Pos);
 						Column++;
 					}
 
