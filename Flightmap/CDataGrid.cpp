@@ -60,7 +60,7 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 			case VK_EXECUTE:
 			case VK_RETURN:
 				DestroyEdit(TRUE);
-				m_SelectedItem.y++;
+				SelectItem(CPoint(m_SelectedItem.x, m_SelectedItem.y+1));
 				return TRUE;
 			case VK_ESCAPE:
 				DestroyEdit(FALSE);
