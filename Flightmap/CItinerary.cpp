@@ -368,11 +368,23 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 // CItinerary
 //
 
-CItinerary::CItinerary()
+CItinerary::CItinerary(BOOL LoadAuthorFromRegistry)
 {
 	m_IsModified = m_IsOpen = FALSE;
 	m_DisplayName.LoadString(IDS_EMPTYITINERARY);
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
+
+	if (LoadAuthorFromRegistry)
+	{
+		HKEY hKey;
+		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+		{
+			DWORD Length = 256;
+			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);
+
+			RegCloseKey(hKey);
+		}
+	}
 }
 
 CItinerary::~CItinerary()
@@ -389,6 +401,11 @@ void CItinerary::NewSampleAtlantic()
 	m_DisplayName.LoadString(IDS_SAMPLEITINERARY);
 	m_IsOpen = TRUE;
 
+	wcscpy_s(m_Metadata.Author, 256, L"liquidFOLDERS");
+	LoadString(AfxGetResourceHandle(), IDS_METADATA_COMMENTS, m_Metadata.Comments, 256);
+	LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_ATLANTIC, m_Metadata.Title, 256);
+	LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_ATLANTIC, m_Metadata.Keywords, 256);
+
 	AddFlight("DUS", "FRA", L"Lufthansa", L"Boeing 737", "LH 803", AIRX_Economy, "9F", "", L"", 500, (COLORREF)-1, MakeTime(2007, 1, 25, 6, 15));
 	AddFlight("FRA", "JFK", L"Lufthansa", L"Airbus A340", "LH 400", AIRX_Crew, "F/D", "D-AIHD", L"Stuttgart", 2565, (COLORREF)-1, MakeTime(2007, 1, 25, 9, 35));
 	AddFlight("EWR", "SFO", L"Continental Airlines", L"Boeing 737", "CO 572", AIRX_Economy, "15F", "", L"", 0, 0xFFC0A0, MakeTime(2007, 1, 28, 11, 45));
@@ -402,6 +419,11 @@ void CItinerary::NewSamplePacific()
 
 	m_DisplayName.LoadString(IDS_SAMPLEITINERARY);
 	m_IsOpen = TRUE;
+
+	wcscpy_s(m_Metadata.Author, 256, L"liquidFOLDERS");
+	LoadString(AfxGetResourceHandle(), IDS_METADATA_COMMENTS, m_Metadata.Comments, 256);
+	LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_PACIFIC, m_Metadata.Title, 256);
+	LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_PACIFIC, m_Metadata.Keywords, 256);
 
 	AddFlight("YVR", "DFW", L"American Airlines", L"Boeing 737", "AA 260", AIRX_Economy, "16A", "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 9, 12, 15));
 	AddFlight("DFW", "LAX", L"American Airlines", L"Boeing 737", "AA 2489", AIRX_Economy, "18D", "", L"", 1070, (COLORREF)-1, MakeTime(2012, 7, 9, 20, 35));

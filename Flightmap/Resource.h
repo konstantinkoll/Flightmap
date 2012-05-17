@@ -93,6 +93,11 @@
 #define IDS_COLUMN21                    1221
 #define IDS_COLUMN22                    1222
 #define IDS_COLUMN23                    1223
+#define IDS_METADATA_COMMENTS           1300
+#define IDS_METADATA_TITLE_ATLANTIC     1301
+#define IDS_METADATA_TITLE_PACIFIC      1302
+#define IDS_METADATA_KEYWORDS_ATLANTIC  1303
+#define IDS_METADATA_KEYWORDS_PACIFIC   1304
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002

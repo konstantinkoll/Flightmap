@@ -614,7 +614,7 @@ void CMainWnd::OnFileNew()
 {
 	if (CloseFile())
 	{
-		m_pItinerary = new CItinerary();
+		m_pItinerary = new CItinerary(TRUE);
 		UpdateWindowStatus();
 	}
 }

@@ -214,6 +214,15 @@ BEGIN
     IDM_GLOBEVIEW           "&Ansicht"
 END
 
+STRINGTABLE
+BEGIN
+    IDS_METADATA_COMMENTS   "Beispiel-Flugplan"
+    IDS_METADATA_TITLE_ATLANTIC "Atlantik-Überquerung"
+    IDS_METADATA_TITLE_PACIFIC  "Pazifik-Überquerung"
+    IDS_METADATA_KEYWORDS_ATLANTIC "Flightmap Beispiel Flugplan Atlantik Überquerung"
+    IDS_METADATA_KEYWORDS_PACIFIC "Flightmap Beispiel Flugplan Pazifik Überquerung"
+END
+
 STRINGTABLE 
 BEGIN
     IDM_FILE_NEW            "&Neu"
@@ -451,6 +460,15 @@ BEGIN
     IDM_MAPVIEW             "&View"
     IDM_GLOBEWND            "&Globe"
     IDM_GLOBEVIEW           "&View"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_METADATA_COMMENTS   "Sample itinerary"
+    IDS_METADATA_TITLE_ATLANTIC "Atlantic crossing"
+    IDS_METADATA_TITLE_PACIFIC  "Pacific crossing"
+    IDS_METADATA_KEYWORDS_ATLANTIC "Flightmap Sample Itinerary Atlantic Crossing"
+    IDS_METADATA_KEYWORDS_PACIFIC "Flightmap Sample Itinerary Pacific Crossing"
 END
 
 STRINGTABLE 

@@ -30,16 +30,12 @@ protected:
 	CEdit* p_Edit;
 	CTooltipHeader m_wndHeader;
 	ViewParameters m_ViewParameters;
-	HTHEME hThemeList;
-	HTHEME hThemeButton;
 	FMTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;
 	CPoint m_SelectedItem;
 	CPoint m_HotItem;
-	CPoint m_EditLabel;
 	BOOL m_Hover;
-	BOOL m_SpacePressed;
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 
@@ -47,13 +43,14 @@ protected:
 
 	void AdjustLayout();
 	void AdjustHeader();
+	void EditCell(BOOL Delete=FALSE, CPoint item=CPoint(-1, -1));
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* item);
 	void InvalidateItem(CPoint Item);
 	void SelectItem(CPoint Item);
-	void DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect);
+	void DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -70,9 +67,7 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);

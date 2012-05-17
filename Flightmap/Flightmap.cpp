@@ -134,7 +134,7 @@ BOOL CFlightmapApp::InitInstance()
 		m_MapSettings.Height = 4096;
 
 	CMainWnd* pFrame = new CMainWnd();
-	pFrame->Create(__argc==2 ? pFrame->Load(__wargv[1]) : new CItinerary());
+	pFrame->Create(__argc==2 ? pFrame->Load(__wargv[1]) : new CItinerary(TRUE));
 	pFrame->ShowWindow(SW_SHOW);
 	pFrame->UpdateWindow();
 
