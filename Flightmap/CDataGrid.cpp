@@ -799,7 +799,6 @@ BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 
 void CDataGrid::OnMouseMove(UINT nFlags, CPoint point)
 {
-	BOOL Dragging = (GetCapture()==this);
 	CPoint Item(-1, -1);
 	BOOL OnItem = HitTest(point, &Item);
 
@@ -818,20 +817,11 @@ void CDataGrid::OnMouseMove(UINT nFlags, CPoint point)
 		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
 			m_TooltipCtrl.Deactivate();
 
-	if (!Dragging)
+	if (OnItem && (m_HotItem!=Item))
 	{
-		if (m_HotItem!=Item)
-		{
-			InvalidateItem(m_HotItem);
-			m_HotItem = Item;
-			InvalidateItem(m_HotItem);
-		}
-
-		if ((OnItem) && (nFlags & MK_RBUTTON))
-		{
-			SetFocus();
-			m_SelectedItem = m_HotItem;
-		}
+		InvalidateItem(m_HotItem);
+		m_HotItem = Item;
+		InvalidateItem(m_HotItem);
 	}
 }
 
