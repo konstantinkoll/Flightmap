@@ -112,7 +112,7 @@ BEGIN
     CONTROL         "Maﬂeinheiten",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,66
     LTEXT           "Entfernungsangaben werden immer in Kilometern (km) angezeigt, und zus‰tzlich in Meilen:",IDC_STATIC,14,103,142,25
     CONTROL         "&Nautische Meilen (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,142,10
-    CONTROL         "&Gesetzliche Meilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,142,10
+    CONTROL         "Land&meilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,142,10
     CONTROL         "Visuelle Effekte",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,155,66
     CONTROL         "&Hintergrundbilder benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,143,10
     PUSHBUTTON      "3D-&Einstellungen...",IDD_3DSETTINGS,176,120,144,14
