@@ -74,6 +74,7 @@ void AboutDlg::CheckLicenseKey(FMLicense* License)
 BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDD_3DSETTINGS, On3DSettings)
+	ON_BN_CLICKED(IDC_EXCLUSIVE, OnExclusive)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
 END_MESSAGE_MAP()
 
@@ -135,6 +136,14 @@ void AboutDlg::On3DSettings()
 {
 	ThreeDSettingsDlg dlg(this);
 	dlg.DoModal();
+}
+
+void AboutDlg::OnExclusive()
+{
+	CString url;
+	ENSURE(url.LoadString(IDS_EXCLUSIVEURL));
+
+	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
 }
 
 void AboutDlg::OnEnableAutoUpdate()

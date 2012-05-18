@@ -26,6 +26,7 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnEnableAutoUpdate();
 	afx_msg void On3DSettings();
+	afx_msg void OnExclusive();
 	afx_msg void OnUpdateNow();
 	DECLARE_MESSAGE_MAP()
 

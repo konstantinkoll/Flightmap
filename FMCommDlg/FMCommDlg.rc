@@ -115,7 +115,8 @@ BEGIN
     CONTROL         "&Gesetzliche Meilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,142,10
     CONTROL         "Visuelle Effekte",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,155,66
     CONTROL         "&Hintergrundbilder benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,143,10
-    PUSHBUTTON      "3D-&Einstellungen...",IDD_3DSETTINGS,176,139,144,14
+    PUSHBUTTON      "3D-&Einstellungen...",IDD_3DSETTINGS,176,120,144,14
+    PUSHBUTTON      "Über „Flightmap E&xclusive“ informieren...",IDC_EXCLUSIVE,176,139,144,14
     CONTROL         "Lizenz",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,155,81
     LTEXT           "Name:",IDC_STATIC,15,174,141,8
     LTEXT           "X",IDC_NAME,15,184,141,8
@@ -462,6 +463,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://flightmap.net/purchase"
     IDS_UPDATEURL           "http://flightmap.net/download"
+    IDS_EXCLUSIVEURL        "http://flightmap.net/exclusive"
     IDS_ERROR               "Fehler"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
@@ -567,7 +569,8 @@ BEGIN
     CONTROL         "&Statute miles (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,142,10
     CONTROL         "Visual effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,155,66
     CONTROL         "Use &background images",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,143,10
-    PUSHBUTTON      "3&D settings...",IDD_3DSETTINGS,176,139,144,14
+    PUSHBUTTON      "3&D settings...",IDD_3DSETTINGS,176,120,144,14
+    PUSHBUTTON      "Learn about ""Flightmap E&xclusive""..",IDC_EXCLUSIVE,176,139,144,14
     CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,155,81
     LTEXT           "Name:",IDC_STATIC,15,174,141,8
     LTEXT           "X",IDC_NAME,15,184,141,8
