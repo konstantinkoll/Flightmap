@@ -27,7 +27,7 @@ public:
 
 protected:
 	CItinerary* p_Itinerary;
-	CEdit* p_Edit;
+	CMFCMaskedEdit* p_Edit;
 	CTooltipHeader m_wndHeader;
 	ViewParameters m_ViewParameters;
 	FMTooltip m_TooltipCtrl;
@@ -43,7 +43,7 @@ protected:
 
 	void AdjustLayout();
 	void AdjustHeader();
-	void EditCell(BOOL Delete=FALSE, CPoint item=CPoint(-1, -1));
+	void EditCell(BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();
@@ -67,6 +67,7 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);

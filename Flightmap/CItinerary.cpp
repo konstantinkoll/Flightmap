@@ -206,7 +206,7 @@ void ScanTime(LPCWSTR str, UINT& time)
 		time = Hour*60;
 
 		if (c==2)
-			time += max(Minute, 59);
+			time += min(Minute, 59);
 	}
 }
 
@@ -223,14 +223,32 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 	ASSERT(pStr);
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
+	WCHAR tmpStr[16];
+	WCHAR* pWChar;
+	CHAR* pChar;
 
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		wcscpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (WCHAR*)pStr);
+		wcscpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter+1, (WCHAR*)pStr);
+		if ((Attr==2) || (Attr==5) || (Attr==9))
+		{
+			pWChar = (WCHAR*)pData;
+			while (*pWChar)
+			{
+				*pWChar = (WCHAR)toupper(*pWChar);
+				pWChar++;
+			}
+		}
 		break;
 	case FMTypeAnsiString:
-		WideCharToMultiByte(CP_ACP, 0, pStr, -1, (CHAR*)pData, FMAttributes[Attr].DataParameter, NULL, NULL);
+		pChar = (CHAR*)pData;
+		WideCharToMultiByte(CP_ACP, 0, pStr, -1, pChar, FMAttributes[Attr].DataParameter+1, NULL, NULL);
+		while (*pChar)
+		{
+			*pChar = (CHAR)toupper(*pChar);
+			pChar++;
+		}
 		break;
 	case FMTypeUINT:
 		ScanUINT(pStr, *((UINT*)pData));
@@ -251,7 +269,14 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		ScanTime(pStr, *((UINT*)pData));
 		break;
 	case FMTypeClass:
-		*((CHAR*)pData) = (wcscmp(L"Y", pStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", pStr)==0) ? AIRX_EconomyPlus : (wcscmp(L"J", pStr)==0) ? AIRX_Business : (wcscmp(L"F", pStr)==0) ? AIRX_First : ((wcscmp(L"C", pStr)==0) || (wcscmp(L"Crew", pStr)==0) || (wcscmp(L"Crew/DCM", pStr)==0)) ? AIRX_Crew : AIRX_Unknown;
+		wcscpy_s(tmpStr, 16, pStr);
+		pWChar = tmpStr;
+		while (*pWChar)
+		{
+			*pWChar = (WCHAR)toupper(*pWChar);
+			pWChar++;
+		}
+		*((CHAR*)pData) = (wcscmp(L"Y", tmpStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", tmpStr)==0) ? AIRX_EconomyPlus : (wcscmp(L"J", tmpStr)==0) ? AIRX_Business : (wcscmp(L"F", tmpStr)==0) ? AIRX_First : ((wcscmp(L"C", tmpStr)==0) || (wcscmp(L"CREW", tmpStr)==0) || (wcscmp(L"CREW/DCM", tmpStr)==0)) ? AIRX_Crew : AIRX_Unknown;
 		break;
 	case FMTypeColor:
 		ScanColor(pStr, *((COLORREF*)pData));

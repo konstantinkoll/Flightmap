@@ -166,7 +166,7 @@ void CDataGrid::AdjustHeader()
 	m_IgnoreHeaderItemChange = FALSE;
 }
 
-void CDataGrid::EditCell(BOOL Delete, CPoint item)
+void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 {
 	if (!p_Itinerary)
 		return;
@@ -194,17 +194,70 @@ void CDataGrid::EditCell(BOOL Delete, CPoint item)
 		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
 	WCHAR tmpBuf[256] = L"";
-	if (!Delete)
-		AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], Attr, tmpBuf, 256);
+	if (PushChar)
+	{
+		tmpBuf[0] = PushChar;
+		tmpBuf[1] = L'\0';
+	}
+	else
+		if (!Delete)
+		{
+			AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], Attr, tmpBuf, 256);
+		}
 
 	CRect rect(x-2, y-2, x+m_ViewParameters.ColumnWidth[Attr]+1, y+m_RowHeight+1);
 
-	p_Edit = new CEdit();
+	p_Edit = new CMFCMaskedEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
+
+	switch (FMAttributes[Attr].Type)
+	{
+	case FMTypeAnsiString:
+		switch (Attr)
+		{
+		case 0:
+		case 3:
+			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+			break;
+		case 2:
+		case 5:
+		case 8:
+		case 14:
+		case 16:
+			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
+			break;
+		case 9:
+			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "));
+			break;
+		case 11:
+			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789- "));
+			break;
+		}
+	case FMTypeUnicodeString:
+		p_Edit->SetLimitText(FMAttributes[Attr].DataParameter);
+		break;
+	case FMTypeUINT:
+		p_Edit->SetLimitText(6);
+		p_Edit->SetValidChars(_T("0123456789"));
+		break;
+	case FMTypeClass:
+		p_Edit->SetLimitText(2);
+		p_Edit->SetValidChars(_T("CFJYcfjy+"));
+		break;
+	case FMTypeDateTime:
+		p_Edit->SetLimitText(16);
+		p_Edit->SetValidChars(_T("0123456789:-. "));
+		break;
+	case FMTypeTime:
+		p_Edit->SetLimitText(6);
+		p_Edit->SetValidChars(_T("0123456789:"));
+		break;
+	}
+
 	p_Edit->SetWindowText(tmpBuf);
-	p_Edit->SetSel(0, (INT)wcslen(tmpBuf));
 	p_Edit->SetFont(&theApp.m_DefaultFont);
 	p_Edit->SetFocus();
+	p_Edit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
 }
 
 void CDataGrid::EnsureVisible(CPoint item)
@@ -258,7 +311,7 @@ void CDataGrid::EnsureVisible(CPoint item)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -513,6 +566,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEHWHEEL()
 	ON_WM_KEYDOWN()
+	ON_WM_CHAR()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
@@ -927,7 +981,7 @@ void CDataGrid::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 
 		ScreenToClient(&pt);
@@ -1025,6 +1079,12 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		SelectItem(item);
 	}
+}
+
+void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+{
+	if (p_Itinerary && !p_Edit)
+		EditCell(FALSE, (WCHAR)nChar);
 }
 
 void CDataGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
