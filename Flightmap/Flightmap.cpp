@@ -52,6 +52,11 @@ BOOL CFlightmapApp::InitInstance()
 		RegCloseKey(hKey);
 	}
 
+	// Icons
+	m_FlagIcons16.Create(IDB_FLAGS_16, NULL, 0, 3);
+	m_FlagIcons16i.Create(IDB_FLAGS_16i, NULL, 0, 3);
+	m_FlagIcons32.Create(IDB_FLAGS_32, NULL, 0, 3);
+
 	// Registry auslesen
 	SetRegistryBase();
 	m_UseStatuteMiles = GetInt(_T("UseStatuteMiles"), FALSE);

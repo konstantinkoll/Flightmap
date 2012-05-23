@@ -69,6 +69,10 @@ public:
 	CList<CString> m_RecentFiles;
 	CString m_PathGoogleEarth;
 
+	CImageListTransparent m_FlagIcons16;
+	CImageListTransparent m_FlagIcons16i;
+	CImageListTransparent m_FlagIcons32;
+
 	BOOL m_UseStatuteMiles;
 
 	UINT m_nTextureSize;

@@ -49,8 +49,9 @@ protected:
 	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* item);
 	void InvalidateItem(CPoint Item);
+	void InvalidateItem(UINT Row, UINT Attr);
 	void SelectItem(CPoint Item);
-	void DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
+	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

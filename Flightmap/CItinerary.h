@@ -41,8 +41,10 @@ struct AIRX_Location
 #define AIRX_LeisureTrip            4
 #define AIRX_DistanceCalculated     8
 #define AIRX_DistanceValid          16
-#define AIRX_VisitedFrom            32
-#define AIRX_VisitedTo              64
+#define AIRX_UnknownFrom            32
+#define AIRX_VisitedFrom            64
+#define AIRX_UnknownTo              128
+#define AIRX_VisitedTo              256
 
 #define AIRX_Unknown                '\0'
 #define AIRX_Economy                'Y'

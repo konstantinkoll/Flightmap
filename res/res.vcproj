@@ -132,19 +132,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Add_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Add_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\AddDocument_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\AddDocument_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Award_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Award_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Business_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Business_32.png"
 				>
 			</File>
 			<File
@@ -209,6 +217,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\FileProperties_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Flipflops_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Flipflops_32.png"
 				>
 			</File>
 			<File
@@ -289,6 +305,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Open_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PaperClip_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\PaperClip_32.png"
 				>
 			</File>
 			<File

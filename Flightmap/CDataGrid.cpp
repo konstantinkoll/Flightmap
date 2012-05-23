@@ -425,6 +425,13 @@ void CDataGrid::InvalidateItem(CPoint Item)
 	}
 }
 
+void CDataGrid::InvalidateItem(UINT Row, UINT Attr)
+{
+	for (UINT a=0; a<FMAttributeCount; a++)
+		if (m_ViewParameters.ColumnOrder[a]==(INT)Attr)
+			InvalidateItem(CPoint(a, Row));
+}
+
 void CDataGrid::SelectItem(CPoint Item)
 {
 	if (Item==m_SelectedItem)
@@ -438,7 +445,7 @@ void CDataGrid::SelectItem(CPoint Item)
 	ReleaseCapture();
 }
 
-void CDataGrid::DrawItem(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected)
+void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected)
 {
 	ASSERT(Attr<FMAttributeCount);
 
@@ -546,7 +553,15 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 				AdjustLayout();
 			}
 
-			StringToAttribute(tmpBuf, p_Itinerary->m_Flights.m_Items[item.y], m_ViewParameters.ColumnOrder[item.x]);
+			const UINT Attr = m_ViewParameters.ColumnOrder[item.x];
+			StringToAttribute(tmpBuf, p_Itinerary->m_Flights.m_Items[item.y], Attr);
+			InvalidateItem(item);
+
+			if ((Attr==0) || (Attr==3))
+			{
+				CalcDistance(p_Itinerary->m_Flights.m_Items[item.y], TRUE);
+				InvalidateItem(item.y, 6);
+			}
 		}
 	}
 }
@@ -663,12 +678,12 @@ void CDataGrid::OnPaint()
 		for (UINT row=start; row<=p_Itinerary->m_Flights.m_ItemCount; row++)
 		{
 			const BOOL Selected = FALSE;
-			dc.SetTextColor(Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : colText);
 
 			INT x = -m_HScrollPos;
 			for (UINT col=0; col<FMAttributeCount; col++)
 			{
-				const INT l = m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]];
+				const UINT Attr = m_ViewParameters.ColumnOrder[col];
+				const INT l = m_ViewParameters.ColumnWidth[Attr];
 				if (l)
 				{
 					CRect rectItem(x, y, x+l-1, y+m_RowHeight-1);
@@ -680,14 +695,16 @@ void CDataGrid::OnPaint()
 							dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
 						}
 						else
-							if (!FMAttributes[m_ViewParameters.ColumnOrder[col]].Editable)
+							if (!FMAttributes[Attr].Editable)
 							{
 								dc.FillSolidRect(rectItem, 0xF5F5F5);
 							}
 
 						if (row<p_Itinerary->m_Flights.m_ItemCount)
 						{
-							DrawItem(dc, p_Itinerary->m_Flights.m_Items[row], m_ViewParameters.ColumnOrder[col], rectItem, Selected);
+							const DWORD Flags = p_Itinerary->m_Flights.m_Items[row].Flags;
+							dc.SetTextColor(Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : colText);
+							DrawCell(dc, p_Itinerary->m_Flights.m_Items[row], Attr, rectItem, Selected);
 						}
 					}
 
@@ -851,7 +868,7 @@ BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 	return TRUE;
 }
 
-void CDataGrid::OnMouseMove(UINT nFlags, CPoint point)
+void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	CPoint Item(-1, -1);
 	BOOL OnItem = HitTest(point, &Item);
@@ -1002,10 +1019,25 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 		case VK_F2:
 			EditCell();
-			break;
+			return;
+		case VK_BACK:
+			if (m_SelectedItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
+				EditCell(TRUE);
+			return;
 		case VK_DELETE:
-			EditCell(TRUE);
-			break;
+			if (m_SelectedItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
+			{
+				const UINT Attr = m_ViewParameters.ColumnOrder[m_SelectedItem.x];
+				StringToAttribute(L"", p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], Attr);
+				InvalidateItem(m_SelectedItem);
+
+				if ((Attr==0) || (Attr==3))
+				{
+					CalcDistance(p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], TRUE);
+					InvalidateItem(m_SelectedItem.y, 6);
+				}
+			}
+			return;
 		case VK_LEFT:
 			for (INT col=item.x-1; col>=0; col--)
 				if (m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]])
@@ -1084,7 +1116,8 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
 	if (p_Itinerary && !p_Edit)
-		EditCell(FALSE, (WCHAR)nChar);
+		if (nChar>=L' ')
+			EditCell(FALSE, (WCHAR)nChar);
 }
 
 void CDataGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
@@ -1278,7 +1311,7 @@ void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 void CDataGrid::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-	UINT attr = pHdr->iItem;
+	const UINT Attr = pHdr->iItem;
 
 /*	if (!AttributeSortableInView(attr, m_ViewParameters.Mode))
 	{

@@ -15,11 +15,17 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 		return;
 
 	Flight.Flags |= AIRX_DistanceCalculated;
+	Flight.Flags &= ~(AIRX_DistanceValid | AIRX_UnknownFrom | AIRX_UnknownTo);
 
 	FMAirport* pFrom = NULL;
-	FMAirport* pTo = NULL;
+	if (!FMIATAGetAirportByCode(Flight.From.Code, &pFrom))
+		Flight.Flags |= AIRX_UnknownFrom;
 
-	if (FMIATAGetAirportByCode(Flight.From.Code, &pFrom) && FMIATAGetAirportByCode(Flight.To.Code, &pTo))
+	FMAirport* pTo = NULL;
+	if (!FMIATAGetAirportByCode(Flight.To.Code, &pTo))
+		Flight.Flags |= AIRX_UnknownTo;
+
+	if ((Flight.Flags & (AIRX_UnknownFrom | AIRX_UnknownTo))==0)
 	{
 		const DOUBLE Lat1 = PI*pFrom->Location.Latitude/180;
 		const DOUBLE Lon1 = PI*pFrom->Location.Longitude/180;
@@ -39,7 +45,6 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 	else
 	{
 		Flight.DistanceNM = 0.0;
-		Flight.Flags &= ~AIRX_DistanceValid;
 	}
 }
 
@@ -192,7 +197,10 @@ void ScanDateTime(LPCWSTR str, FILETIME& ft)
 		}
 
 		SystemTimeToFileTime(&st, &ft);
+		return;
 	}
+
+	ft.dwHighDateTime = ft.dwLowDateTime = 0;
 }
 
 void ScanTime(LPCWSTR str, UINT& time)
@@ -207,14 +215,23 @@ void ScanTime(LPCWSTR str, UINT& time)
 
 		if (c==2)
 			time += min(Minute, 59);
+
+		return;
 	}
+
+	time = 0;
 }
 
 void ScanColor(LPCWSTR str, COLORREF& col)
 {
 	if (swscanf_s(str, L"%06X", &col)==1)
 		if (col!=(COLORREF)-1)
+		{
 			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
+			return;
+		}
+
+	col = (COLORREF)-1;
 }
 
 void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
