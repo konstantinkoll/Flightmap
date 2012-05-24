@@ -160,6 +160,10 @@ BEGIN
     IDS_EMPTYITINERARY      "(Neuer Flugplan)"
     IDS_SAMPLEITINERARY     "(Beispiel-Flugplan)"
     IDS_NOTSAVED            "Möchten Sie die Änderungen speichern?"
+    IDS_ATTACHMENTS         "Angehängte Dateien\nKlicken Sie auf das Symbol, um die\nangehängten Dateien zu betrachten."
+    IDS_AWARDFLIGHT         "Prämienflug"
+    IDS_BUSINESSTRIP        "Geschäftsreise"
+    IDS_LEISURETRIP         "Privater Reisegrund"
 END
 
 STRINGTABLE 
@@ -408,6 +412,10 @@ BEGIN
     IDS_EMPTYITINERARY      "(New itinerary)"
     IDS_SAMPLEITINERARY     "(Sample itinerary)"
     IDS_NOTSAVED            "The itinerary has been modified. Save?"
+    IDS_ATTACHMENTS         "Attached files\nClick on the icon to view the\nfiles attached to this flight."
+    IDS_AWARDFLIGHT         "Award flight"
+    IDS_BUSINESSTRIP        "Business trip"
+    IDS_LEISURETRIP         "Leisure trip"
 END
 
 STRINGTABLE 

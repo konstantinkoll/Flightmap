@@ -35,6 +35,7 @@ protected:
 	UINT m_RowHeight;
 	CPoint m_SelectedItem;
 	CPoint m_HotItem;
+	INT m_HotSubitem;
 	BOOL m_Hover;
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
@@ -47,7 +48,7 @@ protected:
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();
-	BOOL HitTest(CPoint point, CPoint* item);
+	BOOL HitTest(CPoint point, CPoint* item, INT* subitem=NULL);
 	void InvalidateItem(CPoint Item);
 	void InvalidateItem(UINT Row, UINT Attr);
 	void SelectItem(CPoint Item);

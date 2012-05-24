@@ -62,6 +62,10 @@
 #define IDS_EMPTYITINERARY              1018
 #define IDS_SAMPLEITINERARY             1019
 #define IDS_NOTSAVED                    1020
+#define IDS_ATTACHMENTS                 1021
+#define IDS_AWARDFLIGHT                 1022
+#define IDS_BUSINESSTRIP                1023
+#define IDS_LEISURETRIP                 1024
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
