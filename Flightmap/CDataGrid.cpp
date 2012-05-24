@@ -24,6 +24,7 @@
                                             DeleteDC(hdcMem); }
 
 static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_BusinessTrip, AIRX_LeisureTrip };
 
 CDataGrid::CDataGrid()
 {
@@ -481,6 +482,23 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			dc.Draw3dRect(rectColor, 0x000000, 0x000000);
 			rectColor.DeflateRect(1, 1);
 			dc.FillSolidRect(rectColor, Flight.Color);
+		}
+		break;
+	case FMTypeFlags:
+		{
+			HDC hdcMem = CreateCompatibleDC(dc);
+			CPoint pt(rect.left, rect.top+(rect.Height()-16)/2);
+
+			for (UINT a=0; a<4; a++)
+			{
+				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, theApp.m_FlagIcons16[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : 0]);
+				AlphaBlend(dc, pt.x, pt.y, 16, 16, hdcMem, a*16, 0, 16, 16, BF);
+				SelectObject(hdcMem, hbmOld);
+
+				pt.x += 18;
+			}
+
+			DeleteDC(hdcMem);
 		}
 		break;
 	case FMTypeRating:

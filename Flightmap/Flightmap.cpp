@@ -23,6 +23,7 @@ CFlightmapApp::CFlightmapApp()
 {
 	m_NagCounter = 3;
 	m_AppInitialized = FALSE;
+	m_FlagIcons16[0] = m_FlagIcons16[1] = NULL;
 }
 
 
@@ -53,8 +54,8 @@ BOOL CFlightmapApp::InitInstance()
 	}
 
 	// Icons
-	m_FlagIcons16.Create(IDB_FLAGS_16, NULL, 0, 3);
-	m_FlagIcons16i.Create(IDB_FLAGS_16i, NULL, 0, 3);
+	m_FlagIcons16[0] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16i));
+	m_FlagIcons16[1] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16));
 	m_FlagIcons32.Create(IDB_FLAGS_32, NULL, 0, 3);
 
 	// Registry auslesen
@@ -155,6 +156,9 @@ BOOL CFlightmapApp::InitInstance()
 
 INT CFlightmapApp::ExitInstance()
 {
+	DeleteObject(m_FlagIcons16[0]);
+	DeleteObject(m_FlagIcons16[1]);
+
 	if (m_AppInitialized)
 	{
 		WriteInt(_T("UseStatuteMiles"), m_UseStatuteMiles);
