@@ -647,6 +647,9 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 		{
 			if (item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
 			{
+				if (tmpBuf[0]==L'\0')
+					return;
+
 				p_Itinerary->AddFlight();
 				item.y = p_Itinerary->m_Flights.m_ItemCount-1;
 
