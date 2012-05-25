@@ -188,6 +188,27 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 
 	switch (FMAttributes[Attr].Type)
 	{
+	case FMTypeColor:
+		if (!PushChar)
+		{
+			COLORREF col = pData ? *((COLORREF*)pData) : (COLORREF)-1;
+			if (theApp.ChooseColor(&col, this))
+			{
+				if (NewLine)
+				{
+					p_Itinerary->AddFlight();
+					item.y = p_Itinerary->m_Flights.m_ItemCount-1;
+
+					AdjustLayout();
+				}
+
+				*((COLORREF*)(((BYTE*)&p_Itinerary->m_Flights.m_Items[item.y])+FMAttributes[Attr].Offset)) = col;
+
+				p_Itinerary->m_IsModified = TRUE;
+				InvalidateItem(item);
+			}
+		}
+		return;
 	case FMTypeFlags:
 		if (pData)
 			switch (PushChar)
