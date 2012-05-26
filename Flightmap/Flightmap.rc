@@ -26,7 +26,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// BMP
+// Bitmap
 //
 
 IDB_BACKGROUNDS         BITMAP                  "res\\Backgrounds.bmp"
@@ -133,12 +133,98 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog
+//
+
+IDD_FLIGHTROUTE_FROMTO DIALOGEX 0, 0, 359, 303
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Route"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT1,63,14,40,14,ES_AUTOHSCROLL
+    LTEXT           "Flughafen:",IDC_STATIC,11,16,50,8
+    GROUPBOX        "Von",IDC_STATIC,3,3,172,72
+    PUSHBUTTON      "Auswählen...",IDC_BUTTON1,109,14,60,14
+    EDITTEXT        IDC_EDIT3,63,34,105,14,ES_AUTOHSCROLL
+    LTEXT           "Abflugzeit:",IDC_STATIC,12,36,50,8
+    EDITTEXT        IDC_EDIT4,63,54,40,14,ES_AUTOHSCROLL
+    LTEXT           "Abfluggate:",IDC_STATIC,11,56,50,8
+    EDITTEXT        IDC_EDIT5,243,14,40,14,ES_AUTOHSCROLL
+    LTEXT           "Flughafen:",IDC_STATIC,191,16,50,8
+    GROUPBOX        "Nach",IDC_STATIC,183,3,172,72
+    PUSHBUTTON      "Auswählen...",IDC_BUTTON2,289,14,60,14
+    EDITTEXT        IDC_EDIT6,243,34,105,14,ES_AUTOHSCROLL
+    LTEXT           "Ankunftszeit:",IDC_STATIC,192,36,50,8
+    EDITTEXT        IDC_EDIT7,243,54,40,14,ES_AUTOHSCROLL
+    LTEXT           "Ankunftsgate:",IDC_STATIC,191,56,50,8
+    GROUPBOX        "Wegpunkt",IDC_STATIC,3,78,352,61
+    LTEXT           "Wenn Start- und Zielflughafen identisch sind, können Sie einen Wegpunkt angeben, der bei der Streckenführung berücksichtigt wird. Auf diese Weise können Sie Rundflüge, etwa den Air Berlin Polarflug, erfassen.",IDC_STATIC,10,89,338,24
+    PUSHBUTTON      "&Wegpunkt setzen...",IDC_BUTTON3,9,117,100,14
+END
+
+IDD_FLIGHTROUTE_EQUIPMENT DIALOGEX 0, 0, 359, 303
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "On board"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT1,63,14,40,14,ES_AUTOHSCROLL
+    LTEXT           "Flughafen:",IDC_STATIC,11,16,50,8
+    GROUPBOX        "Von",IDC_STATIC,3,3,172,72
+    PUSHBUTTON      "Auswählen...",IDC_BUTTON1,109,14,60,14
+    EDITTEXT        IDC_EDIT3,63,34,105,14,ES_AUTOHSCROLL
+    LTEXT           "Abflugzeit:",IDC_STATIC,12,36,50,8
+    EDITTEXT        IDC_EDIT4,63,54,40,14,ES_AUTOHSCROLL
+    LTEXT           "Abfluggate:",IDC_STATIC,11,56,50,8
+    EDITTEXT        IDC_EDIT5,243,14,40,14,ES_AUTOHSCROLL
+    LTEXT           "Flughafen:",IDC_STATIC,191,16,50,8
+    GROUPBOX        "Nach",IDC_STATIC,183,3,172,72
+    PUSHBUTTON      "Auswählen...",IDC_BUTTON2,289,14,60,14
+    EDITTEXT        IDC_EDIT6,243,34,105,14,ES_AUTOHSCROLL
+    LTEXT           "Ankunftszeit:",IDC_STATIC,192,36,50,8
+    EDITTEXT        IDC_EDIT7,243,54,40,14,ES_AUTOHSCROLL
+    LTEXT           "Ankunftsgate:",IDC_STATIC,191,56,50,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_FLIGHTROUTE_FROMTO, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 355
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 300
+    END
+
+    IDD_FLIGHTROUTE_EQUIPMENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 355
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 300
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_RECENTFILES         "Zuletzt verwendete Flugpläne"
     IDS_SAMPLEITINERARIES   "Beispiele"
     IDS_SAVECOPY            "Kopie des Flugplans speichern"
@@ -147,6 +233,10 @@ BEGIN
     IDS_PREPAREDISTRIBUTION "Flugplan für die Verteilung vorbereiten"
     IDS_BACKGROUND          "Hintergrund"
     IDS_FLIGHTROUTES        "Flugrouten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LOCATIONS           "Orte"
     IDS_IATACODES           "IATA-Codes"
     IDS_YOULOOKAT           "Sie schauen auf %s"
@@ -163,7 +253,12 @@ BEGIN
     IDS_ATTACHMENTS         "Angehängte Dateien\nKlicken Sie auf das Symbol, um die\nangehängten Dateien zu betrachten."
     IDS_AWARDFLIGHT         "Prämienflug"
     IDS_BUSINESSTRIP        "Geschäftsreise"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LEISURETRIP         "Privater Reisegrund"
+    IDS_EDITFLIGHT          "Flug bearbeiten"
 END
 
 STRINGTABLE 
@@ -171,6 +266,10 @@ BEGIN
     IDS_FILEFILTER_AIRX     "Flugplan"
     IDS_FILEFILTER_BMP      "Windows Bitmap"
     IDS_FILEFILTER_CSV      "Comma Separated Values"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
@@ -197,6 +296,10 @@ BEGIN
     IDS_COLUMN13            "Klasse"
     IDS_COLUMN14            "Sitz"
     IDS_COLUMN15            "Farbe"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_COLUMN16            "Buchungscode"
     IDS_COLUMN17            "Preis"
     IDS_COLUMN18            "Prämienmeilen"
@@ -210,28 +313,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILE                "&Datei"
-    IDM_EDIT                "&Bearbeiten"
-    IDM_MAP                 "&Karte"
-    IDM_GLOBE               "&Globus"
-    IDM_GOOGLEEARTH         "Google &Earth"
-    IDM_STATISTICS          "&Statistik"
-    IDM_MAPWND              "&Karte"
-    IDM_MAPVIEW             "&Ansicht"
-    IDM_GLOBEWND            "&Globus"
-    IDM_GLOBEVIEW           "&Ansicht"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_METADATA_COMMENTS   "Beispiel-Flugplan"
-    IDS_METADATA_TITLE_ATLANTIC "Atlantik-Überquerung"
-    IDS_METADATA_TITLE_PACIFIC  "Pazifik-Überquerung"
-    IDS_METADATA_KEYWORDS_ATLANTIC "Flightmap Beispiel Flugplan Atlantik Überquerung"
-    IDS_METADATA_KEYWORDS_PACIFIC "Flightmap Beispiel Flugplan Pazifik Überquerung"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_NEW            "&Neu"
     IDM_FILE_NEWSAMPLE1     "&Atlantik-Überquerung\nÖffnet einen Beispiel-Flugplan\nmit Atlantik-Überquerung."
     IDM_FILE_NEWSAMPLE2     "&Pazifik-Überquerung\nÖffnet einen Beispiel-Flugplan\nmit Pazifik-Überquerung."
@@ -239,27 +320,19 @@ BEGIN
     IDM_FILE_SAVE           "&Speichern"
     IDM_FILE_SAVEAS         "Speichern &unter"
     IDM_FILE_SAVEAS_AIRX    "&Flugplan\nSpeichert den Flugplan als Flightmap-Datei."
-    IDM_FILE_SAVEAS_ICS     "&Kalendar-Eintrag\nSpeichert eine Kopie des Flugplans für\nMicrosoft Outlook und viele andere Programme."
-    IDM_FILE_SAVEAS_CSV     "Comma Separated &Values\nSpeichert eine Kopie des Flugplans für\nMicrosoft Excel und viele andere Programme."
-    IDM_FILE_SAVEAS_TXT     "&Textdokument\nSpeichert eine Kopie des Flugplans\nals unformatierte Textdatei."
-    IDM_FILE_SAVEAS_OTHER   "&Andere Formate\nDas Dialogfeld „Speichern unter“ öffnen, um aus den\nmöglichen Dateitypen eine Auswahl zu treffen."
-    IDM_FILE_PRINT          "&Drucken\nEinen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen."
-    IDM_FILE_PRINT_QUICK    "Schnelld&ruck\nDen Flugplan direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
-    IDM_FILE_PRINT_PREVIEW  "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
-    IDM_FILE_PREPARE        "Vorberei&ten"
-    IDM_FILE_PREPARE_PROPERTIES "&Eigenschaften\nDateieigenschaften wie Titel, Autor und\nSchlüsselwörter anzeigen und bearbeiten."
-    IDM_FILE_PREPARE_INSPECT "Flugplan &prüfen\nDen Flugplan auf ausgeblendete Metadaten\noder persönliche Informationen prüfen."
-    IDM_FILE_PREPARE_ATTACHMENTS "An&hänge\nAngehängte Dateien anzeigen\nund bearbeiten."
-    IDM_FILE_CLOSE          "S&chließen"
-    IDM_FILE_QUIT           "&Beenden"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_EDIT                "&Bearbeiten"
     IDM_EDIT_CUT            "Auss&chneiden"
     IDM_EDIT_COPY           "&Kopieren"
     IDM_EDIT_PASTE          "&Einfügen"
-    IDM_EDIT_INSERT_FLIGHT  "Einzel&flug\nFügt einen einzelnen Flug an der\naktuellen Stelle in den Flugplan ein."
-    IDM_EDIT_INSERT_ROUTE   "&Umsteigeverbindung\nFügt mehrere zusammenhängende Flüge an der\naktuellen Stelle in den Flugplan ein."
-    IDM_EDIT_INSERT_ITINERARY "Ganzen &Flugplan\nFügt einen bereits erstellten\nFlugplan an der aktuellen Stelle ein."
-    IDM_EDIT_DELETE         "&Löschen"
-    IDM_EDIT_SELECTALL      "&Alles auswählen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAP                 "&Karte"
     IDM_MAP_OPEN            "Karte ö&ffnen\nZeigt den Flugplan auf\neiner 2D-Karte an."
     IDM_MAP_EXPORT_BMP      "Windows &Bitmap\nExportiert den Flugplan\nals Windows Bitmap."
     IDM_MAP_EXPORT_JPEG     "&JPEG\nExportiert den Flugplan\nals JPEG-Bild."
@@ -270,11 +343,112 @@ BEGIN
     IDM_MAP_RESOLUTION      "Auf&lösung"
     IDM_MAP_CENTERATLANTIC  "&Atlantik mittig"
     IDM_MAP_CENTERPACIFIC   "&Pazifik mittig"
-    IDM_MAP_SHOWFLIGHTROUTES
-                            "Flug&routen zeigen"
+    IDM_MAP_SHOWFLIGHTROUTES "Flug&routen zeigen"
     IDM_MAP_STRAIGHTLINES   "&Gerade Linien"
     IDM_MAP_ARROWS          "&Pfeilspitzen"
     IDM_MAP_USECOLORS       "&Farben benutzen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBE               "&Globus"
+    IDM_GLOBE_OPEN          "Globus ö&ffnen\nZeigt den Flugplan auf\neinem 3D-Globus an."
+    IDM_GLOBE_MERGEMETRO    "&Metropolitan-Codes zusammenfassen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GOOGLEEARTH         "Google &Earth"
+    IDM_GOOGLEEARTH_OPEN    "In Google Earth ö&ffnen\nÖffnet den Flugplan\nin Google Earth."
+    IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
+    IDM_GOOGLEEARTH_MERGEMETRO "&Metropolitan-Codes zusammenfassen"
+    IDM_GOOGLEEARTH_COLORS  "&Farben benutzen"
+    IDM_GOOGLEEARTH_CLAMP   "&Echte Flughöhen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STATISTICS          "&Statistik"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAPWND              "&Karte"
+    IDM_MAPWND_COPY         "&Kopieren"
+    IDM_MAPWND_SAVEAS       "Speichern &unter"
+    IDM_MAPWND_PRINT        "&Drucken\nEinen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen."
+    IDM_MAPWND_PRINT_QUICK  "Schnelld&ruck\nDie Karte direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
+    IDM_MAPWND_PRINT_PREVIEW 
+                            "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
+    IDM_MAPWND_CLOSE        "S&chließen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAPVIEW             "&Ansicht"
+    IDM_MAPVIEW_ZOOMIN      "Ver&größern"
+    IDM_MAPVIEW_ZOOMOUT     "Ver&kleinern"
+    IDM_MAPVIEW_AUTOSIZE    "Größe &anpassen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBEWND            "&Globus"
+    IDM_GLOBEWND_CLOSE      "S&chließen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBEVIEW           "&Ansicht"
+    IDM_GLOBEVIEW_SAVEAS    "Speichern &unter"
+    IDM_GLOBEVIEW_JUMPTOLOCATION 
+                            "&Ort anzeigen...\nRichtet den Globus auf einen\nbestimmten Ort aus."
+    IDM_GLOBEVIEW_ZOOMIN    "Ver&größern"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_METADATA_COMMENTS   "Beispiel-Flugplan"
+    IDS_METADATA_TITLE_ATLANTIC "Atlantik-Überquerung"
+    IDS_METADATA_TITLE_PACIFIC "Pazifik-Überquerung"
+    IDS_METADATA_KEYWORDS_ATLANTIC 
+                            "Flightmap Beispiel Flugplan Atlantik Überquerung"
+    IDS_METADATA_KEYWORDS_PACIFIC 
+                            "Flightmap Beispiel Flugplan Pazifik Überquerung"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_SAVEAS_ICS     "&Kalendar-Eintrag\nSpeichert eine Kopie des Flugplans für\nMicrosoft Outlook und viele andere Programme."
+    IDM_FILE_SAVEAS_CSV     "Comma Separated &Values\nSpeichert eine Kopie des Flugplans für\nMicrosoft Excel und viele andere Programme."
+    IDM_FILE_SAVEAS_TXT     "&Textdokument\nSpeichert eine Kopie des Flugplans\nals unformatierte Textdatei."
+    IDM_FILE_SAVEAS_OTHER   "&Andere Formate\nDas Dialogfeld „Speichern unter“ öffnen, um aus den\nmöglichen Dateitypen eine Auswahl zu treffen."
+    IDM_FILE_PRINT          "&Drucken\nEinen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen."
+    IDM_FILE_PRINT_QUICK    "Schnelld&ruck\nDen Flugplan direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
+    IDM_FILE_PRINT_PREVIEW  "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
+    IDM_FILE_PREPARE        "Vorberei&ten"
+    IDM_FILE_PREPARE_PROPERTIES 
+                            "&Eigenschaften\nDateieigenschaften wie Titel, Autor und\nSchlüsselwörter anzeigen und bearbeiten."
+    IDM_FILE_PREPARE_INSPECT 
+                            "Flugplan &prüfen\nDen Flugplan auf ausgeblendete Metadaten\noder persönliche Informationen prüfen."
+    IDM_FILE_PREPARE_ATTACHMENTS 
+                            "An&hänge\nAngehängte Dateien anzeigen\nund bearbeiten."
+    IDM_FILE_CLOSE          "S&chließen"
+    IDM_FILE_QUIT           "&Beenden"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_EDIT_INSERT_FLIGHT  "Einzel&flug\nFügt einen einzelnen Flug an der\naktuellen Stelle in den Flugplan ein."
+    IDM_EDIT_INSERT_ROUTE   "&Umsteigeverbindung\nFügt mehrere zusammenhängende Flüge an der\naktuellen Stelle in den Flugplan ein."
+    IDM_EDIT_INSERT_ITINERARY 
+                            "Ganzen &Flugplan\nFügt einen bereits erstellten\nFlugplan an der aktuellen Stelle ein."
+    IDM_EDIT_DELETE         "&Löschen"
+    IDM_EDIT_SELECTALL      "&Alles auswählen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_ROUTECOLOR      "&Standardfarbe"
     IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
     IDM_MAP_LOCATIONINNERCOLOR "Far&be"
@@ -282,27 +456,10 @@ BEGIN
     IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
     IDM_MAP_IATAINNERCOLOR  "S&chriftfarbe"
     IDM_MAP_IATAOUTERCOLOR  "&Umrandung"
-    IDM_GLOBE_OPEN          "Globus ö&ffnen\nZeigt den Flugplan auf\neinem 3D-Globus an."
-    IDM_GLOBE_MERGEMETRO    "&Metropolitan-Codes zusammenfassen"
-    IDM_GOOGLEEARTH_OPEN    "In Google Earth ö&ffnen\nÖffnet den Flugplan\nin Google Earth."
-    IDM_GOOGLEEARTH_EXPORT  "E&xportieren\nExportiert den Flugplan\nals Google Earth Overlay."
-    IDM_GOOGLEEARTH_MERGEMETRO "&Metropolitan-Codes zusammenfassen"
-    IDM_GOOGLEEARTH_COLORS  "&Farben benutzen"
-    IDM_GOOGLEEARTH_CLAMP   "&Echte Flughöhen"
-    IDM_MAPWND_COPY         "&Kopieren"
-    IDM_MAPWND_SAVEAS       "Speichern &unter"
-    IDM_MAPWND_PRINT        "&Drucken\nEinen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen."
-    IDM_MAPWND_PRINT_QUICK  "Schnelld&ruck\nDie Karte direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
-    IDM_MAPWND_PRINT_PREVIEW "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
-    IDM_MAPWND_CLOSE        "S&chließen"
-    IDM_MAPVIEW_ZOOMIN      "Ver&größern"
-    IDM_MAPVIEW_ZOOMOUT     "Ver&kleinern"
-    IDM_MAPVIEW_AUTOSIZE    "Größe &anpassen"
-    IDM_GLOBEWND_CLOSE      "S&chließen"
-    IDM_GLOBEVIEW_SAVEAS    "Speichern &unter"
-    IDM_GLOBEVIEW_JUMPTOLOCATION 
-                            "&Ort anzeigen...\nRichtet den Globus auf einen\nbestimmten Ort aus."
-    IDM_GLOBEVIEW_ZOOMIN    "Ver&größern"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBEVIEW_ZOOMOUT   "Ver&kleinern"
     IDM_GLOBEVIEW_AUTOSIZE  "Größe &anpassen"
     IDM_GLOBEVIEW_COLORS    "&Farben benutzen"
@@ -315,12 +472,21 @@ BEGIN
     IDM_GLOBEVIEW_VIEWPORT  "Ka&mera-Perspektive zeigen"
     IDM_GLOBEVIEW_CROSSHAIRS "Fa&denkreuz zeigen"
     IDM_GLOBEVIEW_3DSETTINGS "3D-&Einstellungen..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBEITEM_OPENGOOGLEEARTH 
                             "In Google Earth ö&ffnen\nÖffnet den Ort\nin Google Earth."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_DETAILS_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
     IDM_DETAILS_AUTOSIZE    "&Spaltenbreite anpassen"
     IDM_DETAILS_CHOOSE      "&Details aus&wählen..."
 END
+
 #endif    // Deutsch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -391,6 +557,10 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Flightmap"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_RECENTFILES         "Recently used itineraries"
     IDS_SAMPLEITINERARIES   "Sample itineraries"
     IDS_SAVECOPY            "Save a copy of the itinerary"
@@ -399,6 +569,10 @@ BEGIN
     IDS_PREPAREDISTRIBUTION "Prepare the itinerary for distribution"
     IDS_BACKGROUND          "Background"
     IDS_FLIGHTROUTES        "Flight routes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LOCATIONS           "Locations"
     IDS_IATACODES           "IATA codes"
     IDS_YOULOOKAT           "You look at %s"
@@ -415,7 +589,12 @@ BEGIN
     IDS_ATTACHMENTS         "Attached files\nClick on the icon to view the\nfiles attached to this flight."
     IDS_AWARDFLIGHT         "Award flight"
     IDS_BUSINESSTRIP        "Business trip"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LEISURETRIP         "Leisure trip"
+    IDS_EDITFLIGHT          "Edit flight"
 END
 
 STRINGTABLE 
@@ -423,6 +602,10 @@ BEGIN
     IDS_FILEFILTER_AIRX     "Itinerary"
     IDS_FILEFILTER_BMP      "Windows Bitmap"
     IDS_FILEFILTER_CSV      "Comma Separated Values"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
@@ -449,6 +632,10 @@ BEGIN
     IDS_COLUMN13            "Class"
     IDS_COLUMN14            "Seat"
     IDS_COLUMN15            "Color"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_COLUMN16            "Etix code"
     IDS_COLUMN17            "Fare"
     IDS_COLUMN18            "Award miles"
@@ -462,28 +649,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILE                "&File"
-    IDM_EDIT                "&Edit"
-    IDM_MAP                 "&Map"
-    IDM_GLOBE               "&Globe"
-    IDM_GOOGLEEARTH         "Google &Earth"
-    IDM_STATISTICS          "&Statistics"
-    IDM_MAPWND              "&Map"
-    IDM_MAPVIEW             "&View"
-    IDM_GLOBEWND            "&Globe"
-    IDM_GLOBEVIEW           "&View"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_METADATA_COMMENTS   "Sample itinerary"
-    IDS_METADATA_TITLE_ATLANTIC "Atlantic crossing"
-    IDS_METADATA_TITLE_PACIFIC  "Pacific crossing"
-    IDS_METADATA_KEYWORDS_ATLANTIC "Flightmap Sample Itinerary Atlantic Crossing"
-    IDS_METADATA_KEYWORDS_PACIFIC "Flightmap Sample Itinerary Pacific Crossing"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_NEW            "&New"
     IDM_FILE_NEWSAMPLE1     "&Atlantic crossing\nOpen a sample itinerary\ncrossing the Atlantic Ocean."
     IDM_FILE_NEWSAMPLE2     "&Pacific crossing\nOpen a sample itinerary\ncrossing the Pacific Ocean."
@@ -491,27 +656,19 @@ BEGIN
     IDM_FILE_SAVE           "&Save"
     IDM_FILE_SAVEAS         "Save &as"
     IDM_FILE_SAVEAS_AIRX    "&Flightmap Itinerary\nSave the itinerary in the default file\nformat."
-    IDM_FILE_SAVEAS_ICS     "&Calendar items\nExport the itinerary to Microsoft\nOutlook and other applications."
-    IDM_FILE_SAVEAS_CSV     "Comma Separated &Values\nExport the itinerary to Microsoft\nExcel and other applications."
-    IDM_FILE_SAVEAS_TXT     "&Text document\nExport the itinerary as\nplain text file."
-    IDM_FILE_SAVEAS_OTHER   "&Other formats\nOpen the ""Save as"" dialog box to\nselect from all possible file types."
-    IDM_FILE_PRINT          "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
-    IDM_FILE_PRINT_QUICK    "&Quick print\nSend the itinerary directly to the default\nprinter without making changes."
-    IDM_FILE_PRINT_PREVIEW  "Print Pre&view\nPreview and make changes to the page\nbefore printing."
-    IDM_FILE_PREPARE        "Pr&epare"
-    IDM_FILE_PREPARE_PROPERTIES "&Properties\nView and edit file properties, such\nas title, author and keywords."
-    IDM_FILE_PREPARE_INSPECT "&Inspect itinerary\nCheck the itinerary for hidden metadata\nor personal information."
-    IDM_FILE_PREPARE_ATTACHMENTS "&Attachments\nView and edit attached files,\nsuch as photos or GPS tracks."
-    IDM_FILE_CLOSE          "&Close"
-    IDM_FILE_QUIT           "&Quit"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_EDIT                "&Edit"
     IDM_EDIT_CUT            "Cu&t"
     IDM_EDIT_COPY           "&Copy"
     IDM_EDIT_PASTE          "&Paste"
-    IDM_EDIT_INSERT_FLIGHT  "Single &flight\nInsert a single flight."
-    IDM_EDIT_INSERT_ROUTE   "&Transfer\nInsert a connecting flight."
-    IDM_EDIT_INSERT_ITINERARY "Whole &itinerary\nInsert an existing itinerary."
-    IDM_EDIT_DELETE         "&Delete"
-    IDM_EDIT_SELECTALL      "Select &all"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAP                 "&Map"
     IDM_MAP_OPEN            "&Open map\nVisualize the itinerary\non a 2D map."
     IDM_MAP_EXPORT_BMP      "Windows &Bitmap\nExport the itinerary\nas Windows Bitmap file."
     IDM_MAP_EXPORT_JPEG     "&JPEG\nExport the itinerary\nas JPEG image."
@@ -522,11 +679,112 @@ BEGIN
     IDM_MAP_RESOLUTION      "&Resolution"
     IDM_MAP_CENTERATLANTIC  "Center &Atlantic Ocean"
     IDM_MAP_CENTERPACIFIC   "Center &Pacific Ocean"
-    IDM_MAP_SHOWFLIGHTROUTES
-                            "Show &flight routes"
+    IDM_MAP_SHOWFLIGHTROUTES "Show &flight routes"
     IDM_MAP_STRAIGHTLINES   "&Straight lines"
     IDM_MAP_ARROWS          "Arro&ws"
     IDM_MAP_USECOLORS       "Use colo&rs"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBE               "&Globe"
+    IDM_GLOBE_OPEN          "&Open globe\nVisualize the itinerary\non a 3D globe."
+    IDM_GLOBE_MERGEMETRO    "&Merge metropolitan areas"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GOOGLEEARTH         "Google &Earth"
+    IDM_GOOGLEEARTH_OPEN    "&Open in Google Earth\nOpen the itinerary\nin Google Earth."
+    IDM_GOOGLEEARTH_EXPORT  "E&xport\nExport the itinerary\nas Google Earth overlay."
+    IDM_GOOGLEEARTH_MERGEMETRO "&Merge metropolitan areas"
+    IDM_GOOGLEEARTH_COLORS  "Use colo&rs"
+    IDM_GOOGLEEARTH_CLAMP   "&True flight levels"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STATISTICS          "&Statistics"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAPWND              "&Map"
+    IDM_MAPWND_COPY         "&Copy"
+    IDM_MAPWND_SAVEAS       "Save &as"
+    IDM_MAPWND_PRINT        "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
+    IDM_MAPWND_PRINT_QUICK  "&Quick print\nSend the map directly to the default\nprinter without making changes."
+    IDM_MAPWND_PRINT_PREVIEW 
+                            "Print Pre&view\nPreview and make changes to the page\nbefore printing."
+    IDM_MAPWND_CLOSE        "&Close"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAPVIEW             "&View"
+    IDM_MAPVIEW_ZOOMIN      "Zoom &in"
+    IDM_MAPVIEW_ZOOMOUT     "Zoom &out"
+    IDM_MAPVIEW_AUTOSIZE    "Size to f&it"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBEWND            "&Globe"
+    IDM_GLOBEWND_CLOSE      "&Close"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBEVIEW           "&View"
+    IDM_GLOBEVIEW_SAVEAS    "Save &as"
+    IDM_GLOBEVIEW_JUMPTOLOCATION 
+                            "Jump to &location...\nCenter the globe on\na specific location."
+    IDM_GLOBEVIEW_ZOOMIN    "Zoom &in"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_METADATA_COMMENTS   "Sample itinerary"
+    IDS_METADATA_TITLE_ATLANTIC "Atlantic crossing"
+    IDS_METADATA_TITLE_PACIFIC "Pacific crossing"
+    IDS_METADATA_KEYWORDS_ATLANTIC 
+                            "Flightmap Sample Itinerary Atlantic Crossing"
+    IDS_METADATA_KEYWORDS_PACIFIC 
+                            "Flightmap Sample Itinerary Pacific Crossing"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_SAVEAS_ICS     "&Calendar items\nExport the itinerary to Microsoft\nOutlook and other applications."
+    IDM_FILE_SAVEAS_CSV     "Comma Separated &Values\nExport the itinerary to Microsoft\nExcel and other applications."
+    IDM_FILE_SAVEAS_TXT     "&Text document\nExport the itinerary as\nplain text file."
+    IDM_FILE_SAVEAS_OTHER   "&Other formats\nOpen the ""Save as"" dialog box to\nselect from all possible file types."
+    IDM_FILE_PRINT          "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
+    IDM_FILE_PRINT_QUICK    "&Quick print\nSend the itinerary directly to the default\nprinter without making changes."
+    IDM_FILE_PRINT_PREVIEW  "Print Pre&view\nPreview and make changes to the page\nbefore printing."
+    IDM_FILE_PREPARE        "Pr&epare"
+    IDM_FILE_PREPARE_PROPERTIES 
+                            "&Properties\nView and edit file properties, such\nas title, author and keywords."
+    IDM_FILE_PREPARE_INSPECT 
+                            "&Inspect itinerary\nCheck the itinerary for hidden metadata\nor personal information."
+    IDM_FILE_PREPARE_ATTACHMENTS 
+                            "&Attachments\nView and edit attached files,\nsuch as photos or GPS tracks."
+    IDM_FILE_CLOSE          "&Close"
+    IDM_FILE_QUIT           "&Quit"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_EDIT_INSERT_FLIGHT  "Single &flight\nInsert a single flight."
+    IDM_EDIT_INSERT_ROUTE   "&Transfer\nInsert a connecting flight."
+    IDM_EDIT_INSERT_ITINERARY 
+                            "Whole &itinerary\nInsert an existing itinerary."
+    IDM_EDIT_DELETE         "&Delete"
+    IDM_EDIT_SELECTALL      "Select &all"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_ROUTECOLOR      "&Default color"
     IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
     IDM_MAP_LOCATIONINNERCOLOR "&Color"
@@ -534,27 +792,10 @@ BEGIN
     IDM_MAP_SHOWIATACODES   "Show &IATA codes"
     IDM_MAP_IATAINNERCOLOR  "&Color"
     IDM_MAP_IATAOUTERCOLOR  "&Border"
-    IDM_GLOBE_OPEN          "&Open globe\nVisualize the itinerary\non a 3D globe."
-    IDM_GLOBE_MERGEMETRO    "&Merge metropolitan areas"
-    IDM_GOOGLEEARTH_OPEN    "&Open in Google Earth\nOpen the itinerary\nin Google Earth."
-    IDM_GOOGLEEARTH_EXPORT  "E&xport\nExport the itinerary\nas Google Earth overlay."
-    IDM_GOOGLEEARTH_MERGEMETRO "&Merge metropolitan areas"
-    IDM_GOOGLEEARTH_COLORS  "Use colo&rs"
-    IDM_GOOGLEEARTH_CLAMP   "&True flight levels"
-    IDM_MAPWND_COPY         "&Copy"
-    IDM_MAPWND_SAVEAS       "Save &as"
-    IDM_MAPWND_PRINT        "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
-    IDM_MAPWND_PRINT_QUICK  "&Quick print\nSend the map directly to the default\nprinter without making changes."
-    IDM_MAPWND_PRINT_PREVIEW "Print Pre&view\nPreview and make changes to the page\nbefore printing."
-    IDM_MAPWND_CLOSE        "&Close"
-    IDM_MAPVIEW_ZOOMIN      "Zoom &in"
-    IDM_MAPVIEW_ZOOMOUT     "Zoom &out"
-    IDM_MAPVIEW_AUTOSIZE    "Size to f&it"
-    IDM_GLOBEWND_CLOSE      "&Close"
-    IDM_GLOBEVIEW_SAVEAS    "Save &as"
-    IDM_GLOBEVIEW_JUMPTOLOCATION 
-                            "Jump to &location...\nCenter the globe on\na specific location."
-    IDM_GLOBEVIEW_ZOOMIN    "Zoom &in"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBEVIEW_ZOOMOUT   "Zoom &out"
     IDM_GLOBEVIEW_AUTOSIZE  "Size to f&it"
     IDM_GLOBEVIEW_COLORS    "Use colo&rs"
@@ -567,8 +808,16 @@ BEGIN
     IDM_GLOBEVIEW_VIEWPORT  "Show &camera viewport"
     IDM_GLOBEVIEW_CROSSHAIRS "Show cross&hairs"
     IDM_GLOBEVIEW_3DSETTINGS "3&D settings..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBEITEM_OPENGOOGLEEARTH 
                             "&Open in Google Earth\nOpen the location\nin Google Earth."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_DETAILS_AUTOSIZEALL "Size all &columns to fit"
     IDM_DETAILS_AUTOSIZE    "Size column to &fit"
     IDM_DETAILS_CHOOSE      "Choose &details..."

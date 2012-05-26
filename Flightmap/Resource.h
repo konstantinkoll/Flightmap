@@ -66,6 +66,7 @@
 #define IDS_AWARDFLIGHT                 1022
 #define IDS_BUSINESSTRIP                1023
 #define IDS_LEISURETRIP                 1024
+#define IDS_EDITFLIGHT                  1025
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
@@ -105,6 +106,11 @@
 #define IDS_METADATA_TITLE_PACIFIC      1302
 #define IDS_METADATA_KEYWORDS_ATLANTIC  1303
 #define IDS_METADATA_KEYWORDS_PACIFIC   1304
+#define IDD_FLIGHTROUTE_FROMTO          2000
+#define IDD_FLIGHTROUTE_EQUIPMENT       2001
+#define IDD_EQUIPMENT                   2100
+#define IDD_ATTACHMENTS                 2200
+#define IDD_OTHER                       2300
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002
@@ -204,6 +210,16 @@
 #define IDM_DETAILS_AUTOSIZEALL         4101
 #define IDM_DETAILS_AUTOSIZE            4102
 #define IDM_DETAILS_CHOOSE              4103
+#define IDC_EDIT1                       8020
+#define IDC_EDIT2                       8021
+#define IDC_BUTTON1                     8022
+#define IDC_EDIT3                       8023
+#define IDC_EDIT4                       8024
+#define IDC_BUTTON3                     8025
+#define IDC_EDIT5                       8029
+#define IDC_BUTTON2                     8030
+#define IDC_EDIT6                       8031
+#define IDC_EDIT7                       8032
 
 // Next default values for new objects
 // 
@@ -211,7 +227,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8011
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         8020
+#define _APS_NEXT_CONTROL_VALUE         8026
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

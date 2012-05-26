@@ -188,6 +188,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Edit_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Edit_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FileAttachments_16.png"
 				>
 			</File>
@@ -518,6 +526,10 @@
 		</File>
 		<File
 			RelativePath=".\Earthmap_2048.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Edit_Tiny.ico"
 			>
 		</File>
 		<File

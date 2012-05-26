@@ -305,6 +305,13 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 // Other
 //
 
+void ResetFlight(AIRX_Flight& Flight)
+{
+	ZeroMemory(&Flight, sizeof(AIRX_Flight));
+	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
+	Flight.Color = (COLORREF)-1;
+}
+
 BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter)
 {
 	if (Pos>=strSrc.GetLength())
@@ -879,13 +886,6 @@ CString CItinerary::Flight2Text(UINT Idx)
 	ASSERT(Idx<m_Flights.m_ItemCount);
 
 	return Flight2Text(m_Flights.m_Items[Idx]);
-}
-
-void CItinerary::ResetFlight(AIRX_Flight& Flight)
-{
-	ZeroMemory(&Flight, sizeof(AIRX_Flight));
-	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
-	Flight.Color = (COLORREF)-1;
 }
 
 FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute)

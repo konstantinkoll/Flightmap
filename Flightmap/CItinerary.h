@@ -143,6 +143,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, FlightTime), 0, 100, FALSE, TRUE, TRUE }					// Flight time
 };
 
+void ResetFlight(AIRX_Flight& Flight);
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
@@ -179,7 +180,6 @@ public:
 	CString m_DisplayName;
 
 private:
-	static void ResetFlight(AIRX_Flight& Flight);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
 	void SetDisplayName(CString FileName);

@@ -432,6 +432,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EditFlightDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EditFlightRoutePage.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Flightmap.cpp"
 				>
 			</File>
@@ -555,6 +563,14 @@
 			</File>
 			<File
 				RelativePath=".\Database.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EditFlightDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EditFlightRoutePage.h"
 				>
 			</File>
 			<File

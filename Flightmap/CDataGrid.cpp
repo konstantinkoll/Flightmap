@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CDataGrid.h"
 #include "ChooseDetailsDlg.h"
+#include "EditFlightDlg.h"
 #include "Flightmap.h"
 #include "Resource.h"
 
@@ -249,6 +250,14 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 
 		return;
 	}
+
+
+
+	EditFlightDlg dlg(NULL, this);
+	dlg.DoModal();
+	return;
+
+
 
 	INT y = item.y*m_RowHeight+m_HeaderHeight-m_VScrollPos;
 	INT x = -m_HScrollPos;

@@ -5,6 +5,7 @@
 #define IDR_APPLICATION                 128
 #define IDR_MAP                         150
 #define IDR_GLOBE                       151
+#define IDI_EDIT                        152
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
