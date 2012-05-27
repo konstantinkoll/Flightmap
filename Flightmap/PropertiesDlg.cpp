@@ -19,15 +19,13 @@ PropertiesDlg::PropertiesDlg(CItinerary* pItinerary, CWnd* pParent)
 
 void PropertiesDlg::DoDataExchange(CDataExchange* pDX)
 {
-	if (pDX->m_bSaveAndValidate)
-	{
-		GetDlgItem(IDC_TITLE)->GetWindowText(p_Itinerary->m_Metadata.Title, 256);
-		GetDlgItem(IDC_AUTHOR)->GetWindowText(p_Itinerary->m_Metadata.Author, 256);
-		GetDlgItem(IDC_KEYWORDS)->GetWindowText(p_Itinerary->m_Metadata.Keywords, 256);
-		GetDlgItem(IDC_COMMENTS)->GetWindowText(p_Itinerary->m_Metadata.Comments, 256);
+	DDX_Text(pDX, IDC_TITLE, p_Itinerary->m_Metadata.Title, 256);
+	DDX_Text(pDX, IDC_AUTHOR, p_Itinerary->m_Metadata.Author, 256);
+	DDX_Text(pDX, IDC_KEYWORDS, p_Itinerary->m_Metadata.Keywords, 256);
+	DDX_Text(pDX, IDC_COMMENTS, p_Itinerary->m_Metadata.Comments, 256);
 
+	if (pDX->m_bSaveAndValidate)
 		p_Itinerary->m_IsModified = TRUE;
-	}
 }
 
 
@@ -50,11 +48,6 @@ BOOL PropertiesDlg::OnInitDialog()
 	GetWindowText(mask);
 	caption.Format(mask, p_Itinerary->m_DisplayName);
 	SetWindowText(caption);
-
-	GetDlgItem(IDC_TITLE)->SetWindowText(p_Itinerary->m_Metadata.Title);
-	GetDlgItem(IDC_AUTHOR)->SetWindowText(p_Itinerary->m_Metadata.Author);
-	GetDlgItem(IDC_KEYWORDS)->SetWindowText(p_Itinerary->m_Metadata.Keywords);
-	GetDlgItem(IDC_COMMENTS)->SetWindowText(p_Itinerary->m_Metadata.Comments);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
