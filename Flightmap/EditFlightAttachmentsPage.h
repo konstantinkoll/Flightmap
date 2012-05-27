@@ -13,9 +13,11 @@
 class EditFlightAttachmentsPage : public CPropertyPage
 {
 public:
-	EditFlightAttachmentsPage();
+	EditFlightAttachmentsPage(AIRX_Flight* pFlight);
 
 protected:
+	AIRX_Flight* p_Flight;
+
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
 };

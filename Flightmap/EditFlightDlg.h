@@ -4,14 +4,13 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "EditFlightAttachmentsPage.h"
-#include "EditFlightRoutePage.h"
-#include "EditFlightOtherPage.h"
 #include "Flightmap.h"
 
 
 // EditFlightDlg
 //
+
+#define EditFlightPages     3
 
 class EditFlightDlg : public CPropertySheet
 {
@@ -23,10 +22,9 @@ public:
 	AIRX_Flight m_Flight;
 
 protected:
-	EditFlightRoutePage m_Page0;
-	EditFlightOtherPage m_Page1;
-	EditFlightAttachmentsPage m_Page2;
+	CPropertyPage* m_Pages[EditFlightPages];
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 };

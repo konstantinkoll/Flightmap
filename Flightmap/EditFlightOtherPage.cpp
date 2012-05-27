@@ -9,9 +9,12 @@
 // EditFlightOtherPage
 //
 
-EditFlightOtherPage::EditFlightOtherPage()
+EditFlightOtherPage::EditFlightOtherPage(AIRX_Flight* pFlight)
 	: CPropertyPage(IDD_OTHER)
 {
+	ASSERT(pFlight);
+
+	p_Flight = pFlight;
 }
 
 

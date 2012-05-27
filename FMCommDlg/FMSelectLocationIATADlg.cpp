@@ -12,17 +12,13 @@
 // FMSelectLocationIATADlg
 //
 
-FMSelectLocationIATADlg::FMSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
+FMSelectLocationIATADlg::FMSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
 
 	p_App = (FMApplication*)AfxGetApp();
 	m_LastCountrySelected = p_App->GetInt(_T("LastCountrySelected"), 0);
-	m_OverwriteName = AllowOverwriteName ? p_App->GetInt(_T("IATAOverwriteName"), TRUE) : FALSE;
-	m_OverwriteGPS = AllowOverwriteGPS ? p_App->GetInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
-	m_AllowOverwriteName = AllowOverwriteName;
-	m_AllowOverwriteGPS = AllowOverwriteGPS;
 
 	if (Airport)
 	{
@@ -145,13 +141,7 @@ void FMSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MAP_PREVIEW, m_Map);
 
 	if (pDX->m_bSaveAndValidate)
-	{
 		p_App->WriteInt(_T("LastCountrySelected"), m_LastCountrySelected);
-		if (m_AllowOverwriteName)
-			p_App->WriteInt(_T("IATAOverwriteName"), m_OverwriteName);
-		if (m_AllowOverwriteGPS)
-			p_App->WriteInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
-	}
 }
 
 void FMSelectLocationIATADlg::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)

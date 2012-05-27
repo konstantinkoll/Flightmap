@@ -9,9 +9,12 @@
 // EditFlightAttachmentsPage
 //
 
-EditFlightAttachmentsPage::EditFlightAttachmentsPage()
+EditFlightAttachmentsPage::EditFlightAttachmentsPage(AIRX_Flight* pFlight)
 	: CPropertyPage(IDD_ATTACHMENTS)
 {
+	ASSERT(pFlight);
+
+	p_Flight = pFlight;
 }
 
 

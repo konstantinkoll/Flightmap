@@ -253,8 +253,24 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 
 
 
-	EditFlightDlg dlg(NULL, this);
-	dlg.DoModal();
+	EditFlightDlg dlg(NewLine ? NULL : &p_Itinerary->m_Flights.m_Items[item.y], this);
+	if (dlg.DoModal()==IDOK)
+	{
+		if (NewLine)
+		{
+			p_Itinerary->AddFlight();
+			item.y = p_Itinerary->m_Flights.m_ItemCount-1;
+
+			AdjustLayout();
+		}
+		else
+		{
+			p_Itinerary->m_Flights.m_Items[item.y] = dlg.m_Flight;
+			Invalidate();
+		}
+
+		p_Itinerary->m_IsModified = TRUE;
+	}
 	return;
 
 
