@@ -432,7 +432,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EditFlightAttachmentsPage.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EditFlightDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EditFlightOtherPage.cpp"
 				>
 			</File>
 			<File
@@ -566,7 +574,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EditFlightAttachmentsPage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EditFlightDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EditFlightOtherPage.h"
 				>
 			</File>
 			<File
@@ -765,10 +781,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Night_8192.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\PDZVOR.png"
 				>
 			</File>
 			<File

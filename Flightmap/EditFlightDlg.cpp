@@ -23,6 +23,8 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent)
 
 	// Seiten hinzufügen
 	AddPage(&m_Page0);
+	AddPage(&m_Page1);
+	AddPage(&m_Page2);
 }
 
 void EditFlightDlg::DoDataExchange(CDataExchange* pDX)

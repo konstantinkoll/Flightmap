@@ -307,22 +307,22 @@ BEGIN
     LTEXT           "Höhe:",IDC_STATIC,14,240,35,8
 END
 
-IDD_PROPERTIES DIALOGEX 0, 0, 365, 130
+IDD_PROPERTIES DIALOGEX 0, 0, 365, 129
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Eigenschaften von %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,351,94
+    GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,351,93
     LTEXT           "Titel:",IDC_STATIC,14,20,45,8
-    EDITTEXT        IDC_TITLE,72,18,279,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TITLE,72,18,279,13,ES_AUTOHSCROLL
     LTEXT           "Autor:",IDC_STATIC,14,40,45,8
-    EDITTEXT        IDC_AUTHOR,72,38,279,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_AUTHOR,72,38,279,13,ES_AUTOHSCROLL
     LTEXT           "Schlüsselworte:",IDC_STATIC,14,60,55,8
-    EDITTEXT        IDC_KEYWORDS,72,58,279,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_KEYWORDS,72,58,279,13,ES_AUTOHSCROLL
     LTEXT           "Kommentar:",IDC_STATIC,14,80,45,8
-    EDITTEXT        IDC_COMMENTS,72,78,279,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,251,108,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,308,108,50,14,WS_GROUP
+    EDITTEXT        IDC_COMMENTS,72,78,279,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,251,107,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,308,107,50,14,WS_GROUP
 END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
@@ -435,7 +435,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 358
         TOPMARGIN, 7
-        BOTTOMMARGIN, 123
+        BOTTOMMARGIN, 122
     END
 
     IDD_CHOOSEDETAILS, DIALOG
@@ -474,11 +474,11 @@ BEGIN
     IDS_XOFY_PLURAL         "%d von %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
-    IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AUTOMATIC           "Automatisch wählen"
     IDS_AIRPORT_NAME        "Name"
@@ -765,17 +765,17 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Properties of %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Properties",IDC_STATIC,7,7,341,94
+    GROUPBOX        "Properties",IDC_STATIC,7,7,341,93
     LTEXT           "Title:",IDC_STATIC,14,20,45,8
-    EDITTEXT        IDC_TITLE,62,18,279,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TITLE,62,18,279,13,ES_AUTOHSCROLL
     LTEXT           "Author:",IDC_STATIC,14,40,45,8
-    EDITTEXT        IDC_AUTHOR,62,38,279,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_AUTHOR,62,38,279,13,ES_AUTOHSCROLL
     LTEXT           "Keywords:",IDC_STATIC,14,60,45,8
-    EDITTEXT        IDC_KEYWORDS,62,58,279,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_KEYWORDS,62,58,279,13,ES_AUTOHSCROLL
     LTEXT           "Comments:",IDC_STATIC,14,80,45,8
-    EDITTEXT        IDC_COMMENTS,62,78,279,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,241,108,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,298,108,50,14,WS_GROUP
+    EDITTEXT        IDC_COMMENTS,62,78,279,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,241,107,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,298,107,50,14,WS_GROUP
 END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
@@ -927,11 +927,11 @@ BEGIN
     IDS_XOFY_PLURAL         "%d of %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
-    IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
     IDS_AUTOMATIC           "Choose automatically"
     IDS_AIRPORT_NAME        "Name"

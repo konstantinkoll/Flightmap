@@ -4,7 +4,9 @@
 
 #pragma once
 #include "CItinerary.h"
+#include "EditFlightAttachmentsPage.h"
 #include "EditFlightRoutePage.h"
+#include "EditFlightOtherPage.h"
 #include "Flightmap.h"
 
 
@@ -22,6 +24,8 @@ public:
 
 protected:
 	EditFlightRoutePage m_Page0;
+	EditFlightOtherPage m_Page1;
+	EditFlightAttachmentsPage m_Page2;
 
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()

@@ -10,7 +10,7 @@
 //
 
 EditFlightRoutePage::EditFlightRoutePage()
-	: CPropertyPage(IDD_FLIGHTROUTE_FROMTO)
+	: CPropertyPage(IDD_ROUTE)
 {
 }
 
