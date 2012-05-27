@@ -14,6 +14,7 @@
 CKitchen::CKitchen(CString DisplayName, BOOL MergeMetro)
 {
 	m_DisplayName = DisplayName;
+	m_MaxRouteCount = 0;
 	m_MergeMetro = MergeMetro;
 
 	m_FlightAirports.InitHashTable(2048);
@@ -89,6 +90,9 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, COLORREF Color)
 		}
 
 		m_FlightRoutes[ID] = Route;
+
+		if (Route.Count>m_MaxRouteCount)
+			m_MaxRouteCount = Route.Count;
 	}
 }
 

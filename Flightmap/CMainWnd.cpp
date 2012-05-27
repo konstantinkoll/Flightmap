@@ -365,6 +365,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
 	ON_COMMAND(IDM_MAP_STRAIGHTLINES, OnMapStraightLines)
 	ON_COMMAND(IDM_MAP_ARROWS, OnMapArrows)
+	ON_COMMAND(IDM_MAP_USECOUNT, OnMapUseCount)
 	ON_COMMAND(IDM_MAP_USECOLORS, OnMapUseColors)
 	ON_COMMAND(IDM_MAP_SHOWLOCATIONS, OnMapShowLocations)
 	ON_COMMAND(IDM_MAP_SHOWIATACODES, OnMapShowIATACodes)
@@ -527,6 +528,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCheckbox(IDM_MAP_SHOWFLIGHTROUTES);
 		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
 		pPopup->AddCheckbox(IDM_MAP_ARROWS);
+		pPopup->AddCheckbox(IDM_MAP_USECOUNT);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_USECOLORS);
 		pPopup->AddColor(IDM_MAP_ROUTECOLOR, &theApp.m_MapSettings.RouteColor);
@@ -880,6 +882,11 @@ void CMainWnd::OnMapArrows()
 	theApp.m_MapSettings.Arrows = !theApp.m_MapSettings.Arrows;
 }
 
+void CMainWnd::OnMapUseCount()
+{
+	theApp.m_MapSettings.UseCount = !theApp.m_MapSettings.UseCount;
+}
+
 void CMainWnd::OnMapUseColors()
 {
 	theApp.m_MapSettings.UseColors = !theApp.m_MapSettings.UseColors;
@@ -932,6 +939,10 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_ARROWS:
 		pCmdUI->SetCheck(theApp.m_MapSettings.Arrows);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_USECOUNT:
+		pCmdUI->SetCheck(theApp.m_MapSettings.UseCount);
 		b = theApp.m_MapSettings.ShowFlightRoutes;
 		break;
 	case IDM_MAP_USECOLORS:

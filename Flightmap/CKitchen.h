@@ -29,7 +29,7 @@ struct FlightRoute
 	LPVOID lpFrom;
 	LPVOID lpTo;
 	COLORREF Color;
-	INT Count;
+	UINT Count;
 	BYTE Arrows;
 };
 
@@ -58,6 +58,7 @@ public:
 	CFlightAirports m_FlightAirports;
 	CFlightCounts m_FlightAirportCounts;
 	CFlightRoutes m_FlightRoutes;
+	UINT m_MaxRouteCount;
 
 protected:
 	BOOL m_MergeMetro;

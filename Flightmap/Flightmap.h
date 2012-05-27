@@ -38,6 +38,7 @@ struct MapSettings
 	BOOL ShowFlightRoutes;
 	BOOL StraightLines;
 	BOOL Arrows;
+	BOOL UseCount;
 	BOOL UseColors;
 	COLORREF RouteColor;
 	BOOL ShowLocations;
