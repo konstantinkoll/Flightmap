@@ -123,7 +123,7 @@
 #define IDC_COMMENT                     2014
 #define IDC_TO_GATE                     2019
 #define IDD_OTHER                       2100
-#define IDC_AIRLINE                     2101
+#define IDC_CARRIER                     2101
 #define IDC_FLIGHTNO                    2102
 #define IDC_CODESHARES                  2103
 #define IDC_EQUIPMENT                   2104

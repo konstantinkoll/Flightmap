@@ -19,6 +19,8 @@ public:
 
 protected:
 	AIRX_Flight* p_Flight;
+	CComboBox m_wndCarrier;
+	CComboBox m_wndEquipment;
 	CMFCMaskedEdit m_wndFlightNo;
 	CMFCMaskedEdit m_wndCodeshares;
 	CMFCMaskedEdit m_wndRegistration;

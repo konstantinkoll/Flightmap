@@ -181,7 +181,7 @@ BEGIN
     GROUPBOX        "Farbe",IDC_STATIC,3,163,117,32
     GROUPBOX        "Sonstiges",IDC_STATIC,128,163,227,32
     LTEXT           "Gesellschaft:",IDC_STATIC,10,16,50,8
-    COMBOBOX        IDC_AIRLINE,63,14,105,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_CARRIER,63,14,105,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Flugnummer:",IDC_STATIC,10,36,50,8
     EDITTEXT        IDC_FLIGHTNO,63,34,105,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Codeshares:",IDC_STATIC,10,56,50,8
@@ -657,7 +657,7 @@ BEGIN
     GROUPBOX        "Color",IDC_STATIC,3,163,117,32
     GROUPBOX        "Miscellaneous",IDC_STATIC,128,163,227,32
     LTEXT           "Carrier:",IDC_STATIC,10,16,50,8
-    COMBOBOX        IDC_AIRLINE,63,14,105,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_CARRIER,63,14,105,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Flight number:",IDC_STATIC,10,36,50,8
     EDITTEXT        IDC_FLIGHTNO,63,34,105,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Codeshares:",IDC_STATIC,10,56,50,8
@@ -803,7 +803,7 @@ BEGIN
     IDS_COLUMN4             "Arr. time"
     IDS_COLUMN5             "Arr. gate"
     IDS_COLUMN6             "Distance"
-    IDS_COLUMN7             "Airline"
+    IDS_COLUMN7             "Carrier"
     IDS_COLUMN8             "Flight"
     IDS_COLUMN9             "Codeshares"
     IDS_COLUMN10            "Equipment"

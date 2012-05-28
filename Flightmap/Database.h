@@ -2,7 +2,7 @@
 // StarAlliance
 //
 
-#define AllianceStarCount     31
+#define AllianceStarCount     30
 
 static const WCHAR AllianceStar[AllianceStarCount][64] = {
 	L"Adria Airways",
@@ -95,7 +95,7 @@ static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
 // Equipment
 //
 
-#define EquipmentCount     34
+#define EquipmentCount     33
 
 static const WCHAR Equipment[EquipmentCount][32] = {
 	L"Airbus A300",
@@ -131,5 +131,4 @@ static const WCHAR Equipment[EquipmentCount][32] = {
 	L"Fokker 70/100",
 	L"MD-11",
 	L"SSJ 100",
-	L"Train"
 };

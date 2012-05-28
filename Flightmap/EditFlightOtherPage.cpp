@@ -26,6 +26,8 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 	}
 
+	DDX_Control(pDX, IDC_CARRIER, m_wndCarrier);
+	DDX_Control(pDX, IDC_EQUIPMENT, m_wndEquipment);
 	DDX_MaskedText(pDX, IDC_FLIGHTNO, m_wndFlightNo, 8, p_Flight);
 	DDX_MaskedText(pDX, IDC_CODESHARES, m_wndCodeshares, 9, p_Flight);
 	DDX_MaskedText(pDX, IDC_REGISTRATION, m_wndRegistration, 11, p_Flight);
@@ -38,6 +40,13 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
+		CString tmpStr;
+		m_wndCarrier.GetWindowText(tmpStr);
+		StringToAttribute(tmpStr.GetBuffer(), *p_Flight, 7);
+
+		m_wndEquipment.GetWindowText(tmpStr);
+		StringToAttribute(tmpStr.GetBuffer(), *p_Flight, 10);
+
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 		p_Flight->Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : AIRX_Unknown;
 
@@ -60,6 +69,25 @@ BOOL EditFlightOtherPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
+	// Carriers
+	for (UINT a=0; a<AllianceStarCount; a++)
+		m_wndCarrier.AddString(AllianceStar[a]);
+	for (UINT a=0; a<AllianceSkyTeamCount; a++)
+		m_wndCarrier.AddString(AllianceSkyTeam[a]);
+	for (UINT a=0; a<AllianceOneWorldCount; a++)
+		m_wndCarrier.AddString(AllianceOneWorld[a]);
+
+	if (m_wndCarrier.SelectString(-1, p_Flight->Carrier)==-1)
+		m_wndCarrier.SetWindowText(p_Flight->Carrier);
+
+	// Equipment
+	for (UINT a=0; a<EquipmentCount; a++)
+		m_wndEquipment.AddString(Equipment[a]);
+
+	if (m_wndEquipment.SelectString(-1, p_Flight->Equipment)==-1)
+		m_wndEquipment.SetWindowText(p_Flight->Equipment);
+
+	// Flug
 	((CButton*)GetDlgItem(IDC_LEISURETRIP))->SetCheck(p_Flight->Flags & AIRX_LeisureTrip);
 	((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->SetCheck(p_Flight->Flags & AIRX_BusinessTrip);
 	((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->SetCheck(p_Flight->Flags & AIRX_AwardFlight);

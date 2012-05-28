@@ -22,7 +22,7 @@ BOOL CExcelFile::Open(LPCTSTR lpszFileName)
 
 	m_IsOpen = CStdioFile::Open(lpszFileName, CFile::modeCreate | CFile::modeWrite);
 	if (m_IsOpen)
-		WriteString(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Airline;Flight #;Codeshares;Equipment;Aircraft registration;Aircraft name;Class;Seat;Color;Etix booking code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time\n"));
+		WriteString(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Carrier;Flight #;Codeshares;Equipment;Aircraft registration;Aircraft name;Class;Seat;Color;Etix booking code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time\n"));
 
 	return m_IsOpen;
 }
