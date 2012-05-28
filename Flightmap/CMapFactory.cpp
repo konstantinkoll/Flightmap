@@ -48,11 +48,11 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	INT MapOffset = m_Settings.CenterPacific ? 4700 : 0;
 	DOUBLE Scale = 1.0;
 
-	UINT AirportCount = (UINT)pKitchen->m_FlightAirports.GetCount();
+	const UINT AirportCount = (UINT)pKitchen->m_FlightAirports.GetCount();
 	FactoryAirportData* AirportData = new FactoryAirportData[AirportCount];
 	ZeroMemory(AirportData, AirportCount*sizeof(FactoryAirportData));
 
-	UINT RouteCount = (UINT)pKitchen->m_FlightRoutes.GetCount();
+	const UINT RouteCount = (UINT)pKitchen->m_FlightRoutes.GetCount();
 	FlightSegments** RouteData = NULL;
 
 	// Convert coordinates to row/column, and compute minimum background boundaries
@@ -234,7 +234,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	if (m_Settings.ShowFlightRoutes)
 	{
 #define PreparePen(Route) \
-	CColor col(((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : pPair2->value.Color); \
+	CColor col(((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : Route.Color); \
 	const DOUBLE Width = (m_Settings.UseCount && (pKitchen->m_MaxRouteCount!=0)) ? (0.5+(5.9*((DOUBLE)Route.Count)/((DOUBLE)pKitchen->m_MaxRouteCount))) : 3.2; \
 	Pen pen(col, (REAL)(Width*Upscale));
 
