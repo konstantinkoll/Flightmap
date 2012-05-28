@@ -216,7 +216,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		case AIRX_Economy:
 			wcscpy_s(pBuffer, cCount, L"Y");
 			break;
-		case AIRX_EconomyPlus:
+		case AIRX_PremiumEconomy:
 			wcscpy_s(pBuffer, cCount, L"Y+");
 			break;
 		case AIRX_Business:
@@ -386,7 +386,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 			*pWChar = (WCHAR)toupper(*pWChar);
 			pWChar++;
 		}
-		*((CHAR*)pData) = (wcscmp(L"Y", tmpStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", tmpStr)==0) ? AIRX_EconomyPlus : (wcscmp(L"J", tmpStr)==0) ? AIRX_Business : (wcscmp(L"F", tmpStr)==0) ? AIRX_First : ((wcscmp(L"C", tmpStr)==0) || (wcscmp(L"CREW", tmpStr)==0) || (wcscmp(L"CREW/DCM", tmpStr)==0)) ? AIRX_Crew : AIRX_Unknown;
+		*((CHAR*)pData) = (wcscmp(L"Y", tmpStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", tmpStr)==0) ? AIRX_PremiumEconomy : (wcscmp(L"J", tmpStr)==0) ? AIRX_Business : (wcscmp(L"F", tmpStr)==0) ? AIRX_First : ((wcscmp(L"C", tmpStr)==0) || (wcscmp(L"CREW", tmpStr)==0) || (wcscmp(L"CREW/DCM", tmpStr)==0)) ? AIRX_Crew : AIRX_Unknown;
 		break;
 	case FMTypeColor:
 		ScanColor(pStr, *((COLORREF*)pData));
@@ -699,7 +699,7 @@ void CItinerary::OpenAIR(CString FileName)
 				ReadUTF7CHAR(f, Flight.FlightNo, 8);
 
 				CString Class = ReadUTF7String(f);
-				Flight.Class = (Class==_T("Y")) ? AIRX_Economy : (Class==_T("Y+")) ? AIRX_EconomyPlus : (Class==_T("J")) ? AIRX_Business : (Class==_T("F")) ? AIRX_First : (Class==_T("C")) ? AIRX_Crew : AIRX_Unknown;
+				Flight.Class = (Class==_T("Y")) ? AIRX_Economy : (Class==_T("Y+")) ? AIRX_PremiumEconomy : (Class==_T("J")) ? AIRX_Business : (Class==_T("F")) ? AIRX_First : (Class==_T("C")) ? AIRX_Crew : AIRX_Unknown;
 
 				ReadUTF7FILETIME(f, Flight.From.Time);
 				ReadUTF7COLORREF(f, Flight.Color);

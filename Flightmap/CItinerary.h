@@ -48,7 +48,7 @@ struct AIRX_Location
 
 #define AIRX_Unknown                '\0'
 #define AIRX_Economy                'Y'
-#define AIRX_EconomyPlus            '+'
+#define AIRX_PremiumEconomy            '+'
 #define AIRX_Business               'J'
 #define AIRX_First                  'F'
 #define AIRX_Crew                   'C'
