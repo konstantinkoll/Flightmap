@@ -17,8 +17,6 @@ class EditFlightDlg : public CPropertySheet
 public:
 	EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	AIRX_Flight m_Flight;
 
 protected:

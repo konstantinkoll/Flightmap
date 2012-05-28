@@ -28,6 +28,7 @@ struct FlightRoute
 	FMAirport* pTo;
 	LPVOID lpFrom;
 	LPVOID lpTo;
+	FMGeoCoordinates Waypoint;
 	COLORREF Color;
 	UINT Count;
 	BYTE Arrows;
@@ -49,7 +50,7 @@ class CKitchen
 public:
 	CKitchen(CString DisplayName, BOOL MergeMetro=FALSE);
 
-	virtual void AddFlight(CHAR* From, CHAR* To, COLORREF Color);
+	virtual void AddFlight(CHAR* From, CHAR* To, FMGeoCoordinates& Waypoint, COLORREF Color);
 
 	void AddFlight(AIRX_Flight& Flight);
 	static FlightSegments* Tesselate(FlightRoute& Route);
@@ -62,6 +63,7 @@ public:
 
 protected:
 	BOOL m_MergeMetro;
+	UINT m_WaypointCount;
 
 private:
 	FMAirport* AddAirport(CHAR* Code);

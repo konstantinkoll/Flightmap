@@ -35,13 +35,8 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent)
 		m_Pages[a]->Construct(nIDTemplates[a]);
 		AddPage(m_Pages[a]);
 	}
-}
 
-void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
-{
-	if (pDX->m_bSaveAndValidate)
-	{
-	}
+	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
 

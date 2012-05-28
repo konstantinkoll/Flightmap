@@ -320,9 +320,10 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			{
 				PreparePen(pPair2->value);
 
-				DrawLine(g, pen, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale);
+				const BOOL UseWaypoint = (pFrom==pTo) && ((pPair2->value.Waypoint.Latitude!=0.0) || (pPair2->value.Waypoint.Longitude!=0.0));
+				DrawLine(g, pen, pFrom->S, pFrom->Z, UseWaypoint ? (pPair2->value.Waypoint.Longitude*4096.0)/180.0+4096.0+MapOffset : pTo->S, UseWaypoint ? (pPair2->value.Waypoint.Latitude*2048.0)/90.0+2048.0 : pTo->Z, MinS, MinZ, Scale);
 
-				if (m_Settings.Arrows)
+				if (m_Settings.Arrows && !UseWaypoint)
 				{
 					SolidBrush brush(col);
 

@@ -140,31 +140,33 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS | WS
 CAPTION "Route"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Von",IDC_STATIC,3,3,172,71
-    GROUPBOX        "Nach",IDC_STATIC,183,3,172,71
-    GROUPBOX        "Wegpunkt",IDC_STATIC,3,78,352,61
-    GROUPBOX        "Sonstiges",IDC_STATIC,3,142,352,50
+    GROUPBOX        "Von",IDC_STATIC,3,3,172,82
+    GROUPBOX        "Nach",IDC_STATIC,183,3,172,82
+    GROUPBOX        "Wegpunkt",IDC_STATIC,3,89,352,61
+    GROUPBOX        "Sonstiges",IDC_STATIC,3,153,352,50
     LTEXT           "Flughafen:",IDC_STATIC,10,16,50,8
     EDITTEXT        IDC_FROM_IATA,63,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     PUSHBUTTON      "Auswählen...",IDC_FROM_SELECT,109,14,60,13,WS_GROUP
-    LTEXT           "Abflugzeit:",IDC_STATIC,10,36,50,8
-    EDITTEXT        IDC_FROM_TIME,63,34,105,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Abfluggate:",IDC_STATIC,10,56,50,8
-    EDITTEXT        IDC_FROM_GATE,63,54,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Abflugzeit:",IDC_STATIC,10,47,50,8
+    EDITTEXT        IDC_FROM_TIME,63,45,105,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Abfluggate:",IDC_STATIC,10,67,50,8
+    EDITTEXT        IDC_FROM_GATE,63,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Flughafen:",IDC_STATIC,190,16,50,8
     EDITTEXT        IDC_TO_IATA,243,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     PUSHBUTTON      "Auswählen...",IDC_TO_SELECT,289,14,60,13,WS_GROUP
-    LTEXT           "Ankunftszeit:",IDC_STATIC,190,36,50,8
-    EDITTEXT        IDC_TO_TIME,243,34,105,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Ankunftsgate:",IDC_STATIC,190,56,50,8
-    EDITTEXT        IDC_TO_GATE,243,54,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Wenn Start- und Zielflughafen identisch sind, können Sie einen Wegpunkt angeben, der bei der Streckenführung berücksichtigt wird. Auf diese Weise können Sie Rundflüge, etwa den Air Berlin Polarflug, erfassen.",IDC_STATIC,10,89,338,24
-    PUSHBUTTON      "&Wegpunkt setzen...",IDC_WAYPOINT_BTN,9,117,100,14,WS_GROUP
-    LTEXT           "X",IDC_WAYPOINT_DISPLAY,116,120,232,8
-    LTEXT           "Reine Flugzeit:",IDC_STATIC,10,154,50,8
-    EDITTEXT        IDC_FLIGHTTIME,63,152,40,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Kommentar:",IDC_STATIC,10,173,50,8
-    EDITTEXT        IDC_COMMENT,63,171,285,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Ankunftszeit:",IDC_STATIC,190,47,50,8
+    EDITTEXT        IDC_TO_TIME,243,45,105,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Ankunftsgate:",IDC_STATIC,190,67,50,8
+    EDITTEXT        IDC_TO_GATE,243,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Wenn Start- und Zielflughafen identisch sind, können Sie einen Wegpunkt angeben, der bei der Streckenführung berücksichtigt wird. Auf diese Weise können Sie Rundflüge, etwa den Air Berlin Polarflug, erfassen.",IDC_STATIC,10,100,338,24,SS_NOPREFIX
+    PUSHBUTTON      "&Wegpunkt setzen...",IDC_WAYPOINT_BTN,9,128,100,14,WS_GROUP
+    LTEXT           "X",IDC_WAYPOINT_DISPLAY,116,131,232,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "Reine Flugzeit:",IDC_STATIC,10,165,50,8
+    EDITTEXT        IDC_FLIGHTTIME,63,163,40,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Kommentar:",IDC_STATIC,10,184,50,8
+    EDITTEXT        IDC_COMMENT,63,182,285,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "X",IDC_FROM_NAME,63,30,105,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "X",IDC_TO_NAME,243,30,105,8,SS_NOPREFIX | SS_ENDELLIPSIS
 END
 
 IDD_OTHER DIALOGEX 0, 0, 359, 303
@@ -391,7 +393,18 @@ BEGIN
     IDM_MAP_STRAIGHTLINES   "&Gerade Linien"
     IDM_MAP_ARROWS          "&Pfeilspitzen"
     IDM_MAP_USECOUNT        "Häufige Routen &dicker"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_USECOLORS       "&Farben benutzen"
+    IDM_MAP_ROUTECOLOR      "&Standardfarbe"
+    IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
+    IDM_MAP_LOCATIONINNERCOLOR "Far&be"
+    IDM_MAP_LOCATIONOUTERCOLOR "&Umrandung"
+    IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
+    IDM_MAP_IATAINNERCOLOR  "S&chriftfarbe"
+    IDM_MAP_IATAOUTERCOLOR  "&Umrandung"
 END
 
 STRINGTABLE 
@@ -490,17 +503,6 @@ BEGIN
                             "Ganzen &Flugplan\nFügt einen bereits erstellten\nFlugplan an der aktuellen Stelle ein."
     IDM_EDIT_DELETE         "&Löschen"
     IDM_EDIT_SELECTALL      "&Alles auswählen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP_ROUTECOLOR      "&Standardfarbe"
-    IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
-    IDM_MAP_LOCATIONINNERCOLOR "Far&be"
-    IDM_MAP_LOCATIONOUTERCOLOR "&Umrandung"
-    IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
-    IDM_MAP_IATAINNERCOLOR  "S&chriftfarbe"
-    IDM_MAP_IATAOUTERCOLOR  "&Umrandung"
 END
 
 STRINGTABLE 
@@ -604,31 +606,33 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CLI
 CAPTION "Route"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "From",IDC_STATIC,3,3,172,71
-    GROUPBOX        "To",IDC_STATIC,183,3,172,71
-    GROUPBOX        "Waypoint",IDC_STATIC,3,78,352,53
-    GROUPBOX        "Miscellaneous",IDC_STATIC,3,134,352,50
+    GROUPBOX        "From",IDC_STATIC,3,3,172,82
+    GROUPBOX        "To",IDC_STATIC,183,3,172,82
+    GROUPBOX        "Waypoint",IDC_STATIC,3,89,352,53
+    GROUPBOX        "Miscellaneous",IDC_STATIC,3,145,352,50
     LTEXT           "Airport:",IDC_STATIC,10,16,50,8
     EDITTEXT        IDC_FROM_IATA,63,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     PUSHBUTTON      "Select...",IDC_FROM_SELECT,109,14,60,13,WS_GROUP
-    LTEXT           "Time:",IDC_STATIC,10,36,50,8
-    EDITTEXT        IDC_FROM_TIME,63,34,105,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Gate:",IDC_STATIC,10,56,50,8
-    EDITTEXT        IDC_FROM_GATE,63,54,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Time:",IDC_STATIC,10,47,50,8
+    EDITTEXT        IDC_FROM_TIME,63,45,105,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Gate:",IDC_STATIC,10,67,50,8
+    EDITTEXT        IDC_FROM_GATE,63,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Airport:",IDC_STATIC,190,16,50,8
     EDITTEXT        IDC_TO_IATA,243,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     PUSHBUTTON      "Select...",IDC_TO_SELECT,289,14,60,13,WS_GROUP
-    LTEXT           "Time:",IDC_STATIC,190,36,50,8
-    EDITTEXT        IDC_TO_TIME,243,34,105,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Gate:",IDC_STATIC,190,56,50,8
-    EDITTEXT        IDC_TO_GATE,243,54,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Provided departure and arrival airport are identical, you can enter a routing waypoint. This allows you to correctly display roundtrip and sightseeing flights, like the annual Air Berlin polar flight.",IDC_STATIC,10,89,338,16
-    PUSHBUTTON      "Set &waypoint...",IDC_WAYPOINT_BTN,9,109,100,14,WS_GROUP
-    LTEXT           "X",IDC_WAYPOINT_DISPLAY,116,112,232,8
+    LTEXT           "Time:",IDC_STATIC,190,47,50,8
+    EDITTEXT        IDC_TO_TIME,243,45,105,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Gate:",IDC_STATIC,190,67,50,8
+    EDITTEXT        IDC_TO_GATE,243,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Provided departure and arrival airport are identical, you can enter a routing waypoint. This allows you to correctly display roundtrip and sightseeing flights, like the annual Air Berlin polar flight.",IDC_STATIC,10,100,338,16,SS_NOPREFIX
+    PUSHBUTTON      "Set &waypoint...",IDC_WAYPOINT_BTN,9,120,100,14,WS_GROUP
+    LTEXT           "X",IDC_WAYPOINT_DISPLAY,116,123,232,8,SS_NOPREFIX | SS_ENDELLIPSIS
     LTEXT           "Flight time:",IDC_STATIC,10,146,50,8
-    EDITTEXT        IDC_FLIGHTTIME,63,144,40,13,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_FLIGHTTIME,63,155,40,13,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Comments:",IDC_STATIC,10,165,50,8
-    EDITTEXT        IDC_COMMENT,63,163,285,13,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,63,174,285,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "X",IDC_FROM_NAME,63,30,105,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "X",IDC_TO_NAME,243,30,105,8,SS_NOPREFIX | SS_ENDELLIPSIS
 END
 
 IDD_ATTACHMENTS DIALOGEX 0, 0, 359, 303
@@ -855,7 +859,18 @@ BEGIN
     IDM_MAP_STRAIGHTLINES   "&Straight lines"
     IDM_MAP_ARROWS          "Arro&ws"
     IDM_MAP_USECOUNT        "&Fatten frequent routes"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_USECOLORS       "Use colo&rs"
+    IDM_MAP_ROUTECOLOR      "&Default color"
+    IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
+    IDM_MAP_LOCATIONINNERCOLOR "&Color"
+    IDM_MAP_LOCATIONOUTERCOLOR "&Border"
+    IDM_MAP_SHOWIATACODES   "Show &IATA codes"
+    IDM_MAP_IATAINNERCOLOR  "&Color"
+    IDM_MAP_IATAOUTERCOLOR  "&Border"
 END
 
 STRINGTABLE 
@@ -954,17 +969,6 @@ BEGIN
                             "Whole &itinerary\nInsert an existing itinerary."
     IDM_EDIT_DELETE         "&Delete"
     IDM_EDIT_SELECTALL      "Select &all"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP_ROUTECOLOR      "&Default color"
-    IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
-    IDM_MAP_LOCATIONINNERCOLOR "&Color"
-    IDM_MAP_LOCATIONOUTERCOLOR "&Border"
-    IDM_MAP_SHOWIATACODES   "Show &IATA codes"
-    IDM_MAP_IATAINNERCOLOR  "&Color"
-    IDM_MAP_IATAOUTERCOLOR  "&Border"
 END
 
 STRINGTABLE 

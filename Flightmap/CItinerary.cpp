@@ -27,10 +27,11 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 
 	if ((Flight.Flags & (AIRX_UnknownFrom | AIRX_UnknownTo))==0)
 	{
+		const BOOL UseWaypoint = (pFrom==pTo) && ((Flight.Waypoint.Latitude!=0) || (Flight.Waypoint.Longitude!=0));
 		const DOUBLE Lat1 = PI*pFrom->Location.Latitude/180;
 		const DOUBLE Lon1 = PI*pFrom->Location.Longitude/180;
-		const DOUBLE Lat2 = PI*pTo->Location.Latitude/180;
-		const DOUBLE Lon2 = PI*pTo->Location.Longitude/180;
+		const DOUBLE Lat2 = PI*(UseWaypoint ? Flight.Waypoint.Latitude : pTo->Location.Latitude)/180;
+		const DOUBLE Lon2 = PI*(UseWaypoint ? Flight.Waypoint.Longitude : pTo->Location.Longitude)/180;
 
 		const DOUBLE DeltaLon = abs(Lon1-Lon2);
 		const DOUBLE tmp1 = cos(Lat1)*sin(DeltaLon);
@@ -40,6 +41,9 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 		const DOUBLE GreatCircle = atan2(T, B);
 
 		Flight.DistanceNM = 3438.461*GreatCircle;
+		if (UseWaypoint)
+			Flight.DistanceNM *= 2.0;
+
 		Flight.Flags |= AIRX_DistanceValid;
 	}
 	else
