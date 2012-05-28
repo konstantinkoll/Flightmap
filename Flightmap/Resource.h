@@ -66,6 +66,8 @@
 #define IDS_BUSINESSTRIP                1023
 #define IDS_LEISURETRIP                 1024
 #define IDS_EDITFLIGHT                  1025
+#define IDS_CUEBANNER_DATETIME          1026
+#define IDS_CUEBANNER_TIME              1027
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102

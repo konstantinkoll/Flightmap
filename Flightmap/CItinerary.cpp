@@ -9,6 +9,13 @@
 #include <math.h>
 
 
+void ResetFlight(AIRX_Flight& Flight)
+{
+	ZeroMemory(&Flight, sizeof(AIRX_Flight));
+	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
+	Flight.Color = (COLORREF)-1;
+}
+
 void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 {
 	if ((Flight.Flags & AIRX_DistanceCalculated) && !Force)
@@ -49,6 +56,88 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 	else
 	{
 		Flight.DistanceNM = 0.0;
+	}
+}
+
+void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
+{
+	ASSERT(pEdit);
+
+	CString tmpStr;
+
+	switch (FMAttributes[Attr].Type)
+	{
+	case FMTypeAnsiString:
+		switch (Attr)
+		{
+		case 0:
+		case 3:
+			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+			break;
+		case 2:
+		case 5:
+		case 8:
+		case 14:
+		case 16:
+			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
+			break;
+		case 9:
+			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "));
+			break;
+		case 11:
+			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789- "));
+			break;
+		}
+	case FMTypeUnicodeString:
+		pEdit->SetLimitText(FMAttributes[Attr].DataParameter);
+		break;
+	case FMTypeUINT:
+		pEdit->SetLimitText(6);
+		pEdit->SetValidChars(_T("0123456789"));
+		break;
+	case FMTypeClass:
+		pEdit->SetLimitText(2);
+		pEdit->SetValidChars(_T("CFJYcfjy+"));
+		break;
+	case FMTypeDateTime:
+		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_DATETIME));
+		pEdit->SetCueBanner(tmpStr);
+		pEdit->SetLimitText(16);
+		pEdit->SetValidChars(_T("0123456789:-. "));
+		break;
+	case FMTypeTime:
+		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_TIME));
+		pEdit->SetCueBanner(tmpStr);
+		pEdit->SetLimitText(5);
+		pEdit->SetValidChars(_T("0123456789:"));
+		break;
+	}
+
+	if (pFlight)
+	{
+		WCHAR tmpBuf[256];
+		AttributeToString(*pFlight, Attr, tmpBuf, 256);
+
+		pEdit->SetWindowText(tmpBuf);
+	}
+}
+
+void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight)
+{
+	ASSERT(pFlight);
+
+	DDX_Control(pDX, nIDC, rControl);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		CString tmpStr;
+		rControl.GetWindowText(tmpStr);
+
+		StringToAttribute(tmpStr.GetBuffer(), *pFlight, Attr);
+	}
+	else
+	{
+		PrepareEditCtrl(&rControl, Attr, pFlight);
 	}
 }
 
@@ -308,13 +397,6 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 
 // Other
 //
-
-void ResetFlight(AIRX_Flight& Flight)
-{
-	ZeroMemory(&Flight, sizeof(AIRX_Flight));
-	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
-	Flight.Color = (COLORREF)-1;
-}
 
 BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter)
 {

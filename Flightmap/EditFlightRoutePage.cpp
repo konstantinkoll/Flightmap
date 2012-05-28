@@ -6,7 +6,6 @@
 #include "EditFlightRoutePage.h"
 
 
-
 // EditFlightRoutePage
 //
 
@@ -20,10 +19,17 @@ EditFlightRoutePage::EditFlightRoutePage(AIRX_Flight* pFlight)
 
 void EditFlightRoutePage::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_MaskedText(pDX, IDC_FROM_IATA, m_wndFromIATA, 0, p_Flight);
+	DDX_MaskedText(pDX, IDC_FROM_TIME, m_wndFromTime, 1, p_Flight);
+	DDX_MaskedText(pDX, IDC_FROM_GATE, m_wndFromGate, 2, p_Flight);
+	DDX_MaskedText(pDX, IDC_TO_IATA, m_wndToIATA, 3, p_Flight);
+	DDX_MaskedText(pDX, IDC_TO_TIME, m_wndToTime, 4, p_Flight);
+	DDX_MaskedText(pDX, IDC_TO_GATE, m_wndToGate, 5, p_Flight);
+	DDX_MaskedText(pDX, IDC_FLIGHTTIME, m_wndFlighttime, 23, p_Flight);
+	DDX_MaskedText(pDX, IDC_COMMENT, m_wndComment, 22, p_Flight);
+
 	if (pDX->m_bSaveAndValidate)
-	{
 		CalcDistance(*p_Flight, TRUE);
-	}
 }
 
 void EditFlightRoutePage::DisplayAirport(UINT nID, FMAirport* pAirport)
@@ -74,7 +80,7 @@ void EditFlightRoutePage::SelectAirport(UINT nEditID, CHAR* pIATA, UINT nDisplay
 		GetDlgItem(nEditID)->SetWindowText(tmpStr);
 
 		DisplayAirport(nDisplayID, dlg.p_Airport);
-		SetModified(TRUE);
+		OnCheckWaypoint();
 	}
 }
 
@@ -91,6 +97,8 @@ BEGIN_MESSAGE_MAP(EditFlightRoutePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_FROM_SELECT, OnFromSelect)
 	ON_BN_CLICKED(IDC_TO_SELECT, OnToSelect)
 	ON_BN_CLICKED(IDC_WAYPOINT_BTN, OnWaypoint)
+	ON_EN_KILLFOCUS(IDC_FROM_IATA, OnCheckWaypoint)
+	ON_EN_KILLFOCUS(IDC_TO_IATA, OnCheckWaypoint)
 END_MESSAGE_MAP()
 
 BOOL EditFlightRoutePage::OnInitDialog()
@@ -100,6 +108,8 @@ BOOL EditFlightRoutePage::OnInitDialog()
 	DisplayAirport(IDC_FROM_NAME, p_Flight->From.Code);
 	DisplayAirport(IDC_TO_NAME, p_Flight->To.Code);
 	DisplayLocation(p_Flight->Waypoint);
+
+	OnCheckWaypoint();
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -121,7 +131,31 @@ void EditFlightRoutePage::OnWaypoint()
 	{
 		p_Flight->Waypoint = dlg.m_Location;
 		DisplayLocation(dlg.m_Location);
-
-		SetModified(TRUE);
 	}
+}
+
+void EditFlightRoutePage::OnCheckWaypoint()
+{
+	BOOL bActive = FALSE;
+
+	CString tmpStr;
+	CHAR Code[4];
+
+	FMAirport* pFrom = NULL;
+	m_wndFromIATA.GetWindowText(tmpStr);
+	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, Code, 4, NULL, NULL);
+	if (!FMIATAGetAirportByCode(Code, &pFrom))
+		goto SetActive;
+
+	FMAirport* pTo = NULL;
+	m_wndToIATA.GetWindowText(tmpStr);
+	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, Code, 4, NULL, NULL);
+	if (!FMIATAGetAirportByCode(Code, &pTo))
+		goto SetActive;
+
+	bActive = (pFrom==pTo) && (pFrom!=NULL);
+
+SetActive:
+	GetDlgItem(IDC_WAYPOINT_BTN)->EnableWindow(bActive);
+	GetDlgItem(IDC_WAYPOINT_DISPLAY)->EnableWindow(bActive);
 }

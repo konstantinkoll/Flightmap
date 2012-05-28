@@ -12,8 +12,8 @@
 // EditFlightDlg
 //
 
-EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent)
-: CPropertySheet(IDS_EDITFLIGHT, pParent)
+EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, UINT iSelectPage)
+: CPropertySheet(IDS_EDITFLIGHT, pParent, iSelectPage)
 {
 	if (pFlight)
 	{
@@ -36,7 +36,7 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent)
 		AddPage(m_Pages[a]);
 	}
 
-	m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
 }
 
 

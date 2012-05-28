@@ -15,7 +15,7 @@
 class EditFlightDlg : public CPropertySheet
 {
 public:
-	EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent);
+	EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, UINT iSelectPage=0);
 
 	AIRX_Flight m_Flight;
 

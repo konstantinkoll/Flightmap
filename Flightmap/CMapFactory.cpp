@@ -243,15 +243,15 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			// Tesselated routes
 			for (UINT a=0; a<RouteCount; a++)
 			{
-				PreparePen(RouteData[a]->Route);
 				const FlightSegments* pSegments = RouteData[a];
+				PreparePen(pSegments->Route);
 
 #define CompS(s) s*BGWIDTH/(2*PI)+BGWIDTH/2
 #define CompZ(z) z*BGHEIGHT/PI+BGHEIGHT/2
 
 				for (UINT b=1; b<pSegments->PointCount; b++)
 					DrawLine(g, pen,
-						CompS(pSegments->Points[b-1][1]), CompZ(pSegments->Points[b-1][0]), 
+						CompS(pSegments->Points[b-1][1]), CompZ(pSegments->Points[b-1][0]),
 						CompS(pSegments->Points[b][1]), CompZ(pSegments->Points[b][0]),
 						MinS, MinZ, Scale);
 

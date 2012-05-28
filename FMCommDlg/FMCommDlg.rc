@@ -474,10 +474,6 @@ BEGIN
     IDS_XOFY_PLURAL         "%d von %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AUTOMATIC           "Automatisch wählen"
@@ -927,10 +923,6 @@ BEGIN
     IDS_XOFY_PLURAL         "%d of %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
     IDS_AUTOMATIC           "Choose automatically"
