@@ -483,8 +483,8 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* item, INT* subitem)
 							break;
 						case FMTypeRating:
 							if (x<RatingBitmapWidth+6)
-								if ((x<6) || ((x-6)%18<16))
-									*subitem = (x<6) ? 0 : 2*((x-6)/18)+((x-6)%18>8)+1;
+								if ((x<6) || (x%18<16))
+									*subitem = (x<6) ? 0 : 2*(x/18)+(x%18>8)+1;
 							break;
 						}
 				}
@@ -693,6 +693,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_CONTEXTMENU()
+	ON_WM_SETCURSOR()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_COMMAND(IDM_DETAILS_AUTOSIZEALL, OnAutosizeAll)
@@ -969,12 +970,6 @@ void CDataGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
-{
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
-	return TRUE;
-}
-
 void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	CPoint Item(-1, -1);
@@ -1002,6 +997,8 @@ void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		m_HotItem = Item;
 		m_HotSubitem = Subitem;
 		InvalidateItem(m_HotItem);
+
+		SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
 	}
 }
 
@@ -1363,6 +1360,13 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
 */
+}
+
+BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+{
+	SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
+
+	return TRUE;
 }
 
 void CDataGrid::OnSetFocus(CWnd* /*pOldWnd*/)
