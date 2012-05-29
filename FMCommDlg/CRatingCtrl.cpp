@@ -13,7 +13,7 @@
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
                                             HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
-                                            AlphaBlend(dc, rect.left, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF); \
+                                            AlphaBlend(dc, rect.left+(rect.Width()-w)/2, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF); \
                                             SelectObject(hdcMem, hbmOld); \
                                             DeleteDC(hdcMem); }
 
@@ -54,8 +54,8 @@ void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 		GetWindowRect(&rect);
 		GetParent()->ScreenToClient(&rect);
 
-		if (rect.Width()<RatingBitmapWidth+4)
-			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RatingBitmapWidth+4), max(rect.Height(), RatingBitmapHeight+4), SWP_NOACTIVATE | SWP_NOZORDER);
+		if (rect.Width()<RatingBitmapWidth+8)
+			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RatingBitmapWidth+8), max(rect.Height(), RatingBitmapHeight+4), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	m_Rating = Rating;
@@ -163,9 +163,9 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 void CRatingCtrl::OnLButtonDown(UINT /*Flags*/, CPoint point)
 {
 	if ((point.x>=0) && (point.x<RatingBitmapWidth+2))
-		if ((point.x<6) || (point.x%18<16))
+		if ((point.x<6) || ((point.x-2)%18<16))
 		{
-			m_Rating = (UCHAR)((point.x<6) ? 0 : 2*(point.x/18)+(point.x%18>8)+1);
+			m_Rating = (UCHAR)((point.x<6) ? 0 : 2*((point.x-2)/18)+((point.x-2)%18>8)+1);
 			Invalidate();
 		}
 
@@ -178,7 +178,10 @@ BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*
 	GetCursorPos(&point);
 	ScreenToClient(&point);
 
-	SetCursor(AfxGetApp()->LoadStandardCursor(point.x<6 ? IDC_HAND : ((point.x<RatingBitmapWidth+2) && (point.x%18<16)) ? IDC_HAND : IDC_ARROW));
+	CRect rect;
+	GetClientRect(rect);
+
+	SetCursor(AfxGetApp()->LoadStandardCursor((point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RatingBitmapWidth+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
 	return TRUE;
 }
 
