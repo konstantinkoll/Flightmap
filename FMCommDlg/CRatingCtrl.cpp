@@ -54,8 +54,8 @@ void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 		GetWindowRect(&rect);
 		GetParent()->ScreenToClient(&rect);
 
-		if (rect.Width()<RatingBitmapWidth+6)
-			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RatingBitmapWidth+6), max(rect.Height(), RatingBitmapHeight+4), SWP_NOACTIVATE | SWP_NOZORDER);
+		if (rect.Width()<RatingBitmapWidth+4)
+			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RatingBitmapWidth+4), max(rect.Height(), RatingBitmapHeight+4), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	m_Rating = Rating;
