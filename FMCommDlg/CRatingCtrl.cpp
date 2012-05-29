@@ -181,7 +181,7 @@ BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*
 	CRect rect;
 	GetClientRect(rect);
 
-	SetCursor(AfxGetApp()->LoadStandardCursor((point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RatingBitmapWidth+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
+	SetCursor(AfxGetApp()->LoadStandardCursor((point.x<0) || (point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RatingBitmapWidth+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
 	return TRUE;
 }
 
