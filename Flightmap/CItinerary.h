@@ -143,15 +143,6 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, FlightTime), 0, 100, FALSE, TRUE, TRUE }					// Flight time
 };
 
-void ResetFlight(AIRX_Flight& Flight);
-void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
-void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight=NULL);
-void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight);
-
-void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
-void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);
-
 
 // CItinerary
 //
@@ -189,3 +180,18 @@ private:
 
 	BOOL m_IsOpen;
 };
+
+
+// Helpers
+//
+
+void ResetFlight(AIRX_Flight& Flight);
+void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
+void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight=NULL);
+void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL);
+void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL);
+void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight);
+
+void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
+void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);

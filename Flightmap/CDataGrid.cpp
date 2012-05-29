@@ -95,11 +95,13 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 
 void CDataGrid::SetItinerary(CItinerary* pItinerary)
 {
-	p_Itinerary = pItinerary;
+	if (p_Itinerary!=pItinerary)
+	{
+		p_Itinerary = pItinerary;
 
-	m_SelectedItem.x = m_SelectedItem.y = p_Itinerary ? 0 : -1;
-
-	AdjustLayout();
+		m_SelectedItem.x = m_SelectedItem.y = p_Itinerary ? 0 : -1;
+		AdjustLayout();
+	}
 }
 
 void CDataGrid::AdjustLayout()
@@ -253,24 +255,7 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 
 
 
-	EditFlightDlg dlg(NewLine ? NULL : &p_Itinerary->m_Flights.m_Items[item.y], this);
-	if (dlg.DoModal()==IDOK)
-	{
-		if (NewLine)
-		{
-			p_Itinerary->AddFlight();
-			item.y = p_Itinerary->m_Flights.m_ItemCount-1;
-
-			AdjustLayout();
-		}
-		else
-		{
-			p_Itinerary->m_Flights.m_Items[item.y] = dlg.m_Flight;
-			Invalidate();
-		}
-
-		p_Itinerary->m_IsModified = TRUE;
-	}
+	EditFlight(item, 1);
 	return;
 
 
@@ -297,54 +282,46 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 	p_Edit = new CMFCMaskedEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
 
-	switch (FMAttributes[Attr].Type)
-	{
-	case FMTypeAnsiString:
-		switch (Attr)
-		{
-		case 0:
-		case 3:
-			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
-			break;
-		case 2:
-		case 5:
-		case 8:
-		case 14:
-		case 16:
-			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
-			break;
-		case 9:
-			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "));
-			break;
-		case 11:
-			p_Edit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789- "));
-			break;
-		}
-	case FMTypeUnicodeString:
-		p_Edit->SetLimitText(FMAttributes[Attr].DataParameter);
-		break;
-	case FMTypeUINT:
-		p_Edit->SetLimitText(6);
-		p_Edit->SetValidChars(_T("0123456789"));
-		break;
-	case FMTypeClass:
-		p_Edit->SetLimitText(2);
-		p_Edit->SetValidChars(_T("CFJYcfjy+"));
-		break;
-	case FMTypeDateTime:
-		p_Edit->SetLimitText(16);
-		p_Edit->SetValidChars(_T("0123456789:-. "));
-		break;
-	case FMTypeTime:
-		p_Edit->SetLimitText(6);
-		p_Edit->SetValidChars(_T("0123456789:"));
-		break;
-	}
+	PrepareEditCtrl(p_Edit, Attr);
 
 	p_Edit->SetWindowText(tmpBuf);
 	p_Edit->SetFont(&theApp.m_DefaultFont);
 	p_Edit->SetFocus();
 	p_Edit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
+}
+
+void CDataGrid::EditFlight(CPoint item, UINT iSelectPage)
+{
+	if (!p_Itinerary)
+		return;
+
+	if ((item.x==-1) || (item.y==-1))
+		item = m_SelectedItem;
+	if ((item.x==-1) || (item.y==-1) || (item.x>=FMAttributeCount) || (item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
+		return;
+
+	EnsureVisible(item);
+	const BOOL NewLine = (item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount);
+
+	EditFlightDlg dlg(NewLine ? NULL : &p_Itinerary->m_Flights.m_Items[item.y], this, p_Itinerary, iSelectPage);
+	if (dlg.DoModal()==IDOK)
+	{
+		if (NewLine)
+		{
+			p_Itinerary->AddFlight();
+			item.y = p_Itinerary->m_Flights.m_ItemCount-1;
+
+			AdjustLayout();
+		}
+		else
+		{
+			Invalidate();
+		}
+
+		p_Itinerary->m_Flights.m_Items[item.y] = dlg.m_Flight;
+		p_Itinerary->m_IsModified = TRUE;
+	}
+	return;
 }
 
 void CDataGrid::EnsureVisible(CPoint item)
@@ -563,7 +540,7 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			switch (Flight.Class)
 			{
 			case AIRX_Economy:
-			case AIRX_EconomyPlus:
+			case AIRX_PremiumEconomy:
 				dc.FillSolidRect(rect, 0xE0FFE0);
 				break;
 			case AIRX_Business:
@@ -1292,7 +1269,7 @@ void CDataGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 				case FMTypeFlags:
 					if (Subitem==0)
 					{
-						// TODO
+						EditFlight(Item, 2);
 					}
 					else
 					{

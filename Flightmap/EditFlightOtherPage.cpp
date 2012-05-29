@@ -9,12 +9,13 @@
 // EditFlightOtherPage
 //
 
-EditFlightOtherPage::EditFlightOtherPage(AIRX_Flight* pFlight)
+EditFlightOtherPage::EditFlightOtherPage(AIRX_Flight* pFlight, CItinerary* pItinerary)
 	: CPropertyPage(IDD_OTHER)
 {
 	ASSERT(pFlight);
 
 	p_Flight = pFlight;
+	p_Itinerary = pItinerary;
 }
 
 void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
@@ -37,6 +38,7 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 	DDX_MaskedText(pDX, IDC_AWARDMILES, m_wndAwardMiles, 18, p_Flight);
 	DDX_MaskedText(pDX, IDC_STATUSMILES, m_wndStatusMiles, 19, p_Flight);
 	DDX_MaskedText(pDX, IDC_SEAT, m_wndSeat, 14, p_Flight);
+	DDX_Control(pDX, IDC_RATING, m_wndRating);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -50,7 +52,9 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 		p_Flight->Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : AIRX_Unknown;
 
-		p_Flight->Flags &= ~(AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight);
+		p_Flight->Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight);
+		p_Flight->Flags |= m_wndRating.GetRating()<<FMAttributes[21].DataParameter;
+
 		if (((CButton*)GetDlgItem(IDC_LEISURETRIP))->GetCheck())
 			p_Flight->Flags |= AIRX_LeisureTrip;
 		if (((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->GetCheck())
@@ -70,19 +74,13 @@ BOOL EditFlightOtherPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	// Carriers
-	for (UINT a=0; a<AllianceStarCount; a++)
-		m_wndCarrier.AddString(AllianceStar[a]);
-	for (UINT a=0; a<AllianceSkyTeamCount; a++)
-		m_wndCarrier.AddString(AllianceSkyTeam[a]);
-	for (UINT a=0; a<AllianceOneWorldCount; a++)
-		m_wndCarrier.AddString(AllianceOneWorld[a]);
+	PrepareCarrierCtrl(&m_wndCarrier, p_Itinerary);
 
 	if (m_wndCarrier.SelectString(-1, p_Flight->Carrier)==-1)
 		m_wndCarrier.SetWindowText(p_Flight->Carrier);
 
 	// Equipment
-	for (UINT a=0; a<EquipmentCount; a++)
-		m_wndEquipment.AddString(Equipment[a]);
+	PrepareEquipmentCtrl(&m_wndEquipment, p_Itinerary);
 
 	if (m_wndEquipment.SelectString(-1, p_Flight->Equipment)==-1)
 		m_wndEquipment.SetWindowText(p_Flight->Equipment);
@@ -91,6 +89,9 @@ BOOL EditFlightOtherPage::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_LEISURETRIP))->SetCheck(p_Flight->Flags & AIRX_LeisureTrip);
 	((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->SetCheck(p_Flight->Flags & AIRX_BusinessTrip);
 	((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->SetCheck(p_Flight->Flags & AIRX_AwardFlight);
+
+	// Rating
+	m_wndRating.SetRating((p_Flight->Flags>>FMAttributes[21].DataParameter) & 0xF);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

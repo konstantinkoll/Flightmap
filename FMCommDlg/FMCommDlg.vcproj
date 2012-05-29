@@ -359,6 +359,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CRatingCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CStripCtrl.cpp"
 				>
 			</File>
@@ -486,6 +490,10 @@
 			</File>
 			<File
 				RelativePath=".\CPictureCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CRatingCtrl.h"
 				>
 			</File>
 			<File

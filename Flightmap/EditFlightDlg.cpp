@@ -12,7 +12,7 @@
 // EditFlightDlg
 //
 
-EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, UINT iSelectPage)
+EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pItinerary, UINT iSelectPage)
 : CPropertySheet(IDS_EDITFLIGHT, pParent, iSelectPage)
 {
 	if (pFlight)
@@ -25,7 +25,7 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, UINT iSelectPa
 	}
 
 	m_Pages[0] = new EditFlightRoutePage(&m_Flight);
-	m_Pages[1] = new EditFlightOtherPage(&m_Flight);
+	m_Pages[1] = new EditFlightOtherPage(&m_Flight, pItinerary);
 	m_Pages[2] = new EditFlightAttachmentsPage(&m_Flight);
 
 	// Seiten hinzufügen

@@ -8,6 +8,7 @@
 #include "..\FMCommDlg\CMapSelectionCtrl.h"
 #include "..\FMCommDlg\CMapPreviewCtrl.h"
 #include "..\FMCommDlg\CPictureCtrl.h"
+#include "..\FMCommDlg\CRatingCtrl.h"
 #include "..\FMCommDlg\CStripCtrl.h"
 #include "..\FMCommDlg\CTooltipHeader.h"
 #include "..\FMCommDlg\DynArray.h"

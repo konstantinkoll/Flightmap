@@ -45,6 +45,7 @@ protected:
 	void AdjustLayout();
 	void AdjustHeader();
 	void EditCell(BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
+	void EditFlight(CPoint item=CPoint(-1, -1), UINT iSelectPage=0);
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();

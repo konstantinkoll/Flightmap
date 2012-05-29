@@ -77,7 +77,6 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 		case 2:
 		case 5:
 		case 8:
-		case 14:
 		case 16:
 			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
 			break;
@@ -86,6 +85,9 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 			break;
 		case 11:
 			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789- "));
+			break;
+		case 14:
+			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/"));
 			break;
 		}
 	case FMTypeUnicodeString:
@@ -120,6 +122,32 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 
 		pEdit->SetWindowText(tmpBuf);
 	}
+}
+
+void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary)
+{
+	for (UINT a=0; a<AllianceStarCount; a++)
+		pComboBox->AddString(AllianceStar[a]);
+	for (UINT a=0; a<AllianceSkyTeamCount; a++)
+		pComboBox->AddString(AllianceSkyTeam[a]);
+	for (UINT a=0; a<AllianceOneWorldCount; a++)
+		pComboBox->AddString(AllianceOneWorld[a]);
+
+	if (pItinerary)
+		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
+			if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Carrier)==-1)
+				pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Carrier);
+}
+
+void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary)
+{
+	for (UINT a=0; a<EquipmentCount; a++)
+		pComboBox->AddString(Equipment[a]);
+
+	if (pItinerary)
+		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
+			if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Equipment)==-1)
+				pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Equipment);
 }
 
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight)
