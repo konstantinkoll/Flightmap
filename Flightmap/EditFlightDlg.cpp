@@ -50,7 +50,7 @@ BOOL EditFlightDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDI_EDIT);
+	HICON hIcon = theApp.LoadIcon(IDI_EDITFLIGHT);
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 

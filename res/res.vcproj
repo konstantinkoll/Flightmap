@@ -132,11 +132,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\AddDocument_16.png"
+				RelativePath=".\Ribbon\Add_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\AddDocument_32.png"
+				RelativePath=".\Ribbon\Add_32.png"
 				>
 			</File>
 			<File
@@ -474,6 +474,10 @@
 		</File>
 		<File
 			RelativePath=".\About_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Add_Tiny.ico"
 			>
 		</File>
 		<File
