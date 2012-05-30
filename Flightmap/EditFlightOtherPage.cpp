@@ -73,7 +73,7 @@ BOOL EditFlightOtherPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	// Carriers
+	// Carrier
 	PrepareCarrierCtrl(&m_wndCarrier, p_Itinerary);
 
 	if (m_wndCarrier.SelectString(-1, p_Flight->Carrier)==-1)

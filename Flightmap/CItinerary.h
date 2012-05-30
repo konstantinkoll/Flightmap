@@ -195,3 +195,5 @@ void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
 void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);
+
+BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter, WCHAR* pDelimiterFound=NULL);

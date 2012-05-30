@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "AddRouteDlg.h"
 #include "CDataGrid.h"
 #include "ChooseDetailsDlg.h"
 #include "EditFlightDlg.h"
@@ -290,7 +291,7 @@ void CDataGrid::EditFlight(CPoint item, INT iSelectPage)
 
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=FMAttributeCount) || (item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
+	if ((item.x==-1) || (item.y==-1) || (item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
 		return;
 
 	EnsureVisible(item);
@@ -1378,6 +1379,39 @@ void CDataGrid::OnEditFlight()
 
 void CDataGrid::OnAddRoute()
 {
+	ASSERT(p_Itinerary);
+
+	AddRouteDlg dlg(this, p_Itinerary);
+	if (dlg.DoModal()==IDOK)
+	{
+		CString From;
+		CString To;
+		CString resToken;
+		INT Pos = 0;
+		WCHAR DelimiterFound;
+
+		while (Tokenize(dlg.m_Route, resToken, Pos, _T("-/,"), &DelimiterFound))
+		{
+			From = To;
+			To = resToken;
+
+			if ((!From.IsEmpty()) && (!To.IsEmpty()))
+			{
+				StringToAttribute(From.GetBuffer(), dlg.m_FlightTemplate, 0);
+				StringToAttribute(To.GetBuffer(), dlg.m_FlightTemplate, 3);
+
+				CalcDistance(dlg.m_FlightTemplate, TRUE);
+				p_Itinerary->m_Flights.AddItem(dlg.m_FlightTemplate);
+			}
+
+			if (DelimiterFound==L',')
+				To.Empty();
+		}
+
+		AdjustLayout();
+		SelectItem(CPoint(m_SelectedItem.x, p_Itinerary->m_Flights.m_ItemCount-1));
+		p_Itinerary->m_IsModified = TRUE;
+	}
 }
 
 void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)

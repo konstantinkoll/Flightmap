@@ -15,7 +15,7 @@
 static UINT LastPageSelected = 0;
 
 EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pItinerary, INT iSelectPage)
-: CPropertySheet(IDS_EDITFLIGHT, pParent, iSelectPage==-1 ? LastPageSelected : iSelectPage)
+	: CPropertySheet(IDS_EDITFLIGHT, pParent, iSelectPage==-1 ? LastPageSelected : iSelectPage)
 {
 	if (pFlight)
 	{

@@ -426,7 +426,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 // Other
 //
 
-BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter)
+BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter, WCHAR* pDelimiterFound)
 {
 	if (Pos>=strSrc.GetLength())
 		return FALSE;
@@ -437,12 +437,18 @@ BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimite
 	{
 		if (Delimiter.Find(strSrc[Pos])!=-1)
 		{
+			if (pDelimiterFound)
+				*pDelimiterFound = strSrc[Pos];
+
 			Pos++;
 			return TRUE;
 		}
 
 		strDst.AppendChar(strSrc[Pos++]);
 	}
+
+	if (pDelimiterFound)
+		*pDelimiterFound = L'\0';
 
 	return TRUE;
 }
@@ -872,7 +878,6 @@ void CItinerary::OpenCSV(CString FileName)
 					Pos = 0;
 					Column = 0;
 
-					//resToken = line.Tokenize(_T(";"), Pos);
 					while (Tokenize(line, resToken, Pos, _T(";")) && (Column<100))
 					{
 						if ((INT)Column==RouteMapping)
@@ -885,7 +890,6 @@ void CItinerary::OpenCSV(CString FileName)
 								StringToAttribute(resToken.GetBuffer(), Flight, Mapping[Column]);
 							}
 
-					//	resToken = line.Tokenize(_T(";"), Pos);
 						Column++;
 					}
 
@@ -899,9 +903,9 @@ void CItinerary::OpenCSV(CString FileName)
 						CString From;
 						CString To;
 						Pos = 0;
+						WCHAR DelimiterFound;
 
-						resToken = route.Tokenize(_T("-/"), Pos);
-						while (resToken!=_T(""))
+						while (Tokenize(route, resToken, Pos, _T("-/,"), &DelimiterFound))
 						{
 							From = To;
 							To = resToken;
@@ -915,7 +919,8 @@ void CItinerary::OpenCSV(CString FileName)
 								m_Flights.AddItem(Flight);
 							}
 
-							resToken = route.Tokenize(_T("-/"), Pos);
+							if (DelimiterFound==L',')
+								To.Empty();
 						}
 					}
 				}

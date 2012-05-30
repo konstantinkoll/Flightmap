@@ -376,6 +376,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AddRouteDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCalendarFile.cpp"
 				>
 			</File>
@@ -511,6 +515,10 @@
 			>
 			<File
 				RelativePath=".\AboutDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AddRouteDlg.h"
 				>
 			</File>
 			<File
