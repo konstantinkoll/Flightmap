@@ -169,6 +169,63 @@ void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT
 	}
 }
 
+CString ExportAttribute(AIRX_Flight& Flight, UINT Attr, BOOL Label=TRUE, BOOL Colon=TRUE, BOOL NewLine=TRUE)
+{
+	WCHAR tmpBuf[256];
+	AttributeToString(Flight, Attr, tmpBuf, 256);
+
+	if (tmpBuf[0]==L'\0')
+		return _T("");
+
+	CString tmpStr;
+	if (Label)
+	{
+		ENSURE(tmpStr.LoadString(IDS_COLUMN0+Attr));
+		tmpStr.Append(Colon ? _T(": ") : _T(" "));
+	}
+
+	tmpStr.Append(tmpBuf);
+	if (NewLine)
+		tmpStr.Append(_T("\n"));
+
+	return tmpStr;
+}
+
+CString ExportLocation(AIRX_Flight& Flight, UINT AttrBase)
+{
+	CString DateTime;
+	CString Gate;
+
+	DateTime = ExportAttribute(Flight, AttrBase+1, FALSE, FALSE, FALSE);
+	Gate = ExportAttribute(Flight, AttrBase+2, TRUE, FALSE, FALSE);
+
+	CString tmpStr;
+	tmpStr = ExportAttribute(Flight, AttrBase, TRUE, TRUE, FALSE);
+
+	if ((!DateTime.IsEmpty()) || (!Gate.IsEmpty()))
+	{
+		tmpStr += _T(" (");
+
+		if (!DateTime.IsEmpty())
+		{
+			tmpStr += DateTime;
+			if (!Gate.IsEmpty())
+			{
+				tmpStr += _T(", ");
+				tmpStr += Gate;
+			}
+		}
+		else
+		{
+			tmpStr += Gate;
+		}
+
+		tmpStr += _T(")");
+	}
+
+	return tmpStr+_T("\n");
+}
+
 
 // ToString
 //
@@ -359,6 +416,19 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 {
 	ASSERT(Attr<FMAttributeCount);
 	ASSERT(pStr);
+
+	while (*pStr==L' ')
+		pStr++;
+
+	WCHAR* ptr = pStr;
+	WCHAR* end = pStr;
+	while (*ptr!=L'\0')
+	{
+		if (*ptr!=L' ')
+			end = ptr+1;
+		ptr++;
+	}
+	*end = L'\0';
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
 	WCHAR tmpStr[16];
@@ -997,6 +1067,15 @@ CString CItinerary::Flight2Text(AIRX_Flight& Flight)
 {
 	CString tmpStr;
 
+	tmpStr += ExportLocation(Flight, 0);
+	tmpStr += ExportLocation(Flight, 3);
+
+	const UINT Attrs[15] = { 6, 23, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 22 };
+	for (UINT a=0; a<15; a++)
+		tmpStr += ExportAttribute(Flight, Attrs[a]);
+
+	if (!tmpStr.IsEmpty())
+		tmpStr += _T("\n");
 	return tmpStr;
 }
 

@@ -180,7 +180,7 @@ BEGIN
     GROUPBOX        "Vielflieger-Programm",IDC_STATIC,238,79,117,79
     GROUPBOX        "Farbe",IDC_STATIC,3,163,117,32
     GROUPBOX        "Sonstiges",IDC_STATIC,128,163,227,32
-    LTEXT           "Gesellschaft:",IDC_STATIC,10,16,50,8
+    LTEXT           "Fluglinie:",IDC_STATIC,10,16,50,8
     COMBOBOX        IDC_CARRIER,63,14,105,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Flugnummer:",IDC_STATIC,10,36,50,8
     EDITTEXT        IDC_FLIGHTNO,63,34,105,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
@@ -232,7 +232,7 @@ BEGIN
     GROUPBOX        "Buchung",IDC_STATIC,7,105,226,80
     LTEXT           "Route:",IDC_STATIC,14,20,50,8
     EDITTEXT        IDC_ROUTE,67,18,158,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Gesellschaft:",IDC_STATIC,14,40,50,8
+    LTEXT           "Fluglinie:",IDC_STATIC,14,40,50,8
     COMBOBOX        IDC_CARRIER,67,38,157,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Kommentar:",IDC_STATIC,14,60,50,8
     EDITTEXT        IDC_COMMENT,67,58,158,13,ES_AUTOHSCROLL | WS_GROUP
@@ -414,6 +414,10 @@ BEGIN
     IDM_EDIT_CUT            "Auss&chneiden"
     IDM_EDIT_COPY           "&Kopieren"
     IDM_EDIT_PASTE          "&Einfügen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_EDIT_DELETE         "&Löschen"
     IDM_EDIT_EDITFLIGHT     "&Flug bearbeiten..."
     IDM_EDIT_ADDROUTE       "&Route hinzufügen..."
@@ -914,6 +918,10 @@ BEGIN
     IDM_EDIT_CUT            "Cu&t"
     IDM_EDIT_COPY           "&Copy"
     IDM_EDIT_PASTE          "&Paste"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_EDIT_DELETE         "&Delete"
     IDM_EDIT_EDITFLIGHT     "Edit &flight..."
     IDM_EDIT_ADDROUTE       "Add &route..."

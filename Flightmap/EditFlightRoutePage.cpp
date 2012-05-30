@@ -37,9 +37,8 @@ void EditFlightRoutePage::DisplayAirport(UINT nID, FMAirport* pAirport)
 	CString tmpStr1(pAirport->Name);
 	CString tmpStr2(FMIATAGetCountry(pAirport->CountryID)->Name);
 
-	tmpStr1.Append(_T(" ("));
+	tmpStr1.Append(_T(", "));
 	tmpStr1.Append(tmpStr2);
-	tmpStr1.Append(_T(")"));
 
 	GetDlgItem(nID)->SetWindowText(tmpStr1);
 }
