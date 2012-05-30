@@ -413,6 +413,10 @@ BEGIN
     IDM_EDIT_CUT            "Auss&chneiden"
     IDM_EDIT_COPY           "&Kopieren"
     IDM_EDIT_PASTE          "&Einfügen"
+    IDM_EDIT_DELETE         "&Löschen"
+    IDM_EDIT_EDITFLIGHT     "&Flug bearbeiten..."
+    IDM_EDIT_ADDROUTE       "&Route hinzufügen..."
+    IDM_EDIT_SELECTALL      "&Alles auswählen"
 END
 
 STRINGTABLE 
@@ -532,16 +536,6 @@ BEGIN
                             "An&hänge\nAngehängte Dateien anzeigen\nund bearbeiten."
     IDM_FILE_CLOSE          "S&chließen"
     IDM_FILE_QUIT           "&Beenden"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_EDIT_INSERT_FLIGHT  "Einzel&flug\nFügt einen einzelnen Flug an der\naktuellen Stelle in den Flugplan ein."
-    IDM_EDIT_INSERT_ROUTE   "&Umsteigeverbindung\nFügt mehrere zusammenhängende Flüge an der\naktuellen Stelle in den Flugplan ein."
-    IDM_EDIT_INSERT_ITINERARY 
-                            "Ganzen &Flugplan\nFügt einen bereits erstellten\nFlugplan an der aktuellen Stelle ein."
-    IDM_EDIT_DELETE         "&Löschen"
-    IDM_EDIT_SELECTALL      "&Alles auswählen"
 END
 
 STRINGTABLE 
@@ -918,6 +912,10 @@ BEGIN
     IDM_EDIT_CUT            "Cu&t"
     IDM_EDIT_COPY           "&Copy"
     IDM_EDIT_PASTE          "&Paste"
+    IDM_EDIT_DELETE         "&Delete"
+    IDM_EDIT_EDITFLIGHT     "Edit &flight..."
+    IDM_EDIT_ADDROUTE       "Add &route..."
+    IDM_EDIT_SELECTALL      "Select &all"
 END
 
 STRINGTABLE 
@@ -1037,16 +1035,6 @@ BEGIN
                             "&Attachments\nView and edit attached files,\nsuch as photos or GPS tracks."
     IDM_FILE_CLOSE          "&Close"
     IDM_FILE_QUIT           "&Quit"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_EDIT_INSERT_FLIGHT  "Single &flight\nInsert a single flight."
-    IDM_EDIT_INSERT_ROUTE   "&Transfer\nInsert a connecting flight."
-    IDM_EDIT_INSERT_ITINERARY 
-                            "Whole &itinerary\nInsert an existing itinerary."
-    IDM_EDIT_DELETE         "&Delete"
-    IDM_EDIT_SELECTALL      "Select &all"
 END
 
 STRINGTABLE 

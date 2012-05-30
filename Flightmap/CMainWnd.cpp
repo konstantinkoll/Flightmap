@@ -501,16 +501,13 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
 		pPopup->AddCommand(IDM_EDIT_CUT, 0, CDMB_SMALL);
 		pPopup->AddCommand(IDM_EDIT_COPY, 1, CDMB_SMALL);
-		pPopup->AddSubmenu(IDM_EDIT_PASTE, 2, CDMB_SMALL, TRUE);
-		pPopup->AddCommand(IDM_EDIT_DELETE, 4, CDMB_SMALL);
+		pPopup->AddCommand(IDM_EDIT_PASTE, 2, CDMB_SMALL);
+		pPopup->AddCommand(IDM_EDIT_DELETE, 3, CDMB_SMALL);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_EDIT_SELECTALL, 5, CDMB_SMALL);
-		break;
-	case IDM_EDIT_PASTE:
-		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
-		pPopup->AddCommand(IDM_EDIT_INSERT_FLIGHT, 3, CDMB_LARGE);
-		pPopup->AddCommand(IDM_EDIT_INSERT_ROUTE, 3, CDMB_LARGE);
-		pPopup->AddFileType(IDM_EDIT_INSERT_ITINERARY, _T("airx"), CDMB_LARGE);
+		pPopup->AddCommand(IDM_EDIT_EDITFLIGHT, 4, CDMB_SMALL);
+		pPopup->AddCommand(IDM_EDIT_ADDROUTE, 5, CDMB_SMALL);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_EDIT_SELECTALL, 6, CDMB_SMALL);
 		break;
 	case IDM_MAP:
 		pPopup->Create(this, IDB_MENUMAP_32, IDB_MENUMAP_16);

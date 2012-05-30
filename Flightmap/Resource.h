@@ -173,11 +173,10 @@
 #define IDM_EDIT_CUT                    3101
 #define IDM_EDIT_COPY                   3102
 #define IDM_EDIT_PASTE                  3103
-#define IDM_EDIT_INSERT_FLIGHT          3104
-#define IDM_EDIT_INSERT_ROUTE           3105
-#define IDM_EDIT_INSERT_ITINERARY       3106
-#define IDM_EDIT_DELETE                 3107
-#define IDM_EDIT_SELECTALL              3108
+#define IDM_EDIT_DELETE                 3104
+#define IDM_EDIT_EDITFLIGHT             3105
+#define IDM_EDIT_ADDROUTE               3106
+#define IDM_EDIT_SELECTALL              3107
 #define IDM_MAP                         3200
 #define IDM_MAP_OPEN                    3201
 #define IDM_MAP_EXPORT_BMP              3202

@@ -77,10 +77,15 @@ protected:
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+
+	afx_msg void OnEditFlight();
+	afx_msg void OnUpdateEditCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnAutosizeAll();
 	afx_msg void OnAutosize();
 	afx_msg void OnChooseDetails();
 	afx_msg void OnUpdateDetailsCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);

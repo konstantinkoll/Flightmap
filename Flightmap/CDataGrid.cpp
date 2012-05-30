@@ -696,10 +696,15 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_SETCURSOR()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+
+	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
+
 	ON_COMMAND(IDM_DETAILS_AUTOSIZEALL, OnAutosizeAll)
 	ON_COMMAND(IDM_DETAILS_AUTOSIZE, OnAutosize)
 	ON_COMMAND(IDM_DETAILS_CHOOSE, OnChooseDetails)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_DETAILS_AUTOSIZEALL, IDM_DETAILS_CHOOSE, OnUpdateDetailsCommands)
+
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
 	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
@@ -1334,32 +1339,22 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 		pPopup->AddCommand(IDM_DETAILS_CHOOSE, 1);
 
 		pPopup->Track(point);
-
 		return;
 	}
 
-
-	/*	CPoint item(-1, -1);
 	if ((point.x<0) || (point.y<0))
 	{
-		if ((m_SelectedItem.x==-1) || (m_SelectedItem.y==-1))
-		{
-			GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
-			return;
-		}
+		CRect rect;
+		GetClientRect(rect);
 
-		item = m_SelectedItem;
-
-		point.x = 0;
-		for (INT a=0; a<item.x; a++)
-			point.x += m_ViewParameters.ColumnWidth[a];
-		point.y = (item.y+1)*m_RowHeight+m_HeaderHeight+1;
+		point.x = (rect.left+rect.right)/2;
+		point.y = (rect.top+rect.bottom)/2;
 		ClientToScreen(&point);
 	}
 
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
-		return;
-*/
+	CDialogMenuPopup* pPopup = (CDialogMenuPopup*)GetParent()->SendMessage(WM_REQUESTSUBMENU, IDM_EDIT);
+
+	pPopup->Track(point);
 }
 
 BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
@@ -1378,6 +1373,34 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 {
 	InvalidateItem(m_SelectedItem);
 }
+
+
+// Edit
+
+void CDataGrid::OnEditFlight()
+{
+	EditFlight();
+}
+
+void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = (p_Itinerary!=NULL);
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_EDIT_CUT:
+	case IDM_EDIT_COPY:
+	case IDM_EDIT_PASTE:
+	case IDM_EDIT_DELETE:
+	case IDM_EDIT_SELECTALL:
+		b = FALSE;
+	}
+
+	pCmdUI->Enable(b);
+}
+
+
+// Details
 
 void CDataGrid::OnAutosizeAll()
 {
@@ -1422,6 +1445,9 @@ void CDataGrid::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 
 	pCmdUI->Enable(b);
 }
+
+
+// Header
 
 void CDataGrid::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
