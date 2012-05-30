@@ -253,13 +253,6 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 		return;
 	}
 
-
-
-	EditFlight(item, 1);
-	return;
-
-
-
 	INT y = item.y*m_RowHeight+m_HeaderHeight-m_VScrollPos;
 	INT x = -m_HScrollPos;
 	for (INT a=0; a<item.x; a++)
@@ -290,7 +283,7 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 	p_Edit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
 }
 
-void CDataGrid::EditFlight(CPoint item, UINT iSelectPage)
+void CDataGrid::EditFlight(CPoint item, INT iSelectPage)
 {
 	if (!p_Itinerary)
 		return;
@@ -698,6 +691,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_KILLFOCUS()
 
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
+	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
 
 	ON_COMMAND(IDM_DETAILS_AUTOSIZEALL, OnAutosizeAll)
@@ -1380,6 +1374,10 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 void CDataGrid::OnEditFlight()
 {
 	EditFlight();
+}
+
+void CDataGrid::OnAddRoute()
+{
 }
 
 void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)

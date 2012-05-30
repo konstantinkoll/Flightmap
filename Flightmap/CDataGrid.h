@@ -45,7 +45,7 @@ protected:
 	void AdjustLayout();
 	void AdjustHeader();
 	void EditCell(BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
-	void EditFlight(CPoint item=CPoint(-1, -1), UINT iSelectPage=0);
+	void EditFlight(CPoint item=CPoint(-1, -1), INT iSelectPage=-1);
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();
@@ -79,6 +79,7 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
 	afx_msg void OnEditFlight();
+	afx_msg void OnAddRoute();
 	afx_msg void OnUpdateEditCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnAutosizeAll();

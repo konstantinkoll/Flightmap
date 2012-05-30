@@ -15,7 +15,9 @@
 class EditFlightDlg : public CPropertySheet
 {
 public:
-	EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pItinerary=NULL, UINT iSelectPage=0);
+	EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pItinerary=NULL, INT iSelectPage=-1);
+
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	AIRX_Flight m_Flight;
 

@@ -12,8 +12,10 @@
 // EditFlightDlg
 //
 
-EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pItinerary, UINT iSelectPage)
-: CPropertySheet(IDS_EDITFLIGHT, pParent, iSelectPage)
+static UINT LastPageSelected = 0;
+
+EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pItinerary, INT iSelectPage)
+: CPropertySheet(IDS_EDITFLIGHT, pParent, iSelectPage==-1 ? LastPageSelected : iSelectPage)
 {
 	if (pFlight)
 	{
@@ -37,6 +39,14 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pI
 	}
 
 	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
+}
+
+BOOL EditFlightDlg::OnCommand(WPARAM wParam, LPARAM lParam) 
+{
+	if (LOWORD(wParam)==IDOK)
+		LastPageSelected = GetPageIndex(GetActivePage());
+
+	return CPropertySheet::OnCommand(wParam, lParam);
 }
 
 
