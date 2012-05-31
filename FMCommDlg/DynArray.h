@@ -74,6 +74,8 @@ bool DynArray<T>::InsertEmpty(unsigned int Pos, unsigned int Count=1, bool ZeroO
 {
 	if (!Count)
 		return true;
+	if (Pos>m_ItemCount+1)
+		return false;
 
 	INITDYNARRAY
 
