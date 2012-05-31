@@ -48,7 +48,7 @@ struct AIRX_Location
 
 #define AIRX_Unknown                '\0'
 #define AIRX_Economy                'Y'
-#define AIRX_PremiumEconomy            '+'
+#define AIRX_PremiumEconomy         '+'
 #define AIRX_Business               'J'
 #define AIRX_First                  'F'
 #define AIRX_Crew                   'C'
@@ -164,6 +164,7 @@ public:
 	CString Flight2Text(UINT Idx);
 
 	void AddFlight();
+	void InsertRows(UINT Pos, UINT Count=1);
 
 	AIRX_Metadata m_Metadata;
 	DynArray<AIRX_Flight> m_Flights;

@@ -78,6 +78,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
+	afx_msg void OnInsertRow();
 	afx_msg void OnEditFlight();
 	afx_msg void OnAddRoute();
 	afx_msg void OnUpdateEditCommands(CCmdUI* pCmdUI);
@@ -91,7 +92,6 @@ protected:
 	afx_msg void OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 

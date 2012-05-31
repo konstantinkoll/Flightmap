@@ -414,10 +414,7 @@ BEGIN
     IDM_EDIT_CUT            "Auss&chneiden"
     IDM_EDIT_COPY           "&Kopieren"
     IDM_EDIT_PASTE          "&Einfügen"
-END
-
-STRINGTABLE 
-BEGIN
+    IDM_EDIT_INSERTROW      "&Zeile einfügen"
     IDM_EDIT_DELETE         "&Löschen"
     IDM_EDIT_EDITFLIGHT     "&Flug bearbeiten..."
     IDM_EDIT_ADDROUTE       "&Route hinzufügen..."
@@ -918,10 +915,7 @@ BEGIN
     IDM_EDIT_CUT            "Cu&t"
     IDM_EDIT_COPY           "&Copy"
     IDM_EDIT_PASTE          "&Paste"
-END
-
-STRINGTABLE 
-BEGIN
+    IDM_EDIT_INSERTROW      "Insert ro&w"
     IDM_EDIT_DELETE         "&Delete"
     IDM_EDIT_EDITFLIGHT     "Edit &flight..."
     IDM_EDIT_ADDROUTE       "Add &route..."

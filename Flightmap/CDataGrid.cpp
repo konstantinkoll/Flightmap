@@ -691,6 +691,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 
+	ON_COMMAND(IDM_EDIT_INSERTROW, OnInsertRow)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
 	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
@@ -704,7 +705,6 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
 	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
-	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
@@ -1372,6 +1372,17 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 
 // Edit
 
+void CDataGrid::OnInsertRow()
+{
+	ASSERT(p_Itinerary);
+
+	if (m_SelectedItem.y!=-1)
+	{
+		p_Itinerary->InsertRows(m_SelectedItem.y);
+		AdjustLayout();
+	}
+}
+
 void CDataGrid::OnEditFlight()
 {
 	EditFlight();
@@ -1538,34 +1549,6 @@ void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 		*pResult = FALSE;
 	}
-}
-
-void CDataGrid::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-	const UINT Attr = pHdr->iItem;
-
-/*	if (!AttributeSortableInView(attr, m_ViewParameters.Mode))
-	{
-		CString msg;
-		ENSURE(msg.LoadString(IDS_ATTRIBUTENOTSORTABLE));
-		MessageBox(msg, theApp.m_Attributes[attr]->Name, MB_OK | MB_ICONWARNING);
-	
-		return;
-	}*/
-
-	/*if (p_ViewParameters->SortBy==attr)
-	{
-		p_ViewParameters->Descending = !p_ViewParameters->Descending;
-	}
-	else
-	{
-		p_ViewParameters->SortBy = attr;
-		p_ViewParameters->Descending = theApp.m_Attributes[attr]->PreferDescendingSort;
-	}
-	theApp.UpdateSortOptions(m_Context);*/
-
-	*pResult = NULL;
 }
 
 void CDataGrid::OnDestroyEdit()
