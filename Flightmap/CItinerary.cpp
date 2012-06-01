@@ -359,6 +359,25 @@ void ScanDateTime(LPCWSTR str, FILETIME& ft)
 		return;
 	}
 
+	c = swscanf_s(str, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
+	if (c>=3)
+	{
+		ZeroMemory(&st, sizeof(st));
+
+		st.wYear = (WORD)Year;
+		st.wMonth = (WORD)Month;
+		st.wDay = (WORD)Day;
+
+		if (c==5)
+		{
+			st.wHour = (WORD)Hour;
+			st.wMinute = (WORD)Minute;
+		}
+
+		SystemTimeToFileTime(&st, &ft);
+		return;
+	}
+
 	c = swscanf_s(str, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
 	if (c>=3)
 	{
