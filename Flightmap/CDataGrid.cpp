@@ -32,7 +32,7 @@ CDataGrid::CDataGrid()
 {
 	p_Itinerary = NULL;
 	p_Edit = NULL;
-	m_HeaderItemClicked = m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_HotSubitem = -1;
+	m_HeaderItemClicked = m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_HotSubitem = m_SelectionAnchor = -1;
 	m_Hover = m_IgnoreHeaderItemChange = FALSE;
 	m_ViewParameters = theApp.m_ViewParameters;
 }
@@ -63,7 +63,7 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 			case VK_EXECUTE:
 			case VK_RETURN:
 				DestroyEdit(TRUE);
-				SelectItem(CPoint(m_SelectedItem.x, m_SelectedItem.y+1));
+				SelectItem(CPoint(m_SelectedItem.x, m_SelectedItem.y+1), FALSE);
 				return TRUE;
 			case VK_ESCAPE:
 				DestroyEdit(FALSE);
@@ -101,8 +101,40 @@ void CDataGrid::SetItinerary(CItinerary* pItinerary)
 		p_Itinerary = pItinerary;
 
 		m_SelectedItem.x = m_SelectedItem.y = p_Itinerary ? 0 : -1;
+		m_SelectionAnchor = -1;
 		AdjustLayout();
 	}
+}
+
+BOOL CDataGrid::HasSelection()
+{
+	return p_Itinerary ? (m_SelectionAnchor>=0) && (m_SelectionAnchor<(INT)p_Itinerary->m_Flights.m_ItemCount) : FALSE;
+}
+
+void CDataGrid::GetSelection(UINT& First, UINT& Last)
+{
+	ASSERT(p_Itinerary);
+
+	if (!p_Itinerary->m_Flights.m_ItemCount)
+	{
+		First = Last = 0;
+	}
+	else
+		if (HasSelection())
+		{
+			First = min(m_SelectionAnchor, m_SelectedItem.y);
+			Last = max(m_SelectionAnchor, m_SelectedItem.y);
+
+			if (First>=p_Itinerary->m_Flights.m_ItemCount)
+				First = 0;
+			if (Last>=p_Itinerary->m_Flights.m_ItemCount)
+				Last = p_Itinerary->m_Flights.m_ItemCount-1;
+		}
+		else
+		{
+			First = 0;
+			Last = p_Itinerary->m_Flights.m_ItemCount-1;
+		}
 }
 
 void CDataGrid::AdjustLayout()
@@ -149,21 +181,6 @@ void CDataGrid::AdjustHeader()
 
 		m_wndHeader.SetItem(a, &HdItem);
 	}
-
-/*	// Sort indicator
-	HDITEM hdi;
-	hdi.mask = HDI_FORMAT;
-
-	if ((m_HeaderItemSort!=(INT)p_ViewParameters->SortBy) && (m_HeaderItemSort!=-1))
-	{
-		hdi.fmt = 0;
-		m_wndHeader.SetItem(m_HeaderItemSort, &hdi);
-	}
-
-	hdi.fmt = p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
-	m_wndHeader.SetItem(p_ViewParameters->SortBy, &hdi);
-
-	m_HeaderItemSort = p_ViewParameters->SortBy;*/
 
 	m_wndHeader.SetRedraw(TRUE);
 	m_wndHeader.Invalidate();
@@ -513,14 +530,28 @@ void CDataGrid::InvalidateItem(UINT Row, UINT Attr)
 			InvalidateItem(CPoint(a, Row));
 }
 
-void CDataGrid::SelectItem(CPoint Item)
+void CDataGrid::SelectItem(CPoint Item, BOOL ShiftSelect)
 {
 	if (Item==m_SelectedItem)
 		return;
 
+	if (ShiftSelect)
+	{
+		if (m_SelectionAnchor==-1)
+			m_SelectionAnchor = m_SelectedItem.y;
+
+		Invalidate();
+	}
+	else
+		if (m_SelectionAnchor!=-1)
+		{
+			m_SelectionAnchor = -1;
+			Invalidate();
+		}
+
 	InvalidateItem(m_SelectedItem);
 	m_SelectedItem = Item;
-	EnsureVisible(Item);
+	EnsureVisible();
 	InvalidateItem(Item);
 }
 
@@ -694,6 +725,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_COMMAND(IDM_EDIT_INSERTROW, OnInsertRow)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
 	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
+	ON_COMMAND(IDM_EDIT_SELECTALL, OnSelectAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
 
 	ON_COMMAND(IDM_DETAILS_AUTOSIZEALL, OnAutosizeAll)
@@ -785,7 +817,7 @@ void CDataGrid::OnPaint()
 		INT y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
 		for (UINT row=start; row<=p_Itinerary->m_Flights.m_ItemCount; row++)
 		{
-			const BOOL Selected = FALSE;
+			const BOOL Selected = (m_SelectionAnchor!=-1) && (row<p_Itinerary->m_Flights.m_ItemCount) && ((((INT)row>=m_SelectionAnchor) && ((INT)row<=m_SelectedItem.y)) || (((INT)row<=m_SelectionAnchor) && ((INT)row>=m_SelectedItem.y)));
 
 			INT x = -m_HScrollPos;
 			for (UINT col=0; col<FMAttributeCount; col++)
@@ -800,7 +832,7 @@ void CDataGrid::OnPaint()
 					{
 						if (Selected)
 						{
-							dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
+							dc.FillSolidRect(rectItem, Themed && (theApp.OSVersion>OS_XP) ? 0xFFDBB7 : GetSysColor(COLOR_HIGHLIGHT));
 						}
 						else
 							if (!FMAttributes[Attr].Editable)
@@ -811,7 +843,7 @@ void CDataGrid::OnPaint()
 						if (row<p_Itinerary->m_Flights.m_ItemCount)
 						{
 							const DWORD Flags = p_Itinerary->m_Flights.m_Items[row].Flags;
-							dc.SetTextColor(Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : colText);
+							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : colText);
 							DrawCell(dc, p_Itinerary->m_Flights.m_Items[row], Attr, rectItem, Selected);
 						}
 					}
@@ -1144,6 +1176,13 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		switch (nChar)
 		{
+		case 'A':
+			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			{
+				OnSelectAll();
+				return;
+			}
+			break;
 		case VK_F2:
 			EditCell();
 			return;
@@ -1156,6 +1195,8 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				const UINT Attr = m_ViewParameters.ColumnOrder[m_SelectedItem.x];
 				StringToAttribute(L"", p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], Attr);
+
+				p_Itinerary->m_IsModified = TRUE;
 				InvalidateItem(m_SelectedItem);
 
 				if ((Attr==0) || (Attr==3))
@@ -1236,7 +1277,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			return;
 		}
 
-		SelectItem(item);
+		SelectItem(item, GetKeyState(VK_SHIFT)<0);
 	}
 }
 
@@ -1247,7 +1288,7 @@ void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 			EditCell(FALSE, (WCHAR)nChar);
 }
 
-void CDataGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	SetFocus();
 
@@ -1286,7 +1327,7 @@ void CDataGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 				}
 			}
 
-		SelectItem(Item);
+		SelectItem(Item, nFlags & MK_SHIFT);
 	}
 }
 
@@ -1306,13 +1347,13 @@ void CDataGrid::OnLButtonDblClk(UINT nFlags, CPoint point)
 			}
 }
 
-void CDataGrid::OnRButtonDown(UINT /*nFlags*/, CPoint point)
+void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	SetFocus();
 
 	CPoint Item;
 	if (HitTest(point, &Item))
-		SelectItem(Item);
+		SelectItem(Item, nFlags & MK_SHIFT);
 }
 
 void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -1379,6 +1420,9 @@ void CDataGrid::OnInsertRow()
 	if (m_SelectedItem.y!=-1)
 	{
 		p_Itinerary->InsertRows(m_SelectedItem.y);
+		p_Itinerary->m_IsModified = TRUE;
+
+		m_SelectionAnchor = -1;
 		AdjustLayout();
 	}
 }
@@ -1420,9 +1464,19 @@ void CDataGrid::OnAddRoute()
 		}
 
 		AdjustLayout();
-		SelectItem(CPoint(m_SelectedItem.x, p_Itinerary->m_Flights.m_ItemCount-1));
+		SelectItem(CPoint(m_SelectedItem.x, p_Itinerary->m_Flights.m_ItemCount-1), FALSE);
 		p_Itinerary->m_IsModified = TRUE;
 	}
+}
+
+void CDataGrid::OnSelectAll()
+{
+	ASSERT(p_Itinerary);
+
+	m_SelectionAnchor = 0;
+	m_SelectedItem.y = p_Itinerary->m_Flights.m_ItemCount;
+	EnsureVisible();
+	Invalidate();
 }
 
 void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
@@ -1433,10 +1487,16 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_EDIT_CUT:
 	case IDM_EDIT_COPY:
-	case IDM_EDIT_PASTE:
 	case IDM_EDIT_DELETE:
-	case IDM_EDIT_SELECTALL:
+		b &= HasSelection();
+		break;
+	case IDM_EDIT_PASTE:
 		b = FALSE;
+		break;
+	case IDM_EDIT_SELECTALL:
+		if (p_Itinerary)
+			b = p_Itinerary->m_Flights.m_ItemCount;
+		break;
 	}
 
 	pCmdUI->Enable(b);

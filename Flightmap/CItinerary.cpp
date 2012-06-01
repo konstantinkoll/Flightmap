@@ -428,7 +428,8 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 			end = ptr+1;
 		ptr++;
 	}
-	*end = L'\0';
+	if (*end)
+		*end = L'\0';
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
 	WCHAR tmpStr[16];

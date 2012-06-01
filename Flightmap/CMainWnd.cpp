@@ -194,8 +194,16 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_DisplayName : _T(""), MergeMetro);
 
 	if (m_pItinerary)
-		for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
+	{
+		UINT First = 0;
+		UINT Last = m_pItinerary->m_Flights.m_ItemCount-1;
+
+		if ((Selected) && (m_CurrentMainView==DataGrid))
+			((CDataGrid*)m_pWndMainView)->GetSelection(First, Last);
+
+		for (UINT a=First; a<=Last; a++)
 			pKitchen->AddFlight(m_pItinerary->m_Flights.m_Items[a]);
+	}
 
 	return pKitchen;
 }

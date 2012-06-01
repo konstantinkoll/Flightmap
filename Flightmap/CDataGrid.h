@@ -24,6 +24,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary);
+	void GetSelection(UINT& First, UINT& Last);
 
 protected:
 	CItinerary* p_Itinerary;
@@ -39,9 +40,11 @@ protected:
 	BOOL m_Hover;
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
+	INT m_SelectionAnchor;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	BOOL HasSelection();
 	void AdjustLayout();
 	void AdjustHeader();
 	void EditCell(BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
@@ -52,7 +55,7 @@ protected:
 	BOOL HitTest(CPoint point, CPoint* item, INT* subitem=NULL);
 	void InvalidateItem(CPoint Item);
 	void InvalidateItem(UINT Row, UINT Attr);
-	void SelectItem(CPoint Item);
+	void SelectItem(CPoint Item, BOOL ShiftSelect);
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -81,6 +84,7 @@ protected:
 	afx_msg void OnInsertRow();
 	afx_msg void OnEditFlight();
 	afx_msg void OnAddRoute();
+	afx_msg void OnSelectAll();
 	afx_msg void OnUpdateEditCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnAutosizeAll();
