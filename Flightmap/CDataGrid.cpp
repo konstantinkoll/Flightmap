@@ -1522,7 +1522,7 @@ void CDataGrid::OnPaste()
 		HGLOBAL ClipBuffer = GetClipboardData(theApp.CF_FLIGHTS);
 		LPVOID pBuffer = GlobalLock(ClipBuffer);
 
-		p_Itinerary->InsertFlights(m_SelectedItem.y, GlobalSize(ClipBuffer)/sizeof(AIRX_Flight), (AIRX_Flight*)pBuffer);
+		p_Itinerary->InsertFlights(m_SelectedItem.y, (UINT)(GlobalSize(ClipBuffer)/sizeof(AIRX_Flight)), (AIRX_Flight*)pBuffer);
 		p_Itinerary->m_IsModified = TRUE;
 		m_SelectionAnchor = -1;
 		AdjustLayout();
