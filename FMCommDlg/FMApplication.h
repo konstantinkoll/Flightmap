@@ -68,8 +68,6 @@ public:
 	CFont m_LargeFont;
 	CFont m_CaptionFont;
 	UINT OSVersion;
-	CLIPFORMAT CF_FILEDESCRIPTOR;
-	CLIPFORMAT CF_FILECONTENTS;
 	BOOL m_UseBgImages;
 	UINT msgUseBgImagesChanged;
 	UINT msgDistanceSettingChanged;

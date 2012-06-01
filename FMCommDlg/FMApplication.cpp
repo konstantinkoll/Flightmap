@@ -51,10 +51,6 @@ FMApplication::FMApplication()
 	GetVersionEx(&osInfo);
 	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
 
-	// Clipboard
-	CF_FILEDESCRIPTOR = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
-	CF_FILECONTENTS = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_FILECONTENTS);
-
 	// DLL-Hijacking verhindern
 	SetDllDirectory(_T(""));
 

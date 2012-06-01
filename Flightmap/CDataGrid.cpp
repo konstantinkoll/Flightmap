@@ -137,6 +137,53 @@ void CDataGrid::GetSelection(UINT& First, UINT& Last)
 		}
 }
 
+void CDataGrid::DoCopy(BOOL Cut)
+{
+	if (OpenClipboard())
+	{
+		UINT Anfang;
+		UINT Ende;
+		GetSelection(Anfang, Ende);
+
+		// CF_UNICODETEXT
+		CString Buffer;
+		for (UINT a=Anfang; a<=Ende; a++)
+			Buffer += p_Itinerary->Flight2Text(a);
+
+		EmptyClipboard();
+
+		// CF_UNICODETEXT
+		SIZE_T sz = (Buffer.GetLength()+1)*sizeof(WCHAR);
+		HGLOBAL ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+		LPVOID pBuffer = GlobalLock(ClipBuffer);
+		wcscpy_s((WCHAR*)pBuffer, sz, Buffer.GetBuffer());
+		GlobalUnlock(ClipBuffer);
+		SetClipboardData(CF_UNICODETEXT, ClipBuffer);
+
+		// CF_FLIGHTS
+		sz = (Ende-Anfang+1)*sizeof(AIRX_Flight);
+		ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+		pBuffer = GlobalLock(ClipBuffer);
+		memcpy_s(pBuffer, sz, &p_Itinerary->m_Flights.m_Items[Anfang], sz);
+		GlobalUnlock(ClipBuffer);
+		SetClipboardData(theApp.CF_FLIGHTS, ClipBuffer);
+
+		CloseClipboard();
+
+		if (Cut)
+			DoDelete(Anfang, Ende);
+	}
+}
+
+void CDataGrid::DoDelete(UINT Anfang, UINT Ende)
+{
+	p_Itinerary->DeleteFlights(Anfang, Ende-Anfang+1);
+	p_Itinerary->m_IsModified = TRUE;
+
+	m_SelectionAnchor = -1;
+	AdjustLayout();
+}
+
 void CDataGrid::AdjustLayout()
 {
 	if (p_Itinerary)
@@ -726,7 +773,9 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 
+	ON_COMMAND(IDM_EDIT_CUT, OnCut)
 	ON_COMMAND(IDM_EDIT_COPY, OnCopy)
+	ON_COMMAND(IDM_EDIT_PASTE, OnPaste)
 	ON_COMMAND(IDM_EDIT_INSERTROW, OnInsertRow)
 	ON_COMMAND(IDM_EDIT_DELETE, OnDelete)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
@@ -1189,6 +1238,29 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				return;
 			}
 			break;
+		case 'C':
+			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			{
+				if (HasSelection())
+					OnCopy();
+				return;
+			}
+			break;
+		case 'V':
+			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			{
+				OnPaste();
+				return;
+			}
+			break;
+		case 'X':
+			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			{
+				if (HasSelection())
+					OnCut();
+				return;
+			}
+			break;
 		case VK_F2:
 			EditCell();
 			return;
@@ -1425,40 +1497,37 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 
 // Edit
 
+void CDataGrid::OnCut()
+{
+	ASSERT(p_Itinerary);
+	ASSERT(HasSelection());
+
+	DoCopy(TRUE);
+}
+
 void CDataGrid::OnCopy()
 {
 	ASSERT(p_Itinerary);
 	ASSERT(HasSelection());
 
+	DoCopy(FALSE);
+}
+
+void CDataGrid::OnPaste()
+{
+	ASSERT(p_Itinerary);
+
 	if (OpenClipboard())
 	{
-		UINT Anfang;
-		UINT Ende;
-		GetSelection(Anfang, Ende);
-
-		// CF_UNICODETEXT
-		CString Buffer;
-		for (UINT a=Anfang; a<=Ende; a++)
-			Buffer += p_Itinerary->Flight2Text(a);
-
-		EmptyClipboard();
-
-		// CF_UNICODETEXT
-		SIZE_T sz = (Buffer.GetLength()+1)*sizeof(WCHAR);
-		HGLOBAL ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+		HGLOBAL ClipBuffer = GetClipboardData(theApp.CF_FLIGHTS);
 		LPVOID pBuffer = GlobalLock(ClipBuffer);
-		wcscpy_s((WCHAR*)pBuffer, sz, Buffer.GetBuffer());
-		GlobalUnlock(ClipBuffer);
-		SetClipboardData(CF_UNICODETEXT, ClipBuffer);
 
-		// CF_FLIGHTS
-		sz = (Ende-Anfang+1)*sizeof(AIRX_Flight);
-		ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
-		pBuffer = GlobalLock(ClipBuffer);
-		memcpy_s(pBuffer, sz, &p_Itinerary->m_Flights.m_Items[Anfang], sz);
-		GlobalUnlock(ClipBuffer);
-		SetClipboardData(theApp.CF_FLIGHTS, ClipBuffer);
+		p_Itinerary->InsertFlights(m_SelectedItem.y, GlobalSize(ClipBuffer)/sizeof(AIRX_Flight), (AIRX_Flight*)pBuffer);
+		p_Itinerary->m_IsModified = TRUE;
+		m_SelectionAnchor = -1;
+		AdjustLayout();
 
+		GlobalUnlock(ClipBuffer);
 		CloseClipboard();
 	}
 }
@@ -1486,11 +1555,7 @@ void CDataGrid::OnDelete()
 	UINT Ende;
 	GetSelection(Anfang, Ende);
 
-	p_Itinerary->DeleteFlights(Anfang, Ende-Anfang+1);
-	p_Itinerary->m_IsModified = TRUE;
-
-	m_SelectionAnchor = -1;
-	AdjustLayout();
+	DoDelete(Anfang, Ende);
 }
 
 void CDataGrid::OnEditFlight()
@@ -1557,7 +1622,11 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 		b &= HasSelection();
 		break;
 	case IDM_EDIT_PASTE:
-		b = FALSE;
+		{
+			COleDataObject dobj;
+			if (dobj.AttachClipboard())
+				b = dobj.IsDataAvailable(theApp.CF_FLIGHTS);
+		}
 		break;
 	case IDM_EDIT_SELECTALL:
 		if (p_Itinerary)

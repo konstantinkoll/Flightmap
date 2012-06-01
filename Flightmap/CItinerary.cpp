@@ -1112,11 +1112,25 @@ void CItinerary::AddFlight()
 	m_Flights.AddItem(Flight);
 }
 
-void CItinerary::InsertFlights(UINT Row, UINT Count)
+void CItinerary::InsertFlights(UINT Row, UINT Count, AIRX_Flight* pFlights)
 {
 	if (m_Flights.InsertEmpty(Row, Count, false))
-		for (UINT a=Row; a<Row+Count; a++)
-			ResetFlight(m_Flights.m_Items[a]);
+		if (pFlights)
+		{
+			const SIZE_T sz = Count*sizeof(AIRX_Flight);
+			memcpy_s(&m_Flights.m_Items[Row], sz, pFlights, sz);
+
+			for (UINT a=Row; a<Row+Count; a++)
+			{
+				CalcDistance(m_Flights.m_Items[a], TRUE);
+				// TODO: Referenzen auf angehängte Dateien resetten
+			}
+		}
+		else
+		{
+			for (UINT a=Row; a<Row+Count; a++)
+				ResetFlight(m_Flights.m_Items[a]);
+		}
 }
 
 void CItinerary::DeleteFlights(UINT Row, UINT Count)

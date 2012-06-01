@@ -81,7 +81,9 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
+	afx_msg void OnCut();
 	afx_msg void OnCopy();
+	afx_msg void OnPaste();
 	afx_msg void OnInsertRow();
 	afx_msg void OnDelete();
 	afx_msg void OnEditFlight();
@@ -107,6 +109,8 @@ private:
 	INT m_HScrollPos;
 	INT m_VScrollPos;
 
+	void DoCopy(BOOL Cut);
+	void DoDelete(UINT Anfang, UINT Ende);
 	void AutosizeColumn(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);
 };
