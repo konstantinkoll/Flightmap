@@ -1112,11 +1112,19 @@ void CItinerary::AddFlight()
 	m_Flights.AddItem(Flight);
 }
 
-void CItinerary::InsertRows(UINT Pos, UINT Count)
+void CItinerary::InsertFlights(UINT Row, UINT Count)
 {
-	if (m_Flights.InsertEmpty(Pos, Count, false))
-		for (UINT a=Pos; a<Pos+Count; a++)
+	if (m_Flights.InsertEmpty(Row, Count, false))
+		for (UINT a=Row; a<Row+Count; a++)
 			ResetFlight(m_Flights.m_Items[a]);
+}
+
+void CItinerary::DeleteFlights(UINT Row, UINT Count)
+{
+	for (UINT a=Row; a<Row+Count; a++)
+		; // TODO: Referenzen auf angehängte Dateien löschen
+
+	m_Flights.DeleteItems(Row, Count);
 }
 
 void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure)

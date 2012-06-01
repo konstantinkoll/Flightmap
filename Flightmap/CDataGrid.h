@@ -82,6 +82,7 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
 	afx_msg void OnInsertRow();
+	afx_msg void OnDelete();
 	afx_msg void OnEditFlight();
 	afx_msg void OnAddRoute();
 	afx_msg void OnSelectAll();

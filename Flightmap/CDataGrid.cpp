@@ -139,6 +139,10 @@ void CDataGrid::GetSelection(UINT& First, UINT& Last)
 
 void CDataGrid::AdjustLayout()
 {
+	if (p_Itinerary)
+		if (m_SelectedItem.y>(INT)p_Itinerary->m_Flights.m_ItemCount)
+			m_SelectedItem.y = p_Itinerary->m_Flights.m_ItemCount;
+
 	CRect rect;
 	GetClientRect(rect);
 
@@ -723,6 +727,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_KILLFOCUS()
 
 	ON_COMMAND(IDM_EDIT_INSERTROW, OnInsertRow)
+	ON_COMMAND(IDM_EDIT_DELETE, OnDelete)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
 	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
 	ON_COMMAND(IDM_EDIT_SELECTALL, OnSelectAll)
@@ -1191,20 +1196,26 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				EditCell(TRUE);
 			return;
 		case VK_DELETE:
-			if (m_SelectedItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
+			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			{
-				const UINT Attr = m_ViewParameters.ColumnOrder[m_SelectedItem.x];
-				StringToAttribute(L"", p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], Attr);
-
-				p_Itinerary->m_IsModified = TRUE;
-				InvalidateItem(m_SelectedItem);
-
-				if ((Attr==0) || (Attr==3))
-				{
-					CalcDistance(p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], TRUE);
-					InvalidateItem(m_SelectedItem.y, 6);
-				}
+				if (HasSelection())
+					OnDelete();
 			}
+			else
+				if (m_SelectedItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
+				{
+					const UINT Attr = m_ViewParameters.ColumnOrder[m_SelectedItem.x];
+					StringToAttribute(L"", p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], Attr);
+
+					p_Itinerary->m_IsModified = TRUE;
+					InvalidateItem(m_SelectedItem);
+
+					if ((Attr==0) || (Attr==3))
+					{
+						CalcDistance(p_Itinerary->m_Flights.m_Items[m_SelectedItem.y], TRUE);
+						InvalidateItem(m_SelectedItem.y, 6);
+					}
+				}
 			return;
 		case VK_LEFT:
 			for (INT col=item.x-1; col>=0; col--)
@@ -1419,12 +1430,28 @@ void CDataGrid::OnInsertRow()
 
 	if (m_SelectedItem.y!=-1)
 	{
-		p_Itinerary->InsertRows(m_SelectedItem.y);
+		p_Itinerary->InsertFlights(m_SelectedItem.y);
 		p_Itinerary->m_IsModified = TRUE;
 
 		m_SelectionAnchor = -1;
 		AdjustLayout();
 	}
+}
+
+void CDataGrid::OnDelete()
+{
+	ASSERT(p_Itinerary);
+	ASSERT(HasSelection());
+
+	UINT Anfang;
+	UINT Ende;
+	GetSelection(Anfang, Ende);
+
+	p_Itinerary->DeleteFlights(Anfang, Ende-Anfang+1);
+	p_Itinerary->m_IsModified = TRUE;
+
+	m_SelectionAnchor = -1;
+	AdjustLayout();
 }
 
 void CDataGrid::OnEditFlight()

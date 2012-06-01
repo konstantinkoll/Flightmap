@@ -121,5 +121,4 @@ void DynArray<T>::DeleteItems(unsigned int Pos, unsigned int Count=1)
 		m_Items[a] = m_Items[a+Count];
 
 	m_ItemCount -= Count;
-	return true;
 }

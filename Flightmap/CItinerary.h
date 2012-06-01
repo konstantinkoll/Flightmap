@@ -164,7 +164,8 @@ public:
 	CString Flight2Text(UINT Idx);
 
 	void AddFlight();
-	void InsertRows(UINT Pos, UINT Count=1);
+	void InsertFlights(UINT Row, UINT Count=1);
+	void DeleteFlights(UINT Row, UINT Count=1);
 
 	AIRX_Metadata m_Metadata;
 	DynArray<AIRX_Flight> m_Flights;
