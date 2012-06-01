@@ -24,6 +24,8 @@ CFlightmapApp::CFlightmapApp()
 	m_NagCounter = 3;
 	m_AppInitialized = FALSE;
 	m_FlagIcons16[0] = m_FlagIcons16[1] = NULL;
+
+	CF_FLIGHTS = (CLIPFORMAT)RegisterClipboardFormat(_T("liquidFOLDERS.Flightmap"));
 }
 
 

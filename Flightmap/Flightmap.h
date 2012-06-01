@@ -73,6 +73,8 @@ public:
 	HBITMAP m_FlagIcons16[2];
 	CImageListTransparent m_FlagIcons32;
 
+	CLIPFORMAT CF_FLIGHTS;
+
 	BOOL m_UseStatuteMiles;
 
 	UINT m_nTextureSize;

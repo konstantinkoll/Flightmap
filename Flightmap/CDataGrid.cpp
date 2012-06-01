@@ -726,6 +726,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 
+	ON_COMMAND(IDM_EDIT_COPY, OnCopy)
 	ON_COMMAND(IDM_EDIT_INSERTROW, OnInsertRow)
 	ON_COMMAND(IDM_EDIT_DELETE, OnDelete)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
@@ -1423,6 +1424,44 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 
 
 // Edit
+
+void CDataGrid::OnCopy()
+{
+	ASSERT(p_Itinerary);
+	ASSERT(HasSelection());
+
+	if (OpenClipboard())
+	{
+		UINT Anfang;
+		UINT Ende;
+		GetSelection(Anfang, Ende);
+
+		// CF_UNICODETEXT
+		CString Buffer;
+		for (UINT a=Anfang; a<=Ende; a++)
+			Buffer += p_Itinerary->Flight2Text(a);
+
+		EmptyClipboard();
+
+		// CF_UNICODETEXT
+		SIZE_T sz = (Buffer.GetLength()+1)*sizeof(WCHAR);
+		HGLOBAL ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+		LPVOID pBuffer = GlobalLock(ClipBuffer);
+		wcscpy_s((WCHAR*)pBuffer, sz, Buffer.GetBuffer());
+		GlobalUnlock(ClipBuffer);
+		SetClipboardData(CF_UNICODETEXT, ClipBuffer);
+
+		// CF_FLIGHTS
+		sz = (Ende-Anfang+1)*sizeof(AIRX_Flight);
+		ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+		pBuffer = GlobalLock(ClipBuffer);
+		memcpy_s(pBuffer, sz, &p_Itinerary->m_Flights.m_Items[Anfang], sz);
+		GlobalUnlock(ClipBuffer);
+		SetClipboardData(theApp.CF_FLIGHTS, ClipBuffer);
+
+		CloseClipboard();
+	}
+}
 
 void CDataGrid::OnInsertRow()
 {

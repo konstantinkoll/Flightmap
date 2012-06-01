@@ -81,6 +81,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
+	afx_msg void OnCopy();
 	afx_msg void OnInsertRow();
 	afx_msg void OnDelete();
 	afx_msg void OnEditFlight();
