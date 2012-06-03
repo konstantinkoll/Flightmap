@@ -900,6 +900,7 @@ void CItinerary::OpenCSV(CString FileName)
 				map[L"AIRLINE"] = 7;
 				map[L"CARRIER"] = 7;
 				map[L"OPERATOR"] = 7;
+				map[L"FLIGHT"] = 8;
 				map[L"FLIGHT #"] = 8;
 				map[L"FLIGHT_NUMBER"] = 8;
 				map[L"FLUGNR"] = 8;
