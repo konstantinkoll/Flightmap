@@ -283,13 +283,6 @@ void CMapWnd::OnMapWndClose()
 
 void CMapWnd::OnUpdateMapWndCommands(CCmdUI* pCmdUI)
 {
-	// TODO
-	if ((pCmdUI->m_nID==IDM_MAPWND_PRINT) || (pCmdUI->m_nID==IDM_MAPWND_PRINT_PREVIEW) || (pCmdUI->m_nID==IDM_MAPWND_PRINT_QUICK))
-	{
-		pCmdUI->Enable(FALSE);
-		return;
-	}
-
 	pCmdUI->Enable(pCmdUI->m_nID==IDM_MAPWND_CLOSE ? TRUE : m_pBitmap!=NULL);
 }
 
