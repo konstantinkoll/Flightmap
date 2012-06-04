@@ -568,7 +568,7 @@ BEGIN
     CONTROL         "Visual effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,155,66
     CONTROL         "Use &background images",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,143,10
     PUSHBUTTON      "3&D settings...",IDD_3DSETTINGS,176,120,144,14
-    PUSHBUTTON      "Learn about ""Flightmap E&xclusive""..",IDC_EXCLUSIVE,176,139,144,14
+    PUSHBUTTON      "Learn about ""Flightmap E&xclusive""...",IDC_EXCLUSIVE,176,139,144,14
     CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,155,81
     LTEXT           "Name:",IDC_STATIC,15,174,141,8
     LTEXT           "X",IDC_NAME,15,184,141,8
