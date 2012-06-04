@@ -902,7 +902,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	if (m_ShowViewport && m_ShowCrosshairs)
 	{
 		glBegin(GL_QUADS);
-		glDrawIcon(m_Width/2.0f, m_Height/2.0f, 64.0f, 1.0f, CROSSHAIRS);
+		glDrawIcon((GLfloat)(m_Width/2), (GLfloat)(m_Height/2), 64.0f, 1.0f, CROSSHAIRS);
 		glEnd();
 	}
 
