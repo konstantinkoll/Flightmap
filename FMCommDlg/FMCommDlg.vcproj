@@ -367,6 +367,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTaskbar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CTaskButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTooltipHeader.cpp"
 				>
 			</File>
@@ -498,6 +506,14 @@
 			</File>
 			<File
 				RelativePath=".\CStripCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTaskbar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTaskButton.h"
 				>
 			</File>
 			<File

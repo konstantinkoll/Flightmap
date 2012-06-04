@@ -9,12 +9,18 @@
 // EditFlightAttachmentsPage
 //
 
-EditFlightAttachmentsPage::EditFlightAttachmentsPage(AIRX_Flight* pFlight)
-	: CPropertyPage(IDD_ATTACHMENTS)
+EditFlightAttachmentsPage::EditFlightAttachmentsPage(AIRX_Flight* pFlight, CItinerary* pItinerary)
+	: CPropertyPage(IDD_EDITFLIGHT_ATTACHMENTS)
 {
 	ASSERT(pFlight);
 
 	p_Flight = pFlight;
+	p_Itinerary = pItinerary;
+}
+
+void EditFlightAttachmentsPage::DoDataExchange(CDataExchange* pDX)
+{
+	DDX_Control(pDX, IDC_FILEVIEW, m_wndFileView);
 }
 
 

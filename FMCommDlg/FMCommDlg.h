@@ -10,6 +10,8 @@
 #include "..\FMCommDlg\CPictureCtrl.h"
 #include "..\FMCommDlg\CRatingCtrl.h"
 #include "..\FMCommDlg\CStripCtrl.h"
+#include "..\FMCommDlg\CTaskBar.h"
+#include "..\FMCommDlg\CTaskButton.h"
 #include "..\FMCommDlg\CTooltipHeader.h"
 #include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"

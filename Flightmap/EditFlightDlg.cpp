@@ -28,10 +28,10 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pI
 
 	m_Pages[0] = new EditFlightRoutePage(&m_Flight);
 	m_Pages[1] = new EditFlightOtherPage(&m_Flight, pItinerary);
-	m_Pages[2] = new EditFlightAttachmentsPage(&m_Flight);
+	m_Pages[2] = new EditFlightAttachmentsPage(&m_Flight, pItinerary);
 
 	// Seiten hinzufügen
-	const UINT nIDTemplates[EditFlightPages] = { IDD_ROUTE, IDD_OTHER, IDD_ATTACHMENTS };
+	const UINT nIDTemplates[EditFlightPages] = { IDD_EDITFLIGHT_ROUTE, IDD_EDITFLIGHT_OTHER, IDD_EDITFLIGHT_ATTACHMENTS };
 	for (UINT a=0; a<EditFlightPages; a++)
 	{
 		m_Pages[a]->Construct(nIDTemplates[a]);

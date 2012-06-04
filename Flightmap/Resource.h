@@ -108,7 +108,7 @@
 #define IDS_METADATA_TITLE_PACIFIC      1302
 #define IDS_METADATA_KEYWORDS_ATLANTIC  1303
 #define IDS_METADATA_KEYWORDS_PACIFIC   1304
-#define IDD_ROUTE                       2000
+#define IDD_EDITFLIGHT_ROUTE            2000
 #define IDC_FROM_IATA                   2001
 #define IDC_FROM_SELECT                 2002
 #define IDC_FROM_NAME                   2003
@@ -123,7 +123,7 @@
 #define IDC_FLIGHTTIME                  2013
 #define IDC_COMMENT                     2014
 #define IDC_TO_GATE                     2019
-#define IDD_OTHER                       2100
+#define IDD_EDITFLIGHT_OTHER            2100
 #define IDC_CARRIER                     2101
 #define IDC_FLIGHTNO                    2102
 #define IDC_CODESHARES                  2103
@@ -145,7 +145,9 @@
 #define IDC_CHOOSECOLOR                 2119
 #define IDC_RATING                      2120
 #define IDC_SEAT                        2121
-#define IDD_ATTACHMENTS                 2200
+#define IDC_RATING2                     2121
+#define IDD_EDITFLIGHT_ATTACHMENTS      2200
+#define IDC_FILEVIEW                    2201
 #define IDD_ADDROUTE                    2300
 #define IDC_ROUTE                       2301
 #define IDM_FILE                        3000
