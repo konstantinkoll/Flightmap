@@ -752,6 +752,9 @@ void CItinerary::OpenAIRX(CString FileName)
 						if (ReadRecord(f, &Flight, sizeof(Flight), Header.FlightRecordSize))
 						{
 							CalcDistance(Flight, TRUE);
+							if (Flight.AttachmentCount>AIRX_MaxAttachmentCount)
+								Flight.AttachmentCount = AIRX_MaxAttachmentCount;
+
 							m_Flights.AddItem(Flight);
 						}
 					}
@@ -1143,7 +1146,7 @@ void CItinerary::InsertFlights(UINT Row, UINT Count, AIRX_Flight* pFlights)
 			for (UINT a=Row; a<Row+Count; a++)
 			{
 				CalcDistance(m_Flights.m_Items[a], TRUE);
-				// TODO: Referenzen auf angehängte Dateien resetten
+				m_Flights.m_Items[a].AttachmentCount = 0;
 			}
 		}
 		else

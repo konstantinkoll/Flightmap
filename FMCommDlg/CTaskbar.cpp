@@ -159,7 +159,6 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
@@ -360,50 +359,6 @@ void CTaskbar::OnIdleUpdateCmdUI()
 
 	if (Update)
 		AdjustLayout();
-}
-
-void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
-{
-	if ((pos.x<0) || (pos.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		pos.x = (rect.left+rect.right)/2;
-		pos.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&pos);
-	}
-
-	CMenu menu;
-	if (!menu.CreatePopupMenu())
-		return;
-
-	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
-		if (btn->IsWindowEnabled())
-		{
-			CString tmpStr;
-			btn->GetWindowText(tmpStr);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
-		}
-	}
-
-	if (menu.GetMenuItemCount())
-		menu.AppendMenu(MF_SEPARATOR);
-
-	for (POSITION p=m_ButtonsRight.GetTailPosition(); p; )
-	{
-		CTaskButton* btn = m_ButtonsRight.GetPrev(p);
-		if (btn->IsWindowEnabled())
-		{
-			CString tmpStr;
-			btn->GetWindowText(tmpStr);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
-		}
-	}
-
-	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
 }
 
 void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)

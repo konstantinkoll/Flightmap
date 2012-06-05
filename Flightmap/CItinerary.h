@@ -53,6 +53,8 @@ struct AIRX_Location
 #define AIRX_First                  'F'
 #define AIRX_Crew                   'C'
 
+#define AIRX_MaxAttachmentCount     16
+
 struct AIRX_Flight
 {
 	DWORD Flags;
@@ -75,6 +77,8 @@ struct AIRX_Flight
 	WCHAR Fare[16];
 	WCHAR Codeshares[64];
 	UINT FlightTime;
+	UINT AttachmentCount;
+	UINT Attachments[16];
 };
 
 struct AIRX_Attachment

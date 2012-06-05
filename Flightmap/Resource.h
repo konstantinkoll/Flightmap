@@ -40,6 +40,7 @@
 #define IDB_FLAGS_16                    164
 #define IDB_FLAGS_16i                   165
 #define IDB_FLAGS_32                    166
+#define IDB_TASKS                       167
 #define IDS_RECENTFILES                 1000
 #define IDS_SAMPLEITINERARIES           1001
 #define IDS_SAVECOPY                    1002
@@ -250,6 +251,11 @@
 #define IDM_DETAILS_AUTOSIZEALL         4101
 #define IDM_DETAILS_AUTOSIZE            4102
 #define IDM_DETAILS_CHOOSE              4103
+#define IDM_FILEVIEW_ADD                4200
+#define IDM_FILEVIEW_OPEN               4201
+#define IDM_FILEVIEW_COPY               4202
+#define IDM_FILEVIEW_DELETE             4203
+#define IDM_FILEVIEW_RENAME             4204
 
 // Next default values for new objects
 // 
