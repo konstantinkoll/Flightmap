@@ -27,6 +27,7 @@ struct AIRX_Metadata
 	WCHAR Author[256];
 	WCHAR Keywords[256];
 	WCHAR Comments[256];
+	UINT CurrentRow;
 };
 
 struct AIRX_Location

@@ -759,6 +759,9 @@ void CItinerary::OpenAIRX(CString FileName)
 						}
 					}
 
+					if (m_Metadata.CurrentRow>m_Flights.m_ItemCount)
+						m_Metadata.CurrentRow = m_Flights.m_ItemCount;
+
 					for (UINT a=0; a<Header.AttachmentCount; a++)
 					{
 						AIRX_Attachment Attachment;

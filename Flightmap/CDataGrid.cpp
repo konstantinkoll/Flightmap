@@ -94,15 +94,17 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CDataGrid::SetItinerary(CItinerary* pItinerary)
+void CDataGrid::SetItinerary(CItinerary* pItinerary, UINT Row)
 {
 	if (p_Itinerary!=pItinerary)
 	{
 		p_Itinerary = pItinerary;
 
-		m_SelectedItem.x = m_SelectedItem.y = p_Itinerary ? 0 : -1;
+		m_SelectedItem.x = p_Itinerary ? 0 : -1;
+		m_SelectedItem.y = p_Itinerary ? Row : -1;
 		m_SelectionAnchor = -1;
 		AdjustLayout();
+		EnsureVisible();
 	}
 }
 
@@ -135,6 +137,15 @@ void CDataGrid::GetSelection(UINT& First, UINT& Last)
 			First = 0;
 			Last = p_Itinerary->m_Flights.m_ItemCount-1;
 		}
+}
+
+UINT CDataGrid::GetCurrentRow()
+{
+	if (p_Itinerary)
+		if (m_SelectedItem.y!=-1)
+			return (UINT)m_SelectedItem.y;
+
+	return 0;
 }
 
 void CDataGrid::DoCopy(BOOL Cut)
@@ -652,7 +663,7 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 
 			for (UINT a=0; a<4; a++)
 			{
-				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, theApp.m_FlagIcons16[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : 0]);
+				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, theApp.m_FlagIcons16[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : Flight.AttachmentCount>0 ? 1 : 0]);
 				AlphaBlend(dc, pt.x, pt.y, 16, 16, hdcMem, a*16, 0, 16, 16, BF);
 				SelectObject(hdcMem, hbmOld);
 

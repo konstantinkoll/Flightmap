@@ -112,7 +112,7 @@ void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 	}
 
 	if (m_CurrentMainView==DataGrid)
-		((CDataGrid*)m_pWndMainView)->SetItinerary(m_pItinerary);
+		((CDataGrid*)m_pWndMainView)->SetItinerary(m_pItinerary, m_pItinerary ? m_pItinerary->m_Metadata.CurrentRow : 0);
 
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
@@ -695,8 +695,10 @@ void CMainWnd::OnFileSave()
 	}
 	else
 	{
-		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
+		if (m_CurrentMainView==DataGrid)
+			m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
 
+		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
 		UpdateWindowStatus();
 	}
 }
@@ -711,8 +713,10 @@ void CMainWnd::OnFileSaveAs()
 	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		m_pItinerary->SaveAIRX(dlg.GetPathName());
+		if (m_CurrentMainView==DataGrid)
+			m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
 
+		m_pItinerary->SaveAIRX(dlg.GetPathName());
 		UpdateWindowStatus();
 	}
 }
@@ -774,6 +778,9 @@ void CMainWnd::OnFileSaveOther()
 		CString Ext = dlg.GetFileExt().MakeLower();
 		if (Ext==_T("airx"))
 		{
+			if (m_CurrentMainView==DataGrid)
+				m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
+
 			m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
 			UpdateWindowStatus();
 		}

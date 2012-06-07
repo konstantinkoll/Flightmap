@@ -23,8 +23,9 @@ public:
 	~CDataGrid();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetItinerary(CItinerary* pItinerary);
+	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
 	void GetSelection(UINT& First, UINT& Last);
+	UINT GetCurrentRow();
 
 protected:
 	CItinerary* p_Itinerary;
