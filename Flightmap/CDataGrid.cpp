@@ -26,7 +26,7 @@
                                             DeleteDC(hdcMem); }
 
 static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_BusinessTrip, AIRX_LeisureTrip };
+static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip };
 
 CDataGrid::CDataGrid()
 {
@@ -303,6 +303,13 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 				p_Itinerary->m_IsModified = TRUE;
 				InvalidateItem(item);
 				break;
+			case L'G':
+			case L'g':
+				*((DWORD*)pData) ^= AIRX_GroundTransportation;
+
+				p_Itinerary->m_IsModified = TRUE;
+				InvalidateItem(item);
+				break;
 			case L'B':
 			case L'b':
 				*((DWORD*)pData) ^= AIRX_BusinessTrip;
@@ -545,22 +552,26 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* item, INT* subitem)
 				if (subitem)
 				{
 					*subitem = -1;
-					x = point.x-x-MARGIN;
 
-					if (x>0)
-						switch (FMAttributes[Attr].Type)
-						{
-						case FMTypeFlags:
-							if (x<18*4)
-								if (x%18<16)
-									*subitem = x/18;
-							break;
-						case FMTypeRating:
-							if (x<RatingBitmapWidth+6)
-								if ((x<6) || (x%18<16))
-									*subitem = (x<6) ? 0 : 2*(x/18)+(x%18>8)+1;
-							break;
-						}
+					if (row<(INT)p_Itinerary->m_Flights.m_ItemCount)
+					{
+						x = point.x-x-MARGIN;
+
+						if (x>0)
+							switch (FMAttributes[Attr].Type)
+							{
+							case FMTypeFlags:
+								if (x<18*5)
+									if (x%18<16)
+										*subitem = x/18;
+								break;
+							case FMTypeRating:
+								if (x<RatingBitmapWidth+6)
+									if ((x<6) || (x%18<16))
+										*subitem = (x<6) ? 0 : 2*(x/18)+(x%18>8)+1;
+								break;
+							}
+					}
 				}
 
 				return TRUE;
@@ -661,7 +672,7 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			HDC hdcMem = CreateCompatibleDC(dc);
 			CPoint pt(rect.left, rect.top+(rect.Height()-16)/2);
 
-			for (UINT a=0; a<4; a++)
+			for (UINT a=0; a<5; a++)
 			{
 				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, theApp.m_FlagIcons16[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : Flight.AttachmentCount>0 ? 1 : 0]);
 				AlphaBlend(dc, pt.x, pt.y, 16, 16, hdcMem, a*16, 0, 16, 16, BF);

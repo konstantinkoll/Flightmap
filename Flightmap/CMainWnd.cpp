@@ -231,7 +231,7 @@ void CMainWnd::ExportExcel(CString FileName)
 
 	if (!f.Open(FileName))
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 	}
 	else
 	{
@@ -254,7 +254,7 @@ void CMainWnd::ExportCalendar(CString FileName)
 
 	if (!f.Open(FileName, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 	}
 	else
 	{
@@ -273,7 +273,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, B
 
 	if (!f.Open(FileName, m_pItinerary ? m_pItinerary->m_DisplayName : NULL))
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 		return FALSE;
 	}
 	else
@@ -299,7 +299,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, B
 		catch(CFileException ex)
 		{
 			f.Close();
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 		}
 
 		delete pKitchen;
@@ -317,7 +317,7 @@ void CMainWnd::ExportText(CString FileName)
 
 	if (!f.Open(FileName, CFile::modeCreate | CFile::modeWrite))
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 	}
 	else
 	{
@@ -333,7 +333,7 @@ void CMainWnd::ExportText(CString FileName)
 		catch(CFileException ex)
 		{
 			f.Close();
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 		}
 	}
 }

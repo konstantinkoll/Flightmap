@@ -58,7 +58,7 @@ BOOL CFlightmapApp::InitInstance()
 	// Icons
 	m_FlagIcons16[0] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16i));
 	m_FlagIcons16[1] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16));
-	m_FlagIcons32.Create(IDB_FLAGS_32, NULL, 0, 3, 32, 32);
+	m_FlagIcons32.Create(IDB_FLAGS_32, NULL, 0, 4, 32, 32);
 
 	// Registry auslesen
 	SetRegistryBase();
@@ -116,6 +116,9 @@ BOOL CFlightmapApp::InitInstance()
 	}
 	GetBinary(_T("ColumnOrder"), &m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
 	GetBinary(_T("ColumnWidth"), &m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
+	for (UINT a=0; a<FMAttributeCount; a++)
+		if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor) || (FMAttributes[a].Type==FMTypeFlags))
+			m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
 
 	for (UINT a=0; a<10; a++)
 	{
@@ -307,7 +310,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	CGoogleEarthFile f;
 	if (!f.Open(szTempName))
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 	}
 	else
 	{
@@ -320,7 +323,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 			f.Close();
 		}
 	}

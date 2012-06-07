@@ -1444,7 +1444,7 @@ void CGlobeView::OnSaveAs()
 
 		if (!f.Open(dlg.GetPathName(), m_DisplayName))
 		{
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 		}
 		else
 		{
@@ -1461,7 +1461,7 @@ void CGlobeView::OnSaveAs()
 			catch(CFileException ex)
 			{
 				f.Close();
-				FMErrorBox(IDS_DRIVENOTREADY);
+				FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 			}
 		}
 	}

@@ -46,6 +46,7 @@ struct AIRX_Location
 #define AIRX_VisitedFrom            64
 #define AIRX_UnknownTo              128
 #define AIRX_VisitedTo              256
+#define AIRX_GroundTransportation   512
 
 #define AIRX_Unknown                '\0'
 #define AIRX_Economy                'Y'
@@ -142,7 +143,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN17, FMTypeUINT, offsetof(AIRX_Flight, Fare), 15, 100, FALSE, TRUE, TRUE },						// Fare
 	{ IDS_COLUMN18, FMTypeUINT, offsetof(AIRX_Flight, MilesAward), 0 , 70, FALSE, TRUE, TRUE },					// Award miles
 	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 70, FALSE, TRUE, TRUE },					// Status miles
-	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 78, FALSE, FALSE, TRUE },						// Flags
+	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 96, FALSE, FALSE, TRUE },						// Flags
 	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 28, RatingBitmapWidth+7, FALSE, TRUE, TRUE },	// Rating
 	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 255, 100, TRUE, TRUE, TRUE },			// Comments
 	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, FlightTime), 0, 100, FALSE, TRUE, TRUE }					// Flight time

@@ -272,6 +272,8 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 	case FMTypeFlags:
 		if (Flight.Flags & AIRX_AwardFlight)
 			wcscat_s(pBuffer, cCount, L"A");
+		if (Flight.Flags & AIRX_GroundTransportation)
+			wcscat_s(pBuffer, cCount, L"G");
 		if (Flight.Flags & AIRX_BusinessTrip)
 			wcscat_s(pBuffer, cCount, L"B");
 		if (Flight.Flags & AIRX_LeisureTrip)
@@ -482,9 +484,11 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		ScanUINT(pStr, *((UINT*)pData));
 		break;
 	case FMTypeFlags:
-		Flight.Flags &= ~(AIRX_AwardFlight | AIRX_BusinessTrip | AIRX_LeisureTrip);
+		Flight.Flags &= ~(AIRX_AwardFlight | AIRX_GroundTransportation | AIRX_BusinessTrip | AIRX_LeisureTrip);
 		if (wcschr(pStr, L'A'))
 			Flight.Flags |= AIRX_AwardFlight;
+		if (wcschr(pStr, L'G'))
+			Flight.Flags |= AIRX_GroundTransportation;
 		if (wcschr(pStr, L'B'))
 			Flight.Flags |= AIRX_BusinessTrip;
 		if (wcschr(pStr, L'L'))
@@ -790,12 +794,12 @@ void CItinerary::OpenAIRX(CString FileName)
 		catch(CFileException ex)
 		{
 			f.Close();
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 		}
 	}
 	else
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 	}
 
 	if (pData)
@@ -858,12 +862,12 @@ void CItinerary::OpenAIR(CString FileName)
 		catch(CFileException ex)
 		{
 			f.Close();
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 		}
 	}
 	else
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 	}
 }
 
@@ -1028,12 +1032,12 @@ void CItinerary::OpenCSV(CString FileName)
 		catch(CFileException ex)
 		{
 			f.Close();
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 		}
 	}
 	else
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 	}
 }
 
@@ -1081,12 +1085,12 @@ void CItinerary::SaveAIRX(CString FileName)
 		catch(CFileException ex)
 		{
 			f.Close();
-			FMErrorBox(IDS_DRIVENOTREADY);
+			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 		}
 	}
 	else
 	{
-		FMErrorBox(IDS_DRIVENOTREADY);
+		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 	}
 }
 

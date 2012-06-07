@@ -64,12 +64,13 @@
 #define IDS_NOTSAVED                    1020
 #define IDS_ATTACHMENTS                 1021
 #define IDS_AWARDFLIGHT                 1022
-#define IDS_BUSINESSTRIP                1023
-#define IDS_LEISURETRIP                 1024
-#define IDS_EDITFLIGHT                  1025
-#define IDS_CUEBANNER_DATETIME          1026
-#define IDS_CUEBANNER_TIME              1027
-#define IDS_CUEBANNER_ROUTE             1028
+#define IDS_GROUNDTRANSPORTATION        1023
+#define IDS_BUSINESSTRIP                1024
+#define IDS_LEISURETRIP                 1025
+#define IDS_EDITFLIGHT                  1026
+#define IDS_CUEBANNER_DATETIME          1027
+#define IDS_CUEBANNER_TIME              1028
+#define IDS_CUEBANNER_ROUTE             1029
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
@@ -119,11 +120,12 @@
 #define IDC_TO_SELECT                   2007
 #define IDC_TO_NAME                     2008
 #define IDC_TO_TIME                     2009
+#define IDC_TO_GATE                     2010
 #define IDC_WAYPOINT_BTN                2011
 #define IDC_WAYPOINT_DISPLAY            2012
 #define IDC_FLIGHTTIME                  2013
-#define IDC_COMMENT                     2014
-#define IDC_TO_GATE                     2019
+#define IDC_GROUNDTRANSPORTATION        2014
+#define IDC_COMMENT                     2015
 #define IDD_EDITFLIGHT_OTHER            2100
 #define IDC_CARRIER                     2101
 #define IDC_FLIGHTNO                    2102
@@ -263,7 +265,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8011
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         8038
+#define _APS_NEXT_CONTROL_VALUE         8039
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

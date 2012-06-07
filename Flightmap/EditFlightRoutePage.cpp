@@ -29,7 +29,13 @@ void EditFlightRoutePage::DoDataExchange(CDataExchange* pDX)
 	DDX_MaskedText(pDX, IDC_COMMENT, m_wndComment, 22, p_Flight);
 
 	if (pDX->m_bSaveAndValidate)
+	{
 		CalcDistance(*p_Flight, TRUE);
+
+		p_Flight->Flags &= ~AIRX_GroundTransportation;
+		if (((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->GetCheck())
+			p_Flight->Flags |= AIRX_GroundTransportation;
+	}
 }
 
 void EditFlightRoutePage::DisplayAirport(UINT nID, FMAirport* pAirport)
@@ -96,6 +102,7 @@ BEGIN_MESSAGE_MAP(EditFlightRoutePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_FROM_SELECT, OnFromSelect)
 	ON_BN_CLICKED(IDC_TO_SELECT, OnToSelect)
 	ON_BN_CLICKED(IDC_WAYPOINT_BTN, OnWaypoint)
+	ON_BN_CLICKED(IDC_GROUNDTRANSPORTATION, OnGroundTransportation)
 	ON_EN_KILLFOCUS(IDC_FROM_IATA, OnCheckWaypoint)
 	ON_EN_KILLFOCUS(IDC_TO_IATA, OnCheckWaypoint)
 END_MESSAGE_MAP()
@@ -109,6 +116,8 @@ BOOL EditFlightRoutePage::OnInitDialog()
 	DisplayLocation(p_Flight->Waypoint);
 
 	OnCheckWaypoint();
+
+	((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->SetCheck(p_Flight->Flags & AIRX_GroundTransportation);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -131,6 +140,12 @@ void EditFlightRoutePage::OnWaypoint()
 		p_Flight->Waypoint = dlg.m_Location;
 		DisplayLocation(dlg.m_Location);
 	}
+}
+
+void EditFlightRoutePage::OnGroundTransportation()
+{
+	p_Flight->Flags ^= AIRX_GroundTransportation;
+	((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->SetCheck(p_Flight->Flags & AIRX_GroundTransportation);
 }
 
 void EditFlightRoutePage::OnCheckWaypoint()

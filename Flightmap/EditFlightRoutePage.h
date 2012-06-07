@@ -35,6 +35,7 @@ protected:
 	afx_msg void OnFromSelect();
 	afx_msg void OnToSelect();
 	afx_msg void OnWaypoint();
+	afx_msg void OnGroundTransportation();
 	afx_msg void OnCheckWaypoint();
 	DECLARE_MESSAGE_MAP()
 
