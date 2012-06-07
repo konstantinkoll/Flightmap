@@ -95,7 +95,7 @@ static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
 // Equipment
 //
 
-#define EquipmentCount     33
+#define EquipmentCount     32
 
 static const WCHAR Equipment[EquipmentCount][32] = {
 	L"Airbus A300",
@@ -109,7 +109,6 @@ static const WCHAR Equipment[EquipmentCount][32] = {
 	L"Airbus A350",
 	L"Airbus A380",
 	L"Avro Regional Jet",
-	L"BAe 146",
 	L"Boeing 707",
 	L"Boeing 717",
 	L"Boeing 727",
@@ -130,5 +129,5 @@ static const WCHAR Equipment[EquipmentCount][32] = {
 	L"Fokker 50/60",
 	L"Fokker 70/100",
 	L"MD-11",
-	L"SSJ 100",
+	L"SSJ 100"
 };
