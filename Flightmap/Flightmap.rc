@@ -1067,7 +1067,7 @@ BEGIN
     IDM_GLOBEVIEW_AUTOSIZE  "Size to f&it"
     IDM_GLOBEVIEW_COLORS    "Use colo&rs"
     IDM_GLOBEVIEW_CLAMP     "&True flight levels"
-    IDM_GLOBEVIEW_SPOTS     "Mark loca&tions"
+    IDM_GLOBEVIEW_SPOTS     "Show loca&tions"
     IDM_GLOBEVIEW_AIRPORTIATA "Show &IATA codes"
     IDM_GLOBEVIEW_AIRPORTNAMES "Show &airport names"
     IDM_GLOBEVIEW_GPS       "Show &GPS coordinates"
