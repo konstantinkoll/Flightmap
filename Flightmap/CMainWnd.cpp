@@ -468,11 +468,11 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSubmenu(IDM_FILE_SAVEAS, 4, CDMB_MEDIUM, TRUE);
 		pPopup->AddSeparator();
 		pPopup->AddSubmenu(IDM_FILE_PRINT, 5, CDMB_MEDIUM, TRUE);
-		pPopup->AddSubmenu(IDM_FILE_PREPARE, 9, CDMB_MEDIUM);
+		pPopup->AddSubmenu(IDM_FILE_PREPARE, 8, CDMB_MEDIUM);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_FILE_CLOSE, 13, CDMB_MEDIUM);
+		pPopup->AddCommand(IDM_FILE_CLOSE, 12, CDMB_MEDIUM);
 		pPopup->AddSeparator(TRUE);
-		pPopup->AddCommand(IDM_FILE_QUIT, 14, CDMB_SMALL);
+		pPopup->AddCommand(IDM_FILE_QUIT, 13, CDMB_SMALL);
 		break;
 	case IDM_FILE_OPEN:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
@@ -494,17 +494,16 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_FILE_PRINT:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
-		pPopup->AddCaption(IDS_PRINTPREVIEW);
-		pPopup->AddCommand(IDM_FILE_PRINT, 5, CDMB_LARGE);
-		pPopup->AddCommand(IDM_FILE_PRINT_QUICK, 6, CDMB_LARGE);
-		pPopup->AddCommand(IDM_FILE_PRINT_PREVIEW, 7, CDMB_LARGE);
+		pPopup->AddCaption(IDS_PRINT);
+		pPopup->AddCommand(IDM_FILE_PRINT, 6, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PRINT_QUICK, 7, CDMB_LARGE);
 		break;
 	case IDM_FILE_PREPARE:
 		pPopup->Create(this, IDB_MENUFILE_32, IDB_MENUFILE_16);
 		pPopup->AddCaption(IDS_PREPAREDISTRIBUTION);
-		pPopup->AddCommand(IDM_FILE_PREPARE_PROPERTIES, 10, CDMB_LARGE);
-		pPopup->AddCommand(IDM_FILE_PREPARE_INSPECT, 11, CDMB_LARGE);
-		pPopup->AddCommand(IDM_FILE_PREPARE_ATTACHMENTS, 12, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PREPARE_PROPERTIES, 9, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PREPARE_INSPECT, 10, CDMB_LARGE);
+		pPopup->AddCommand(IDM_FILE_PREPARE_ATTACHMENTS, 11, CDMB_LARGE);
 		break;
 	case IDM_EDIT:
 		pPopup->Create(this, IDB_MENUEDIT_32, IDB_MENUEDIT_16);
@@ -767,7 +766,7 @@ void CMainWnd::OnFileSaveOther()
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"));
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"));
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T("kml"));
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"));
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TXT, _T("txt"), TRUE);
@@ -825,13 +824,6 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
-	/*case IDM_FILE_PRINT:
-	case IDM_FILE_PRINT_PREVIEW:
-	case IDM_FILE_PRINT_QUICK:*/
-	case IDM_FILE_PREPARE_INSPECT:
-	case IDM_FILE_PREPARE_ATTACHMENTS:
-		pCmdUI->Enable(FALSE);	// TODO
-		break;
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_SAVEAS_AIRX:

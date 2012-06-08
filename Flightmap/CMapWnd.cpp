@@ -162,7 +162,7 @@ LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator();
 		pPopup->AddSubmenu(IDM_MAPWND_PRINT, 2, CDMB_MEDIUM, TRUE);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_MAPWND_CLOSE, 6, CDMB_MEDIUM);
+		pPopup->AddCommand(IDM_MAPWND_CLOSE, 5, CDMB_MEDIUM);
 		break;
 	case IDM_MAPVIEW:
 		pPopup->Create(this, IDB_MENUMAPVIEW_32, IDB_MENUMAPVIEW_16);
@@ -181,10 +181,9 @@ LRESULT CMapWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_MAPWND_PRINT:
 		pPopup->Create(this, IDB_MENUMAPWND_32, IDB_MENUMAPWND_16);
-		pPopup->AddCaption(IDS_PRINTPREVIEW);
-		pPopup->AddCommand(IDM_MAPWND_PRINT, 2, CDMB_LARGE);
-		pPopup->AddCommand(IDM_MAPWND_PRINT_QUICK, 3, CDMB_LARGE);
-		pPopup->AddCommand(IDM_MAPWND_PRINT_PREVIEW, 4, CDMB_LARGE);
+		pPopup->AddCaption(IDS_PRINT);
+		pPopup->AddCommand(IDM_MAPWND_PRINT, 3, CDMB_LARGE);
+		pPopup->AddCommand(IDM_MAPWND_PRINT_QUICK, 4, CDMB_LARGE);
 		break;
 	}
 

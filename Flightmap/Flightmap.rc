@@ -316,7 +316,7 @@ BEGIN
     IDS_SAMPLEITINERARIES   "Beispiele"
     IDS_SAVECOPY            "Kopie des Flugplans speichern"
     IDS_EXPORT              "Den Flugplan exportieren"
-    IDS_PRINTPREVIEW        "Flugplan in der Vorschau anzeigen und drucken"
+    IDS_PRINT               "Flugplan drucken"
     IDS_PREPAREDISTRIBUTION "Flugplan für die Verteilung vorbereiten"
     IDS_BACKGROUND          "Hintergrund"
     IDS_FLIGHTROUTES        "Flugrouten"
@@ -490,8 +490,6 @@ BEGIN
     IDM_MAPWND_SAVEAS       "Speichern &unter"
     IDM_MAPWND_PRINT        "&Drucken\nEinen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen."
     IDM_MAPWND_PRINT_QUICK  "Schnelld&ruck\nDie Karte direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
-    IDM_MAPWND_PRINT_PREVIEW 
-                            "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
     IDM_MAPWND_CLOSE        "S&chließen"
 END
 
@@ -537,7 +535,6 @@ BEGIN
     IDM_FILE_SAVEAS_OTHER   "&Andere Formate\nDas Dialogfeld „Speichern unter“ öffnen, um aus den\nmöglichen Dateitypen eine Auswahl zu treffen."
     IDM_FILE_PRINT          "&Drucken\nEinen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen."
     IDM_FILE_PRINT_QUICK    "Schnelld&ruck\nDen Flugplan direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen."
-    IDM_FILE_PRINT_PREVIEW  "Seiten&ansicht\nVor dem Drucken Seiten in\nder Vorschau anzeigen und ändern."
     IDM_FILE_PREPARE        "Vorberei&ten"
     IDM_FILE_PREPARE_PROPERTIES 
                             "&Eigenschaften\nDateieigenschaften wie Titel, Autor und\nSchlüsselwörter anzeigen und bearbeiten."
@@ -834,7 +831,7 @@ BEGIN
     IDS_SAMPLEITINERARIES   "Sample itineraries"
     IDS_SAVECOPY            "Save a copy of the itinerary"
     IDS_EXPORT              "Export the itinerary"
-    IDS_PRINTPREVIEW        "Preview and print the itinerary"
+    IDS_PRINT               "Print the itinerary"
     IDS_PREPAREDISTRIBUTION "Prepare the itinerary for distribution"
     IDS_BACKGROUND          "Background"
     IDS_FLIGHTROUTES        "Flight routes"
@@ -1008,8 +1005,6 @@ BEGIN
     IDM_MAPWND_SAVEAS       "Save &as"
     IDM_MAPWND_PRINT        "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
     IDM_MAPWND_PRINT_QUICK  "&Quick print\nSend the map directly to the default\nprinter without making changes."
-    IDM_MAPWND_PRINT_PREVIEW 
-                            "Print Pre&view\nPreview and make changes to the page\nbefore printing."
     IDM_MAPWND_CLOSE        "&Close"
 END
 
@@ -1055,7 +1050,6 @@ BEGIN
     IDM_FILE_SAVEAS_OTHER   "&Other formats\nOpen the ""Save as"" dialog box to\nselect from all possible file types."
     IDM_FILE_PRINT          "&Print\nSelect a printer, number of copies, and\nother printing options before printing."
     IDM_FILE_PRINT_QUICK    "&Quick print\nSend the itinerary directly to the default\nprinter without making changes."
-    IDM_FILE_PRINT_PREVIEW  "Print Pre&view\nPreview and make changes to the page\nbefore printing."
     IDM_FILE_PREPARE        "Pr&epare"
     IDM_FILE_PREPARE_PROPERTIES 
                             "&Properties\nView and edit file properties, such\nas title, author and keywords."
