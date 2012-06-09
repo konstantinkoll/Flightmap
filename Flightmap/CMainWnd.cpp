@@ -859,7 +859,7 @@ void CMainWnd::OnFilePrint()
 					DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
 
 				CFont fntSubtitle;
-				fntSubtitle.CreateFont((INT)(Spacer*0.70), 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+				fntSubtitle.CreateFont((INT)(Spacer*0.75), 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 					OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 					DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
 
@@ -890,7 +890,7 @@ void CMainWnd::OnFilePrint()
 					ENSURE(Subtitle.LoadString(IDS_PRINTED_UNREGISTERED));
 				}
 
-				CRect rectSubtitle((INT)(Spacer*3.5), (INT)(Spacer*2.25), rect.right, (INT)(Spacer*3.0));
+				CRect rectSubtitle((INT)(Spacer*3.5), (INT)(Spacer*2.15), rect.right, (INT)(Spacer*3.0));
 				dc.DrawText(Subtitle, rectSubtitle, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP);
 
 				dc.SelectObject(pOldFont);
