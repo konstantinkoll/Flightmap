@@ -46,7 +46,7 @@ CRatingCtrl::CRatingCtrl()
 
 void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 {
-	ASSERT(Rating<=FMMaxRating);
+	ASSERT(Rating<=MaxRating);
 
 	if (Prepare)
 	{

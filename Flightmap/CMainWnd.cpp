@@ -361,6 +361,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
 	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
 	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveOther)
+	ON_COMMAND(IDM_FILE_PRINT, OnFilePrint)
 	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -802,6 +803,68 @@ void CMainWnd::OnFileSaveOther()
 	}
 }
 
+void CMainWnd::OnFilePrint()
+{
+	ASSERT(m_pItinerary);
+
+	CPrintDialogEx dlg(PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC, this);
+	if (SUCCEEDED(dlg.DoModal()))
+	{
+		if (dlg.m_pdex.dwResultAction!=PD_RESULT_PRINT)
+			return;
+
+		// Device Context
+		CDC dc;
+		dc.Attach(dlg.GetPrinterDC());
+
+		// Landscape
+		LPDEVMODE lp = (LPDEVMODE)GlobalLock(dlg.m_pdex.hDevMode);
+		ASSERT(lp);
+		lp->dmOrientation = DMORIENT_LANDSCAPE;
+		lp->dmFields |= DM_ORIENTATION;
+		dc.ResetDC(lp);
+		GlobalUnlock(dlg.m_pdex.hDevMode);
+
+		// Document
+		DOCINFO di;
+		ZeroMemory(&di, sizeof(di));
+		di.cbSize = sizeof(DOCINFO);
+		di.lpszDocName = m_pItinerary->m_Metadata.Title[0] ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName.GetBuffer();
+
+		// Printing
+		dc.SetMapMode(MM_TEXT);
+		dc.SetBkMode(TRANSPARENT);
+
+		INT w = dc.GetDeviceCaps(HORZRES);
+		INT h = dc.GetDeviceCaps(VERTRES);
+		CRect rect(0, 0, w, h);
+		rect.DeflateRect(w/40, w/40);
+
+		if (dc.StartDoc(&di)>=0)
+		{
+			if (dc.StartPage()>=0)
+			{
+				CGdiPlusBitmapResource Logo(IDB_FLIGHTMAP, _T("PNG"));
+				INT l = Logo.m_pBitmap->GetWidth();
+				INT h = Logo.m_pBitmap->GetHeight();
+
+				Graphics g(dc);
+				g.SetPageUnit(UnitPixel);
+				g.DrawImage(Logo.m_pBitmap, (REAL)rect.left, (REAL)rect.top, l*(w/40)/Logo.m_pBitmap->GetHorizontalResolution(), h*(w/40)/Logo.m_pBitmap->GetVerticalResolution());
+
+				dc.EndPage();
+			}
+
+			dc.EndDoc();
+		}
+
+		if (dlg.m_pdex.hDevMode)
+			GlobalFree(dlg.m_pdex.hDevMode);
+		if (dlg.m_pdex.hDevNames)
+			GlobalFree(dlg.m_pdex.hDevNames);
+	}
+}
+
 void CMainWnd::OnFileProperties()
 {
 	ASSERT(m_pItinerary);
@@ -831,8 +894,12 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_SAVEAS_ICS:
 	case IDM_FILE_SAVEAS_TXT:
 	case IDM_FILE_SAVEAS_OTHER:
+	case IDM_FILE_PRINT:
+	case IDM_FILE_PRINT_QUICK:
 	case IDM_FILE_PREPARE:
 	case IDM_FILE_PREPARE_PROPERTIES:
+	case IDM_FILE_PREPARE_INSPECT:
+	case IDM_FILE_PREPARE_ATTACHMENTS:
 	case IDM_FILE_CLOSE:
 		pCmdUI->Enable(m_pItinerary!=NULL);
 		break;

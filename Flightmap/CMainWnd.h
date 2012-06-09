@@ -63,6 +63,7 @@ protected:
 	afx_msg void OnFileSaveICS();
 	afx_msg void OnFileSaveTXT();
 	afx_msg void OnFileSaveOther();
+	afx_msg void OnFilePrint();
 	afx_msg void OnFileProperties();
 	afx_msg void OnFileClose();
 	afx_msg void OnFileQuit();

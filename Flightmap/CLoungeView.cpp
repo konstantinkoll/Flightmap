@@ -47,8 +47,8 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		for (INT a=0; a<5; a++)
 			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
 
-		l = m_pLogo->m_pBitmap->GetWidth();
-		h = m_pLogo->m_pBitmap->GetHeight();
+		l = m_pLogo->m_pBitmap->GetWidth()/2;
+		h = m_pLogo->m_pBitmap->GetHeight()/2;
 		if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
 		{
 			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
