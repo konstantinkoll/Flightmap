@@ -71,6 +71,8 @@
 #define IDS_CUEBANNER_DATETIME          1027
 #define IDS_CUEBANNER_TIME              1028
 #define IDS_CUEBANNER_ROUTE             1029
+#define IDS_PRINTED_UNREGISTERED        1030
+#define IDS_PRINTED_REGISTERED          1031
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102

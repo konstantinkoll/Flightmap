@@ -350,6 +350,8 @@ BEGIN
     IDS_CUEBANNER_DATETIME  " JJJJ-MM-TT SS:MM"
     IDS_CUEBANNER_TIME      " SS:MM"
     IDS_CUEBANNER_ROUTE     " z.B. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
+    IDS_PRINTED_UNREGISTERED "Gedruckt mit einer nicht registrierten Version von Flightmap – http://flightmap.net/"
+    IDS_PRINTED_REGISTERED  "Stand: %s, %s Uhr"
 END
 
 STRINGTABLE 
@@ -865,6 +867,8 @@ BEGIN
     IDS_CUEBANNER_DATETIME  " YYYY-MM-DD HH:MM"
     IDS_CUEBANNER_TIME      " HH:MM"
     IDS_CUEBANNER_ROUTE     " e.g. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
+    IDS_PRINTED_UNREGISTERED "Printed with an unregistered version of Flightmap—http://flightmap.net/"
+    IDS_PRINTED_REGISTERED  "Current as of %s, %s"
 END
 
 STRINGTABLE 
