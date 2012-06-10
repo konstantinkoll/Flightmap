@@ -837,8 +837,7 @@ void CMainWnd::OnFilePrint()
 
 		INT w = dc.GetDeviceCaps(HORZRES);
 		INT h = dc.GetDeviceCaps(VERTRES);
-		const DOUBLE Rand = 40.0;
-		const DOUBLE Spacer = (w/Rand);
+		const DOUBLE Spacer = (w/40.0);
 
 		CRect rect(0, 0, w, h);
 		rect.DeflateRect((INT)Spacer, (INT)Spacer);
@@ -847,53 +846,15 @@ void CMainWnd::OnFilePrint()
 		{
 			if (dc.StartPage()>=0)
 			{
-				CGdiPlusBitmapResource Logo(IDB_FLIGHTMAP, _T("PNG"));
+				CRect rectPage(rect);
 
-				Graphics g(dc);
-				g.SetPageUnit(UnitPixel);
-				g.DrawImage(Logo.m_pBitmap, (REAL)rect.left, (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
+				theApp.PrintPageHeader(dc, rectPage, Spacer, di);
 
-				CFont fntTitle;
-				fntTitle.CreateFont((INT)Spacer, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-					OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-					DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
+				CFont fnt;
+				fnt.CreatePointFont(120, _T("Tahoma"), &dc);
 
-				CFont fntSubtitle;
-				fntSubtitle.CreateFont((INT)(Spacer*0.75), 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-					OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-					DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
-
-				CFont* pOldFont = dc.SelectObject(&fntTitle);
-
-				CRect rectTitle((INT)(Spacer*3.5), (INT)Spacer, rect.right, (INT)(Spacer*3.0));
-				dc.DrawText(di.lpszDocName, -1, rectTitle, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP);
-
-				dc.SelectObject(&fntSubtitle);
-				CString Subtitle;
-				if (FMIsLicensed())
-				{
-					CString Mask;
-					ENSURE(Mask.LoadString(IDS_PRINTED_REGISTERED));
-
-					SYSTEMTIME st;
-					GetLocalTime(&st);
-
-					WCHAR Date[256] = L"";
-					WCHAR Time[256] = L"";
-					GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, Date, 256);
-					GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, Time, 256);
-
-					Subtitle.Format(Mask, Date, Time);
-				}
-				else
-				{
-					ENSURE(Subtitle.LoadString(IDS_PRINTED_UNREGISTERED));
-				}
-
-				CRect rectSubtitle((INT)(Spacer*3.5), (INT)(Spacer*2.15), rect.right, (INT)(Spacer*3.0));
-				dc.DrawText(Subtitle, rectSubtitle, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP);
-
-				dc.SelectObject(pOldFont);
+				dc.SelectObject(&fnt);
+				dc.DrawText(_T("Test"), rectPage, DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS | DT_TOP | DT_LEFT);
 
 				dc.EndPage();
 			}
