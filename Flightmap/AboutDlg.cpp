@@ -18,7 +18,7 @@ AboutDlg::AboutDlg(CWnd* pParent)
 	m_UseBgImages = theApp.m_UseBgImages;
 
 	m_pLogo = new CGdiPlusBitmapResource();
-	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP, _T("PNG"), AfxGetResourceHandle()));
+	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP_128, _T("PNG"), AfxGetResourceHandle()));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 }

@@ -383,7 +383,7 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 			fnt.CreatePointFont(120, _T("Tahoma"), &dc);
 			CFont* pOldFont = dc.SelectObject(&fnt);
 
-			CPen pen(PS_SOLID, 4, (COLORREF)0x808080);
+			CPen pen(PS_SOLID, 4, (COLORREF)0x606060);
 			CPen* pOldPen = dc.SelectObject(&pen);
 
 			const UINT cColumns = 9;

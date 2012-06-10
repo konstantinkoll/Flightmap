@@ -545,7 +545,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Flightmap.png"
+			RelativePath=".\Flightmap_128.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Flightmap_256.png"
 			>
 		</File>
 		<File

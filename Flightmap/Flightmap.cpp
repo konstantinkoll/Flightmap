@@ -353,7 +353,7 @@ void CFlightmapApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 
 void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di)
 {
-	CGdiPlusBitmapResource Logo(IDB_FLIGHTMAP, _T("PNG"));
+	CGdiPlusBitmapResource Logo(IDB_FLIGHTMAP_256, _T("PNG"));
 
 	Graphics g(dc);
 	g.SetPageUnit(UnitPixel);

@@ -47,14 +47,14 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		for (INT a=0; a<5; a++)
 			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
 
-		l = m_pLogo->m_pBitmap->GetWidth()/2;
-		h = m_pLogo->m_pBitmap->GetHeight()/2;
+		l = m_pLogo->m_pBitmap->GetWidth();
+		h = m_pLogo->m_pBitmap->GetHeight();
 		if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
 		{
 			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
 
 			if (m_pSanta)
-				g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-17, 128, 128);
+				g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-17);
 		}
 	}
 	else
@@ -82,7 +82,7 @@ INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_pBackdrop = new CGdiPlusBitmapResource(IDB_DOCKED, _T("JPG"));
-	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP, _T("PNG"));
+	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP_128, _T("PNG"));
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
