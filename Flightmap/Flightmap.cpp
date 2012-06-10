@@ -357,7 +357,8 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 
 	Graphics g(dc);
 	g.SetPageUnit(UnitPixel);
-	g.DrawImage(Logo.m_pBitmap, (REAL)rect.left, (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
+	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+	g.DrawImage(Logo.m_pBitmap, (REAL)(rect.left*0.95), (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
 
 	CFont fntTitle;
 	fntTitle.CreateFont((INT)Spacer, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET,

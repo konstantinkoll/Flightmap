@@ -112,6 +112,25 @@ void CMapWnd::Print(PRINTDLGEX pdex)
 
 			theApp.PrintPageHeader(dc, rectPage, Spacer, di);
 
+			Bitmap bmp((HBITMAP)m_pBitmap->m_hObject, NULL);
+			const DOUBLE ScX = (DOUBLE)rectPage.Width()/(DOUBLE)bmp.GetWidth();
+			const DOUBLE ScY = (DOUBLE)rectPage.Height()/(DOUBLE)bmp.GetHeight();
+			const DOUBLE Scale = min(ScX, ScY);
+			const INT w = (INT)((DOUBLE)bmp.GetWidth()*Scale);
+			const INT h = (INT)((DOUBLE)bmp.GetHeight()*Scale);
+
+			Graphics g(dc);
+			g.SetPageUnit(UnitPixel);
+			g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+
+			g.DrawImage(&bmp, rectPage.left, rectPage.top, w, h);
+
+			CPen pen(PS_SOLID, 2, (COLORREF)0x000000);
+			CPen* pOldPen = dc.SelectObject(&pen);
+			dc.SelectStockObject(HOLLOW_BRUSH);
+			dc.Rectangle(rectPage.left, rectPage.top, rectPage.left+w, rectPage.top+h);
+			dc.SelectObject(pOldPen);
+
 			dc.EndPage();
 		}
 
