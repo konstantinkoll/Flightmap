@@ -381,10 +381,74 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 
 			CFont fnt;
 			fnt.CreatePointFont(120, _T("Tahoma"), &dc);
+			CFont* pOldFont = dc.SelectObject(&fnt);
 
-			dc.SelectObject(&fnt);
-			dc.DrawText(_T("Test"), rectPage, DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS | DT_TOP | DT_LEFT);
+			CPen pen(PS_SOLID, 4, (COLORREF)0x808080);
+			CPen* pOldPen = dc.SelectObject(&pen);
 
+			const UINT cColumns = 9;
+			const UINT ColumnIDs[cColumns] = { 0, 3, 1, 7, 8, 14, 16, 10, 22 };
+
+			INT ColumnWidths[cColumns];
+			INT TotalWidth = 0;
+			for (UINT a=0; a<cColumns; a++)
+				TotalWidth += FMAttributes[ColumnIDs[a]].RecommendedWidth;
+			for (UINT a=0; a<cColumns; a++)
+				ColumnWidths[a] = (INT)((DOUBLE)FMAttributes[ColumnIDs[a]].RecommendedWidth*(DOUBLE)rectPage.Width()/(DOUBLE)TotalWidth);
+
+			const INT TextHeight = dc.GetTextExtent(_T("Wy")).cy;
+			const INT LineHeight = (INT)((DOUBLE)TextHeight*1.2);
+
+			BOOL FirstRow = TRUE;
+			INT First = 0;
+			INT Last = m_pItinerary->m_Flights.m_ItemCount-1;
+
+			if ((pdex.Flags & PD_SELECTION) && (m_CurrentMainView==DataGrid))
+				((CDataGrid*)m_pWndMainView)->GetSelection(First, Last);
+
+			for (INT a=First; a<=Last; a++)
+			{
+				if (rectPage.Height()<LineHeight)
+				{
+					if (dc.EndPage()<0)
+						goto Ende;
+					if (dc.StartPage()<0)
+						goto Ende;
+
+					rectPage = rect;
+					FirstRow = TRUE;
+				}
+
+				if (FirstRow)
+				{
+					FirstRow = FALSE;
+				}
+				else
+				{
+					const INT z = rectPage.top-(LineHeight-TextHeight)/2;
+					dc.MoveTo(rectPage.left, z);
+					dc.LineTo(rectPage.right, z);
+				}
+
+				INT Left = rectPage.left;
+				for (UINT b=0; b<cColumns; b++)
+				{
+					const INT Width = ColumnWidths[b];
+					CRect rectItem(Left, rectPage.top, Left+Width, rectPage.bottom);
+
+					WCHAR tmpBuf[256];
+					AttributeToString(m_pItinerary->m_Flights.m_Items[a], ColumnIDs[b], tmpBuf, 256);
+					dc.DrawText(tmpBuf, -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_TOP | DT_LEFT);
+
+					Left += Width;
+				}
+
+				rectPage.top += LineHeight;
+			}
+
+Ende:
+			dc.SelectObject(pOldPen);
+			dc.SelectObject(pOldFont);
 			dc.EndPage();
 		}
 

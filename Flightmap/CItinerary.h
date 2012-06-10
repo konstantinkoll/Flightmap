@@ -123,15 +123,15 @@ struct FMAttribute
 
 static const FMAttribute FMAttributes[FMAttributeCount] =
 {
-	{ IDS_COLUMN0, FMTypeAnsiString, offsetof(AIRX_Flight, From.Code), 3, 50, TRUE, TRUE, TRUE },				// From
-	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 100, FALSE, TRUE, TRUE },				// Departure time
+	{ IDS_COLUMN0, FMTypeAnsiString, offsetof(AIRX_Flight, From.Code), 3, 35, TRUE, TRUE, TRUE },				// From
+	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 150, FALSE, TRUE, TRUE },				// Departure time
 	{ IDS_COLUMN2, FMTypeUnicodeString, offsetof(AIRX_Flight, From.Gate), 7, 50, FALSE, TRUE, TRUE },			// Departure gate
-	{ IDS_COLUMN3, FMTypeAnsiString, offsetof(AIRX_Flight, To.Code), 3, 50, TRUE, TRUE, TRUE },					// To
-	{ IDS_COLUMN4, FMTypeDateTime, offsetof(AIRX_Flight, To.Time), 0, 100, FALSE, TRUE, TRUE },					// Arrival time
+	{ IDS_COLUMN3, FMTypeAnsiString, offsetof(AIRX_Flight, To.Code), 3, 35, TRUE, TRUE, TRUE },					// To
+	{ IDS_COLUMN4, FMTypeDateTime, offsetof(AIRX_Flight, To.Time), 0, 150, FALSE, TRUE, TRUE },					// Arrival time
 	{ IDS_COLUMN5, FMTypeUnicodeString, offsetof(AIRX_Flight, To.Gate), 7, 50, FALSE, TRUE, TRUE },				// Arrival gate
 	{ IDS_COLUMN6, FMTypeDistance, offsetof(AIRX_Flight, DistanceNM), 0, 140, TRUE, TRUE, FALSE },				// Distance
 	{ IDS_COLUMN7, FMTypeUnicodeString, offsetof(AIRX_Flight, Carrier), 63, 150, TRUE, TRUE, TRUE },			// Carrier
-	{ IDS_COLUMN8, FMTypeAnsiString, offsetof(AIRX_Flight, FlightNo), 7, 100, FALSE, TRUE, TRUE },				// Flight no
+	{ IDS_COLUMN8, FMTypeAnsiString, offsetof(AIRX_Flight, FlightNo), 7, 70, FALSE, TRUE, TRUE },				// Flight no
 	{ IDS_COLUMN9, FMTypeUnicodeString, offsetof(AIRX_Flight, Codeshares), 63, 100, FALSE, FALSE, TRUE },		// Codeshares
 	{ IDS_COLUMN10, FMTypeUnicodeString, offsetof(AIRX_Flight, Equipment), 63, 150, TRUE, TRUE, TRUE },			// Equipment
 	{ IDS_COLUMN11, FMTypeAnsiString, offsetof(AIRX_Flight, Registration), 15, 100, FALSE, TRUE, TRUE },		// Registration
@@ -139,7 +139,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN13, FMTypeClass, offsetof(AIRX_Flight, Class), 0, 75, TRUE, TRUE, TRUE },						// Class
 	{ IDS_COLUMN14, FMTypeAnsiString, offsetof(AIRX_Flight, Seat), 3, 50, TRUE, TRUE, TRUE },					// Seat
 	{ IDS_COLUMN15, FMTypeColor, offsetof(AIRX_Flight, Color), 0, 50, TRUE, FALSE, TRUE },						// Color
-	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 7, 100, FALSE, TRUE, TRUE },				// Etix code
+	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 7, 70, FALSE, TRUE, TRUE },				// Etix code
 	{ IDS_COLUMN17, FMTypeUINT, offsetof(AIRX_Flight, Fare), 15, 100, FALSE, TRUE, TRUE },						// Fare
 	{ IDS_COLUMN18, FMTypeUINT, offsetof(AIRX_Flight, MilesAward), 0 , 70, FALSE, TRUE, TRUE },					// Award miles
 	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 70, FALSE, TRUE, TRUE },					// Status miles
