@@ -24,7 +24,8 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
-	void GetSelection(UINT& First, UINT& Last);
+	BOOL HasSelection();
+	void GetSelection(INT& First, INT& Last);
 	UINT GetCurrentRow();
 
 protected:
@@ -45,7 +46,6 @@ protected:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL HasSelection();
 	void AdjustLayout();
 	void AdjustHeader();
 	void EditCell(BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
@@ -111,7 +111,7 @@ private:
 	INT m_VScrollPos;
 
 	void DoCopy(BOOL Cut);
-	void DoDelete(UINT Anfang, UINT Ende);
+	void DoDelete(INT Anfang, INT Ende);
 	void AutosizeColumn(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);
 };

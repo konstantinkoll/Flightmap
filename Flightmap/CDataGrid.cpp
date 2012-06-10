@@ -113,13 +113,14 @@ BOOL CDataGrid::HasSelection()
 	return p_Itinerary ? (m_SelectionAnchor>=0) && (m_SelectionAnchor<(INT)p_Itinerary->m_Flights.m_ItemCount) : FALSE;
 }
 
-void CDataGrid::GetSelection(UINT& First, UINT& Last)
+void CDataGrid::GetSelection(INT& First, INT& Last)
 {
 	ASSERT(p_Itinerary);
 
 	if (!p_Itinerary->m_Flights.m_ItemCount)
 	{
-		First = Last = 0;
+		First = 0;
+		Last = -1;
 	}
 	else
 		if (HasSelection())
@@ -127,9 +128,9 @@ void CDataGrid::GetSelection(UINT& First, UINT& Last)
 			First = min(m_SelectionAnchor, m_SelectedItem.y);
 			Last = max(m_SelectionAnchor, m_SelectedItem.y);
 
-			if (First>=p_Itinerary->m_Flights.m_ItemCount)
+			if (First>=(INT)p_Itinerary->m_Flights.m_ItemCount)
 				First = 0;
-			if (Last>=p_Itinerary->m_Flights.m_ItemCount)
+			if (Last>=(INT)p_Itinerary->m_Flights.m_ItemCount)
 				Last = p_Itinerary->m_Flights.m_ItemCount-1;
 		}
 		else
@@ -152,13 +153,13 @@ void CDataGrid::DoCopy(BOOL Cut)
 {
 	if (OpenClipboard())
 	{
-		UINT Anfang;
-		UINT Ende;
+		INT Anfang;
+		INT Ende;
 		GetSelection(Anfang, Ende);
 
 		// CF_UNICODETEXT
 		CString Buffer;
-		for (UINT a=Anfang; a<=Ende; a++)
+		for (INT a=Anfang; a<=Ende; a++)
 			Buffer += p_Itinerary->Flight2Text(a);
 
 		EmptyClipboard();
@@ -186,13 +187,16 @@ void CDataGrid::DoCopy(BOOL Cut)
 	}
 }
 
-void CDataGrid::DoDelete(UINT Anfang, UINT Ende)
+void CDataGrid::DoDelete(INT Anfang, INT Ende)
 {
-	p_Itinerary->DeleteFlights(Anfang, Ende-Anfang+1);
-	p_Itinerary->m_IsModified = TRUE;
+	if (Ende>=Anfang)
+	{
+		p_Itinerary->DeleteFlights(Anfang, Ende-Anfang+1);
+		p_Itinerary->m_IsModified = TRUE;
 
-	m_SelectionAnchor = -1;
-	AdjustLayout();
+		m_SelectionAnchor = -1;
+		AdjustLayout();
+	}
 }
 
 void CDataGrid::AdjustLayout()
@@ -1574,8 +1578,8 @@ void CDataGrid::OnDelete()
 	ASSERT(p_Itinerary);
 	ASSERT(HasSelection());
 
-	UINT Anfang;
-	UINT Ende;
+	INT Anfang;
+	INT Ende;
 	GetSelection(Anfang, Ende);
 
 	DoDelete(Anfang, Ende);

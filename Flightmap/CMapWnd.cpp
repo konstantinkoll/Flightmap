@@ -42,10 +42,12 @@ BOOL CMapWnd::Create()
 	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
-void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName)
+void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title)
 {
 	if (m_pBitmap)
 		delete m_pBitmap;
+
+	m_Title = Title;
 
 	CString caption;
 	ENSURE(caption.LoadString(IDR_MAP));
@@ -68,6 +70,60 @@ void CMapWnd::ExportMap(CString Filename, GUID guidFileType)
 
 	theApp.SaveBitmap(m_pBitmap, Filename, guidFileType, FALSE);
 }
+
+void CMapWnd::Print(PRINTDLGEX pdex)
+{
+	ASSERT(m_pBitmap);
+
+	// Device Context
+	CDC dc;
+	dc.Attach(pdex.hDC);
+
+	// Landscape
+	LPDEVMODE lp = (LPDEVMODE)GlobalLock(pdex.hDevMode);
+	ASSERT(lp);
+	lp->dmOrientation = DMORIENT_LANDSCAPE;
+	lp->dmFields |= DM_ORIENTATION;
+	dc.ResetDC(lp);
+	GlobalUnlock(pdex.hDevMode);
+
+	// Document
+	DOCINFO di;
+	ZeroMemory(&di, sizeof(di));
+	di.cbSize = sizeof(DOCINFO);
+	di.lpszDocName = m_Title;
+
+	// Printing
+	dc.SetMapMode(MM_TEXT);
+	dc.SetBkMode(TRANSPARENT);
+
+	INT w = dc.GetDeviceCaps(HORZRES);
+	INT h = dc.GetDeviceCaps(VERTRES);
+	const DOUBLE Spacer = (w/40.0);
+
+	CRect rect(0, 0, w, h);
+	rect.DeflateRect((INT)Spacer, (INT)Spacer);
+
+	if (dc.StartDoc(&di)>=0)
+	{
+		if (dc.StartPage()>=0)
+		{
+			CRect rectPage(rect);
+
+			theApp.PrintPageHeader(dc, rectPage, Spacer, di);
+
+			dc.EndPage();
+		}
+
+		dc.EndDoc();
+	}
+
+	if (pdex.hDevMode)
+		GlobalFree(pdex.hDevMode);
+	if (pdex.hDevNames)
+		GlobalFree(pdex.hDevNames);
+}
+
 
 BOOL CMapWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
@@ -101,6 +157,8 @@ BEGIN_MESSAGE_MAP(CMapWnd, CMainWindow)
 
 	ON_COMMAND(IDM_MAPWND_COPY, OnMapWndCopy)
 	ON_COMMAND(IDM_MAPWND_SAVEAS, OnMapWndSaveAs)
+	ON_COMMAND(IDM_MAPWND_PRINT, OnMapWndPrint)
+	ON_COMMAND(IDM_MAPWND_PRINT_QUICK, OnMapWndPrintQuick)
 	ON_COMMAND(IDM_MAPWND_CLOSE, OnMapWndClose)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAPWND_COPY, IDM_MAPWND_CLOSE, OnUpdateMapWndCommands)
 
@@ -273,6 +331,32 @@ void CMapWnd::OnMapWndSaveAs()
 						ExportMap(dlg.GetPathName(), ImageFormatTIFF);
 					}
 	}
+}
+
+void CMapWnd::OnMapWndPrint()
+{
+	CPrintDialogEx dlg(PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC, this);
+	if (SUCCEEDED(dlg.DoModal()))
+	{
+		if (dlg.m_pdex.dwResultAction!=PD_RESULT_PRINT)
+			return;
+
+		Print(dlg.m_pdex);
+	}
+}
+
+void CMapWnd::OnMapWndPrintQuick()
+{
+	CPrintDialogEx dlg(FALSE);
+
+	ZeroMemory(&dlg.m_pdex, sizeof(dlg.m_pdex));
+	dlg.m_pdex.lStructSize = sizeof(dlg.m_pdex);
+	dlg.m_pdex.hwndOwner = GetSafeHwnd();
+	dlg.m_pdex.Flags = PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC;
+	dlg.m_pdex.nStartPage = (DWORD)-1;
+
+	if (dlg.GetDefaults())
+		Print(dlg.m_pdex);
 }
 
 void CMapWnd::OnMapWndClose()

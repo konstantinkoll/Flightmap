@@ -21,7 +21,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create();
-	void SetBitmap(CBitmap* pBitmap, CString DisplayName=_T(""));
+	void SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title);
 
 protected:
 	HICON m_hIcon;
@@ -29,6 +29,7 @@ protected:
 	CMapView m_wndMapView;
 
 	void ExportMap(CString Filename, GUID guidFileType);
+	void Print(PRINTDLGEX pdex);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -38,6 +39,8 @@ protected:
 
 	afx_msg void OnMapWndCopy();
 	afx_msg void OnMapWndSaveAs();
+	afx_msg void OnMapWndPrint();
+	afx_msg void OnMapWndPrintQuick();
 	afx_msg void OnMapWndClose();
 	afx_msg void OnUpdateMapWndCommands(CCmdUI* pCmdUI);
 
@@ -47,4 +50,7 @@ protected:
 	afx_msg void OnMapExportTIFF();
 	afx_msg void OnUpdateMapExportCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CString m_Title;
 };

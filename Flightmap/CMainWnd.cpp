@@ -195,13 +195,13 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 
 	if (m_pItinerary)
 	{
-		UINT First = 0;
-		UINT Last = m_pItinerary->m_Flights.m_ItemCount-1;
+		INT First = 0;
+		INT Last = m_pItinerary->m_Flights.m_ItemCount-1;
 
 		if ((Selected) && (m_CurrentMainView==DataGrid))
 			((CDataGrid*)m_pWndMainView)->GetSelection(First, Last);
 
-		for (UINT a=First; a<=Last; a++)
+		for (INT a=First; a<=Last; a++)
 			pKitchen->AddFlight(m_pItinerary->m_Flights.m_Items[a]);
 	}
 
@@ -338,6 +338,65 @@ void CMainWnd::ExportText(CString FileName)
 	}
 }
 
+void CMainWnd::Print(PRINTDLGEX pdex)
+{
+	ASSERT(m_pItinerary);
+
+	// Device Context
+	CDC dc;
+	dc.Attach(pdex.hDC);
+
+	// Landscape
+	LPDEVMODE lp = (LPDEVMODE)GlobalLock(pdex.hDevMode);
+	ASSERT(lp);
+	lp->dmOrientation = DMORIENT_LANDSCAPE;
+	lp->dmFields |= DM_ORIENTATION;
+	dc.ResetDC(lp);
+	GlobalUnlock(pdex.hDevMode);
+
+	// Document
+	DOCINFO di;
+	ZeroMemory(&di, sizeof(di));
+	di.cbSize = sizeof(DOCINFO);
+	di.lpszDocName = m_pItinerary->m_Metadata.Title[0]!=L'\0' ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName.GetBuffer();
+
+	// Printing
+	dc.SetMapMode(MM_TEXT);
+	dc.SetBkMode(TRANSPARENT);
+
+	INT w = dc.GetDeviceCaps(HORZRES);
+	INT h = dc.GetDeviceCaps(VERTRES);
+	const DOUBLE Spacer = (w/40.0);
+
+	CRect rect(0, 0, w, h);
+	rect.DeflateRect((INT)Spacer, (INT)Spacer);
+
+	if (dc.StartDoc(&di)>=0)
+	{
+		if (dc.StartPage()>=0)
+		{
+			CRect rectPage(rect);
+
+			theApp.PrintPageHeader(dc, rectPage, Spacer, di);
+
+			CFont fnt;
+			fnt.CreatePointFont(120, _T("Tahoma"), &dc);
+
+			dc.SelectObject(&fnt);
+			dc.DrawText(_T("Test"), rectPage, DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS | DT_TOP | DT_LEFT);
+
+			dc.EndPage();
+		}
+
+		dc.EndDoc();
+	}
+
+	if (pdex.hDevMode)
+		GlobalFree(pdex.hDevMode);
+	if (pdex.hDevNames)
+		GlobalFree(pdex.hDevNames);
+}
+
 
 BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_CREATE()
@@ -362,6 +421,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
 	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveOther)
 	ON_COMMAND(IDM_FILE_PRINT, OnFilePrint)
+	ON_COMMAND(IDM_FILE_PRINT_QUICK, OnFilePrintQuick)
 	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -807,66 +867,35 @@ void CMainWnd::OnFilePrint()
 {
 	ASSERT(m_pItinerary);
 
-	CPrintDialogEx dlg(PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC, this);
+	DWORD Flags = PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC;
+	if (m_CurrentMainView==DataGrid)
+		if (((CDataGrid*)m_pWndMainView)->HasSelection())
+			Flags &= ~PD_NOSELECTION;
+
+	CPrintDialogEx dlg(Flags, this);
 	if (SUCCEEDED(dlg.DoModal()))
 	{
 		if (dlg.m_pdex.dwResultAction!=PD_RESULT_PRINT)
 			return;
 
-		// Device Context
-		CDC dc;
-		dc.Attach(dlg.GetPrinterDC());
-
-		// Landscape
-		LPDEVMODE lp = (LPDEVMODE)GlobalLock(dlg.m_pdex.hDevMode);
-		ASSERT(lp);
-		lp->dmOrientation = DMORIENT_LANDSCAPE;
-		lp->dmFields |= DM_ORIENTATION;
-		dc.ResetDC(lp);
-		GlobalUnlock(dlg.m_pdex.hDevMode);
-
-		// Document
-		DOCINFO di;
-		ZeroMemory(&di, sizeof(di));
-		di.cbSize = sizeof(DOCINFO);
-		di.lpszDocName = m_pItinerary->m_Metadata.Title[0]!=L'\0' ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName.GetBuffer();
-
-		// Printing
-		dc.SetMapMode(MM_TEXT);
-		dc.SetBkMode(TRANSPARENT);
-
-		INT w = dc.GetDeviceCaps(HORZRES);
-		INT h = dc.GetDeviceCaps(VERTRES);
-		const DOUBLE Spacer = (w/40.0);
-
-		CRect rect(0, 0, w, h);
-		rect.DeflateRect((INT)Spacer, (INT)Spacer);
-
-		if (dc.StartDoc(&di)>=0)
-		{
-			if (dc.StartPage()>=0)
-			{
-				CRect rectPage(rect);
-
-				theApp.PrintPageHeader(dc, rectPage, Spacer, di);
-
-				CFont fnt;
-				fnt.CreatePointFont(120, _T("Tahoma"), &dc);
-
-				dc.SelectObject(&fnt);
-				dc.DrawText(_T("Test"), rectPage, DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS | DT_TOP | DT_LEFT);
-
-				dc.EndPage();
-			}
-
-			dc.EndDoc();
-		}
-
-		if (dlg.m_pdex.hDevMode)
-			GlobalFree(dlg.m_pdex.hDevMode);
-		if (dlg.m_pdex.hDevNames)
-			GlobalFree(dlg.m_pdex.hDevNames);
+		Print(dlg.m_pdex);
 	}
+}
+
+void CMainWnd::OnFilePrintQuick()
+{
+	ASSERT(m_pItinerary);
+
+	CPrintDialogEx dlg(FALSE);
+
+	ZeroMemory(&dlg.m_pdex, sizeof(dlg.m_pdex));
+	dlg.m_pdex.lStructSize = sizeof(dlg.m_pdex);
+	dlg.m_pdex.hwndOwner = GetSafeHwnd();
+	dlg.m_pdex.Flags = PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC;
+	dlg.m_pdex.nStartPage = (DWORD)-1;
+
+	if (dlg.GetDefaults())
+		Print(dlg.m_pdex);
 }
 
 void CMainWnd::OnFileProperties()
@@ -925,7 +954,7 @@ void CMainWnd::OnMapOpen()
 
 	CMapWnd* pFrame = new CMapWnd();
 	pFrame->Create();
-	pFrame->SetBitmap(pBitmap, m_pItinerary->m_DisplayName);
+	pFrame->SetBitmap(pBitmap, m_pItinerary->m_DisplayName, m_pItinerary->m_Metadata.Title[0]!=L'\0' ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName);
 	pFrame->ShowWindow(SW_SHOW);
 }
 
