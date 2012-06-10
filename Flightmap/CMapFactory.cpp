@@ -495,7 +495,7 @@ Skip:
 		g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
 		Bitmap bmp((HBITMAP)pBitmap->m_hObject, NULL);
-		g.DrawImage(&bmp, Rect(-1, -1, L+1, H+1), 0, 0, Width, Height, UnitPixel);
+		g.DrawImage(&bmp, Rect(-1, -1, L+2, H+2), 0, 0, Width, Height, UnitPixel);
 
 		dc.SelectObject(pOldBitmap);
 
