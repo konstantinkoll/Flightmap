@@ -29,6 +29,7 @@ protected:
 	CMapView m_wndMapView;
 
 	void ExportMap(CString Filename, GUID guidFileType);
+	void ExportMap(DWORD FilterIndex=3);
 	void Print(PRINTDLGEX pdex);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

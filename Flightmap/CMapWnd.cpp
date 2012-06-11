@@ -71,6 +71,42 @@ void CMapWnd::ExportMap(CString Filename, GUID guidFileType)
 	theApp.SaveBitmap(m_pBitmap, Filename, guidFileType, FALSE);
 }
 
+void CMapWnd::ExportMap(DWORD FilterIndex)
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	dlg.m_ofn.nFilterIndex = FilterIndex;
+	if (dlg.DoModal()==IDOK)
+	{
+		CString ext = dlg.GetFileExt();
+
+		if (ext==_T("bmp"))
+		{
+			ExportMap(dlg.GetPathName(), ImageFormatBMP);
+		}
+		else
+			if (ext==_T("jpg"))
+			{
+				ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+			}
+			else
+				if (ext==_T("png"))
+				{
+					ExportMap(dlg.GetPathName(), ImageFormatPNG);
+				}
+				else
+					if (ext==_T("tif"))
+					{
+						ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+					}
+	}
+}
+
 void CMapWnd::Print(PRINTDLGEX pdex)
 {
 	ASSERT(m_pBitmap);
@@ -321,37 +357,7 @@ void CMapWnd::OnMapWndCopy()
 
 void CMapWnd::OnMapWndSaveAs()
 {
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-	{
-		CString ext = dlg.GetFileExt();
-
-		if (ext==_T("bmp"))
-		{
-			ExportMap(dlg.GetPathName(), ImageFormatBMP);
-		}
-		else
-			if (ext==_T("jpg"))
-			{
-				ExportMap(dlg.GetPathName(), ImageFormatJPEG);
-			}
-			else
-				if (ext==_T("png"))
-				{
-					ExportMap(dlg.GetPathName(), ImageFormatPNG);
-				}
-				else
-					if (ext==_T("tif"))
-					{
-						ExportMap(dlg.GetPathName(), ImageFormatTIFF);
-					}
-	}
+	ExportMap();
 }
 
 void CMapWnd::OnMapWndPrint()
@@ -395,42 +401,22 @@ void CMapWnd::OnUpdateMapWndCommands(CCmdUI* pCmdUI)
 
 void CMapWnd::OnMapExportBMP()
 {
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatBMP);
+	ExportMap(1);
 }
 
 void CMapWnd::OnMapExportJPEG()
 {
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+	ExportMap(2);
 }
 
 void CMapWnd::OnMapExportPNG()
 {
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatPNG);
+	ExportMap(3);
 }
 
 void CMapWnd::OnMapExportTIFF()
 {
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("tif"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+	ExportMap(4);
 }
 
 void CMapWnd::OnUpdateMapExportCommands(CCmdUI* pCmdUI)

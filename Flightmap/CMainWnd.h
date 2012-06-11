@@ -42,6 +42,8 @@ protected:
 	void ExportCalendar(CString FileName);
 	BOOL ExportGoogleEarth(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportText(CString FileName);
+	void ExportMap(DWORD FilterIndex=3, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	void SaveAs(DWORD FilterIndex=1);
 	void Print(PRINTDLGEX pdex);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

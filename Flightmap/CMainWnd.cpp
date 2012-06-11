@@ -338,6 +338,87 @@ void CMainWnd::ExportText(CString FileName)
 	}
 }
 
+void CMainWnd::ExportMap(DWORD FilterIndex, BOOL Selected, BOOL MergeMetro)
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	dlg.m_ofn.nFilterIndex = FilterIndex;
+	if (dlg.DoModal()==IDOK)
+	{
+		CString ext = dlg.GetFileExt();
+
+		if (ext==_T("bmp"))
+		{
+			ExportMap(dlg.GetPathName(), ImageFormatBMP, Selected, MergeMetro);
+		}
+		else
+			if (ext==_T("jpg"))
+			{
+				ExportMap(dlg.GetPathName(), ImageFormatJPEG, Selected, MergeMetro);
+			}
+			else
+				if (ext==_T("png"))
+				{
+					ExportMap(dlg.GetPathName(), ImageFormatPNG, Selected, MergeMetro);
+				}
+				else
+					if (ext==_T("tif"))
+					{
+						ExportMap(dlg.GetPathName(), ImageFormatTIFF, Selected, MergeMetro);
+					}
+	}
+}
+
+void CMainWnd::SaveAs(DWORD FilterIndex)
+{
+	CString Extensions;
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_AIRX, _T("airx"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T("kml"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"));
+	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TXT, _T("txt"), TRUE);
+
+	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	dlg.m_ofn.nFilterIndex = FilterIndex;
+	if (dlg.DoModal()==IDOK)
+	{
+		CString Ext = dlg.GetFileExt().MakeLower();
+		if (Ext==_T("airx"))
+		{
+			if (m_CurrentMainView==DataGrid)
+				m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
+
+			m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
+			UpdateWindowStatus();
+		}
+		if (Ext==_T("bmp"))
+			ExportMap(dlg.GetPathName(), ImageFormatBMP);
+		if (Ext==_T("csv"))
+			ExportExcel(dlg.GetPathName());
+		if (Ext==_T("ics"))
+			ExportCalendar(dlg.GetPathName());
+		if (Ext==_T("kml"))
+			ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
+		if (Ext==_T("jpg"))
+			ExportMap(dlg.GetPathName(), ImageFormatJPEG);
+		if (Ext==_T("png"))
+			ExportMap(dlg.GetPathName(), ImageFormatPNG);
+		if (Ext==_T("tif"))
+			ExportMap(dlg.GetPathName(), ImageFormatTIFF);
+		if (Ext==_T("txt"))
+			ExportText(dlg.GetPathName());
+	}
+}
+
 void CMainWnd::Print(PRINTDLGEX pdex)
 {
 	ASSERT(m_pItinerary);
@@ -833,100 +914,35 @@ void CMainWnd::OnFileSaveAs()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_AIRX, _T("airx"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-	{
-		if (m_CurrentMainView==DataGrid)
-			m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
-
-		m_pItinerary->SaveAIRX(dlg.GetPathName());
-		UpdateWindowStatus();
-	}
+	SaveAs();
 }
 
 void CMainWnd::OnFileSaveCSV()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("csv"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportExcel(dlg.GetPathName());
+	SaveAs(3);
 }
 
 void CMainWnd::OnFileSaveICS()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("ics"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportCalendar(dlg.GetPathName());
+	SaveAs(4);
 }
 
 void CMainWnd::OnFileSaveTXT()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TXT, _T("txt"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportText(dlg.GetPathName());
+	SaveAs(9);
 }
 
 void CMainWnd::OnFileSaveOther()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_AIRX, _T("airx"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_CSV, _T("csv"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_ICS, _T("ics"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T("kml"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"));
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TXT, _T("txt"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-	{
-		CString Ext = dlg.GetFileExt().MakeLower();
-		if (Ext==_T("airx"))
-		{
-			if (m_CurrentMainView==DataGrid)
-				m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
-
-			m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
-			UpdateWindowStatus();
-		}
-		if (Ext==_T("bmp"))
-			ExportMap(dlg.GetPathName(), ImageFormatBMP);
-		if (Ext==_T("csv"))
-			ExportExcel(dlg.GetPathName());
-		if (Ext==_T("ics"))
-			ExportCalendar(dlg.GetPathName());
-		if (Ext==_T("kml"))
-			ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
-		if (Ext==_T("jpg"))
-			ExportMap(dlg.GetPathName(), ImageFormatJPEG);
-		if (Ext==_T("png"))
-			ExportMap(dlg.GetPathName(), ImageFormatPNG);
-		if (Ext==_T("tif"))
-			ExportMap(dlg.GetPathName(), ImageFormatTIFF);
-		if (Ext==_T("txt"))
-			ExportText(dlg.GetPathName());
-	}
+	SaveAs();
 }
 
 void CMainWnd::OnFilePrint()
@@ -1148,48 +1164,28 @@ void CMainWnd::OnMapExportBMP()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatBMP, TRUE, theApp.m_MapMergeMetro);
+	ExportMap(1, TRUE, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportJPEG()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_JPEG, _T("jpg"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatJPEG, TRUE, theApp.m_MapMergeMetro);
+	ExportMap(2, TRUE, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportPNG()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_PNG, _T("png"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatPNG, TRUE, theApp.m_MapMergeMetro);
+	ExportMap(3, TRUE, theApp.m_MapMergeMetro);
 }
 
 void CMainWnd::OnMapExportTIFF()
 {
 	ASSERT(m_pItinerary);
 
-	CString Extensions;
-	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_TIFF, _T("tif"), TRUE);
-
-	CFileDialog dlg(FALSE, _T("tif"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
-	if (dlg.DoModal()==IDOK)
-		ExportMap(dlg.GetPathName(), ImageFormatTIFF, TRUE, theApp.m_MapMergeMetro);
+	ExportMap(4, TRUE, theApp.m_MapMergeMetro);
 }
 
 
