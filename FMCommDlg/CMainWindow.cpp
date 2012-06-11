@@ -14,6 +14,7 @@ CMainWindow::CMainWindow()
 {
 	p_App = (FMApplication*)AfxGetApp();
 	p_PopupWindow = NULL;
+	hAccelerator = NULL;
 	m_pDialogMenuBar = NULL;
 	m_Active = TRUE;
 }
@@ -89,6 +90,11 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 			break;
 		}
 	}
+
+	if (hAccelerator)
+		if ((pMsg->message>=WM_KEYFIRST) && (pMsg->message<=WM_KEYLAST))
+			if (TranslateAccelerator(m_hWnd, hAccelerator, pMsg))
+				return TRUE;
 
 	return CWnd::PreTranslateMessage(pMsg);
 }

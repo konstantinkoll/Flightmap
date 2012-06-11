@@ -36,6 +36,7 @@ protected:
 	CWnd* p_PopupWindow;
 	CDialogMenuBar* m_pDialogMenuBar;
 	BOOL m_Active;
+	HACCEL hAccelerator;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

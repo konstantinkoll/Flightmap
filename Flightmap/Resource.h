@@ -258,13 +258,16 @@
 #define IDM_FILEVIEW_COPY               4202
 #define IDM_FILEVIEW_DELETE             4203
 #define IDM_FILEVIEW_RENAME             4204
+#define IDR_ACCELERATOR_MAIN            5000
+#define IDR_ACCELERATOR_MAP             5001
+#define IDR_ACCELERATOR_GLOBE           5002
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        8011
-#define _APS_NEXT_COMMAND_VALUE         32777
+#define _APS_NEXT_RESOURCE_VALUE        8012
+#define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         8039
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif

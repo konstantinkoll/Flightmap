@@ -1258,36 +1258,6 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		switch (nChar)
 		{
-		case 'A':
-			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			{
-				OnSelectAll();
-				return;
-			}
-			break;
-		case 'C':
-			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			{
-				if (HasSelection())
-					OnCopy();
-				return;
-			}
-			break;
-		case 'V':
-			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			{
-				OnPaste();
-				return;
-			}
-			break;
-		case 'X':
-			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			{
-				if (HasSelection())
-					OnCut();
-				return;
-			}
-			break;
 		case VK_F2:
 			EditCell();
 			return;

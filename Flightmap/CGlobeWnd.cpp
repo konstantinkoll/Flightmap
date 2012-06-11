@@ -94,6 +94,8 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMainWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	hAccelerator = LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR_GLOBE));
+
 	m_pDialogMenuBar = new CDialogMenuBar();
 	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS, 1);
 

@@ -1351,10 +1351,6 @@ void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			OnZoomOut();
 		break;
-	case 'L':
-		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			OnJumpToLocation();
-		break;
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 		{

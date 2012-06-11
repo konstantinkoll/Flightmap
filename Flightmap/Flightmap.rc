@@ -118,6 +118,59 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR_MAIN ACCELERATORS 
+BEGIN
+    "^C",           IDM_EDIT_COPY,          ASCII,  NOINVERT
+    VK_INSERT,      IDM_EDIT_COPY,          VIRTKEY, CONTROL, NOINVERT
+    "^X",           IDM_EDIT_CUT,           ASCII,  NOINVERT
+    "^V",           IDM_EDIT_PASTE,         ASCII,  NOINVERT
+    VK_INSERT,      IDM_EDIT_PASTE,         VIRTKEY, SHIFT, NOINVERT
+    "^A",           IDM_EDIT_SELECTALL,     ASCII,  NOINVERT
+    VK_NUMPAD5,     IDM_EDIT_SELECTALL,     VIRTKEY, CONTROL, NOINVERT
+    "^W",           IDM_FILE_CLOSE,         ASCII,  NOINVERT
+    VK_F4,          IDM_FILE_CLOSE,         VIRTKEY, CONTROL, NOINVERT
+    "^N",           IDM_FILE_NEW,           ASCII,  NOINVERT
+    "^O",           IDM_FILE_OPEN,          ASCII,  NOINVERT
+    VK_F12,         IDM_FILE_OPEN,          VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          IDM_FILE_OPEN,          VIRTKEY, CONTROL, ALT, NOINVERT
+    "^P",           IDM_FILE_PRINT,         ASCII,  NOINVERT
+    VK_F12,         IDM_FILE_PRINT,         VIRTKEY, SHIFT, CONTROL, NOINVERT
+    "^S",           IDM_FILE_SAVE,          ASCII,  NOINVERT
+    VK_F12,         IDM_FILE_SAVE,          VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          IDM_FILE_SAVE,          VIRTKEY, SHIFT, ALT, NOINVERT
+    VK_F12,         IDM_FILE_SAVEAS,        VIRTKEY, NOINVERT
+END
+
+IDR_ACCELERATOR_MAP ACCELERATORS 
+BEGIN
+    "^C",           IDM_MAPWND_COPY,        ASCII,  NOINVERT
+    VK_INSERT,      IDM_MAPWND_COPY,        VIRTKEY, CONTROL, NOINVERT
+    "^W",           IDM_MAPWND_CLOSE,       ASCII,  NOINVERT
+    VK_F4,          IDM_MAPWND_CLOSE,       VIRTKEY, CONTROL, NOINVERT
+    "^P",           IDM_MAPWND_PRINT,       ASCII,  NOINVERT
+    VK_F12,         IDM_MAPWND_PRINT,       VIRTKEY, SHIFT, CONTROL, NOINVERT
+    "^S",           IDM_MAPWND_SAVEAS,      ASCII,  NOINVERT
+    VK_F12,         IDM_MAPWND_SAVEAS,      VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          IDM_MAPWND_SAVEAS,      VIRTKEY, SHIFT, ALT, NOINVERT
+    VK_F12,         IDM_MAPWND_SAVEAS,      VIRTKEY, NOINVERT
+END
+
+IDR_ACCELERATOR_GLOBE ACCELERATORS 
+BEGIN
+    "^W",           IDM_GLOBEWND_CLOSE,     ASCII,  NOINVERT
+    VK_F4,          IDM_GLOBEWND_CLOSE,     VIRTKEY, CONTROL, NOINVERT
+    "^L",           IDM_GLOBEVIEW_JUMPTOLOCATION, ASCII,  NOINVERT
+    "^S",           IDM_GLOBEVIEW_SAVEAS,   ASCII,  NOINVERT
+    VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, SHIFT, ALT, NOINVERT
+    VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, NOINVERT
+END
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -340,17 +393,18 @@ BEGIN
     IDS_ATTACHMENTS         "Angehängte Dateien\nKlicken Sie auf das Symbol, um die\nangehängten Dateien zu betrachten."
     IDS_AWARDFLIGHT         "Prämienflug"
     IDS_GROUNDTRANSPORTATION "Bodenbeförderung\nSchiffsreise, Busfahrt o.ä."
-    IDS_BUSINESSTRIP        "Geschäftsreise"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_BUSINESSTRIP        "Geschäftsreise"
     IDS_LEISURETRIP         "Privater Reisegrund"
     IDS_EDITFLIGHT          "Flug bearbeiten"
     IDS_CUEBANNER_DATETIME  " JJJJ-MM-TT SS:MM"
     IDS_CUEBANNER_TIME      " SS:MM"
     IDS_CUEBANNER_ROUTE     " z.B. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
-    IDS_PRINTED_UNREGISTERED "Gedruckt mit einer nicht registrierten Version von Flightmap – http://flightmap.net/"
+    IDS_PRINTED_UNREGISTERED 
+                            "Gedruckt mit einer nicht registrierten Version von Flightmap – http://flightmap.net/"
     IDS_PRINTED_REGISTERED  "Stand: %s, %s Uhr"
 END
 
@@ -857,17 +911,18 @@ BEGIN
     IDS_ATTACHMENTS         "Attached files\nClick on the icon to view the\nfiles attached to this flight."
     IDS_AWARDFLIGHT         "Award flight"
     IDS_GROUNDTRANSPORTATION "Ground transportation\n(cruise ship, bus etc.)"
-    IDS_BUSINESSTRIP        "Business trip"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_BUSINESSTRIP        "Business trip"
     IDS_LEISURETRIP         "Leisure trip"
     IDS_EDITFLIGHT          "Edit flight"
     IDS_CUEBANNER_DATETIME  " YYYY-MM-DD HH:MM"
     IDS_CUEBANNER_TIME      " HH:MM"
     IDS_CUEBANNER_ROUTE     " e.g. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
-    IDS_PRINTED_UNREGISTERED "Printed with an unregistered version of Flightmap—http://flightmap.net/"
+    IDS_PRINTED_UNREGISTERED 
+                            "Printed with an unregistered version of Flightmap—http://flightmap.net/"
     IDS_PRINTED_REGISTERED  "Current as of %s, %s"
 END
 
