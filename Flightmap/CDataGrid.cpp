@@ -405,8 +405,6 @@ void CDataGrid::EditFlight(CPoint item, INT iSelectPage)
 		p_Itinerary->m_Flights.m_Items[item.y] = dlg.m_Flight;
 		p_Itinerary->m_IsModified = TRUE;
 	}
-
-	return;
 }
 
 void CDataGrid::EnsureVisible(CPoint item)

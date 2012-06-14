@@ -33,5 +33,5 @@ BOOL EditFlightAttachmentsPage::OnInitDialog()
 
 	m_wndFileView.SetData(p_Itinerary, p_Flight);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
