@@ -32,6 +32,7 @@ protected:
 	afx_msg void OnNcPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 
+	afx_msg void OnAdd();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

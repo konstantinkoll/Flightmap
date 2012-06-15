@@ -54,6 +54,7 @@ struct AIRX_Location
 #define AIRX_Business               'J'
 #define AIRX_First                  'F'
 #define AIRX_Crew                   'C'
+#define AIRX_Charter                'H'
 
 #define AIRX_MaxAttachmentCount     16
 

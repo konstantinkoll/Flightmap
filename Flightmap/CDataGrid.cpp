@@ -642,6 +642,7 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			{
 			case AIRX_Economy:
 			case AIRX_PremiumEconomy:
+			case AIRX_Charter:
 				dc.FillSolidRect(rect, 0xE0FFE0);
 				break;
 			case AIRX_Business:
@@ -1570,6 +1571,7 @@ void CDataGrid::OnAddRoute()
 		CString resToken;
 		INT Pos = 0;
 		WCHAR DelimiterFound;
+		BOOL Added = FALSE;
 
 		while (Tokenize(dlg.m_Route, resToken, Pos, _T("-/,"), &DelimiterFound))
 		{
@@ -1583,15 +1585,20 @@ void CDataGrid::OnAddRoute()
 
 				CalcDistance(dlg.m_FlightTemplate, TRUE);
 				p_Itinerary->m_Flights.AddItem(dlg.m_FlightTemplate);
+
+				Added = TRUE;
 			}
 
 			if (DelimiterFound==L',')
 				To.Empty();
 		}
 
-		AdjustLayout();
-		SelectItem(CPoint(m_SelectedItem.x, p_Itinerary->m_Flights.m_ItemCount-1), FALSE);
-		p_Itinerary->m_IsModified = TRUE;
+		if (Added)
+		{
+			AdjustLayout();
+			SelectItem(CPoint(m_SelectedItem.x, p_Itinerary->m_Flights.m_ItemCount-1), FALSE);
+			p_Itinerary->m_IsModified = TRUE;
+		}
 	}
 }
 

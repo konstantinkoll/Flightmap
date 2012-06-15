@@ -34,7 +34,7 @@ void AddRouteDlg::DoDataExchange(CDataExchange* pDX)
 
 		INT Class = 0;
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
-		m_FlightTemplate.Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : AIRX_Unknown;
+		m_FlightTemplate.Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : (Class==5) ? AIRX_Charter : AIRX_Unknown;
 
 		m_FlightTemplate.Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight);
 		m_FlightTemplate.Flags |= m_wndRating.GetRating()<<FMAttributes[21].DataParameter;

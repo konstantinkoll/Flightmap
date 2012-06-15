@@ -23,7 +23,7 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 	INT Class;
 	if (!pDX->m_bSaveAndValidate && (p_Flight->Class!=AIRX_Unknown))
 	{
-		Class = (p_Flight->Class==AIRX_Economy) ? 0 : (p_Flight->Class==AIRX_PremiumEconomy) ? 1 : (p_Flight->Class==AIRX_Business) ? 2 : (p_Flight->Class==AIRX_First) ? 3 : 4;
+		Class = (p_Flight->Class==AIRX_Economy) ? 0 : (p_Flight->Class==AIRX_PremiumEconomy) ? 1 : (p_Flight->Class==AIRX_Business) ? 2 : (p_Flight->Class==AIRX_First) ? 3 : (p_Flight->Class==AIRX_Crew) ? 4 : 5;
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 	}
 
@@ -50,7 +50,7 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 		StringToAttribute(tmpStr.GetBuffer(), *p_Flight, 10);
 
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
-		p_Flight->Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : AIRX_Unknown;
+		p_Flight->Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : (Class==5) ? AIRX_Charter : AIRX_Unknown;
 
 		p_Flight->Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight);
 		p_Flight->Flags |= m_wndRating.GetRating()<<FMAttributes[21].DataParameter;

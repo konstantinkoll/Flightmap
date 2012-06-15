@@ -99,7 +99,7 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 		break;
 	case FMTypeClass:
 		pEdit->SetLimitText(2);
-		pEdit->SetValidChars(_T("CFJYcfjy+"));
+		pEdit->SetValidChars(_T("CFHJYcfhjy+"));
 		break;
 	case FMTypeDateTime:
 		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_DATETIME));
@@ -315,6 +315,9 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		case AIRX_Crew:
 			wcscpy_s(pBuffer, cCount, L"Crew/DCM");
 			break;
+		case AIRX_Charter:
+			wcscpy_s(pBuffer, cCount, L"Charter");
+			break;
 		}
 		break;
 	case FMTypeColor:
@@ -508,7 +511,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 			*pWChar = (WCHAR)toupper(*pWChar);
 			pWChar++;
 		}
-		*((CHAR*)pData) = (wcscmp(L"Y", tmpStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", tmpStr)==0) ? AIRX_PremiumEconomy : (wcscmp(L"J", tmpStr)==0) ? AIRX_Business : (wcscmp(L"F", tmpStr)==0) ? AIRX_First : ((wcscmp(L"C", tmpStr)==0) || (wcscmp(L"CREW", tmpStr)==0) || (wcscmp(L"CREW/DCM", tmpStr)==0)) ? AIRX_Crew : AIRX_Unknown;
+		*((CHAR*)pData) = (wcscmp(L"Y", tmpStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", tmpStr)==0) ? AIRX_PremiumEconomy : (wcscmp(L"J", tmpStr)==0) ? AIRX_Business : (wcscmp(L"F", tmpStr)==0) ? AIRX_First : ((wcscmp(L"C", tmpStr)==0) || (wcscmp(L"CREW", tmpStr)==0) || (wcscmp(L"CREW/DCM", tmpStr)==0)) ? AIRX_Crew : ((wcscmp(L"H", tmpStr)==0) || (wcscmp(L"CHARTER", tmpStr)==0)) ? AIRX_Charter : AIRX_Unknown;
 		break;
 	case FMTypeColor:
 		ScanColor(pStr, *((COLORREF*)pData));

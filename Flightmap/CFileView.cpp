@@ -111,6 +111,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
 
+	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILEVIEW_ADD, IDM_FILEVIEW_RENAME, OnUpdateCommands)
 END_MESSAGE_MAP()
 
@@ -135,6 +136,11 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
+
+void CFileView::OnAdd()
+{
+	MessageBox(_T("Test"));
+}
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
