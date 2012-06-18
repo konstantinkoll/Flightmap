@@ -92,6 +92,14 @@ void CFileView::Init()
 	m_wndExplorerList.SetImageList(&pApp->m_SystemImageListSmall, LVSIL_SMALL);
 	m_wndExplorerList.SetImageList(&pApp->m_SystemImageListLarge, LVSIL_NORMAL);
 
+	for (UINT a=0; a<4; a++)
+	{
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_SUBITEM_NAME+a));
+
+		m_wndExplorerList.AddColumn(a, tmpStr);
+	}
+
 	IMAGEINFO ii;
 	pApp->m_SystemImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
@@ -100,6 +108,7 @@ void CFileView::Init()
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
+	m_wndExplorerList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
 	m_wndExplorerList.SetFocus();
 
 	AdjustLayout();
@@ -110,6 +119,8 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
+	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
+	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILEVIEW_ADD, IDM_FILEVIEW_RENAME, OnUpdateCommands)
@@ -136,10 +147,72 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
+void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLVDISPINFO *pDispInfo = (NMLVDISPINFO*)pNMHDR;
+	AIRX_Attachment* pAttachment = p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[pDispInfo->item.iItem]] : &p_Itinerary->m_Attachments.m_Items[pDispInfo->item.iItem];
+
+	// Columns
+	if (pDispInfo->item.mask & LVIF_COLUMNS)
+	{
+		pDispInfo->item.cColumns = 2;
+		pDispInfo->item.puColumns[0] = 3;
+		pDispInfo->item.puColumns[1] = 1;
+	}
+
+	// Text
+	if (pDispInfo->item.mask & LVIF_TEXT)
+	{
+		switch (pDispInfo->item.iSubItem)
+		{
+		case 0:
+			pDispInfo->item.pszText = pAttachment->Name;
+			break;
+		case 1:
+			StrFormatByteSize(pAttachment->Size, pDispInfo->item.pszText, pDispInfo->item.cchTextMax);
+			break;
+		case 2:
+		case 3:
+			wcscpy_s(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, L"XXX");
+			break;
+		}
+	}
+
+	// Icon
+	if (pDispInfo->item.mask & LVIF_IMAGE)
+	{
+		if (pAttachment->IconID==-1)
+		{
+			CString tmpStr(pAttachment->Name);
+			INT Pos = tmpStr.ReverseFind(L'.');
+
+			CString Ext = (Pos==-1) ? _T("*") : tmpStr.Mid(Pos);
+
+			SHFILEINFO sfi;
+			pAttachment->IconID = SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? sfi.iIcon : 3;
+		}
+
+		pDispInfo->item.iImage = pAttachment->IconID;
+	}
+
+	*pResult = 0;
+}
+
+void CFileView::OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	if (pNMListView->uChanged & LVIF_STATE)
+		m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+
+	*pResult = 0;
+}
+
 
 void CFileView::OnAdd()
 {
-	MessageBox(_T("Test"));
+	if (p_Itinerary->AddAttachment(*p_Flight, _T("I:\\Like.png")))
+		Reload();
 }
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -154,7 +227,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	default:
 		if (m_wndExplorerList.GetItemCount())
-			b = (m_wndExplorerList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED)!=-1);
+			b = (m_wndExplorerList.GetNextItem(-1, LVNI_SELECTED)!=-1);
 	}
 
 	pCmdUI->Enable(b);

@@ -81,7 +81,7 @@ struct AIRX_Flight
 	WCHAR Codeshares[64];
 	UINT FlightTime;
 	UINT AttachmentCount;
-	UINT Attachments[16];
+	UINT Attachments[AIRX_MaxAttachmentCount];
 };
 
 struct AIRX_Attachment
@@ -91,6 +91,7 @@ struct AIRX_Attachment
 	FILETIME Modified;
 	UINT Size;
 	LPVOID pData;
+	INT IconID;
 };
 
 
@@ -173,6 +174,8 @@ public:
 	void AddFlight();
 	void InsertFlights(UINT Row, UINT Count=1, AIRX_Flight* pFlights=NULL);
 	void DeleteFlights(UINT Row, UINT Count=1);
+
+	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
 
 	AIRX_Metadata m_Metadata;
 	DynArray<AIRX_Flight> m_Flights;

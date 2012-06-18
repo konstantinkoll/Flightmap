@@ -776,6 +776,8 @@ void CItinerary::OpenAIRX(CString FileName)
 
 						if (ReadRecord(f, &Attachment, sizeof(Attachment), Header.AttachmentRecordSize))
 						{
+							Attachment.IconID = -1;
+
 							if (pData)
 								free(pData);
 
@@ -1201,4 +1203,66 @@ void CItinerary::SetDisplayName(CString FileName)
 {
 	const WCHAR* pChar = wcsrchr(FileName, L'\\');
 	m_DisplayName = pChar ? pChar+1 : FileName;
+}
+
+BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
+{
+	if (Flight.AttachmentCount>=AIRX_MaxAttachmentCount)
+		return FALSE;
+
+	// FindFirst
+	WIN32_FIND_DATA ffd;
+	HANDLE hFind = FindFirstFile(Filename, &ffd);
+
+	if (hFind==INVALID_HANDLE_VALUE)
+		return FALSE;
+
+	AIRX_Attachment Attachment;
+	ZeroMemory(&Attachment, sizeof(Attachment));
+
+	INT Pos = Filename.ReverseFind(L'\\');
+	wcscpy_s(Attachment.Name, MAX_PATH, Filename.Mid(Pos==-1 ? 0 : Pos+1));
+	Attachment.Size = (((INT64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
+	Attachment.Created = ffd.ftCreationTime;
+	Attachment.Modified = ffd.ftLastWriteTime;
+	Attachment.IconID = -1;
+
+	FindClose(hFind);
+
+	Attachment.pData = malloc(Attachment.Size);
+	if (!Attachment.pData)
+		return FALSE;
+
+	BOOL Res = FALSE;
+
+	// Read file
+	CFile f;
+	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
+	{
+		try
+		{
+			f.Read(Attachment.pData, Attachment.Size);
+			f.Close();
+
+			if (m_Attachments.AddItem(Attachment))
+			{
+				Flight.Attachments[Flight.AttachmentCount++] = m_Attachments.m_ItemCount-1;
+				Res = m_IsModified = TRUE;
+			}
+		}
+		catch(CFileException ex)
+		{
+			f.Close();
+			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
+		}
+	}
+	else
+	{
+		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
+	}
+
+	if (!Res && (Attachment.pData))
+		free(Attachment.pData);
+
+	return Res;
 }

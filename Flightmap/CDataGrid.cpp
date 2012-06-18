@@ -405,6 +405,15 @@ void CDataGrid::EditFlight(CPoint item, INT iSelectPage)
 		p_Itinerary->m_Flights.m_Items[item.y] = dlg.m_Flight;
 		p_Itinerary->m_IsModified = TRUE;
 	}
+	else
+		if (NewLine)
+		{
+		}
+		else
+		{
+			p_Itinerary->m_Flights.m_Items[item.y].AttachmentCount = dlg.m_Flight.AttachmentCount;
+			memcpy_s(p_Itinerary->m_Flights.m_Items[item.y].Attachments, AIRX_MaxAttachmentCount*sizeof(UINT), dlg.m_Flight.Attachments, AIRX_MaxAttachmentCount*sizeof(UINT));
+		}
 }
 
 void CDataGrid::EnsureVisible(CPoint item)
@@ -1448,7 +1457,7 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
 
 		CDialogMenuPopup* pPopup = new CDialogMenuPopup();
-		pPopup->Create(this, IDB_MENUDETAILS_32, IDB_MENUDETAILS_16);
+		pPopup->Create((CMainWindow*)GetTopLevelParent(), IDB_MENUDETAILS_32, IDB_MENUDETAILS_16);
 		pPopup->AddCommand(IDM_DETAILS_AUTOSIZEALL, 0);
 		pPopup->AddCommand(IDM_DETAILS_AUTOSIZE);
 		pPopup->AddSeparator();

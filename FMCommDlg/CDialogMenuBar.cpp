@@ -789,9 +789,6 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 	// Create
 	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 
-	CMainWindow* pTopLevelParent = (CMainWindow*)pParentWnd->GetTopLevelParent();
-	pTopLevelParent->RegisterPopupWindow(this);
-
 	BOOL bDropShadow;
 	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
 	if (bDropShadow)
@@ -800,7 +797,12 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 	BOOL res = CWnd::CreateEx(WS_EX_TOPMOST, className, _T(""), WS_BORDER | WS_POPUP, 0, 0, 0, 0, pParentWnd->GetSafeHwnd(), NULL);
 
-	SetOwner(pTopLevelParent);
+	if (pParentWnd)
+	{
+		CMainWindow* pTopLevelParent = (CMainWindow*)pParentWnd->GetTopLevelParent();
+		pTopLevelParent->RegisterPopupWindow(this);
+		SetOwner(pTopLevelParent);
+	}
 
 	return res;
 }
@@ -819,7 +821,7 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 		}
 		break;
 	case WM_SYSKEYDOWN:
-		if (pMsg->wParam==VK_F4)
+		if ((pMsg->wParam==VK_F4) && (GetParent()))
 		{
 			GetOwner()->PostMessage(WM_CLOSE);
 			return TRUE;
@@ -1943,11 +1945,11 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	if (CmdID)
 		ENSURE(m_Caption.LoadString(CmdID));
 
-	INT pos = m_Caption.Find(L'\n');
+	INT pos = m_Caption.ReverseFind(L'\n');
 	if (pos!=-1)
 	{
-		m_Hint = m_Caption.Mid(pos+1);
-		m_Caption.Truncate(pos);
+		m_Hint = m_Caption.Mid(0, pos);
+		m_Caption.Delete(0, pos+1);
 	}
 }
 

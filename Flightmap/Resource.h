@@ -73,6 +73,15 @@
 #define IDS_CUEBANNER_ROUTE             1029
 #define IDS_PRINTED_UNREGISTERED        1030
 #define IDS_PRINTED_REGISTERED          1031
+#define IDS_METADATA_COMMENTS           1032
+#define IDS_METADATA_TITLE_ATLANTIC     1033
+#define IDS_METADATA_TITLE_PACIFIC      1034
+#define IDS_METADATA_KEYWORDS_ATLANTIC  1035
+#define IDS_METADATA_KEYWORDS_PACIFIC   1036
+#define IDS_SUBITEM_NAME                1037
+#define IDS_SUBITEM_SIZE                1038
+#define IDS_SUBITEM_CREATED             1039
+#define IDS_SUBITEM_MODIFIED            1040
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
@@ -107,11 +116,6 @@
 #define IDS_COLUMN21                    1221
 #define IDS_COLUMN22                    1222
 #define IDS_COLUMN23                    1223
-#define IDS_METADATA_COMMENTS           1300
-#define IDS_METADATA_TITLE_ATLANTIC     1301
-#define IDS_METADATA_TITLE_PACIFIC      1302
-#define IDS_METADATA_KEYWORDS_ATLANTIC  1303
-#define IDS_METADATA_KEYWORDS_PACIFIC   1304
 #define IDD_EDITFLIGHT_ROUTE            2000
 #define IDC_FROM_IATA                   2001
 #define IDC_FROM_SELECT                 2002
@@ -258,6 +262,8 @@
 #define IDM_FILEVIEW_COPY               4202
 #define IDM_FILEVIEW_DELETE             4203
 #define IDM_FILEVIEW_RENAME             4204
+#define IDM_FILEVIEW_ITEM               4250
+#define IDM_FILEVIEW_BACKGROUND         4251
 #define IDR_ACCELERATOR_MAIN            5000
 #define IDR_ACCELERATOR_MAP             5001
 #define IDR_ACCELERATOR_GLOBE           5002
@@ -266,7 +272,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        8012
+#define _APS_NEXT_RESOURCE_VALUE        8013
 #define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         8039
 #define _APS_NEXT_SYMED_VALUE           8007
