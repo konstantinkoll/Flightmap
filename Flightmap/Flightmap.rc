@@ -451,6 +451,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SUBITEM_MODIFIED    "Verändert"
+    IDS_ATTACHMENT_TOOLARGE "Angehängte Dateien dürfen eine Maximalgröße von 1 MB nicht überschreiten!"
+    IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
 END
 
 STRINGTABLE 
@@ -1002,6 +1004,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_SUBITEM_MODIFIED    "Modified"
+    IDS_ATTACHMENT_TOOLARGE "The maximum size for attached files is 1 MB!"
+    IDS_ATTACHMENT_TOOMANY  "The maximum number of attached files is 16 per flight!"
 END
 
 STRINGTABLE 

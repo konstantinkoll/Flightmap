@@ -105,6 +105,7 @@ BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
 	ON_WM_CONTEXTMENU()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -180,4 +181,27 @@ void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
 	}
+}
+
+void CExplorerList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch(nChar)
+	{
+	case VK_F2:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
+			return;
+		}
+		break;
+/*	case VK_DELETE:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			GetOwner()->SendMessage(WM_COMMAND, IDM_STORE_DELETE);
+			return;
+		}
+		break;*/
+	}
+
+	CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }

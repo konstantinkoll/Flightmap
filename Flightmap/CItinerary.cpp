@@ -1208,7 +1208,10 @@ void CItinerary::SetDisplayName(CString FileName)
 BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 {
 	if (Flight.AttachmentCount>=AIRX_MaxAttachmentCount)
+	{
+		FMErrorBox(IDS_ATTACHMENT_TOOMANY, GetActiveWindow());
 		return FALSE;
+	}
 
 	// FindFirst
 	WIN32_FIND_DATA ffd;
@@ -1228,6 +1231,12 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 	Attachment.IconID = -1;
 
 	FindClose(hFind);
+
+	if (Attachment.Size>1024*1024)
+	{
+		FMErrorBox(IDS_ATTACHMENT_TOOLARGE, GetActiveWindow());
+		return FALSE;
+	}
 
 	Attachment.pData = malloc(Attachment.Size);
 	if (!Attachment.pData)

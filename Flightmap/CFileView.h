@@ -27,6 +27,7 @@ protected:
 	CExplorerList m_wndExplorerList;
 
 	void Reload();
+	AIRX_Attachment* GetAttachment(INT idx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnNcPaint();
@@ -34,8 +35,10 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg void OnAdd();
+	afx_msg void OnRename();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

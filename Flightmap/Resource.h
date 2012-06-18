@@ -82,6 +82,8 @@
 #define IDS_SUBITEM_SIZE                1038
 #define IDS_SUBITEM_CREATED             1039
 #define IDS_SUBITEM_MODIFIED            1040
+#define IDS_ATTACHMENT_TOOLARGE         1041
+#define IDS_ATTACHMENT_TOOMANY          1042
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
