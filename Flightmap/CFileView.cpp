@@ -127,6 +127,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
+	ON_WM_INITMENUPOPUP()
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
 	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
 	ON_NOTIFY(LVN_ENDLABELEDIT, 2, OnEndLabelEdit)
@@ -155,6 +156,69 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+{
+	ASSERT(pPopupMenu);
+
+	CCmdUI state;
+	state.m_pMenu = pPopupMenu;
+	ASSERT(state.m_pOther==NULL);
+	ASSERT(state.m_pParentMenu==NULL);
+
+	HMENU hParentMenu;
+	if (AfxGetThreadState()->m_hTrackingMenu==pPopupMenu->m_hMenu)
+	{
+		state.m_pParentMenu = pPopupMenu;
+	}
+	else
+	{
+		hParentMenu = ::GetMenu(m_hWnd);
+		if (hParentMenu)
+		{
+			INT nIndexMax = GetMenuItemCount(hParentMenu);
+			for (INT nIndex=0; nIndex<nIndexMax; nIndex++)
+				if (GetSubMenu(hParentMenu, nIndex)==pPopupMenu->m_hMenu)
+				{
+					state.m_pParentMenu = CMenu::FromHandle(hParentMenu);
+					break;
+				}
+		}
+	}
+
+	state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+	for (state.m_nIndex=0; state.m_nIndex<state.m_nIndexMax; state.m_nIndex++)
+	{
+		state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
+		if (!state.m_nID)
+			continue;
+
+		ASSERT(!state.m_pOther);
+		ASSERT(state.m_pMenu);
+		if (state.m_nID ==(UINT)-1)
+		{
+			state.m_pSubMenu = pPopupMenu->GetSubMenu(state.m_nIndex);
+			if ((!state.m_pSubMenu) || ((state.m_nID=state.m_pSubMenu->GetMenuItemID(0))== 0) || (state.m_nID==(UINT)-1))
+				continue;
+
+			state.DoUpdate(this, TRUE);
+		}
+		else
+		{
+			state.m_pSubMenu = NULL;
+			state.DoUpdate(this, FALSE);
+		}
+
+		UINT nCount = pPopupMenu->GetMenuItemCount();
+		if (nCount<state.m_nIndexMax)
+		{
+			state.m_nIndex -= (state.m_nIndexMax-nCount);
+			while ((state.m_nIndex<nCount) && (pPopupMenu->GetMenuItemID(state.m_nIndex)==state.m_nID))
+				state.m_nIndex++;
+		}
+		state.m_nIndexMax = nCount;
+	}
 }
 
 void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
