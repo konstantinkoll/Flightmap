@@ -69,11 +69,18 @@ void CFileView::SetData(CItinerary* pItinerary, AIRX_Flight* pFlight)
 
 	m_wndExplorerList.SetView(p_Flight ? LV_VIEW_TILE : LV_VIEW_DETAILS);
 	Reload();
+
+	for (UINT a=0; a<4; a++)
+		m_wndExplorerList.SetColumnWidth(a, m_wndExplorerList.GetItemCount()==0 ? 130 : a<3 ? LVSCW_AUTOSIZE_USEHEADER : LVSCW_AUTOSIZE);
 }
 
 void CFileView::Reload()
 {
 	m_wndExplorerList.SetItemCount(p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount);
+
+	if (m_wndExplorerList.GetNextItem(-1, LVIS_FOCUSED)==-1)
+		m_wndExplorerList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 }
 
@@ -105,7 +112,7 @@ void CFileView::Init()
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_SUBITEM_NAME+a));
 
-		m_wndExplorerList.AddColumn(a, tmpStr);
+		m_wndExplorerList.AddColumn(a, tmpStr, a);
 	}
 
 	IMAGEINFO ii;
@@ -118,6 +125,10 @@ void CFileView::Init()
 
 	m_wndExplorerList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
 	m_wndExplorerList.SetFocus();
+
+	CHeaderCtrl* pHeaderCtrl = m_wndExplorerList.GetHeaderCtrl();
+	if (pHeaderCtrl)
+		m_wndHeader.SubclassWindow(pHeaderCtrl->GetSafeHwnd());
 
 	AdjustLayout();
 }

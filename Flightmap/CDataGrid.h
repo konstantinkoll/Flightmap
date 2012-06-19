@@ -31,7 +31,7 @@ public:
 protected:
 	CItinerary* p_Itinerary;
 	CMFCMaskedEdit* p_Edit;
-	CTooltipHeader m_wndHeader;
+	CGridHeader m_wndHeader;
 	ViewParameters m_ViewParameters;
 	FMTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;

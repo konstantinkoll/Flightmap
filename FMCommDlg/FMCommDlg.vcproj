@@ -335,6 +335,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGridHeader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGroupBox.cpp"
 				>
 			</File>
@@ -474,6 +478,10 @@
 			</File>
 			<File
 				RelativePath=".\CGdiPlusBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGridHeader.h"
 				>
 			</File>
 			<File

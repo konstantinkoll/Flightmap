@@ -17,7 +17,7 @@ public:
 	virtual void PreSubclassWindow();
 
 	void AddCategory(INT ID, CString Name, CString Hint=_T(""), BOOL Collapsable=FALSE);
-	void AddColumn(INT ID, CString Name);
+	void AddColumn(INT ID, CString Name, BOOL Right=FALSE);
 	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 
 protected:

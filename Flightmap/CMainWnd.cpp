@@ -1002,6 +1002,9 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_FILE_PREPARE_INSPECT:
+		pCmdUI->Enable(FALSE);
+		break;
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_SAVEAS_AIRX:
@@ -1013,7 +1016,6 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_PRINT_QUICK:
 	case IDM_FILE_PREPARE:
 	case IDM_FILE_PREPARE_PROPERTIES:
-	case IDM_FILE_PREPARE_INSPECT:
 	case IDM_FILE_PREPARE_ATTACHMENTS:
 	case IDM_FILE_CLOSE:
 		pCmdUI->Enable(m_pItinerary!=NULL);

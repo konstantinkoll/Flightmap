@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include <algorithm>
 
 
 // CTooltipHeader
@@ -14,7 +13,16 @@ CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
 	m_Hover = FALSE;
-	m_PressedItem = m_TooltipItem = -1;
+	m_HoverItem = m_PressedItem = m_TrackItem = m_TooltipItem = -1;
+}
+
+void CTooltipHeader::PreSubclassWindow()
+{
+	CHeaderCtrl::PreSubclassWindow();
+
+	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
+	if (!pThreadState->m_pWndInit)
+		Init();
 }
 
 BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
@@ -44,6 +52,16 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	return CHeaderCtrl::PreTranslateMessage(pMsg);
 }
 
+void CTooltipHeader::Init()
+{
+	SetFont(&((FMApplication*)AfxGetApp())->m_DefaultFont);
+
+	m_SortIndicators.Create(IDB_SORTINDICATORS, NULL, 0, 3, 7, 4);
+
+	// Tooltip
+	m_TooltipCtrl.Create(this);
+}
+
 
 BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_CREATE()
@@ -61,12 +79,7 @@ INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CHeaderCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	SetFont(&((FMApplication*)AfxGetApp())->m_DefaultFont);
-
-	m_SortIndicators.Create(IDB_SORTINDICATORS, NULL, 0, 3, 7, 4);
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
+	Init();
 
 	return 0;
 }
@@ -92,7 +105,6 @@ void CTooltipHeader::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	BOOL Themed = IsCtrlThemed();
-	BOOL IsXP = ((FMApplication*)AfxGetApp())->OSVersion==OS_XP;
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
 
 	CFont* pOldFont = dc.SelectObject(GetFont());
@@ -110,76 +122,96 @@ void CTooltipHeader::OnPaint()
 			hdi.cchTextMax = 256;
 
 			if (GetItem(a, &hdi) && (hdi.cxy))
-			{
-				const COLORREF colBorder = IsXP ? GetSysColor(COLOR_SCROLLBAR) : 0xBAB5B1;
-				dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), colBorder);
-				dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, colBorder);
-
-				if (Themed)
+				if (lpBuffer[0]!=L'\0')
 				{
-					rectItem.right--;
-					rectItem.bottom--;
-
-					if (IsXP || (m_PressedItem==a))
+					if (Themed)
 					{
-						dc.FillSolidRect(rectItem, m_PressedItem==a ? colBorder : GetSysColor(COLOR_MENUBAR));
+						if (m_PressedItem==a)
+						{
+							dc.Draw3dRect(rectItem, 0xD9CBC0, 0xD9CBC0);
+							rectItem.DeflateRect(1, 1);
+
+							dc.FillSolidRect(rectItem.left, rectItem.top++, rectItem.Width(), 1, 0xE7DED7);
+							dc.FillSolidRect(rectItem.left, rectItem.top++, rectItem.Width(), 1, 0xF2EEEB);
+							dc.FillSolidRect(rectItem, 0xF8F7F6);
+
+							rectItem.InflateRect(1, 1);
+							rectItem.top -= 2;
+						}
+						else
+							if ((m_PressedItem==-1) && (m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a)))
+							{
+								LinearGradientBrush brush1(Point(0, 0), Point(0, rect.bottom), Color(0xDF, 0xEA, 0xF7), Color(0xE3, 0xE8, 0xEE));
+								g.FillRectangle(&brush1, rectItem.left, rectItem.top, 1, rectItem.Height());
+								g.FillRectangle(&brush1, rectItem.right-1, rectItem.top, 1, rectItem.Height());
+								dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, 0xEEE8E3);
+
+								LinearGradientBrush brush2(Point(0, 0), Point(0, rect.bottom-2), Color(0xFD, 0xFE, 0xFF), Color(0xEF, 0xF3, 0xF9));
+								g.FillRectangle(&brush2, rectItem.left+2, 0, rectItem.Width()-4, rectItem.Height()-2);
+							}
+							else
+							{
+								LinearGradientBrush brush1(Point(0, 0), Point(0, rect.bottom), Color(0xDF, 0xEA, 0xF7), Color(0xFF, 0xFF, 0xFF));
+								g.FillRectangle(&brush1, rectItem.right-1, rectItem.top, 1, rectItem.Height());
+							}
+
+						if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
+							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
+
+						rectItem.bottom -= 3;
+						rectItem.top = rectItem.bottom-dc.GetTextExtent(_T("Wy")).cy;
 					}
 					else
 					{
-						LinearGradientBrush brush(Point(0, rectItem.top), Point(0, rectItem.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xDC, 0xE6, 0xF4));
-						g.FillRectangle(&brush, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
+						COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
+						COLORREF c2 = GetSysColor(COLOR_3DFACE);
+						COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
+						COLORREF c4 = 0x000000;
+
+						if (m_PressedItem==a)
+						{
+							std::swap(c1, c4);
+							std::swap(c2, c3);
+						}
+
+						dc.Draw3dRect(rectItem, c1, c4);
+						rectItem.DeflateRect(1, 1);
+						dc.Draw3dRect(rectItem, c2, c3);
+						rectItem.InflateRect(1, 1);
 					}
 
-					if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
-						m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
+					rectItem.DeflateRect(4, 0);
 
-					rectItem.bottom --;
+					UINT nFormat = DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX;
+					switch (hdi.fmt & HDF_JUSTIFYMASK)
+					{
+					case HDF_LEFT:
+						nFormat |= DT_LEFT;
+						break;
+					case HDF_CENTER:
+						nFormat |= DT_CENTER;
+						break;
+					case HDF_RIGHT:
+						nFormat |= DT_RIGHT;
+						break;
+					}
+
+					dc.SetTextColor(Themed ? 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
+					dc.DrawText(lpBuffer, rectItem, nFormat);
+
+					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
+					{
+						rectItem.left += dc.GetTextExtent(lpBuffer, (INT)wcslen(lpBuffer)).cx+2;
+						if (rectItem.left+5<rectItem.right)
+							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 2 : 3, CPoint(rectItem.left, rectItem.top+(rectItem.Height()-3)/2), ILD_TRANSPARENT);
+					}
 				}
 				else
-				{
-					COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-					COLORREF c2 = GetSysColor(COLOR_3DFACE);
-					COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-					COLORREF c4 = 0x000000;
-
-					if (m_PressedItem==a)
+					if (IsCtrlThemed())
 					{
-						std::swap(c1, c4);
-						std::swap(c2, c3);
+						LinearGradientBrush brush1(Point(0, 0), Point(0, rect.bottom), Color(0xDF, 0xEA, 0xF7), Color(0xFF, 0xFF, 0xFF));
+						g.FillRectangle(&brush1, rectItem.right-1, rectItem.top, 1, rectItem.Height());
 					}
-
-					dc.Draw3dRect(rectItem, c1, c4);
-					rectItem.DeflateRect(1, 1);
-					dc.Draw3dRect(rectItem, c2, c3);
-					rectItem.InflateRect(1, 1);
-				}
-
-				rectItem.DeflateRect(4, 0);
-
-				UINT nFormat = DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX;
-				switch (hdi.fmt & HDF_JUSTIFYMASK)
-				{
-				case HDF_LEFT:
-					nFormat |= DT_LEFT;
-					break;
-				case HDF_CENTER:
-					nFormat |= DT_CENTER;
-					break;
-				case HDF_RIGHT:
-					nFormat |= DT_RIGHT;
-					break;
-				}
-
-				dc.SetTextColor(Themed ? IsXP ? GetSysColor(COLOR_MENUTEXT) : m_PressedItem==a ? 0x000000 : 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
-				dc.DrawText(lpBuffer, rectItem, nFormat);
-
-				if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
-				{
-					rectItem.left += dc.GetTextExtent(lpBuffer, (INT)wcslen(lpBuffer)).cx+2;
-					if (rectItem.left+5<rectItem.right)
-						m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 2 : 3, CPoint(rectItem.left, rectItem.top+(rectItem.Height()-3)/2), ILD_TRANSPARENT);
-				}
-			}
 		}
 	}
 
@@ -195,6 +227,7 @@ void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
 	htt.pt = point;
 	INT idx = HitTest(&htt);
 	m_PressedItem = (htt.flags==HHT_ONHEADER) ? idx : -1;
+	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? idx : -1;
 
 	CHeaderCtrl::OnLButtonDown(nFlags, point);
 	Invalidate();
@@ -202,7 +235,7 @@ void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CTooltipHeader::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	m_PressedItem = -1;
+	m_PressedItem = m_TrackItem = -1;
 
 	CHeaderCtrl::OnLButtonUp(nFlags, point);
 	Invalidate();
@@ -212,7 +245,7 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 {
 	HDHITTESTINFO htt;
 	htt.pt = point;
-	INT HoverItem = HitTest(&htt);
+	m_HoverItem = HitTest(&htt);
 
 	if (!m_Hover)
 	{
@@ -227,7 +260,7 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (HoverItem!=m_TooltipItem))
+		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TooltipItem))
 			m_TooltipCtrl.Deactivate();
 
 	CHeaderCtrl::OnMouseMove(nFlags, point);
@@ -237,6 +270,7 @@ void CTooltipHeader::OnMouseLeave()
 {
 	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
+	m_HoverItem = -1;
 
 	CHeaderCtrl::OnMouseLeave();
 }

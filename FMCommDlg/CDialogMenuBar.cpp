@@ -1750,6 +1750,7 @@ INT CDialogMenuGallery::GetMinHeight()
 	CDC* pDC = p_ParentPopup->GetWindowDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
 	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+5;
+	pDC->SelectObject(pOldFont);
 	p_ParentPopup->ReleaseDC(pDC);
 
 	return m_ItemHeight*m_Rows;

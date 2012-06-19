@@ -2,6 +2,7 @@
 #include "..\FMCommDlg\CDialogMenuBar.h"
 #include "..\FMCommDlg\CExplorerList.h"
 #include "..\FMCommDlg\CGdiPlusBitmap.h"
+#include "..\FMCommDlg\CGridHeader.h"
 #include "..\FMCommDlg\CGroupBox.h"
 #include "..\FMCommDlg\CImageListTransparent.h"
 #include "..\FMCommDlg\CMainWindow.h"

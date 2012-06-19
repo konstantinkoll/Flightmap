@@ -445,12 +445,12 @@ BEGIN
                             "Flightmap Beispiel Flugplan Pazifik Überquerung"
     IDS_SUBITEM_NAME        "Name"
     IDS_SUBITEM_SIZE        "Größe"
-    IDS_SUBITEM_CREATED     "Erstellt"
+    IDS_SUBITEM_CREATED     "Erstellt am"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SUBITEM_MODIFIED    "Verändert"
+    IDS_SUBITEM_MODIFIED    "Geändert am"
     IDS_ATTACHMENT_TOOLARGE "Angehängte Dateien dürfen eine Maximalgröße von 1 MB nicht überschreiten!"
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
 END

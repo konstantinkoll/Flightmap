@@ -80,15 +80,17 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	InsertGroup(ID, &lvg);
 }
 
-void CExplorerList::AddColumn(INT ID, CString Name)
+void CExplorerList::AddColumn(INT ID, CString Name, BOOL Right)
 {
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
 
-	lvc.mask = LVCF_TEXT | LVCF_SUBITEM;
+	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	lvc.pszText = Name.GetBuffer();
+	lvc.cx = 100;
+	lvc.fmt = Right ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.iSubItem = ID;
-	
+
 	InsertColumn(ID, &lvc);
 }
 

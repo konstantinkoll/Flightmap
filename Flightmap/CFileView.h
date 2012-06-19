@@ -25,6 +25,7 @@ protected:
 	AIRX_Flight* p_Flight;
 	CTaskbar m_wndTaskbar;
 	CExplorerList m_wndExplorerList;
+	CTooltipHeader m_wndHeader;
 
 	void Reload();
 	AIRX_Attachment* GetAttachment(INT idx);

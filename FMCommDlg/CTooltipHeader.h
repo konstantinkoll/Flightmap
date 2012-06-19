@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CImageListTransparent.h"
 #include "FMTooltip.h"
 
 
@@ -14,6 +15,7 @@ class CTooltipHeader : public CHeaderCtrl
 public:
 	CTooltipHeader();
 
+	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -29,9 +31,11 @@ public:
 protected:
 	CImageListTransparent m_SortIndicators;
 	FMTooltip m_TooltipCtrl;
-
-private:
 	BOOL m_Hover;
+	INT m_HoverItem;
 	INT m_PressedItem;
+	INT m_TrackItem;
 	INT m_TooltipItem;
+
+	virtual void Init();
 };
