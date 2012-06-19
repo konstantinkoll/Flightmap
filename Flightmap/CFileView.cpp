@@ -250,8 +250,20 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 			break;
 		case 2:
 		case 3:
-			wcscpy_s(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, L"XXX");
-			break;
+			{
+				FILETIME ft;
+				SYSTEMTIME st;
+				FileTimeToLocalFileTime(pDispInfo->item.iSubItem==2 ? &pAttachment->Created : &pAttachment->Modified, &ft);
+				FileTimeToSystemTime(&ft, &st);
+
+				WCHAR Date[256] = L"";
+				WCHAR Time[256] = L"";
+				GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, Date, 256);
+				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, Time, 256);
+
+				swprintf_s(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, L"%s, %s", Date, Time);
+				break;
+			}
 		}
 	}
 
