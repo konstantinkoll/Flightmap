@@ -312,6 +312,16 @@ void CFileView::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 				tmpStr.Delete(0, Pos!=-1 ? Pos : tmpStr.GetLength());
 
 				wcscpy_s(pAttachment->Name, MAX_PATH, pDispInfo->item.pszText);
+
+				WCHAR* pChar = pAttachment->Name;
+				while (*pChar)
+				{
+					if (wcschr(L"<>:\"/\\|?*", *pChar))
+						*pChar = L'_';
+
+					pChar++;
+				}
+
 				wcscat_s(pAttachment->Name, MAX_PATH, tmpStr.GetBuffer());
 				pAttachment->IconID = -1;
 				p_Itinerary->m_IsModified = TRUE;
