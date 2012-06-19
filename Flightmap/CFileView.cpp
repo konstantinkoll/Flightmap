@@ -130,6 +130,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_INITMENUPOPUP()
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
 	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
+	ON_NOTIFY(LVN_BEGINLABELEDIT, 2, OnBeginLabelEdit)
 	ON_NOTIFY(LVN_ENDLABELEDIT, 2, OnEndLabelEdit)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
@@ -272,6 +273,28 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
+void CFileView::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
+
+	AIRX_Attachment* pAttachment = GetAttachment(pDispInfo->item.iItem);
+	if (pAttachment)
+	{
+		CString tmpStr(pAttachment->Name);
+		INT Pos = tmpStr.ReverseFind(L'.');
+		if (Pos!=-1)
+		{
+			tmpStr.Truncate(Pos);
+
+			CEdit* pEdit = m_wndExplorerList.GetEditControl();
+			if (pEdit)
+				pEdit->SetWindowText(tmpStr);
+		}
+	}
+
+	*pResult = FALSE;
+}
+
 void CFileView::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
@@ -284,7 +307,12 @@ void CFileView::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			AIRX_Attachment* pAttachment = GetAttachment(pDispInfo->item.iItem);
 			if (pAttachment)
 			{
+				CString tmpStr(pAttachment->Name);
+				INT Pos = tmpStr.ReverseFind(L'.');
+				tmpStr.Delete(0, Pos!=-1 ? Pos : tmpStr.GetLength());
+
 				wcscpy_s(pAttachment->Name, MAX_PATH, pDispInfo->item.pszText);
+				wcscat_s(pAttachment->Name, MAX_PATH, tmpStr.GetBuffer());
 				pAttachment->IconID = -1;
 				p_Itinerary->m_IsModified = TRUE;
 
