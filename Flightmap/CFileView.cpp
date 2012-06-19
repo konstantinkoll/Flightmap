@@ -129,11 +129,13 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_INITMENUPOPUP()
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
+	ON_NOTIFY(NM_DBLCLK, 2, OnDoubleClick)
 	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
 	ON_NOTIFY(LVN_BEGINLABELEDIT, 2, OnBeginLabelEdit)
 	ON_NOTIFY(LVN_ENDLABELEDIT, 2, OnEndLabelEdit)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
+	ON_COMMAND(IDM_FILEVIEW_OPEN, OnOpen)
 	ON_COMMAND(IDM_FILEVIEW_RENAME, OnRename)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILEVIEW_ADD, IDM_FILEVIEW_RENAME, OnUpdateCommands)
 END_MESSAGE_MAP()
@@ -273,6 +275,12 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
+void CFileView::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+{
+	if (GetSelectedFile()!=-1)
+		PostMessage(WM_COMMAND, (WPARAM)IDM_FILEVIEW_OPEN);
+}
+
 void CFileView::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
@@ -353,6 +361,52 @@ void CFileView::OnAdd()
 				break;
 
 		Reload();
+	}
+}
+
+void CFileView::OnOpen()
+{
+	INT idx = GetSelectedFile();
+	if (idx!=-1)
+	{
+		AIRX_Attachment* pAttachment = GetSelectedAttachment();
+		if (!pAttachment)
+			return;
+
+		// Dateinamen finden
+		TCHAR Pathname[MAX_PATH];
+		if (!GetTempPath(MAX_PATH, Pathname))
+			return;
+
+		CString szTempExt(pAttachment->Name);
+		INT Pos = szTempExt.ReverseFind(L'.');
+		szTempExt.Delete(0, Pos!=-1 ? Pos : szTempExt.GetLength());
+
+		CString szTempName;
+		srand(rand());
+		szTempName.Format(_T("%sFlightmap%.4X%.4X%s"), Pathname, 32768+rand(), 32768+rand(), szTempExt);
+
+		// Datei erzeugen
+		CFile f;
+		if (!f.Open(szTempName, CFile::modeWrite | CFile::modeCreate))
+		{
+			FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+		}
+		else
+		{
+			try
+			{
+				f.Write(pAttachment->pData, pAttachment->Size);
+				f.Close();
+
+				ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+			}
+			catch(CFileException ex)
+			{
+				FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+				f.Close();
+			}
+		}
 	}
 }
 
