@@ -31,7 +31,7 @@ BOOL EditFlightAttachmentsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_wndFileView.SetData(p_Itinerary, p_Flight);
+	m_wndFileView.SetData(GetDlgItem(IDC_FILESTATUS), p_Itinerary, p_Flight);
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

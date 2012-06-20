@@ -84,6 +84,8 @@
 #define IDS_SUBITEM_MODIFIED            1040
 #define IDS_ATTACHMENT_TOOLARGE         1041
 #define IDS_ATTACHMENT_TOOMANY          1042
+#define IDS_FILESTATUS_SINGULAR         1043
+#define IDS_FILESTATUS_PLURAL           1044
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
@@ -159,6 +161,7 @@
 #define IDC_SEAT                        2122
 #define IDD_EDITFLIGHT_ATTACHMENTS      2200
 #define IDC_FILEVIEW                    2201
+#define IDC_FILESTATUS                  2202
 #define IDD_ADDROUTE                    2300
 #define IDC_ROUTE                       2301
 #define IDD_ATTACHMENTS                 2400

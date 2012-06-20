@@ -18,9 +18,10 @@ public:
 	virtual void PreSubclassWindow();
 	virtual void AdjustLayout();
 
-	void SetData(CItinerary* pItinerary, AIRX_Flight* pFlight=NULL);
+	void SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFlight=NULL);
 
 protected:
+	CWnd* p_Status;
 	CItinerary* p_Itinerary;
 	AIRX_Flight* p_Flight;
 	CTaskbar m_wndTaskbar;
@@ -33,6 +34,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnNcPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);

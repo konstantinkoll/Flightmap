@@ -35,7 +35,7 @@ BOOL AttachmentsDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
 	// FileView
-	m_wndFileView.SetData(p_Itinerary);
+	m_wndFileView.SetData(GetDlgItem(IDC_FILESTATUS), p_Itinerary);
 	m_wndFileView.SetFocus();
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird

@@ -34,6 +34,7 @@ CFileView::CFileView()
 			AfxThrowResourceException();
 	}
 
+	p_Status = NULL;
 	p_Itinerary = NULL;
 	p_Flight = NULL;
 }
@@ -62,8 +63,9 @@ void CFileView::AdjustLayout()
 	m_wndExplorerList.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFileView::SetData(CItinerary* pItinerary, AIRX_Flight* pFlight)
+void CFileView::SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFlight)
 {
+	p_Status = pStatus;
 	p_Itinerary = pItinerary;
 	p_Flight = pFlight;
 
@@ -82,6 +84,36 @@ void CFileView::Reload()
 		m_wndExplorerList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+
+	// Status
+	if (p_Status)
+	{
+		UINT FileCount = 0;
+		INT64 FileSize = 0;
+
+		if (p_Flight)
+		{
+			FileCount = p_Flight->AttachmentCount;
+			for (UINT a=0; a<FileCount; a++)
+				FileSize += p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[a]].Size;
+		}
+		else
+		{
+			FileCount = p_Itinerary->m_Attachments.m_ItemCount;
+			for (UINT a=0; a<FileCount; a++)
+				FileSize += p_Itinerary->m_Attachments.m_Items[a].Size;
+		}
+
+		CString tmpMask;
+		ENSURE(tmpMask.LoadString(FileCount==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL));
+
+		WCHAR tmpBuf[256];
+		StrFormatByteSize(FileSize, tmpBuf, 256);
+
+		CString tmpStr;
+		tmpStr.Format(tmpMask, FileCount, tmpBuf);
+		p_Status->SetWindowText(tmpStr);
+	}
 }
 
 AIRX_Attachment* CFileView::GetAttachment(INT idx)
@@ -138,6 +170,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
 	ON_WM_INITMENUPOPUP()
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
 	ON_NOTIFY(NM_DBLCLK, 2, OnDoubleClick)
@@ -170,6 +203,11 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	m_wndExplorerList.SetFocus();
 }
 
 void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
@@ -395,6 +433,8 @@ void CFileView::OnOpen()
 		AIRX_Attachment* pAttachment = GetSelectedAttachment();
 		if (!pAttachment)
 			return;
+
+		CWaitCursor csr;
 
 		// Dateinamen finden
 		TCHAR Pathname[MAX_PATH];
