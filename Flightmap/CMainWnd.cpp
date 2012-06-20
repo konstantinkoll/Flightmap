@@ -997,10 +997,9 @@ void CMainWnd::OnFileInspect()
 	ASSERT(m_pItinerary);
 
 	InspectDlg dlg(m_pItinerary, this);
-	dlg.DoModal();
-
-	if (m_CurrentMainView==DataGrid)
-		m_pWndMainView->Invalidate();
+	if (dlg.DoModal()==IDOK)
+		if (m_CurrentMainView==DataGrid)
+			m_pWndMainView->Invalidate();
 }
 
 void CMainWnd::OnFileAttachments()
@@ -1008,10 +1007,9 @@ void CMainWnd::OnFileAttachments()
 	ASSERT(m_pItinerary);
 
 	AttachmentsDlg dlg(m_pItinerary, this);
-	dlg.DoModal();
-
-	if (m_CurrentMainView==DataGrid)
-		m_pWndMainView->Invalidate();
+	if (dlg.DoModal()==IDOK)
+		if (m_CurrentMainView==DataGrid)
+			m_pWndMainView->Invalidate();
 }
 
 void CMainWnd::OnFileClose()

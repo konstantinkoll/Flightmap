@@ -474,6 +474,11 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
     IDS_FILESTATUS_SINGULAR "%d Datei (%s)"
     IDS_FILESTATUS_PLURAL   "%d Dateien (%s)"
+    IDS_INSPECT_METADATA_NONE "Der Flugplan enthält keine versteckten Metadaten."
+    IDS_INSPECT_METADATA_PRESENT "Der Flugplan enthält versteckte Metadaten wie Autor oder Titel, die persönliche Informationen preisgeben könnten."
+    IDS_INSPECT_ATTACHMENTS_NONE "Der Flugplan enthält keine angehängten Dateien."
+    IDS_INSPECT_ATTACHMENTS_SINGULAR "Der Flugplan enthält %d angehängte Datei, die einen Speicherplatz von %s belegt."
+    IDS_INSPECT_ATTACHMENTS_PLURAL "Der Flugplan enthält %d angehängte Dateien, die einen Speicherplatz von %s belegen."
 END
 
 STRINGTABLE 
@@ -1048,6 +1053,11 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "The maximum number of attached files is 16 per flight!"
     IDS_FILESTATUS_SINGULAR "%d file (%s)"
     IDS_FILESTATUS_PLURAL   "%d files (%s)"
+    IDS_INSPECT_METADATA_NONE "The itinerary contains no hidden metadata."
+    IDS_INSPECT_METADATA_PRESENT "The itinerary contains hidden metadata like author or title that could reveal personal information."
+    IDS_INSPECT_ATTACHMENTS_NONE "The itinerary contains no attached files."
+    IDS_INSPECT_ATTACHMENTS_SINGULAR "The itinerary contains %d file which occupies %s of memory."
+    IDS_INSPECT_ATTACHMENTS_PLURAL "The itinerary contains %d files which occupy %s of memory."
 END
 
 STRINGTABLE 

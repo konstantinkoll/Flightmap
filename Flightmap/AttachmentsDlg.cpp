@@ -36,7 +36,6 @@ BOOL AttachmentsDlg::OnInitDialog()
 
 	// FileView
 	m_wndFileView.SetData(GetDlgItem(IDC_FILESTATUS), p_Itinerary);
-	m_wndFileView.SetFocus();
 
-	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
