@@ -153,12 +153,19 @@
 #define IDC_AUTHOR                      21802
 #define IDC_KEYWORDS                    21803
 #define IDC_COMMENTS                    21804
-#define IDD_CHOOSEDETAILS               21900
-#define IDC_VIEWATTRIBUTES              21901
-#define IDC_CHECKALL                    21902
-#define IDC_UNCHECKALL                  21903
-#define IDC_MOVEUP                      21904
-#define IDC_MOVEDOWN                    21905
+#define IDD_INSPECT                     21900
+#define IDC_METADATA_STATUS             21901
+#define IDC_METADATA_SHOW               21902
+#define IDC_METADATA_DELETE             21903
+#define IDC_ATTACHMENTS_STATUS          21904
+#define IDC_ATTACHMENTS_SHOW            21905
+#define IDC_ATTACHMENTS_DELETE          21906
+#define IDD_CHOOSEDETAILS               22000
+#define IDC_VIEWATTRIBUTES              22001
+#define IDC_CHECKALL                    22002
+#define IDC_UNCHECKALL                  22003
+#define IDC_MOVEUP                      22004
+#define IDC_MOVEDOWN                    22005
 
 // Next default values for new objects
 // 

@@ -472,6 +472,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\InspectDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PropertiesDlg.cpp"
 				>
 			</File>
@@ -631,6 +635,10 @@
 			</File>
 			<File
 				RelativePath=".\GLTexture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InspectDlg.h"
 				>
 			</File>
 			<File

@@ -87,6 +87,7 @@ IDD_3DSETTINGS          ICON                    "res\\3DSettings_Tiny.ico"
 IDD_CHOOSECOLOR         ICON                    "res\\ChooseColor_Tiny.ico"
 IDD_RESOLUTION          ICON                    "res\\Resolution_Tiny.ico"
 IDD_PROPERTIES          ICON                    "res\\FileProperties_Tiny.ico"
+IDD_INSPECT             ICON                    "res\\FileInspect_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
@@ -344,6 +345,22 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,151,255,50,14,WS_GROUP
 END
 
+IDD_INSPECT DIALOGEX 0, 0, 364, 102
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Flugplan prüfen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Metadaten",IDC_STATIC,7,7,350,30
+    LTEXT           "X\nX",IDC_METADATA_STATUS,14,16,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Bearbeiten...",IDC_METADATA_SHOW,220,16,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "&Entfernen",IDC_METADATA_DELETE,290,16,60,14,WS_DISABLED | WS_GROUP
+    GROUPBOX        "Angehängte Dateien",IDC_STATIC,7,43,350,30
+    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,52,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Anzeigen...",IDC_ATTACHMENTS_SHOW,220,52,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "Alle &löschen",IDC_ATTACHMENTS_DELETE,290,52,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "Schließen",IDOK,307,81,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -448,6 +465,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 269
     END
+
+    IDD_INSPECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 357
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 95
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -477,6 +502,10 @@ BEGIN
     IDS_XOFY_PLURAL         "%d von %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AUTOMATIC           "Automatisch wählen"
@@ -793,6 +822,22 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,151,255,50,14,WS_GROUP
 END
 
+IDD_INSPECT DIALOGEX 0, 0, 364, 102
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Inspect itinerary"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Metadata",IDC_STATIC,7,7,350,30
+    LTEXT           "X\nX",IDC_METADATA_STATUS,14,16,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Edit...",IDC_METADATA_SHOW,220,16,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "&Remove",IDC_METADATA_DELETE,290,16,60,14,WS_DISABLED | WS_GROUP
+    GROUPBOX        "Attached files",IDC_STATIC,7,43,350,30
+    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,52,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Show...",IDC_ATTACHMENTS_SHOW,220,52,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "&Delete all",IDC_ATTACHMENTS_DELETE,290,52,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "Close",IDOK,307,81,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -898,6 +943,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 269
     END
+
+    IDD_INSPECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 357
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 95
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -926,6 +979,10 @@ BEGIN
     IDS_XOFY_PLURAL         "%d of %d"
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
     IDS_AUTOMATIC           "Choose automatically"

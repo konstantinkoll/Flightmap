@@ -15,6 +15,7 @@
 #include "CMapFactory.h"
 #include "CMapWnd.h"
 #include "Flightmap.h"
+#include "InspectDlg.h"
 #include "PropertiesDlg.h"
 
 
@@ -569,6 +570,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_PRINT, OnFilePrint)
 	ON_COMMAND(IDM_FILE_PRINT_QUICK, OnFilePrintQuick)
 	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
+	ON_COMMAND(IDM_FILE_PREPARE_INSPECT, OnFileInspect)
 	ON_COMMAND(IDM_FILE_PREPARE_ATTACHMENTS, OnFileAttachments)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
@@ -990,6 +992,17 @@ void CMainWnd::OnFileProperties()
 	dlg.DoModal();
 }
 
+void CMainWnd::OnFileInspect()
+{
+	ASSERT(m_pItinerary);
+
+	InspectDlg dlg(m_pItinerary, this);
+	dlg.DoModal();
+
+	if (m_CurrentMainView==DataGrid)
+		m_pWndMainView->Invalidate();
+}
+
 void CMainWnd::OnFileAttachments()
 {
 	ASSERT(m_pItinerary);
@@ -1013,11 +1026,10 @@ void CMainWnd::OnFileQuit()
 
 void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
+	BOOL b = TRUE;
+
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_FILE_PREPARE_INSPECT:
-		pCmdUI->Enable(FALSE);
-		break;
 	case IDM_FILE_SAVE:
 	case IDM_FILE_SAVEAS:
 	case IDM_FILE_SAVEAS_AIRX:
@@ -1029,13 +1041,15 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_PRINT_QUICK:
 	case IDM_FILE_PREPARE:
 	case IDM_FILE_PREPARE_PROPERTIES:
-	case IDM_FILE_PREPARE_ATTACHMENTS:
 	case IDM_FILE_CLOSE:
-		pCmdUI->Enable(m_pItinerary!=NULL);
+		b = (m_pItinerary!=NULL);
 		break;
-	default:
-		pCmdUI->Enable(TRUE);
+	case IDM_FILE_PREPARE_ATTACHMENTS:
+		b = m_pItinerary ? m_pItinerary->m_Attachments.m_ItemCount : FALSE;
+		break;
 	}
+
+	pCmdUI->Enable(b);
 }
 
 

@@ -220,6 +220,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FileInspect_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FileInspect_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FilePrepare_16.png"
 				>
 			</File>
@@ -265,14 +273,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\GoogleEarth_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Inspect_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Inspect_32.png"
 				>
 			</File>
 			<File
@@ -538,6 +538,10 @@
 		</File>
 		<File
 			RelativePath=".\FileAttachments_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\FileInspect_Tiny.ico"
 			>
 		</File>
 		<File
