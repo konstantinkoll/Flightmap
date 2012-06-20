@@ -161,6 +161,7 @@
 #define IDC_FILEVIEW                    2201
 #define IDD_ADDROUTE                    2300
 #define IDC_ROUTE                       2301
+#define IDD_ATTACHMENTS                 2400
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002

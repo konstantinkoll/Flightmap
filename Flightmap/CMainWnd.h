@@ -69,6 +69,7 @@ protected:
 	afx_msg void OnFilePrint();
 	afx_msg void OnFilePrintQuick();
 	afx_msg void OnFileProperties();
+	afx_msg void OnFileAttachments();
 	afx_msg void OnFileClose();
 	afx_msg void OnFileQuit();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);

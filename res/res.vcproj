@@ -537,6 +537,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\FileAttachments_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\FileProperties_Tiny.ico"
 			>
 		</File>

@@ -7,6 +7,7 @@
 #define IDR_GLOBE                       151
 #define IDI_EDITFLIGHT                  152
 #define IDI_ADDROUTE                    153
+#define IDI_ATTACHMENTS                 154
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202

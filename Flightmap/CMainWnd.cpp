@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "AttachmentsDlg.h"
 #include "CCalendarFile.h"
 #include "CDataGrid.h"
 #include "CExcelFile.h"
@@ -568,6 +569,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_FILE_PRINT, OnFilePrint)
 	ON_COMMAND(IDM_FILE_PRINT_QUICK, OnFilePrintQuick)
 	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
+	ON_COMMAND(IDM_FILE_PREPARE_ATTACHMENTS, OnFileAttachments)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
 	ON_COMMAND(IDM_FILE_QUIT, OnFileQuit)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_QUIT, OnUpdateFileCommands)
@@ -985,6 +987,14 @@ void CMainWnd::OnFileProperties()
 	ASSERT(m_pItinerary);
 
 	PropertiesDlg dlg(m_pItinerary, this);
+	dlg.DoModal();
+}
+
+void CMainWnd::OnFileAttachments()
+{
+	ASSERT(m_pItinerary);
+
+	AttachmentsDlg dlg(m_pItinerary, this);
 	dlg.DoModal();
 }
 
