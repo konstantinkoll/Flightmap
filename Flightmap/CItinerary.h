@@ -176,6 +176,8 @@ public:
 	void DeleteFlights(UINT Row, UINT Count=1);
 
 	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
+	void DeleteAttachment(UINT Idx, AIRX_Flight* pFlight=NULL);
+	void DeleteAttachments(AIRX_Flight* pFlight=NULL);
 
 	AIRX_Metadata m_Metadata;
 	DynArray<AIRX_Flight> m_Flights;

@@ -180,6 +180,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
 	ON_COMMAND(IDM_FILEVIEW_OPEN, OnOpen)
+	ON_COMMAND(IDM_FILEVIEW_DELETE, OnDelete)
 	ON_COMMAND(IDM_FILEVIEW_RENAME, OnRename)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILEVIEW_ADD, IDM_FILEVIEW_RENAME, OnUpdateCommands)
 END_MESSAGE_MAP()
@@ -470,6 +471,16 @@ void CFileView::OnOpen()
 				f.Close();
 			}
 		}
+	}
+}
+
+void CFileView::OnDelete()
+{
+	INT idx = GetSelectedFile();
+	if (idx!=-1)
+	{
+		p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[idx] : idx, p_Flight);
+		Reload();
 	}
 }
 

@@ -408,6 +408,7 @@ void CDataGrid::EditFlight(CPoint item, INT iSelectPage)
 	else
 		if (NewLine)
 		{
+			p_Itinerary->DeleteAttachments(&dlg.m_Flight);
 		}
 		else
 		{

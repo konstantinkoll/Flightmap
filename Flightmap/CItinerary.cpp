@@ -16,6 +16,35 @@ void ResetFlight(AIRX_Flight& Flight)
 	Flight.Color = (COLORREF)-1;
 }
 
+void RemoveAttachment(UINT Idx, AIRX_Flight* pFlight)
+{
+	ASSERT(pFlight);
+
+	UINT No = 0;
+	while (No<pFlight->AttachmentCount)
+		if (pFlight->Attachments[No]==Idx)
+		{
+			pFlight->AttachmentCount--;
+
+			if (No<pFlight->AttachmentCount)
+				for (UINT b=No; b<pFlight->AttachmentCount; b++)
+					pFlight->Attachments[b] = pFlight->Attachments[b+1];
+		}
+		else
+		{
+			if (pFlight->Attachments[No]>Idx)
+				pFlight->Attachments[No]--;
+
+			No++;
+		}
+}
+
+__forceinline void FreeAttachment(AIRX_Attachment& Attachment)
+{
+	if (Attachment.pData)
+		free(Attachment.pData);
+}
+
 void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 {
 	if ((Flight.Flags & AIRX_DistanceCalculated) && !Force)
@@ -685,8 +714,7 @@ CItinerary::CItinerary(BOOL LoadAuthor)
 CItinerary::~CItinerary()
 {
 	for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
-		if (m_Attachments.m_Items[a].pData)
-			free(m_Attachments.m_Items[a].pData);
+		FreeAttachment(m_Attachments.m_Items[a]);
 }
 
 void CItinerary::NewSampleAtlantic()
@@ -1171,7 +1199,8 @@ void CItinerary::InsertFlights(UINT Row, UINT Count, AIRX_Flight* pFlights)
 void CItinerary::DeleteFlights(UINT Row, UINT Count)
 {
 	for (UINT a=Row; a<Row+Count; a++)
-		; // TODO: Referenzen auf angehängte Dateien löschen
+		while (m_Flights.m_Items[a].AttachmentCount)
+			DeleteAttachment(m_Flights.m_Items[a].Attachments[0]);
 
 	m_Flights.DeleteItems(Row, Count);
 }
@@ -1274,4 +1303,47 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 		free(Attachment.pData);
 
 	return Res;
+}
+
+void CItinerary::DeleteAttachment(UINT Idx, AIRX_Flight* pFlight)
+{
+	ASSERT(Idx<m_Attachments.m_ItemCount);
+
+	FreeAttachment(m_Attachments.m_Items[Idx]);
+
+	m_Attachments.m_ItemCount--;
+	for (UINT a=Idx; a<m_Attachments.m_ItemCount; a++)
+		m_Attachments.m_Items[a] = m_Attachments.m_Items[a+1];
+
+	for (UINT a=0; a<m_Flights.m_ItemCount; a++)
+		RemoveAttachment(Idx, &m_Flights.m_Items[a]);
+
+	if (pFlight)
+		RemoveAttachment(Idx, pFlight);
+
+	m_IsModified = TRUE;
+}
+
+void CItinerary::DeleteAttachments(AIRX_Flight* pFlight)
+{
+	if (pFlight)
+	{
+		// Alle Attachments von einem externen Flug (der nicht zu diesem Itinerary gehört) löschen
+		for (UINT a=0; a<pFlight->AttachmentCount; a++)
+			DeleteAttachment(pFlight->Attachments[a]);
+
+		pFlight->AttachmentCount = 0;
+	}
+	else
+	{
+		// Alle Attachments von diesem Itinerary löschen
+		for (UINT a=0; a<m_Flights.m_ItemCount; a++)
+			m_Flights.m_Items[a].AttachmentCount = 0;
+
+		for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
+			FreeAttachment(m_Attachments.m_Items[a]);
+		m_Attachments.m_ItemCount = 0;
+	}
+
+	m_IsModified = TRUE;
 }
