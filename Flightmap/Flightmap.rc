@@ -479,6 +479,9 @@ BEGIN
     IDS_INSPECT_ATTACHMENTS_NONE "Der Flugplan enthält keine angehängten Dateien."
     IDS_INSPECT_ATTACHMENTS_SINGULAR "Der Flugplan enthält %d angehängte Datei, die einen Speicherplatz von %s belegt."
     IDS_INSPECT_ATTACHMENTS_PLURAL "Der Flugplan enthält %d angehängte Dateien, die einen Speicherplatz von %s belegen."
+    IDS_DELETE_CAPTION      "Löschen"
+    IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
+    IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
 END
 
 STRINGTABLE 
@@ -1058,6 +1061,9 @@ BEGIN
     IDS_INSPECT_ATTACHMENTS_NONE "The itinerary contains no attached files."
     IDS_INSPECT_ATTACHMENTS_SINGULAR "The itinerary contains %d file which occupies %s of memory."
     IDS_INSPECT_ATTACHMENTS_PLURAL "The itinerary contains %d files which occupy %s of memory."
+    IDS_DELETE_CAPTION      "Delete"
+    IDS_DELETE_FILE         "Are you sure you want to delete the file?"
+    IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
 END
 
 STRINGTABLE 

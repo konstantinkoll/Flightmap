@@ -195,7 +195,6 @@ void CRatingCtrl::OnKillFocus(CWnd* /*pNewWnd*/)
 	Invalidate();
 }
 
-
 UINT CRatingCtrl::OnGetDlgCode()
 {
 	return DLGC_WANTCHARS;

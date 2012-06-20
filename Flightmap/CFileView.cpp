@@ -479,8 +479,14 @@ void CFileView::OnDelete()
 	INT idx = GetSelectedFile();
 	if (idx!=-1)
 	{
-		p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[idx] : idx, p_Flight);
-		Reload();
+		CString message;
+		ENSURE(message.LoadString(IDS_DELETE_FILE));
+
+		if (MessageBox(message, GetAttachment(idx)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
+		{
+			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[idx] : idx, p_Flight);
+			Reload();
+		}
 	}
 }
 

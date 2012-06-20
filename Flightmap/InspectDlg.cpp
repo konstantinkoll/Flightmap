@@ -114,6 +114,14 @@ void InspectDlg::OnDeleteAttachments()
 {
 	ASSERT(p_Itinerary);
 
-	p_Itinerary->DeleteAttachments();
-	Update();
+	CString caption;
+	CString message;
+	ENSURE(caption.LoadString(IDS_DELETE_CAPTION));
+	ENSURE(message.LoadString(IDS_DELETE_ALL));
+
+	if (MessageBox(message, caption, MB_YESNO | MB_ICONWARNING)==IDYES)
+	{
+		p_Itinerary->DeleteAttachments();
+		Update();
+	}
 }

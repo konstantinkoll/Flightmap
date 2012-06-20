@@ -91,6 +91,9 @@
 #define IDS_INSPECT_ATTACHMENTS_NONE    1047
 #define IDS_INSPECT_ATTACHMENTS_SINGULAR 1048
 #define IDS_INSPECT_ATTACHMENTS_PLURAL  1049
+#define IDS_DELETE_CAPTION              1050
+#define IDS_DELETE_FILE                 1051
+#define IDS_DELETE_ALL                  1052
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
