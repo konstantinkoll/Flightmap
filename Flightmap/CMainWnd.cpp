@@ -996,6 +996,9 @@ void CMainWnd::OnFileAttachments()
 
 	AttachmentsDlg dlg(m_pItinerary, this);
 	dlg.DoModal();
+
+	if (m_CurrentMainView==DataGrid)
+		m_pWndMainView->Invalidate();
 }
 
 void CMainWnd::OnFileClose()
