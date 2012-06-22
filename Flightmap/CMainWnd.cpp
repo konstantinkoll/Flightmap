@@ -399,7 +399,7 @@ void CMainWnd::SaveAs(DWORD FilterIndex)
 			if (m_CurrentMainView==DataGrid)
 				m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
 
-			m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
+			m_pItinerary->SaveAIRX(dlg.GetPathName());
 			UpdateWindowStatus();
 		}
 		if (Ext==_T("bmp"))

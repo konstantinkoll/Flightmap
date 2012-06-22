@@ -1077,7 +1077,7 @@ void CItinerary::OpenCSV(CString FileName)
 void CItinerary::SaveAIRX(CString FileName)
 {
 	CFile f;
-	if (f.Open(FileName, CFile::modeCreate | CFile::modeWrite | CFile::osSequentialScan))
+	if (f.Open(FileName, CFile::modeCreate | CFile::modeWrite))
 	{
 		m_FileName = FileName;
 		SetDisplayName(FileName);
