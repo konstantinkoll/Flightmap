@@ -273,7 +273,7 @@
 #define IDM_DETAILS_CHOOSE              4103
 #define IDM_FILEVIEW_ADD                4200
 #define IDM_FILEVIEW_OPEN               4201
-#define IDM_FILEVIEW_COPY               4202
+#define IDM_FILEVIEW_SAVEAS             4202
 #define IDM_FILEVIEW_DELETE             4203
 #define IDM_FILEVIEW_RENAME             4204
 #define IDM_FILEVIEW_ITEM               4250

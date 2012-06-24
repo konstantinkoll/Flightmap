@@ -126,7 +126,7 @@ void CFileView::Init()
 	m_wndTaskbar.Create(this, IDB_TASKS, 1);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_OPEN, 1, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILEVIEW_COPY, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILEVIEW_SAVEAS, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_DELETE, 3);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_RENAME, 4);
 
@@ -180,6 +180,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
 	ON_COMMAND(IDM_FILEVIEW_OPEN, OnOpen)
+	ON_COMMAND(IDM_FILEVIEW_SAVEAS, OnSaveAs)
 	ON_COMMAND(IDM_FILEVIEW_DELETE, OnDelete)
 	ON_COMMAND(IDM_FILEVIEW_RENAME, OnRename)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILEVIEW_ADD, IDM_FILEVIEW_RENAME, OnUpdateCommands)
@@ -469,6 +470,42 @@ void CFileView::OnOpen()
 			{
 				FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 				f.Close();
+			}
+		}
+	}
+}
+
+void CFileView::OnSaveAs()
+{
+	INT idx = GetSelectedFile();
+	if (idx!=-1)
+	{
+		AIRX_Attachment* pAttachment = GetAttachment(idx);
+		if (!pAttachment)
+			return;
+
+		CFileDialog dlg(FALSE, NULL, pAttachment->Name, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, NULL, this);
+		if (dlg.DoModal()==IDOK)
+		{
+			CWaitCursor csr;
+
+			CFile f;
+			if (!f.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate))
+			{
+				FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+			}
+			else
+			{
+				try
+				{
+					f.Write(pAttachment->pData, pAttachment->Size);
+					f.Close();
+				}
+				catch(CFileException ex)
+				{
+					FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+					f.Close();
+				}
 			}
 		}
 	}

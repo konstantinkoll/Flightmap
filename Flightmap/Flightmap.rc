@@ -386,7 +386,7 @@ BEGIN
     BEGIN
         MENUITEM "Ö&ffnen",                     IDM_FILEVIEW_OPEN
         MENUITEM SEPARATOR
-        MENUITEM "&Kopieren",                   IDM_FILEVIEW_COPY
+        MENUITEM "Speichern &unter...",         IDM_FILEVIEW_SAVEAS
         MENUITEM SEPARATOR
         MENUITEM "&Löschen",                    IDM_FILEVIEW_DELETE
         MENUITEM "&Umbenennen",                 IDM_FILEVIEW_RENAME
@@ -700,7 +700,7 @@ STRINGTABLE
 BEGIN
     IDM_FILEVIEW_ADD        "Hängt weitere Dateien an diesen Flug an.\nHinzufügen"
     IDM_FILEVIEW_OPEN       "Öffnet die ausgewählte Datei.\nÖffnen"
-    IDM_FILEVIEW_COPY       "Kopiert die ausgewählte Datei in die Zwischenablage.\nKopieren"
+    IDM_FILEVIEW_SAVEAS     "Speichert die ausgewählte Datei.\nSpeichern unter"
     IDM_FILEVIEW_DELETE     "Löscht die ausgewählten Datei.\nLöschen"
     IDM_FILEVIEW_RENAME     "Benennt die ausgewählte Datei um.\nUmbenennen"
 END
@@ -968,7 +968,7 @@ BEGIN
     BEGIN
         MENUITEM "&Open",                       IDM_FILEVIEW_OPEN
         MENUITEM SEPARATOR
-        MENUITEM "&Copy",                       IDM_FILEVIEW_COPY
+        MENUITEM "Save &as...",                 IDM_FILEVIEW_SAVEAS
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_FILEVIEW_DELETE
         MENUITEM "&Rename",                     IDM_FILEVIEW_RENAME
@@ -1282,7 +1282,7 @@ STRINGTABLE
 BEGIN
     IDM_FILEVIEW_ADD        "Attaches additional files to this flight.\nAdd"
     IDM_FILEVIEW_OPEN       "Opens the selected file.\nOpen"
-    IDM_FILEVIEW_COPY       "Copies the selected file to the clipboard.\nCopy"
+    IDM_FILEVIEW_SAVEAS     "Saves the selected file.\nSave as"
     IDM_FILEVIEW_DELETE     "Deletes the selected file.\nDelete"
     IDM_FILEVIEW_RENAME     "Renames the selected file.\nRename"
 END

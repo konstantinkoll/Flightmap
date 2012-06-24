@@ -45,6 +45,7 @@ protected:
 
 	afx_msg void OnAdd();
 	afx_msg void OnOpen();
+	afx_msg void OnSaveAs();
 	afx_msg void OnDelete();
 	afx_msg void OnRename();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
