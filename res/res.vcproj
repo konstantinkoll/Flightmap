@@ -420,6 +420,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Statistics_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Statistics_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Support_16.png"
 				>
 			</File>
@@ -738,6 +746,10 @@
 		</File>
 		<File
 			RelativePath=".\SortIndicators.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Statistics_Tiny.ico"
 			>
 		</File>
 		<File

@@ -812,6 +812,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuStatistics_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuStatistics_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Night_8192.jpg"
 				>
 			</File>

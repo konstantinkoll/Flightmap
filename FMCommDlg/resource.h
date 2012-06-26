@@ -166,6 +166,24 @@
 #define IDC_UNCHECKALL                  22003
 #define IDC_MOVEUP                      22004
 #define IDC_MOVEDOWN                    22005
+#define IDD_STATISTICS                  22100
+#define IDC_FILTER_AIRPORT              22101
+#define IDC_FILTER_CARRIER              22102
+#define IDC_FILTER_EQUIPMENT            22103
+#define IDC_FILTER_BUSINESSTRIP         22104
+#define IDC_FILTER_LEISURETRIP          22105
+#define IDC_FILTER_RATING               22106
+#define IDC_FLIGHTCOUNT                 22107
+#define IDC_TOTALDISTANCE               22108
+#define IDC_LONGESTFLIGHT               22109
+#define IDC_SHORTESTFLIGHT              22110
+#define IDC_TOTALMILESEARNED            22111
+#define IDC_TOTALMILESSPENT             22112
+#define IDC_LIST_CLASS                  22113
+#define IDC_LIST_ROUTE                  22114
+#define IDC_LIST_AIRPORT                22115
+#define IDC_LIST_CARRIER                22116
+#define IDC_LIST_EQUIPMENT              22117
 
 // Next default values for new objects
 // 
@@ -173,7 +191,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2012
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2044
+#define _APS_NEXT_CONTROL_VALUE         2046
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
