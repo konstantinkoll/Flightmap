@@ -41,6 +41,7 @@
 #define IDB_FLAGS_16i                   165
 #define IDB_FLAGS_32                    166
 #define IDB_TASKS                       167
+#define IDB_SEATICONS                   168
 #define IDS_RECENTFILES                 1000
 #define IDS_SAMPLEITINERARIES           1001
 #define IDS_SAVECOPY                    1002

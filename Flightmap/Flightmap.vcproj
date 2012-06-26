@@ -820,6 +820,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\SeatIcons.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Tasks.bmp"
 				>
 			</File>

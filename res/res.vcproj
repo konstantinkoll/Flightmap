@@ -705,6 +705,38 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Seat_256.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Seat_32.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SeatC_32.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SeatF_32.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SeatH_32.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SeatJ_32.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SeatY_32.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SeatYP_32.png"
+			>
+		</File>
+		<File
 			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>

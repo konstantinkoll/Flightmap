@@ -57,6 +57,7 @@ IDB_FLAGS_16            BITMAP                  "res\\Flags_16.bmp"
 IDB_FLAGS_16i           BITMAP                  "res\\Flags_16i.bmp"
 IDB_FLAGS_32            BITMAP                  "res\\Flags_32.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
+IDB_SEATICONS           BITMAP                  "res\\SeatIcons.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
