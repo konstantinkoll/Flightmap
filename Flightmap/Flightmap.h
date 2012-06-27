@@ -111,10 +111,14 @@ public:
 	BOOL m_GlobeShowFlightCount;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
-
+	// Google Earth
 	BOOL m_GoogleEarthMergeMetro;
 	BOOL m_GoogleEarthUseColors;
 	BOOL m_GoogleEarthClamp;
+	// Statistics
+	BOOL m_MergeDirections;
+	BOOL m_MergeAwards;
+	BOOL m_MergeClasses;
 
 protected:
 	BOOL m_AppInitialized;

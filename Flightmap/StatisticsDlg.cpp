@@ -73,7 +73,7 @@ void StatisticsDlg::UpdateStatistics()
 		Miles[IsAwardFlight ? 1 : 0][0] += pFlight->MilesAward;
 		Miles[IsAwardFlight ? 1 : 0][1] += pFlight->MilesStatus;
 
-		if (FALSE)
+		if (theApp.m_MergeAwards)
 			IsAwardFlight = FALSE;
 
 		INT Class;
@@ -86,13 +86,13 @@ void StatisticsDlg::UpdateStatistics()
 			Class = IsAwardFlight ? 7 : 1;
 			break;
 		case AIRX_PremiumEconomy:
-			Class = FALSE ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 8 : 2;
+			Class = theApp.m_MergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 8 : 2;
 			break;
 		case AIRX_Economy:
 			Class = IsAwardFlight ? 9 : 3;
 			break;
 		case AIRX_Charter:
-			Class = FALSE ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 9 : 4;
+			Class = theApp.m_MergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 9 : 4;
 			break;
 		case AIRX_Crew:
 			Class = 5;
@@ -199,7 +199,10 @@ BOOL StatisticsDlg::OnInitDialog()
 	m_wndListClass.AddColumn(1, _T(""));
 	m_wndListClass.AddColumn(2, _T(""));
 
-	m_wndListClass.SetFont(&((FMApplication*)AfxGetApp())->m_DefaultFont);
+	m_SeatIcons.Create(IDB_SEATICONS, AfxGetResourceHandle(), 0, -1, 32, 32);
+	m_wndListClass.SetImageList(&m_SeatIcons, LVSIL_NORMAL);
+
+	//m_wndListClass.SetFont(&((FMApplication*)AfxGetApp())->m_DefaultFont);
 	m_wndListClass.SetView(LV_VIEW_TILE);
 	m_wndListClass.EnableGroupView(TRUE);
 

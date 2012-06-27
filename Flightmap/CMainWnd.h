@@ -106,6 +106,9 @@ protected:
 	afx_msg void OnGoogleEarthExport();
 
 	afx_msg void OnStatisticsOpen();
+	afx_msg void OnStatisticsMergeDirections();
+	afx_msg void OnStatisticsMergeAwards();
+	afx_msg void OnStatisticsMergeClasses();
 	afx_msg void OnUpdateStatisticsCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

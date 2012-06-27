@@ -608,7 +608,10 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_CLAMP, OnUpdateGoogleEarthCommands)
 
 	ON_COMMAND(IDM_STATISTICS_OPEN, OnStatisticsOpen)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STATISTICS_OPEN, IDM_STATISTICS_OPEN, OnUpdateStatisticsCommands)
+	ON_COMMAND(IDM_STATISTICS_MERGE_DIRECTIONS, OnStatisticsMergeDirections)
+	ON_COMMAND(IDM_STATISTICS_MERGE_AWARDS, OnStatisticsMergeAwards)
+	ON_COMMAND(IDM_STATISTICS_MERGE_CLASSES, OnStatisticsMergeClasses)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STATISTICS_OPEN, IDM_STATISTICS_MERGE_CLASSES, OnUpdateStatisticsCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -794,6 +797,9 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUSTATISTICS_32, IDB_MENUSTATISTICS_16);
 		pPopup->AddCommand(IDM_STATISTICS_OPEN, 0, CDMB_LARGE);
 		pPopup->AddSeparator(TRUE);
+		pPopup->AddCheckbox(IDM_STATISTICS_MERGE_DIRECTIONS);
+		pPopup->AddCheckbox(IDM_STATISTICS_MERGE_AWARDS);
+		pPopup->AddCheckbox(IDM_STATISTICS_MERGE_CLASSES);
 		break;
 	}
 
@@ -1346,6 +1352,21 @@ void CMainWnd::OnStatisticsOpen()
 	dlg.DoModal();
 }
 
+void CMainWnd::OnStatisticsMergeDirections()
+{
+	theApp.m_MergeDirections = !theApp.m_MergeDirections;
+}
+
+void CMainWnd::OnStatisticsMergeAwards()
+{
+	theApp.m_MergeAwards = !theApp.m_MergeAwards;
+}
+
+void CMainWnd::OnStatisticsMergeClasses()
+{
+	theApp.m_MergeClasses = !theApp.m_MergeClasses;
+}
+
 void CMainWnd::OnUpdateStatisticsCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = TRUE;
@@ -1355,9 +1376,15 @@ void CMainWnd::OnUpdateStatisticsCommands(CCmdUI* pCmdUI)
 	case IDM_STATISTICS_OPEN:
 		b = (m_pItinerary!=NULL);
 		break;
-	/*case IDM_GLOBE_MERGEMETRO:
-		pCmdUI->SetCheck(theApp.m_GlobeMergeMetro);
-		break;*/
+	case IDM_STATISTICS_MERGE_DIRECTIONS:
+		pCmdUI->SetCheck(theApp.m_MergeDirections);
+		break;
+	case IDM_STATISTICS_MERGE_AWARDS:
+		pCmdUI->SetCheck(theApp.m_MergeAwards);
+		break;
+	case IDM_STATISTICS_MERGE_CLASSES:
+		pCmdUI->SetCheck(theApp.m_MergeClasses);
+		break;
 	}
 
 	pCmdUI->Enable(b);

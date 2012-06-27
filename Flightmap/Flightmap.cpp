@@ -90,6 +90,9 @@ BOOL CFlightmapApp::InitInstance()
 	m_GoogleEarthMergeMetro = GetInt(_T("GoogleEarthMergeMetro"), FALSE);
 	m_GoogleEarthUseColors = GetInt(_T("GoogleEarthUseColors"), TRUE);
 	m_GoogleEarthClamp = GetInt(_T("GoogleEarthClamp"), FALSE);
+	m_MergeDirections = GetInt(_T("MergeDirections"), TRUE);
+	m_MergeAwards = GetInt(_T("MergeAwards"), FALSE);
+	m_MergeClasses = GetInt(_T("MergeClasses"), TRUE);
 	GetBinary(_T("CustomColors"), &m_CustomColors, sizeof(m_CustomColors));
 	m_MapSettings.Background = GetInt(_T("MapBackground"), 0);
 	m_MapSettings.BackgroundColor = GetInt(_T("MapBackgroundColor"), 0xF0F0F0);
@@ -195,6 +198,9 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GoogleEarthMergeMetro"), m_GoogleEarthMergeMetro);
 		WriteInt(_T("GoogleEarthUseColors"), m_GoogleEarthUseColors);
 		WriteInt(_T("GoogleEarthClamp"), m_GoogleEarthClamp);
+		WriteInt(_T("MergeDirections"), m_MergeDirections);
+		WriteInt(_T("MergeAwards"), m_MergeAwards);
+		WriteInt(_T("MergeClasses"), m_MergeClasses);
 		WriteBinary(_T("CustomColors"), (LPBYTE)&m_CustomColors, sizeof(m_CustomColors));
 		WriteInt(_T("MapBackground"), m_MapSettings.Background);
 		WriteInt(_T("MapBackgroundColor"), m_MapSettings.BackgroundColor);

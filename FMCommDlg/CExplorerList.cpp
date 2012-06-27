@@ -14,6 +14,7 @@ CExplorerList::CExplorerList()
 {
 	p_App = (FMApplication*)AfxGetApp();
 	hTheme = NULL;
+	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
 
 void CExplorerList::PreSubclassWindow()
@@ -38,7 +39,7 @@ void CExplorerList::Init()
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = 2;
+	tvi.cLines = (p_App->OSVersion==OS_XP) ? 2 : 3;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 250;
@@ -53,7 +54,7 @@ void CExplorerList::Init()
 	SetTileViewInfo(&tvi);
 }
 
-void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsable)
+void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsible)
 {
 	LVGROUP lvg;
 	ZeroMemory(&lvg, sizeof(lvg));
@@ -70,9 +71,10 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 			lvg.pszSubtitle = Hint.GetBuffer();
 			lvg.mask |= LVGF_SUBTITLE;
 		}
-		if (Collapsable)
+		if (Collapsible)
 		{
 			lvg.stateMask = LVGS_COLLAPSIBLE;
+			lvg.state = LVGS_COLLAPSIBLE;
 			lvg.mask |= LVGF_STATE;
 		}
 	}
@@ -92,6 +94,14 @@ void CExplorerList::AddColumn(INT ID, CString Name, BOOL Right)
 	lvc.iSubItem = ID;
 
 	InsertColumn(ID, &lvc);
+}
+
+void CExplorerList::AddColumn(INT ID, INT ResID, BOOL Right)
+{
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(ResID));
+
+	AddColumn(ID, tmpStr, Right);
 }
 
 void CExplorerList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT BackgroundMenuID)

@@ -629,6 +629,9 @@ STRINGTABLE
 BEGIN
     IDM_STATISTICS          "&Statistik"
     IDM_STATISTICS_OPEN     "Zeigt eine statistische Auswertung\ndes Flugplans an.\nStatistik ö&ffnen"
+    IDM_STATISTICS_MERGE_DIRECTIONS "&Richtung von Routen ignorieren"
+    IDM_STATISTICS_MERGE_AWARDS "&Prämienflüge als normale Flüge"
+    IDM_STATISTICS_MERGE_CLASSES "&Y+, Y und Charterflüge als Y"
 END
 
 STRINGTABLE 
@@ -1223,6 +1226,10 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STATISTICS          "&Statistics"
+    IDM_STATISTICS_OPEN     "Open a statistic analysis\nof the itinerary.\n&Open statistics"
+    IDM_STATISTICS_MERGE_DIRECTIONS "Merge route &directions"
+    IDM_STATISTICS_MERGE_AWARDS "Merge &award and revenue flights"
+    IDM_STATISTICS_MERGE_CLASSES "Merge &Y+, Y and charter flights"
 END
 
 STRINGTABLE 
