@@ -13,7 +13,7 @@
 class PropertiesDlg : public CDialog
 {
 public:
-	PropertiesDlg(CItinerary* pItinerary, CWnd* pParent);
+	PropertiesDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

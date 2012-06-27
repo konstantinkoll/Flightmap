@@ -240,6 +240,7 @@
 #define IDM_GOOGLEEARTH_COLORS          3404
 #define IDM_GOOGLEEARTH_CLAMP           3405
 #define IDM_STATISTICS                  3500
+#define IDM_STATISTICS_OPEN             3501
 #define IDM_MAPWND                      3600
 #define IDM_MAPWND_COPY                 3601
 #define IDM_MAPWND_SAVEAS               3602

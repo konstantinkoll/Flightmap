@@ -1573,7 +1573,7 @@ void CDataGrid::OnAddRoute()
 {
 	ASSERT(p_Itinerary);
 
-	AddRouteDlg dlg(this, p_Itinerary);
+	AddRouteDlg dlg(p_Itinerary, this);
 	if (dlg.DoModal()==IDOK)
 	{
 		CString From;

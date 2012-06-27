@@ -1,5 +1,5 @@
 
-// AddRouteDlg.h: Schnittstelle der Klasse AddRouteDlg
+// StatisticsDlg.h: Schnittstelle der Klasse StatisticsDlg
 //
 
 #pragma once
@@ -7,18 +7,15 @@
 #include "Flightmap.h"
 
 
-// AddRouteDlg
+// StatisticsDlg
 //
 
-class AddRouteDlg : public CDialog
+class StatisticsDlg : public CDialog
 {
 public:
-	AddRouteDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
+	StatisticsDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
-
-	CString m_Route;
-	AIRX_Flight m_FlightTemplate;
 
 protected:
 	CItinerary* p_Itinerary;

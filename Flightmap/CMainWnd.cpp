@@ -17,6 +17,7 @@
 #include "Flightmap.h"
 #include "InspectDlg.h"
 #include "PropertiesDlg.h"
+#include "StatisticsDlg.h"
 
 
 // CMainWnd
@@ -605,6 +606,9 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_GOOGLEEARTH_COLORS, OnGoogleEarthColors)
 	ON_COMMAND(IDM_GOOGLEEARTH_CLAMP, OnGoogleEarthClamp)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_CLAMP, OnUpdateGoogleEarthCommands)
+
+	ON_COMMAND(IDM_STATISTICS_OPEN, OnStatisticsOpen)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STATISTICS_OPEN, IDM_STATISTICS_OPEN, OnUpdateStatisticsCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -786,6 +790,10 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddCaption(IDS_EXPORT);
 		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE);
+	case IDM_STATISTICS:
+		pPopup->Create(this, IDB_MENUSTATISTICS_32, IDB_MENUSTATISTICS_16);
+		pPopup->AddCommand(IDM_STATISTICS_OPEN, 0, CDMB_LARGE);
+		pPopup->AddSeparator(TRUE);
 		break;
 	}
 
@@ -1325,4 +1333,32 @@ void CMainWnd::OnGoogleEarthExport()
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 		ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro);
+}
+
+
+// Statistics
+
+void CMainWnd::OnStatisticsOpen()
+{
+	ASSERT(m_pItinerary);
+
+	StatisticsDlg dlg(m_pItinerary, this);
+	dlg.DoModal();
+}
+
+void CMainWnd::OnUpdateStatisticsCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = TRUE;
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_STATISTICS_OPEN:
+		b = (m_pItinerary!=NULL);
+		break;
+	/*case IDM_GLOBE_MERGEMETRO:
+		pCmdUI->SetCheck(theApp.m_GlobeMergeMetro);
+		break;*/
+	}
+
+	pCmdUI->Enable(b);
 }

@@ -616,6 +616,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STATISTICS          "&Statistik"
+    IDM_STATISTICS_OPEN     "Zeigt eine statistische Auswertung\ndes Flugplans an.\nStatistik ö&ffnen"
 END
 
 STRINGTABLE 

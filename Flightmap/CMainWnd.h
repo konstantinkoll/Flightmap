@@ -104,5 +104,8 @@ protected:
 	afx_msg void OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnGoogleEarthExport();
+
+	afx_msg void OnStatisticsOpen();
+	afx_msg void OnUpdateStatisticsCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

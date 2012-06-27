@@ -14,7 +14,7 @@
 class ChooseDetailsDlg : public CDialog
 {
 public:
-	ChooseDetailsDlg(ViewParameters* pViewParameters, CWnd* pParentWnd);
+	ChooseDetailsDlg(ViewParameters* pViewParameters, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

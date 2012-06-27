@@ -9,7 +9,7 @@
 // AddRouteDlg
 //
 
-AddRouteDlg::AddRouteDlg(CWnd* pParent, CItinerary* pItinerary)
+AddRouteDlg::AddRouteDlg(CItinerary* pItinerary, CWnd* pParent)
 	: CDialog(IDD_ADDROUTE, pParent)
 {
 	p_Itinerary = pItinerary;

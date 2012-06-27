@@ -480,6 +480,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StatisticsDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -647,6 +651,10 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StatisticsDlg.h"
 				>
 			</File>
 			<File
