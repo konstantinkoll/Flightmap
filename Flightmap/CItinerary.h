@@ -37,6 +37,13 @@ struct AIRX_Location
 	WCHAR Gate[8];
 };
 
+struct AIRX_Route
+{
+	CHAR From[4];
+	CHAR To[4];
+	DOUBLE DistanceNM;
+};
+
 #define AIRX_AwardFlight            1
 #define AIRX_BusinessTrip           2
 #define AIRX_LeisureTrip            4
@@ -202,11 +209,13 @@ private:
 void ResetFlight(AIRX_Flight& Flight);
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
 void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight=NULL);
-void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL);
-void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL);
-void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight);
+void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);
+void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);
+void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight=NULL);
 
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
+void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route);
+void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
 void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);
 

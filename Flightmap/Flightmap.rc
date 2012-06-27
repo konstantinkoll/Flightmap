@@ -485,6 +485,18 @@ BEGIN
     IDS_DELETE_CAPTION      "Löschen"
     IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
     IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
+    IDS_REVENUEFLIGHTS      "Revenue"
+    IDS_NONREVFLIGHTS       "Non-Revenue"
+    IDS_INCLUDESCREW        "Einschließlich Flüge als Crew (DCM)"
+    IDS_CLASS_F             "First"
+    IDS_CLASS_J             "Business"
+    IDS_CLASS_YP            "Premium Economy"
+    IDS_CLASS_Y             "Economy"
+    IDS_CLASS_CHARTER       "Charter"
+    IDS_CLASS_CREW          "Crew/DCM"
+    IDS_MILES               "%d (%d Statusmeilen)"
+    IDS_FLIGHTS_SINGULAR    "%d Flug"
+    IDS_FLIGHTS_PLURAL      "%d Flüge"
 END
 
 STRINGTABLE 
@@ -1068,6 +1080,18 @@ BEGIN
     IDS_DELETE_CAPTION      "Delete"
     IDS_DELETE_FILE         "Are you sure you want to delete the file?"
     IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
+    IDS_REVENUEFLIGHTS      "Revenue"
+    IDS_NONREVFLIGHTS       "Non-Revenue"
+    IDS_INCLUDESCREW        "Includes flights as crew member (DCM)"
+    IDS_CLASS_F             "First"
+    IDS_CLASS_J             "Business"
+    IDS_CLASS_YP            "Premium Economy"
+    IDS_CLASS_Y             "Economy"
+    IDS_CLASS_CHARTER       "Charter"
+    IDS_CLASS_CREW          "Crew/DCM"
+    IDS_MILES               "%d (%d status miles)"
+    IDS_FLIGHTS_SINGULAR    "%d flight"
+    IDS_FLIGHTS_PLURAL      "%d flights"
 END
 
 STRINGTABLE 

@@ -153,14 +153,17 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 	}
 }
 
-void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary)
+void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
 {
-	for (UINT a=0; a<AllianceStarCount; a++)
-		pComboBox->AddString(AllianceStar[a]);
-	for (UINT a=0; a<AllianceSkyTeamCount; a++)
-		pComboBox->AddString(AllianceSkyTeam[a]);
-	for (UINT a=0; a<AllianceOneWorldCount; a++)
-		pComboBox->AddString(AllianceOneWorld[a]);
+	if (IncludeDatabase)
+	{
+		for (UINT a=0; a<AllianceStarCount; a++)
+			pComboBox->AddString(AllianceStar[a]);
+		for (UINT a=0; a<AllianceSkyTeamCount; a++)
+			pComboBox->AddString(AllianceSkyTeam[a]);
+		for (UINT a=0; a<AllianceOneWorldCount; a++)
+			pComboBox->AddString(AllianceOneWorld[a]);
+	}
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
@@ -168,10 +171,11 @@ void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary)
 				pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Carrier);
 }
 
-void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary)
+void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
 {
-	for (UINT a=0; a<EquipmentCount; a++)
-		pComboBox->AddString(Equipment[a]);
+	if (IncludeDatabase)
+		for (UINT a=0; a<EquipmentCount; a++)
+			pComboBox->AddString(Equipment[a]);
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
@@ -181,16 +185,17 @@ void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary)
 
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight)
 {
-	ASSERT(pFlight);
-
 	DDX_Control(pDX, nIDC, rControl);
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		CString tmpStr;
-		rControl.GetWindowText(tmpStr);
+		if (pFlight)
+		{
+			CString tmpStr;
+			rControl.GetWindowText(tmpStr);
 
-		StringToAttribute(tmpStr.GetBuffer(), *pFlight, Attr);
+			StringToAttribute(tmpStr.GetBuffer(), *pFlight, Attr);
+		}
 	}
 	else
 	{
@@ -259,6 +264,14 @@ CString ExportLocation(AIRX_Flight& Flight, UINT AttrBase)
 // ToString
 //
 
+void MilesToString(CString &str, LONG AwardMiles, LONG StatusMiles)
+{
+	CString mask;
+	ENSURE(mask.LoadString(IDS_MILES));
+
+	str.Format(mask, AwardMiles, StatusMiles);
+}
+
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
 {
 	if (theApp.m_UseStatuteMiles)
@@ -269,6 +282,23 @@ void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
 	{
 		swprintf(pBuffer, cCount, L"%d nm (%d km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
 	}
+}
+
+void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route)
+{
+	if (Route.DistanceNM==-1)
+	{
+		wcscpy_s(pBuffer, cCount, _T("—"));
+		return;
+	}
+
+	CString From(Route.From);
+	CString To(Route.To);
+
+	WCHAR tmpBuf[256];
+	DistanceToString(tmpBuf, 256, Route.DistanceNM);
+
+	swprintf_s(pBuffer, cCount, L"%s–%s, %s", From.GetBuffer(), To.GetBuffer(), tmpBuf);
 }
 
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount)
