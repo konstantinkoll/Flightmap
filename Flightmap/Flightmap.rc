@@ -495,6 +495,8 @@ BEGIN
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
     IDS_MILES               "%d (%d Statusmeilen)"
+    IDS_FLIGHTS             "Flüge"
+    IDS_ROUTE               "Route"
     IDS_FLIGHTS_SINGULAR    "%d Flug"
     IDS_FLIGHTS_PLURAL      "%d Flüge"
 END
@@ -1093,6 +1095,8 @@ BEGIN
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
     IDS_MILES               "%d (%d status miles)"
+    IDS_FLIGHTS             "Flights"
+    IDS_ROUTE               "Route"
     IDS_FLIGHTS_SINGULAR    "%d flight"
     IDS_FLIGHTS_PLURAL      "%d flights"
 END

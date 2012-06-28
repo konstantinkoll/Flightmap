@@ -107,8 +107,10 @@
 #define IDS_CLASS_CHARTER               1060
 #define IDS_CLASS_CREW                  1061
 #define IDS_MILES                       1062
-#define IDS_FLIGHTS_SINGULAR            1063
-#define IDS_FLIGHTS_PLURAL              1064
+#define IDS_FLIGHTS                     1063
+#define IDS_ROUTE                       1064
+#define IDS_FLIGHTS_SINGULAR            1065
+#define IDS_FLIGHTS_PLURAL              1066
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102

@@ -96,14 +96,6 @@ void CExplorerList::AddColumn(INT ID, CString Name, BOOL Right)
 	InsertColumn(ID, &lvc);
 }
 
-void CExplorerList::AddColumn(INT ID, INT ResID, BOOL Right)
-{
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(ResID));
-
-	AddColumn(ID, tmpStr, Right);
-}
-
 void CExplorerList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT BackgroundMenuID)
 {
 	m_ItemMenuID = ItemMenuID;

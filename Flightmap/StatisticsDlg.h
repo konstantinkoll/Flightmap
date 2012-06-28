@@ -25,6 +25,10 @@ protected:
 	CComboBox m_wndFilterEquipment;
 	CRatingCtrl m_wndFilterRating;
 	CExplorerList m_wndListClass;
+	CListCtrl m_wndListRoute;
+	CListCtrl m_wndListAirport;
+	CListCtrl m_wndListCarrier;
+	CListCtrl m_wndListEquipment;
 
 	void UpdateStatistics();
 
