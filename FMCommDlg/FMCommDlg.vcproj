@@ -403,10 +403,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FMProgressDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FMRegisterDlg.cpp"
 				>
 			</File>
@@ -550,10 +546,6 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FMProgressDlg.h"
 				>
 			</File>
 			<File
@@ -764,10 +756,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Statistics_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Strip.jpg"
 				>
 			</File>
 			<File

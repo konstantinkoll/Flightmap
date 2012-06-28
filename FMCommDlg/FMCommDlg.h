@@ -19,7 +19,6 @@
 #include "..\FMCommDlg\FMColorDlg.h"
 #include "..\FMCommDlg\FMDialog.h"
 #include "..\FMCommDlg\FMLicenseDlg.h"
-#include "..\FMCommDlg\FMProgressDlg.h"
 #include "..\FMCommDlg\FMRegisterDlg.h"
 #include "..\FMCommDlg\FMResolutionDlg.h"
 #include "..\FMCommDlg\FMSelectLocationGPSDlg.h"
