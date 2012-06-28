@@ -8,6 +8,8 @@
 // CRatingCtrl
 //
 
+#define WM_RATINGCHANGED     WM_USER+9
+
 class CRatingCtrl : public CWnd
 {
 public:
@@ -17,6 +19,8 @@ public:
 	UCHAR GetRating();
 
 protected:
+	void SendChangeMessage();
+
 	UCHAR m_Rating;
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

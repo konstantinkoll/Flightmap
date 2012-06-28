@@ -28,10 +28,19 @@ void AddColumn(CListCtrl& wndList, INT ID, UINT ResID, BOOL Right=FALSE)
 	wndList.InsertColumn(ID, &lvc);
 }
 
+__forceinline void Start(CListCtrl& wndList)
+{
+	wndList.SetRedraw(FALSE);
+	wndList.DeleteAllItems();
+}
+
 __forceinline void Finish(CListCtrl& wndList, INT Count)
 {
 	for (INT a=0; a<Count; a++)
 		wndList.SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
+
+	wndList.SetRedraw(TRUE);
+	wndList.Invalidate();
 }
 
 
@@ -87,13 +96,46 @@ void StatisticsDlg::UpdateStatistics()
 	CFlightsCarrier Carrier;
 	CFlightsEquipment Equipment;
 
+	// Filter
+	CString tmpStr;
+	m_wndFilterAirport.GetWindowText(tmpStr);
+
+	CHAR FilterAirport[4];
+	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, FilterAirport, 4, NULL, NULL);
+
+	CString FilterCarrier;
+	m_wndFilterCarrier.GetWindowText(FilterCarrier);
+
+	CString FilterEquipment;
+	m_wndFilterEquipment.GetWindowText(FilterEquipment);
+
+	BOOL FilterBusiness = ((CButton*)GetDlgItem(IDC_FILTER_BUSINESSTRIP))->GetCheck();
+	BOOL FilterLeisure = ((CButton*)GetDlgItem(IDC_FILTER_LEISURETRIP))->GetCheck();
+
+	UCHAR FilterRating = m_wndFilterRating.GetRating();
+
 	// Calculate
 	for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
 	{
 		const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[a];
 
 		// Filter
-		if (FALSE)
+		if (strlen(FilterAirport)==3)
+			if ((strcmp(FilterAirport, pFlight->From.Code)!=0) && (strcmp(FilterAirport, pFlight->To.Code)!=0))
+				continue;
+		if (!FilterCarrier.IsEmpty())
+			if (wcscmp(FilterCarrier, pFlight->Carrier)!=0)
+				continue;
+		if (!FilterEquipment.IsEmpty())
+			if (wcscmp(FilterEquipment, pFlight->Equipment)!=0)
+				continue;
+		if (FilterBusiness)
+			if ((pFlight->Flags & AIRX_BusinessTrip)==0)
+				continue;
+		if (FilterLeisure)
+			if ((pFlight->Flags & AIRX_LeisureTrip)==0)
+				continue;
+		if (pFlight->Flags>>28<FilterRating)
 			continue;
 
 		// Count
@@ -189,7 +231,6 @@ void StatisticsDlg::UpdateStatistics()
 	ENSURE(MaskFlightsSingular.LoadString(IDS_FLIGHTS_SINGULAR));
 	ENSURE(MaskFlightsPlural.LoadString(IDS_FLIGHTS_PLURAL));
 
-	CString tmpStr;
 	tmpStr.Format(FlightCount==1 ? MaskFlightsSingular : MaskFlightsPlural, FlightCount);
 	GetDlgItem(IDC_FLIGHTCOUNT)->SetWindowText(tmpStr);
 
@@ -209,6 +250,7 @@ void StatisticsDlg::UpdateStatistics()
 	MilesToString(tmpStr, Miles[1][0], Miles[1][1]);
 	GetDlgItem(IDC_TOTALMILESSPENT)->SetWindowText(tmpStr);
 
+	m_wndListClass.SetRedraw(FALSE);
 	m_wndListClass.DeleteAllItems();
 
 	UINT Columns1[1] = { 1 };
@@ -239,8 +281,11 @@ void StatisticsDlg::UpdateStatistics()
 			m_wndListClass.SetItemText(idx, 2, tmpBuf);
 		}
 
+	m_wndListClass.SetRedraw(TRUE);
+	m_wndListClass.Invalidate();
+
 	// Routes
-	m_wndListRoute.DeleteAllItems();
+	Start(m_wndListRoute);
 
 	ZeroMemory(&item, sizeof(item));
 	item.mask = LVIF_TEXT | LVIF_COLUMNS;
@@ -258,7 +303,7 @@ void StatisticsDlg::UpdateStatistics()
 		strcat_s(Rt, 8, "–");
 		strncat_s(Rt, 8, &Key[3], 3);
 
-		tmpStr.Format(_T("%d"), pPair1->value);
+		tmpStr.Format(_T("%5d"), pPair1->value);
 		item.pszText = tmpStr.GetBuffer();
 
 		INT idx = m_wndListRoute.InsertItem(&item);
@@ -266,11 +311,12 @@ void StatisticsDlg::UpdateStatistics()
 		tmpStr = Rt;
 		m_wndListRoute.SetItemText(idx, 1, tmpStr);
 
+		m_wndListRoute.SetItemData(idx, idx);
 		pPair1 = Route.PGetNextAssoc(pPair1);
 	}
 
 	// Airports
-	m_wndListAirport.DeleteAllItems();
+	Start(m_wndListAirport);
 
 	ZeroMemory(&item, sizeof(item));
 	item.mask = LVIF_TEXT | LVIF_COLUMNS;
@@ -286,7 +332,7 @@ void StatisticsDlg::UpdateStatistics()
 		FMAirport* pAirport;
 		if (FMIATAGetAirportByCode(Code, &pAirport))
 		{
-			tmpStr.Format(_T("%d"), pPair2->value);
+			tmpStr.Format(_T("%5d"), pPair2->value);
 			item.pszText = tmpStr.GetBuffer();
 
 			INT idx = m_wndListAirport.InsertItem(&item);
@@ -298,13 +344,14 @@ void StatisticsDlg::UpdateStatistics()
 			tmpStr += _T(", ");
 			tmpStr += FMIATAGetCountry(pAirport->CountryID)->Name;
 			m_wndListAirport.SetItemText(idx, 2, tmpStr);
+			m_wndListAirport.SetItemData(idx, idx);
 		}
 
 		pPair2 = Airport.PGetNextAssoc(pPair2);
 	}
 
 	// Carrier
-	m_wndListCarrier.DeleteAllItems();
+	Start(m_wndListCarrier);
 
 	ZeroMemory(&item, sizeof(item));
 	item.mask = LVIF_TEXT | LVIF_COLUMNS;
@@ -314,7 +361,7 @@ void StatisticsDlg::UpdateStatistics()
 	CFlightsCarrier::CPair* pPair3 = Carrier.PGetFirstAssoc();
 	while (pPair3)
 	{
-		tmpStr.Format(_T("%d"), pPair3->value.FlightCount);
+		tmpStr.Format(_T("%5d"), pPair3->value.FlightCount);
 		item.pszText = tmpStr.GetBuffer();
 
 		INT idx = m_wndListCarrier.InsertItem(&item);
@@ -325,11 +372,12 @@ void StatisticsDlg::UpdateStatistics()
 		tmpStr = pPair3->key;
 		m_wndListCarrier.SetItemText(idx, 2, tmpStr);
 
+		m_wndListCarrier.SetItemData(idx, idx);
 		pPair3 = Carrier.PGetNextAssoc(pPair3);
 	}
 
 	// Equipment
-	m_wndListEquipment.DeleteAllItems();
+	Start(m_wndListEquipment);
 
 	ZeroMemory(&item, sizeof(item));
 	item.mask = LVIF_TEXT | LVIF_COLUMNS;
@@ -339,12 +387,13 @@ void StatisticsDlg::UpdateStatistics()
 	CFlightsEquipment::CPair* pPair4 = Equipment.PGetFirstAssoc();
 	while (pPair4)
 	{
-		tmpStr.Format(_T("%d"), pPair4->value);
+		tmpStr.Format(_T("%5d"), pPair4->value);
 		item.pszText = tmpStr.GetBuffer();
 
 		INT idx = m_wndListEquipment.InsertItem(&item);
 		m_wndListEquipment.SetItemText(idx, 1, pPair4->key);
 
+		m_wndListCarrier.SetItemData(idx, idx);
 		pPair4 = Equipment.PGetNextAssoc(pPair4);
 	}
 
@@ -357,6 +406,14 @@ void StatisticsDlg::UpdateStatistics()
 
 
 BEGIN_MESSAGE_MAP(StatisticsDlg, CDialog)
+	ON_MESSAGE_VOID(WM_UPDATESTATISTICS, OnUpdateStatistics)
+	ON_EN_KILLFOCUS(IDC_FILTER_AIRPORT, OnPostUpdateStatistics)
+	ON_BN_CLICKED(IDD_SELECTIATA, OnSelectIATA)
+	ON_CBN_SELENDOK(IDC_FILTER_CARRIER, OnPostUpdateStatistics)
+	ON_CBN_SELENDOK(IDC_FILTER_EQUIPMENT, OnPostUpdateStatistics)
+	ON_BN_CLICKED(IDC_FILTER_BUSINESSTRIP, OnPostUpdateStatistics)
+	ON_BN_CLICKED(IDC_FILTER_LEISURETRIP, OnPostUpdateStatistics)
+	ON_MESSAGE_VOID(WM_RATINGCHANGED, OnPostUpdateStatistics)
 END_MESSAGE_MAP()
 
 BOOL StatisticsDlg::OnInitDialog()
@@ -420,4 +477,32 @@ BOOL StatisticsDlg::OnInitDialog()
 	UpdateStatistics();
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void StatisticsDlg::OnPostUpdateStatistics()
+{
+	PostMessage(WM_UPDATESTATISTICS);
+}
+
+void StatisticsDlg::OnUpdateStatistics()
+{
+	UpdateStatistics();
+}
+
+void StatisticsDlg::OnSelectIATA()
+{
+	CString tmpStr;
+	m_wndFilterAirport.GetWindowText(tmpStr);
+
+	CHAR Code[4];
+	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, Code, 4, NULL, NULL);
+
+	FMSelectLocationIATADlg dlg(IDD_SELECTIATA, this, Code);
+	if (dlg.DoModal()==IDOK)
+	{
+		tmpStr = dlg.p_Airport->Code;
+		m_wndFilterAirport.SetWindowText(tmpStr);
+
+		OnPostUpdateStatistics();
+	}
 }

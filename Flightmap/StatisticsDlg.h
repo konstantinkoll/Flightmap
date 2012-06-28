@@ -10,6 +10,8 @@
 // StatisticsDlg
 //
 
+#define WM_UPDATESTATISTICS     WM_USER+101
+
 class StatisticsDlg : public CDialog
 {
 public:
@@ -33,6 +35,8 @@ protected:
 	void UpdateStatistics();
 
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
+	afx_msg void OnPostUpdateStatistics();
+	afx_msg void OnUpdateStatistics();
+	afx_msg void OnSelectIATA();
 	DECLARE_MESSAGE_MAP()
 };

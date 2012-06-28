@@ -81,7 +81,7 @@ void EditFlightRoutePage::SelectAirport(UINT nEditID, CHAR* pIATA, UINT nDisplay
 	{
 		strcpy_s(pIATA, 4, dlg.p_Airport->Code);
 
-		CString tmpStr(dlg.p_Airport->Code);
+		tmpStr = dlg.p_Airport->Code;
 		GetDlgItem(nEditID)->SetWindowText(tmpStr);
 
 		DisplayAirport(nDisplayID, dlg.p_Airport);

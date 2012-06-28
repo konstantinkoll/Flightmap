@@ -67,6 +67,11 @@ UCHAR CRatingCtrl::GetRating()
 	return m_Rating;
 }
 
+void CRatingCtrl::SendChangeMessage()
+{
+	GetOwner()->SendMessage(WM_RATINGCHANGED);
+}
+
 
 BEGIN_MESSAGE_MAP(CRatingCtrl, CWnd)
 	ON_WM_ERASEBKGND()
@@ -157,6 +162,8 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	{
 		m_Rating = (UCHAR)Rating;
 		Invalidate();
+
+		SendChangeMessage();
 	}
 }
 
@@ -167,6 +174,8 @@ void CRatingCtrl::OnLButtonDown(UINT /*Flags*/, CPoint point)
 		{
 			m_Rating = (UCHAR)((point.x<6) ? 0 : 2*((point.x-2)/18)+((point.x-2)%18>8)+1);
 			Invalidate();
+
+			SendChangeMessage();
 		}
 
 	SetFocus();
