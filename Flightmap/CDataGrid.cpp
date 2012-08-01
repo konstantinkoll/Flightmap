@@ -1305,7 +1305,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 			break;
 		case VK_RIGHT:
-			for (INT col=item.x+1; col<FMAttributeCount; col--)
+			for (INT col=item.x+1; col<FMAttributeCount; col++)
 				if (m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]])
 				{
 					item.x = col;
