@@ -542,7 +542,7 @@ Skip:
 				{
 					if (!Buf.IsEmpty())
 						Buf.Append(_T("\n"));
-					ENSURE(tmpMask.LoadString(m_Settings.NoteFlightCount==1 ? IDS_FLIGHTS_SINGULAR : IDS_FLIGHTS_PLURAL));
+					ENSURE(tmpMask.LoadString(pPair2->value.Count==1 ? IDS_FLIGHTS_SINGULAR : IDS_FLIGHTS_PLURAL));
 				}
 				CString tmpStr;
 				tmpStr.Format(tmpMask, pPair2->value.Count);
