@@ -68,6 +68,16 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 			case VK_ESCAPE:
 				DestroyEdit(FALSE);
 				return TRUE;
+			case VK_LEFT:
+			case VK_RIGHT:
+			case VK_UP:
+			case VK_DOWN:
+				if (!m_EditAllowCursor)
+				{
+					DestroyEdit(TRUE);
+					PostMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
+					return TRUE;
+				}
 			}
 		break;
 	case WM_MOUSEWHEEL:
@@ -254,7 +264,7 @@ void CDataGrid::AdjustHeader()
 	m_IgnoreHeaderItemChange = FALSE;
 }
 
-void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
+void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint item)
 {
 	if (!p_Itinerary)
 		return;
@@ -367,6 +377,7 @@ void CDataGrid::EditCell(BOOL Delete, WCHAR PushChar, CPoint item)
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
 
 	PrepareEditCtrl(p_Edit, Attr);
+	m_EditAllowCursor = AllowCursor;
 
 	p_Edit->SetWindowText(tmpBuf);
 	p_Edit->SetFont(&theApp.m_DefaultFont);
@@ -1268,11 +1279,11 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		switch (nChar)
 		{
 		case VK_F2:
-			EditCell();
+			EditCell(TRUE);
 			return;
 		case VK_BACK:
 			if (m_SelectedItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
-				EditCell(TRUE);
+				EditCell(FALSE, TRUE);
 			return;
 		case VK_DELETE:
 			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
@@ -1375,7 +1386,7 @@ void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
 	if (p_Itinerary && !p_Edit)
 		if (nChar>=L' ')
-			EditCell(FALSE, (WCHAR)nChar);
+			EditCell(FALSE, FALSE, (WCHAR)nChar);
 }
 
 void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)

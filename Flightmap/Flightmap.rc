@@ -499,6 +499,8 @@ BEGIN
     IDS_ROUTE               "Route"
     IDS_FLIGHTS_SINGULAR    "%d Flug"
     IDS_FLIGHTS_PLURAL      "%d Flüge"
+    IDS_ROUTESTYLE          "Stil"
+    IDS_ANNOTATIONS         "Zusatzinformationen"
 END
 
 STRINGTABLE 
@@ -1109,6 +1111,8 @@ BEGIN
     IDS_ROUTE               "Route"
     IDS_FLIGHTS_SINGULAR    "%d flight"
     IDS_FLIGHTS_PLURAL      "%d flights"
+    IDS_ROUTESTYLE          "Route style"
+    IDS_ANNOTATIONS         "Annotations"
 END
 
 STRINGTABLE 

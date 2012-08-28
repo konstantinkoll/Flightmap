@@ -25,6 +25,7 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUserDefinedRes();
 	DECLARE_MESSAGE_MAP()
 

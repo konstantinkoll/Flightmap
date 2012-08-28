@@ -82,6 +82,7 @@ void FMResolutionDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(FMResolutionDlg, CDialog)
 	ON_WM_DESTROY()
+	ON_NOTIFY(NM_DBLCLK, IDC_RESLIST, OnDoubleClick)
 	ON_BN_CLICKED(IDC_USERDEFINEDRES, OnUserDefinedRes)
 END_MESSAGE_MAP()
 
@@ -171,6 +172,11 @@ void FMResolutionDlg::OnDestroy()
 		DestroyIcon(hIconS);
 
 	CDialog::OnDestroy();
+}
+
+void FMResolutionDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+{
+	EndDialog(IDOK);
 }
 
 void FMResolutionDlg::OnUserDefinedRes()

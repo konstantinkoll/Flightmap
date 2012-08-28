@@ -780,12 +780,14 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		break;
 	case IDM_MAP_ROUTESTYLE:
 		pPopup->Create(this);
+		pPopup->AddCaption(IDS_ROUTESTYLE);
 		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
 		pPopup->AddCheckbox(IDM_MAP_ARROWS);
 		pPopup->AddCheckbox(IDM_MAP_USECOUNT);
 		break;
 	case IDM_MAP_ANNOTATIONS:
 		pPopup->Create(this);
+		pPopup->AddCaption(IDS_ANNOTATIONS);
 		pPopup->AddCheckbox(IDM_MAP_DISTANCE);
 		pPopup->AddCheckbox(IDM_MAP_FLIGHTTIME);
 		pPopup->AddCheckbox(IDM_MAP_FLIGHTCOUNT);

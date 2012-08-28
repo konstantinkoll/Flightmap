@@ -31,6 +31,7 @@ public:
 protected:
 	CItinerary* p_Itinerary;
 	CMFCMaskedEdit* p_Edit;
+	BOOL m_EditAllowCursor;
 	CGridHeader m_wndHeader;
 	ViewParameters m_ViewParameters;
 	FMTooltip m_TooltipCtrl;
@@ -48,7 +49,7 @@ protected:
 
 	void AdjustLayout();
 	void AdjustHeader();
-	void EditCell(BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
+	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
 	void EditFlight(CPoint item=CPoint(-1, -1), INT iSelectPage=-1);
 	void EnsureVisible(CPoint item=CPoint(-1, -1));
 	void ResetScrollbars();
