@@ -53,10 +53,10 @@ FMAirport* CKitchen::AddAirport(CHAR* Code)
 	return pAirport;
 }
 
-void CKitchen::AddFlight(CHAR* From, CHAR* To, FMGeoCoordinates& Waypoint, COLORREF Color)
+void CKitchen::AddFlight(AIRX_Flight& Flight)
 {
-	FMAirport* pFrom = AddAirport(From);
-	FMAirport* pTo = AddAirport(To);
+	FMAirport* pFrom = AddAirport(Flight.From.Code);
+	FMAirport* pTo = AddAirport(Flight.To.Code);
 	BYTE Arrow = ARROW_FT;
 
 	if ((pFrom!=NULL) && (pTo!=NULL))
@@ -68,7 +68,7 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, FMGeoCoordinates& Waypoint, COLOR
 		}
 
 		CHAR ID[16];
-		if ((pFrom==pTo) && ((Waypoint.Latitude!=0.0) || (Waypoint.Longitude!=0.0)))
+		if ((pFrom==pTo) && ((Flight.Waypoint.Latitude!=0.0) || (Flight.Waypoint.Longitude!=0.0)))
 		{
 			sprintf_s(ID, 16, "%s%012d", pFrom->Code, m_WaypointCount++);
 		}
@@ -83,30 +83,62 @@ void CKitchen::AddFlight(CHAR* From, CHAR* To, FMGeoCoordinates& Waypoint, COLOR
 		{
 			Route.Count++;
 			Route.Arrows |= Arrow;
-			if (Color!=Route.Color)
+			if (Flight.Color!=Route.Color)
 				Route.Color = (COLORREF)-1;
+			if (Flight.FlightTime)
+			{
+				Route.FlightTime += Flight.FlightTime;
+				Route.FlightTimeCount++;
+			}
+			if ((!Route.CarrierMultiple) && (Flight.Carrier[0]!=L'\0'))
+				if (Route.Carrier[0]==L'\0')
+				{
+					wcscpy_s(Route.Carrier, 256, Flight.Carrier);
+				}
+				else
+				{
+					Route.CarrierMultiple = (_wcsicmp(Route.Carrier, Flight.Carrier)!=0);
+				}
+			if ((!Route.EquipmentMultiple) && (Flight.Equipment[0]!=L'\0'))
+				if (Route.Equipment[0]==L'\0')
+				{
+					wcscpy_s(Route.Equipment, 256, Flight.Equipment);
+				}
+				else
+				{
+					Route.EquipmentMultiple = (_wcsicmp(Route.Equipment, Flight.Equipment)!=0);
+				}
 		}
 		else
 		{
 			ZeroMemory(&Route, sizeof(Route));
 			Route.pFrom = pFrom;
 			Route.pTo = pTo;
-			Route.Waypoint = Waypoint;
+			Route.Waypoint = Flight.Waypoint;
 			Route.Count = 1;
-			Route.Color = Color;
+			Route.Color = Flight.Color;
 			Route.Arrows = Arrow;
+			Route.LabelS = Route.LabelZ = -1.0;
+			Route.DistanceNM = 0.0;
+			if (Flight.FlightTime)
+			{
+				Route.FlightTime = Flight.FlightTime;
+				Route.FlightTimeCount = 1;
+			}
+			if (Flight.Carrier[0]!=L'\0')
+				wcscpy_s(Route.Carrier, 256, Flight.Carrier);
+			if (Flight.Equipment[0]!=L'\0')
+				wcscpy_s(Route.Equipment, 256, Flight.Equipment);
 		}
+
+		if ((Route.DistanceNM==0.0) && (Flight.Flags & AIRX_DistanceValid))
+			Route.DistanceNM = Flight.DistanceNM;
 
 		m_FlightRoutes[ID] = Route;
 
 		if (Route.Count>m_MaxRouteCount)
 			m_MaxRouteCount = Route.Count;
 	}
-}
-
-void CKitchen::AddFlight(AIRX_Flight& Flight)
-{
-	AddFlight(Flight.From.Code, Flight.To.Code, Flight.Waypoint, Flight.Color);
 }
 
 FlightSegments* CKitchen::Tesselate(FlightRoute& Route)

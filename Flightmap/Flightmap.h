@@ -39,6 +39,14 @@ struct MapSettings
 	BOOL StraightLines;
 	BOOL Arrows;
 	BOOL UseCount;
+	BOOL NoteDistance;
+	BOOL NoteFlightTime;
+	BOOL NoteFlightCount;
+	BOOL NoteCarrier;
+	BOOL NoteEquipment;
+	BOOL NoteSmallFont;
+	COLORREF NoteInnerColor;
+	COLORREF NoteOuterColor;
 	BOOL UseColors;
 	COLORREF RouteColor;
 	BOOL ShowLocations;

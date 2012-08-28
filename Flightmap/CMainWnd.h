@@ -83,6 +83,12 @@ protected:
 	afx_msg void OnMapStraightLines();
 	afx_msg void OnMapArrows();
 	afx_msg void OnMapUseCount();
+	afx_msg void OnMapDistance();
+	afx_msg void OnMapFlightTime();
+	afx_msg void OnMapFlightCount();
+	afx_msg void OnMapCarrier();
+	afx_msg void OnMapEquipment();
+	afx_msg void OnMapSmallFont();
 	afx_msg void OnMapUseColors();
 	afx_msg void OnMapShowLocations();
 	afx_msg void OnMapShowIATACodes();

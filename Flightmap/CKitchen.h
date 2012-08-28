@@ -32,6 +32,16 @@ struct FlightRoute
 	COLORREF Color;
 	UINT Count;
 	BYTE Arrows;
+	// Annotations
+	DOUBLE LabelS;
+	DOUBLE LabelZ;
+	DOUBLE DistanceNM;
+	ULONG FlightTime;
+	UINT FlightTimeCount;
+	WCHAR Carrier[256];
+	BOOL CarrierMultiple;
+	WCHAR Equipment[256];
+	BOOL EquipmentMultiple;
 };
 
 struct FlightSegments
@@ -49,8 +59,6 @@ class CKitchen
 {
 public:
 	CKitchen(CString DisplayName, BOOL MergeMetro=FALSE);
-
-	virtual void AddFlight(CHAR* From, CHAR* To, FMGeoCoordinates& Waypoint, COLORREF Color);
 
 	void AddFlight(AIRX_Flight& Flight);
 	static FlightSegments* Tesselate(FlightRoute& Route);

@@ -8,6 +8,21 @@
 #include "Flightmap.h"
 
 
+void AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
+{
+	if (!Buf.IsEmpty())
+		Buf.Append(_T("\n"));
+
+	if (MaxLines>1)
+	{
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(nID));
+		Buf.Append(tmpStr);
+		Buf.Append(_T(": "));
+	}
+}
+
+
 // CColor
 //
 
@@ -273,6 +288,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			}
 		}
 
+		UINT RouteNo = 0;
 		pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
 		while (pPair2)
 		{
@@ -321,7 +337,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 				PreparePen(pPair2->value);
 
 				const BOOL UseWaypoint = (pFrom==pTo) && ((pPair2->value.Waypoint.Latitude!=0.0) || (pPair2->value.Waypoint.Longitude!=0.0));
-				DrawLine(g, pen, pFrom->S, pFrom->Z, UseWaypoint ? (pPair2->value.Waypoint.Longitude*4096.0)/180.0+4096.0+MapOffset : pTo->S, UseWaypoint ? (pPair2->value.Waypoint.Latitude*2048.0)/90.0+2048.0 : pTo->Z, MinS, MinZ, Scale);
+				DrawLine(g, pen, pFrom->S, pFrom->Z, UseWaypoint ? (pPair2->value.Waypoint.Longitude*4096.0)/180.0+4096.0+MapOffset : pTo->S, UseWaypoint ? (pPair2->value.Waypoint.Latitude*2048.0)/90.0+2048.0 : pTo->Z, MinS, MinZ, Scale, &pPair2->value.LabelS, &pPair2->value.LabelZ);
 
 				if (m_Settings.Arrows && !UseWaypoint)
 				{
@@ -332,6 +348,13 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 					if (pPair2->value.Arrows & ARROW_TF)
 						DrawArrow(g, brush, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale, Upscale);
 				}
+			}
+			else
+			{
+				const FlightSegments* pSegments = RouteData[RouteNo++];
+
+				pPair2->value.LabelS = (CompS(pSegments->Points[pSegments->PointCount/2][1])-MinS)/Scale;
+				pPair2->value.LabelZ = (CompZ(pSegments->Points[pSegments->PointCount/2][0])-MinZ)/Scale;
 			}
 
 			pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
@@ -479,6 +502,122 @@ Skip:
 		}
 	}
 
+	// Draw annotations
+	if ((m_Settings.ShowFlightRoutes) && ((m_Settings.NoteDistance || m_Settings.NoteFlightCount || m_Settings.NoteFlightTime || m_Settings.NoteCarrier || m_Settings.NoteEquipment)))
+	{
+		const UINT MaxLines = (m_Settings.NoteDistance ? 1 : 0)+(m_Settings.NoteFlightCount ? 1 : 0)+(m_Settings.NoteFlightTime ? 1 : 0)+(m_Settings.NoteCarrier ? 1 : 0)+(m_Settings.NoteEquipment ? 1 : 0);
+
+		RECT* RouteLabel = new RECT[RouteCount];
+		ZeroMemory(RouteLabel, sizeof(RECT)*RouteCount);
+
+		FontFamily font(_T("Tahoma"));
+		Pen pen(CColor(m_Settings.NoteOuterColor), (REAL)((m_Settings.NoteSmallFont ? 1.75 : 2.0)*Upscale+0.5));
+		SolidBrush brush(CColor(m_Settings.NoteInnerColor));
+
+		pen.SetLineJoin(LineJoinRound);
+
+		UINT CurRoute = 0;
+		pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
+		while (pPair2)
+		{
+			CString Buf;
+			WCHAR tmpStr[256];
+			if ((m_Settings.NoteDistance) && (pPair2->value.DistanceNM!=0.0))
+			{
+				AppendLabel(Buf, IDS_COLUMN6, MaxLines);
+				DistanceToString(tmpStr, 256, pPair2->value.DistanceNM);
+				Buf.Append(tmpStr);
+			}
+			if ((m_Settings.NoteFlightTime) && (pPair2->value.FlightTimeCount))
+			{
+				AppendLabel(Buf, IDS_COLUMN23, MaxLines);
+				UINT FlightTime = pPair2->value.FlightTime/pPair2->value.FlightTimeCount;
+				swprintf(tmpStr, 256, L"%02d:%02d", FlightTime/60, FlightTime&60);
+				Buf.Append(tmpStr);
+			}
+			if (m_Settings.NoteFlightCount)
+			{
+				CString tmpMask(_T("%d"));
+				if (MaxLines>1)
+				{
+					if (!Buf.IsEmpty())
+						Buf.Append(_T("\n"));
+					ENSURE(tmpMask.LoadString(m_Settings.NoteFlightCount==1 ? IDS_FLIGHTS_SINGULAR : IDS_FLIGHTS_PLURAL));
+				}
+				CString tmpStr;
+				tmpStr.Format(tmpMask, pPair2->value.Count);
+				Buf.Append(tmpStr);
+			}
+			if ((m_Settings.NoteCarrier) && (pPair2->value.Carrier[0]!=L'\0') && (!pPair2->value.CarrierMultiple))
+			{
+				AppendLabel(Buf, IDS_COLUMN7, MaxLines);
+				Buf.Append(pPair2->value.Carrier);
+			}
+			if ((m_Settings.NoteCarrier) && (pPair2->value.Equipment[0]!=L'\0') && (!pPair2->value.EquipmentMultiple))
+			{
+				AppendLabel(Buf, IDS_COLUMN10, MaxLines);
+				Buf.Append(pPair2->value.Equipment);
+			}
+
+			StringFormat strformat;
+			GraphicsPath TextPath;
+			TextPath.Reset();
+			TextPath.AddString(Buf, Buf.GetLength(), &font, FontStyleRegular, (REAL)((m_Settings.NoteSmallFont ? 14.0 : 16.0)*Upscale), Gdiplus::Point(0, 0), &strformat);
+
+			Rect rectPath;
+			TextPath.GetBounds(&rectPath);
+			const DOUBLE S = pPair2->value.LabelS;
+			const DOUBLE Z = pPair2->value.LabelZ;
+			const INT L = rectPath.Width+(INT)(5.5*Upscale);
+			const INT H = rectPath.Height+(INT)(4.5*Upscale);
+
+			CRect rectLabel((INT)(S-L/2.0), (INT)(Z-H/2.0), (INT)(S+L/2.0), (INT)(Z+H/2.0));
+			if ((S==-1.0) || (Z==-1.0))
+				goto SkipNote;
+			if (rectLabel.left<0)
+				rectLabel.OffsetRect(-rectLabel.left, 0);
+			if (rectLabel.top<0)
+				rectLabel.OffsetRect(0, -rectLabel.top);
+			if (rectLabel.right>=Width)
+				rectLabel.OffsetRect(-(rectLabel.right-Width), 0);
+			if (rectLabel.bottom>=Height)
+				rectLabel.OffsetRect(0, -(rectLabel.bottom-Height));
+
+			if ((rectLabel.left<0) || (rectLabel.top<0) || (rectLabel.right>=Width) || (rectLabel.bottom>=Height))
+				goto SkipNote;
+
+			for (UINT a=0; a<AirportCount; a++)
+			{
+				RECT rect;
+				if (IntersectRect(&rect, rectLabel, &AirportData[a].Spot))
+					goto SkipNote;
+				if (IntersectRect(&rect, rectLabel, &AirportData[a].IATA))
+					goto SkipNote;
+			}
+			for (UINT a=0; a<CurRoute; a++)
+			{
+				RECT rect;
+				if (IntersectRect(&rect, rectLabel, &RouteLabel[a]))
+					goto SkipNote;
+			}
+
+			{
+				Matrix m;
+				m.Translate((REAL)rectLabel.left, (REAL)rectLabel.top);
+				TextPath.Transform(&m);
+			}
+
+			g.DrawPath(&pen, &TextPath);
+			g.FillPath(&brush, &TextPath);
+
+			RouteLabel[CurRoute++] = rectLabel;
+SkipNote:
+			pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
+		}
+
+		delete[] RouteLabel;
+	}
+
 	// Clean up GDI
 	dc.SelectObject(pOldBitmap);
 
@@ -580,7 +719,7 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 	return pBitmap;
 }
 
-void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ, DOUBLE Scale)
+void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ, DOUBLE Scale, DOUBLE* MidS, DOUBLE* MidZ)
 {
 #define Line(pen, x1, y1, x2, y2) \
 	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1), (REAL)(x2), (REAL)(y2)); \
@@ -596,16 +735,31 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 	{
 		Line(pen, x1, y1, x2-BGWIDTH, y2);
 		Line(pen, x1+BGWIDTH, y1, x2, y2);
+
+		if (MidS)
+			*MidS = -1.0;
+		if (MidZ)
+			*MidZ = -1.0;
 	}
 	else
 		if ((x1>BGWIDTH-WRAPMARGIN-MinS) && (x2<WRAPMARGIN-MinS))
 		{
 			Line(pen, x1-BGWIDTH, y1, x2, y2);
 			Line(pen, x1, y1, x2+BGWIDTH, y2);
+
+			if (MidS)
+				*MidS = -1.0;
+			if (MidZ)
+				*MidZ = -1.0;
 		}
 		else
 		{
 			Line(pen, x1/Scale, y1/Scale, x2/Scale, y2/Scale);
+
+			if (MidS)
+				*MidS = (x1+x2)/(2.0*Scale);
+			if (MidZ)
+				*MidZ = (y1+y2)/(2.0*Scale);
 		}
 }
 

@@ -585,7 +585,12 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
 	ON_COMMAND(IDM_MAP_STRAIGHTLINES, OnMapStraightLines)
 	ON_COMMAND(IDM_MAP_ARROWS, OnMapArrows)
-	ON_COMMAND(IDM_MAP_USECOUNT, OnMapUseCount)
+	ON_COMMAND(IDM_MAP_DISTANCE, OnMapDistance)
+	ON_COMMAND(IDM_MAP_FLIGHTTIME, OnMapFlightTime)
+	ON_COMMAND(IDM_MAP_FLIGHTCOUNT, OnMapFlightCount)
+	ON_COMMAND(IDM_MAP_CARRIER, OnMapCarrier)
+	ON_COMMAND(IDM_MAP_EQUIPMENT, OnMapEquipment)
+	ON_COMMAND(IDM_MAP_SMALLFONT, OnMapSmallFont)
 	ON_COMMAND(IDM_MAP_USECOLORS, OnMapUseColors)
 	ON_COMMAND(IDM_MAP_SHOWLOCATIONS, OnMapShowLocations)
 	ON_COMMAND(IDM_MAP_SHOWIATACODES, OnMapShowIATACodes)
@@ -751,9 +756,8 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCheckbox(IDM_MAP_CENTERPACIFIC, TRUE);
 		pPopup->AddCaption(IDS_FLIGHTROUTES);
 		pPopup->AddCheckbox(IDM_MAP_SHOWFLIGHTROUTES);
-		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
-		pPopup->AddCheckbox(IDM_MAP_ARROWS);
-		pPopup->AddCheckbox(IDM_MAP_USECOUNT);
+		pPopup->AddSubmenu(IDM_MAP_ROUTESTYLE);
+		pPopup->AddSubmenu(IDM_MAP_ANNOTATIONS);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_USECOLORS);
 		pPopup->AddColor(IDM_MAP_ROUTECOLOR, &theApp.m_MapSettings.RouteColor);
@@ -773,6 +777,24 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddFileType(IDM_MAP_EXPORT_JPEG, _T("jpg"), CDMB_LARGE);
 		pPopup->AddFileType(IDM_MAP_EXPORT_PNG, _T("png"), CDMB_LARGE);
 		pPopup->AddFileType(IDM_MAP_EXPORT_TIFF, _T("tif"), CDMB_LARGE);
+		break;
+	case IDM_MAP_ROUTESTYLE:
+		pPopup->Create(this);
+		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
+		pPopup->AddCheckbox(IDM_MAP_ARROWS);
+		pPopup->AddCheckbox(IDM_MAP_USECOUNT);
+		break;
+	case IDM_MAP_ANNOTATIONS:
+		pPopup->Create(this);
+		pPopup->AddCheckbox(IDM_MAP_DISTANCE);
+		pPopup->AddCheckbox(IDM_MAP_FLIGHTTIME);
+		pPopup->AddCheckbox(IDM_MAP_FLIGHTCOUNT);
+		pPopup->AddCheckbox(IDM_MAP_CARRIER);
+		pPopup->AddCheckbox(IDM_MAP_EQUIPMENT);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_MAP_SMALLFONT);
+		pPopup->AddColor(IDM_MAP_NOTEINNERCOLOR, &theApp.m_MapSettings.NoteInnerColor);
+		pPopup->AddColor(IDM_MAP_NOTEOUTERCOLOR, &theApp.m_MapSettings.NoteOuterColor);
 		break;
 	case IDM_GLOBE:
 		pPopup->Create(this, IDB_MENUGLOBE_32, IDB_MENUGLOBE_16);
@@ -1112,6 +1134,36 @@ void CMainWnd::OnMapArrows()
 	theApp.m_MapSettings.Arrows = !theApp.m_MapSettings.Arrows;
 }
 
+void CMainWnd::OnMapDistance()
+{
+	theApp.m_MapSettings.NoteDistance = !theApp.m_MapSettings.NoteDistance;
+}
+
+void CMainWnd::OnMapFlightTime()
+{
+	theApp.m_MapSettings.NoteFlightTime = !theApp.m_MapSettings.NoteFlightTime;
+}
+
+void CMainWnd::OnMapFlightCount()
+{
+	theApp.m_MapSettings.NoteFlightCount = !theApp.m_MapSettings.NoteFlightCount;
+}
+
+void CMainWnd::OnMapCarrier()
+{
+	theApp.m_MapSettings.NoteCarrier = !theApp.m_MapSettings.NoteCarrier;
+}
+
+void CMainWnd::OnMapEquipment()
+{
+	theApp.m_MapSettings.NoteEquipment = !theApp.m_MapSettings.NoteEquipment;
+}
+
+void CMainWnd::OnMapSmallFont()
+{
+	theApp.m_MapSettings.NoteSmallFont = !theApp.m_MapSettings.NoteSmallFont;
+}
+
 void CMainWnd::OnMapUseCount()
 {
 	theApp.m_MapSettings.UseCount = !theApp.m_MapSettings.UseCount;
@@ -1173,6 +1225,32 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_USECOUNT:
 		pCmdUI->SetCheck(theApp.m_MapSettings.UseCount);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_DISTANCE:
+		pCmdUI->SetCheck(theApp.m_MapSettings.NoteDistance);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_FLIGHTTIME:
+		pCmdUI->SetCheck(theApp.m_MapSettings.NoteFlightTime);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_FLIGHTCOUNT:
+		pCmdUI->SetCheck(theApp.m_MapSettings.NoteFlightCount);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_CARRIER:
+		pCmdUI->SetCheck(theApp.m_MapSettings.NoteCarrier);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_EQUIPMENT:
+		pCmdUI->SetCheck(theApp.m_MapSettings.NoteEquipment);
+		b = theApp.m_MapSettings.ShowFlightRoutes;
+		break;
+	case IDM_MAP_SMALLFONT:
+		pCmdUI->SetCheck(theApp.m_MapSettings.NoteSmallFont);
+	case IDM_MAP_NOTEINNERCOLOR:
+	case IDM_MAP_NOTEOUTERCOLOR:
 		b = theApp.m_MapSettings.ShowFlightRoutes;
 		break;
 	case IDM_MAP_USECOLORS:
