@@ -532,7 +532,7 @@ Skip:
 			{
 				AppendLabel(Buf, IDS_COLUMN23, MaxLines);
 				UINT FlightTime = pPair2->value.FlightTime/pPair2->value.FlightTimeCount;
-				swprintf(tmpStr, 256, L"%02d:%02d", FlightTime/60, FlightTime&60);
+				swprintf(tmpStr, 256, L"%02d:%02d", FlightTime/60, FlightTime%60);
 				Buf.Append(tmpStr);
 			}
 			if (m_Settings.NoteFlightCount)
