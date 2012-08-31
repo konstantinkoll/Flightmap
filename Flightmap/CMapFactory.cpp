@@ -553,7 +553,7 @@ Skip:
 				AppendLabel(Buf, IDS_COLUMN7, MaxLines);
 				Buf.Append(pPair2->value.Carrier);
 			}
-			if ((m_Settings.NoteCarrier) && (pPair2->value.Equipment[0]!=L'\0') && (!pPair2->value.EquipmentMultiple))
+			if ((m_Settings.NoteEquipment) && (pPair2->value.Equipment[0]!=L'\0') && (!pPair2->value.EquipmentMultiple))
 			{
 				AppendLabel(Buf, IDS_COLUMN10, MaxLines);
 				Buf.Append(pPair2->value.Equipment);
