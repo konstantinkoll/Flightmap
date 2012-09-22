@@ -170,15 +170,16 @@
 #define IDC_FILTER_RATING               22006
 #define IDC_FLIGHTCOUNT                 22007
 #define IDC_TOTALDISTANCE               22008
-#define IDC_LONGESTFLIGHT               22009
-#define IDC_SHORTESTFLIGHT              22010
-#define IDC_TOTALMILESEARNED            22011
-#define IDC_TOTALMILESSPENT             22012
-#define IDC_LIST_CLASS                  22013
-#define IDC_LIST_ROUTE                  22014
-#define IDC_LIST_AIRPORT                22015
-#define IDC_LIST_CARRIER                22016
-#define IDC_LIST_EQUIPMENT              22017
+#define IDC_TOTALFLIGHTTIME             22009
+#define IDC_LONGESTFLIGHT               22010
+#define IDC_SHORTESTFLIGHT              22011
+#define IDC_TOTALMILESEARNED            22012
+#define IDC_TOTALMILESSPENT             22013
+#define IDC_LIST_CLASS                  22014
+#define IDC_LIST_ROUTE                  22015
+#define IDC_LIST_AIRPORT                22016
+#define IDC_LIST_CARRIER                22017
+#define IDC_LIST_EQUIPMENT              22018
 
 // Next default values for new objects
 // 

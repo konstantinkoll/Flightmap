@@ -86,6 +86,7 @@ void StatisticsDlg::UpdateStatistics()
 	// Reset
 	UINT FlightCount = 0;
 	DOUBLE DistanceNM = 0.0;
+	LONG FlightTime = 0;
 	AIRX_Route Longest = { "", "", -1.0 };
 	AIRX_Route Shortest = { "", "", -1.0 };
 	ULONG Miles[2][2] = {{ 0, 0 }, { 0, 0 }};
@@ -140,6 +141,7 @@ void StatisticsDlg::UpdateStatistics()
 
 		// Count
 		FlightCount++;
+		FlightTime += pFlight->FlightTime;
 		if (pFlight->Flags & AIRX_DistanceValid)
 		{
 			DistanceNM += pFlight->DistanceNM;
@@ -237,6 +239,9 @@ void StatisticsDlg::UpdateStatistics()
 	WCHAR tmpBuf[256];
 	DistanceToString(tmpBuf, 256, DistanceNM);
 	GetDlgItem(IDC_TOTALDISTANCE)->SetWindowText(tmpBuf);
+
+	swprintf(tmpBuf, 256, L"%dd %02d:%02d", FlightTime/1440, (FlightTime/60)%24 ,FlightTime%60);
+	GetDlgItem(IDC_TOTALFLIGHTTIME)->SetWindowText(FlightTime ? tmpBuf : L"—");
 
 	RouteToString(tmpBuf, 256, Longest);
 	GetDlgItem(IDC_LONGESTFLIGHT)->SetWindowText(tmpBuf);
