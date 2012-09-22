@@ -645,6 +645,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Overlay_Invalid.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Overlay_Valid.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\PDZVOR.png"
 			>
 		</File>
