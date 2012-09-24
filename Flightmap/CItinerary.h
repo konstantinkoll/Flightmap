@@ -64,6 +64,8 @@ struct AIRX_Route
 #define AIRX_Charter                'H'
 
 #define AIRX_MaxAttachmentCount     16
+#define AIRX_Valid                  1
+#define AIRX_Invalid                2
 
 struct AIRX_Flight
 {
@@ -99,6 +101,7 @@ struct AIRX_Attachment
 	UINT Size;
 	LPVOID pData;
 	INT IconID;
+	DWORD Flags;
 };
 
 

@@ -163,8 +163,6 @@ void FMSelectLocationIATADlg::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 
 			if (strcmp(m_Airports[idx]->Code, m_Airports[idx]->MetroCode)==0)
 				pLVCD->clrText = 0xFF0000;
-
-			*pResult = CDRF_DODEFAULT;
 		}
 }
 

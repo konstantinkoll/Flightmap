@@ -172,6 +172,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_INITMENUPOPUP()
+	ON_NOTIFY(NM_CUSTOMDRAW, 2, OnCustomDraw)
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
 	ON_NOTIFY(NM_DBLCLK, 2, OnDoubleClick)
 	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
@@ -273,6 +274,31 @@ void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysM
 		}
 		state.m_nIndexMax = nCount;
 	}
+}
+
+void CFileView::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLVCUSTOMDRAW* pLVCD = (NMLVCUSTOMDRAW*)pNMHDR;
+	*pResult = CDRF_DODEFAULT;
+
+	if (CDDS_PREPAINT==pLVCD->nmcd.dwDrawStage)
+	{
+		*pResult = CDRF_NOTIFYITEMDRAW;
+	}
+	else
+		if (CDDS_ITEMPREPAINT==pLVCD->nmcd.dwDrawStage)
+		{
+			AIRX_Attachment* pAttachment = GetAttachment(pLVCD->nmcd.dwItemSpec);
+			if (pAttachment->Flags & AIRX_Invalid)
+			{
+				pLVCD->clrText = 0x0000FF;
+			}
+			else
+				if (pAttachment->Flags & AIRX_Valid)
+				{
+					pLVCD->clrText = 0x208040;
+				}
+		}
 }
 
 void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)

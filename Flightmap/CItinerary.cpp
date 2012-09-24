@@ -835,6 +835,8 @@ void CItinerary::OpenAIRX(CString FileName)
 						if (ReadRecord(f, &Attachment, sizeof(Attachment), Header.AttachmentRecordSize))
 						{
 							Attachment.IconID = -1;
+							if (Attachment.Flags & AIRX_Invalid)
+								Attachment.Flags &= ~AIRX_Valid;
 
 							if (pData)
 								free(pData);
@@ -1132,9 +1134,10 @@ void CItinerary::SaveAIRX(CString FileName)
 			{
 				AIRX_Attachment Attachment = m_Attachments.m_Items[a];
 
-				if (Attachment.pData==NULL)
+				if (!Attachment.pData)
 					Attachment.Size = 0;
 				Attachment.pData = NULL;
+				Attachment.IconID = -1;
 
 				f.Write(&Attachment, sizeof(Attachment));
 				if ((m_Attachments.m_Items[a].pData) && (Attachment.Size!=0))

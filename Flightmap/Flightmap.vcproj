@@ -840,14 +840,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Overlay_Invalid.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Overlay_Valid.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Santa.png"
 				>
 			</File>
