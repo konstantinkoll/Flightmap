@@ -128,7 +128,7 @@ BOOL CFlightmapApp::InitInstance()
 	GetBinary(_T("ColumnOrder"), &m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
 	GetBinary(_T("ColumnWidth"), &m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
 	for (UINT a=0; a<FMAttributeCount; a++)
-		if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor) || (FMAttributes[a].Type==FMTypeFlags))
+		if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor) || (FMAttributes[a].Type==FMTypeFlags) || ((m_ViewParameters.ColumnWidth[a]==0) && ((a==0) || (a==3))))
 			m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
 
 	for (UINT a=0; a<10; a++)

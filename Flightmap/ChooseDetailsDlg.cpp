@@ -29,15 +29,19 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		{
-			UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
-			p_ViewParameters->ColumnWidth[attr] = m_ShowAttributes.GetCheck(a) ? OldWidth[attr] ? OldWidth[attr] : FMAttributes[attr].RecommendedWidth : 0;
+			const UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
+			const BOOL show = m_ShowAttributes.GetCheck(a) || (attr==0) || (attr==3);
+			p_ViewParameters->ColumnWidth[attr] = show ? OldWidth[attr] ? OldWidth[attr] : FMAttributes[attr].RecommendedWidth : 0;
 		}
 
 		// Reihenfolge
 		UINT cnt = 0;
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
-			if (m_ShowAttributes.GetCheck(a))
-				p_ViewParameters->ColumnOrder[cnt++] = (INT)m_ShowAttributes.GetItemData(a);
+		{
+			const UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
+			if (m_ShowAttributes.GetCheck(a) || (attr==0) || (attr==3))
+				p_ViewParameters->ColumnOrder[cnt++] = attr;
+		}
 
 		for (INT a=0; a<FMAttributeCount; a++)
 			if (!p_ViewParameters->ColumnWidth[a])
@@ -135,7 +139,7 @@ void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	INT idx = (INT)pNMListView->iItem;
 
-	if (pNMListView->uNewState & LVIS_SELECTED)
+	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
 	{
 		GetDlgItem(IDC_MOVEUP)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx>0));
 		GetDlgItem(IDC_MOVEDOWN)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx<m_ShowAttributes.GetItemCount()-1));
