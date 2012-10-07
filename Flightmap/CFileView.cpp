@@ -288,7 +288,7 @@ void CFileView::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 		if (CDDS_ITEMPREPAINT==pLVCD->nmcd.dwDrawStage)
 		{
-			AIRX_Attachment* pAttachment = GetAttachment(pLVCD->nmcd.dwItemSpec);
+			AIRX_Attachment* pAttachment = GetAttachment((INT)pLVCD->nmcd.dwItemSpec);
 			if (pAttachment->Flags & AIRX_Invalid)
 			{
 				pLVCD->clrText = 0x0000FF;

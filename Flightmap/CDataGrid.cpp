@@ -118,12 +118,12 @@ void CDataGrid::SetItinerary(CItinerary* pItinerary, UINT Row)
 	}
 }
 
-BOOL CDataGrid::HasSelection()
+BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected)
 {
-	return p_Itinerary ? (m_SelectionAnchor>=0) && (m_SelectionAnchor<(INT)p_Itinerary->m_Flights.m_ItemCount) : FALSE;
+	return p_Itinerary ? ((m_SelectionAnchor>=0) && (m_SelectionAnchor<(INT)p_Itinerary->m_Flights.m_ItemCount)) || (CurrentLineIfNoneSelected && (m_SelectedItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)) : FALSE;
 }
 
-void CDataGrid::GetSelection(INT& First, INT& Last)
+void CDataGrid::GetSelection(INT& First, INT& Last, BOOL CurrentLineIfNoneSelected)
 {
 	ASSERT(p_Itinerary);
 
@@ -144,10 +144,15 @@ void CDataGrid::GetSelection(INT& First, INT& Last)
 				Last = p_Itinerary->m_Flights.m_ItemCount-1;
 		}
 		else
-		{
-			First = 0;
-			Last = p_Itinerary->m_Flights.m_ItemCount-1;
-		}
+			if (HasSelection(CurrentLineIfNoneSelected))
+			{
+				First = Last = m_SelectedItem.y;
+			}
+			else
+			{
+				First = 0;
+				Last = p_Itinerary->m_Flights.m_ItemCount-1;
+			}
 }
 
 UINT CDataGrid::GetCurrentRow()
@@ -165,7 +170,7 @@ void CDataGrid::DoCopy(BOOL Cut)
 	{
 		INT Anfang;
 		INT Ende;
-		GetSelection(Anfang, Ende);
+		GetSelection(Anfang, Ende, TRUE);
 
 		// CF_UNICODETEXT
 		CString Buffer;
@@ -1288,7 +1293,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case VK_DELETE:
 			if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			{
-				if (HasSelection())
+				if (HasSelection(TRUE))
 					OnDelete();
 			}
 			else
@@ -1517,7 +1522,7 @@ void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 void CDataGrid::OnCut()
 {
 	ASSERT(p_Itinerary);
-	ASSERT(HasSelection());
+	ASSERT(HasSelection(TRUE));
 
 	DoCopy(TRUE);
 }
@@ -1525,7 +1530,7 @@ void CDataGrid::OnCut()
 void CDataGrid::OnCopy()
 {
 	ASSERT(p_Itinerary);
-	ASSERT(HasSelection());
+	ASSERT(HasSelection(TRUE));
 
 	DoCopy(FALSE);
 }
@@ -1566,11 +1571,11 @@ void CDataGrid::OnInsertRow()
 void CDataGrid::OnDelete()
 {
 	ASSERT(p_Itinerary);
-	ASSERT(HasSelection());
+	ASSERT(HasSelection(TRUE));
 
 	INT Anfang;
 	INT Ende;
-	GetSelection(Anfang, Ende);
+	GetSelection(Anfang, Ende, TRUE);
 
 	DoDelete(Anfang, Ende);
 }
@@ -1642,7 +1647,7 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 	case IDM_EDIT_CUT:
 	case IDM_EDIT_COPY:
 	case IDM_EDIT_DELETE:
-		b &= HasSelection();
+		b &= HasSelection(TRUE);
 		break;
 	case IDM_EDIT_PASTE:
 		{

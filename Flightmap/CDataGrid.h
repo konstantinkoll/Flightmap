@@ -24,8 +24,8 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
-	BOOL HasSelection();
-	void GetSelection(INT& First, INT& Last);
+	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE);
+	void GetSelection(INT& First, INT& Last, BOOL CurrentLineIfNone=FALSE);
 	UINT GetCurrentRow();
 
 protected:
