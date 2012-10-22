@@ -1338,6 +1338,18 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 	return Res;
 }
 
+CGdiPlusBitmap* CItinerary::DecodeAttachment(UINT Idx)
+{
+	ASSERT(Idx<m_Attachments.m_ItemCount);
+
+	return DecodeAttachment(m_Attachments.m_Items[Idx]);
+}
+
+CGdiPlusBitmap* CItinerary::DecodeAttachment(AIRX_Attachment& Attachment)
+{
+	return new CGdiPlusBitmapMemory(Attachment.pData, Attachment.Size);
+}
+
 void CItinerary::DeleteAttachment(UINT Idx, AIRX_Flight* pFlight)
 {
 	ASSERT(Idx<m_Attachments.m_ItemCount);

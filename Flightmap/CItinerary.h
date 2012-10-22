@@ -186,6 +186,8 @@ public:
 	void DeleteFlights(UINT Row, UINT Count=1);
 
 	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
+	CGdiPlusBitmap* DecodeAttachment(UINT Idx);
+	CGdiPlusBitmap* DecodeAttachment(AIRX_Attachment& Attachment);
 	void DeleteAttachment(UINT Idx, AIRX_Flight* pFlight=NULL);
 	void DeleteAttachments(AIRX_Flight* pFlight=NULL);
 
