@@ -63,7 +63,7 @@ BOOL CFlightmapApp::InitInstance()
 	// Registry auslesen
 	SetRegistryBase();
 	m_UseStatuteMiles = GetInt(_T("UseStatuteMiles"), FALSE);
-	m_UseBgImages = GetInt(_T("UseBgImages"), TRUE);
+	m_UseBgImages = GetInt(_T("UseBgImages"), OSVersion!=OS_Eight);
 	m_nTextureSize = GetInt(_T("TextureSize"), FMTextureAuto);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
 	m_MapMergeMetro = GetInt(_T("MapMergeMetro"), FALSE);

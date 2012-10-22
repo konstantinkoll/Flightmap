@@ -912,7 +912,7 @@ void CDataGrid::OnPaint()
 
 	BOOL Themed = IsCtrlThemed();
 	const COLORREF colBackground = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	const COLORREF colLines = Themed ? 0xDDDCDA : GetSysColor(COLOR_3DFACE);
+	const COLORREF colLines = Themed ? theApp.OSVersion==OS_Eight ? 0xEAE9E8 : 0xDDDCDA : GetSysColor(COLOR_SCROLLBAR);
 	const COLORREF colText = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 	dc.FillSolidRect(rect, colBackground);
 
@@ -939,18 +939,18 @@ void CDataGrid::OnPaint()
 					{
 						if (Selected)
 						{
-							dc.FillSolidRect(rectItem, Themed && (theApp.OSVersion>OS_XP) ? 0xFFDBB7 : GetSysColor(COLOR_HIGHLIGHT));
+							dc.FillSolidRect(rectItem, Themed && (theApp.OSVersion!=OS_XP) && (theApp.OSVersion!=OS_Eight) ? 0xFFDBB7 : GetSysColor(COLOR_HIGHLIGHT));
 						}
 						else
 							if (!FMAttributes[Attr].Editable)
 							{
-								dc.FillSolidRect(rectItem, 0xF5F5F5);
+								dc.FillSolidRect(rectItem, theApp.OSVersion==OS_Eight ? 0xF7F6F5 : 0xF5F5F5);
 							}
 
 						if (row<p_Itinerary->m_Flights.m_ItemCount)
 						{
 							const DWORD Flags = p_Itinerary->m_Flights.m_Items[row].Flags;
-							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : colText);
+							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP) || (theApp.OSVersion==OS_Eight))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : colText);
 							DrawCell(dc, p_Itinerary->m_Flights.m_Items[row], Attr, rectItem, Selected);
 						}
 					}

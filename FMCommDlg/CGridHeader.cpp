@@ -28,8 +28,9 @@ void CGridHeader::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
+	FMApplication* pApp = (FMApplication*)AfxGetApp();
 	BOOL Themed = IsCtrlThemed();
-	BOOL IsXP = ((FMApplication*)AfxGetApp())->OSVersion==OS_XP;
+	BOOL Flat = (pApp->OSVersion==OS_XP) || (pApp->OSVersion==OS_Eight);
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
 
 	CFont* pOldFont = dc.SelectObject(GetFont());
@@ -48,7 +49,7 @@ void CGridHeader::OnPaint()
 
 			if (GetItem(a, &hdi) && (hdi.cxy))
 			{
-				const COLORREF colBorder = IsXP ? GetSysColor(COLOR_SCROLLBAR) : 0xBAB5B1;
+				const COLORREF colBorder = Flat ? pApp->OSVersion==OS_Eight ? 0xEAE9E8 : GetSysColor(COLOR_SCROLLBAR) : 0xBAB5B1;
 				dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), colBorder);
 				dc.FillSolidRect(rectItem.left, rectItem.bottom-1, rectItem.Width(), 1, colBorder);
 
@@ -57,9 +58,9 @@ void CGridHeader::OnPaint()
 					rectItem.right--;
 					rectItem.bottom--;
 
-					if (IsXP || (m_PressedItem==a))
+					if (Flat || (m_PressedItem==a))
 					{
-						dc.FillSolidRect(rectItem, m_PressedItem==a ? colBorder : GetSysColor(COLOR_MENUBAR));
+						dc.FillSolidRect(rectItem, m_PressedItem==a ? colBorder : pApp->OSVersion==OS_Eight ? 0xF7F6F5 : GetSysColor(COLOR_MENUBAR));
 					}
 					else
 					{
@@ -107,7 +108,7 @@ void CGridHeader::OnPaint()
 					break;
 				}
 
-				dc.SetTextColor(Themed ? IsXP ? GetSysColor(COLOR_MENUTEXT) : m_PressedItem==a ? 0x000000 : 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
+				dc.SetTextColor(Themed ? Flat ? GetSysColor(COLOR_MENUTEXT) : m_PressedItem==a ? 0x000000 : 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
 				dc.DrawText(lpBuffer, rectItem, nFormat);
 
 				if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))

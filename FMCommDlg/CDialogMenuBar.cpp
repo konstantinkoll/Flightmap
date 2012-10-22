@@ -1146,7 +1146,7 @@ __forceinline CFont* CDialogMenuPopup::SelectCaptionFont(CDC* pDC)
 
 void CDialogMenuPopup::DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed)
 {
-	if (Themed)
+	if (Themed && (p_App->OSVersion!=OS_Eight))
 	{
 		Graphics g(dc);
 
@@ -1290,7 +1290,7 @@ void CDialogMenuPopup::OnPaint()
 	if (m_BlueAreaStart)
 	{
 		DrawBevelRect(dc, rect.left, rect.top, rect.Width(), m_BlueAreaStart, Themed);
-		dc.FillSolidRect(rect.left, m_BlueAreaStart, rect.Width(), rect.bottom, Themed ? 0xFBF5F1 : GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(rect.left, m_BlueAreaStart, rect.Width(), rect.bottom, Themed && (p_App->OSVersion!=OS_Eight) ? 0xFBF5F1 : GetSysColor(COLOR_3DFACE));
 	}
 	else
 	{
@@ -1305,7 +1305,7 @@ void CDialogMenuPopup::OnPaint()
 		if (IntersectRect(&rectIntersect, &m_Items.m_Items[a].Rect, rectUpdate))
 		{
 			BOOL Selected = (m_SelectedItem==(INT)a) && (m_Items.m_Items[a].Selectable);
-			dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+			dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? p_App->OSVersion!=OS_Eight ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT) : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
 
 			m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, m_SelectedItem==(INT)a, hThemeList ? 2 : Themed ? 1 : 0);
 		}
@@ -1825,7 +1825,7 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		p_ParentPopup->DrawButton(pDC, rectButton, TRUE, (INT)a==m_SelectedItem, m_Enabled, (Selected && ((INT)a==m_HoverItem)), m_Pressed);
 		rectText.left = rectButton.right+BORDER;
 
-		pDC->SetTextColor(!m_Enabled ? GetSysColor(COLOR_3DSHADOW) : Themed==2 ? 0x6E1500 : (Selected && ((INT)a==m_HoverItem)) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+		pDC->SetTextColor(!m_Enabled ? GetSysColor(COLOR_3DSHADOW) : Themed==2 ? ((FMApplication*)AfxGetApp())->OSVersion!=OS_Eight ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT) : (Selected && ((INT)a==m_HoverItem)) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
 		pDC->DrawText(m_Captions[a], rectText, DT_HIDEPREFIX | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS | DT_SINGLELINE);
 	}
 }
@@ -2112,7 +2112,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 	// Pfeil
 	if (m_Submenu)
 	{
-		COLORREF oldColor = pDC->SetTextColor(Themed==2 ? 0x6E1500 : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+		COLORREF col = Themed==2 ? ((FMApplication*)AfxGetApp())->OSVersion!=OS_Eight ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT) : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT);
 
 		CRect rectArrow(rect);
 		rectArrow.left = rectArrow.right-ARROWWIDTH-2*GetInnerBorder();
@@ -2121,11 +2121,9 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 		const INT mid = (rectArrow.top+rectArrow.bottom)/2;
 		for (INT a=0; a<ARROWWIDTH; a++)
 		{
-			pDC->FillSolidRect(rectArrow.left, mid-a, ARROWWIDTH-a, 1, pDC->GetTextColor());
-			pDC->FillSolidRect(rectArrow.left, mid+a, ARROWWIDTH-a, 1, pDC->GetTextColor());
+			pDC->FillSolidRect(rectArrow.left, mid-a, ARROWWIDTH-a, 1, col);
+			pDC->FillSolidRect(rectArrow.left, mid+a, ARROWWIDTH-a, 1, col);
 		}
-
-		pDC->SetTextColor(oldColor);
 	}
 
 	// Text
@@ -2494,12 +2492,17 @@ void CDialogMenuSeparator::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, UIN
 		}
 	}
 	else
-		if (Themed)
+		if (((FMApplication*)AfxGetApp())->OSVersion==OS_Eight)
 		{
-			pDC->FillSolidRect(rect->left, rect->top, l, 1, 0xF1E1DA);
-			pDC->FillSolidRect(rect->left, rect->top+1, l, 1, 0xF4EAE3);
-			pDC->FillSolidRect(rect->left, rect->top+2, l, 1, 0xF9F0EC);
+			pDC->FillSolidRect(rect->left, rect->top+1, l, 2, GetSysColor(COLOR_3DFACE));
 		}
+		else
+			if (Themed)
+			{
+				pDC->FillSolidRect(rect->left, rect->top, l, 1, 0xF1E1DA);
+				pDC->FillSolidRect(rect->left, rect->top+1, l, 1, 0xF4EAE3);
+				pDC->FillSolidRect(rect->left, rect->top+2, l, 1, 0xF9F0EC);
+			}
 }
 
 
@@ -2552,7 +2555,7 @@ void CDialogMenuCaption::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, UINT 
 	CRect rectText(rect);
 	rectText.DeflateRect(0, BORDERPOPUP);
 
-	if (Themed)
+	if (Themed && ((FMApplication*)AfxGetApp())->OSVersion!=OS_Eight)
 	{
 		INT l = rectText.Width();
 		INT h = rectText.Height();
@@ -2564,7 +2567,7 @@ void CDialogMenuCaption::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, UINT 
 
 	rectText.DeflateRect(BORDER+BORDERPOPUP, Themed ? 1 : 0);
 
-	pDC->SetTextColor(Themed ? 0x6E1500 : GetSysColor(COLOR_HIGHLIGHT));
+	pDC->SetTextColor(Themed ? ((FMApplication*)AfxGetApp())->OSVersion!=OS_Eight ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT) : GetSysColor(COLOR_HIGHLIGHT));
 	pDC->DrawText(m_Caption, rectText, DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 	pDC->SelectObject(pOldFont);

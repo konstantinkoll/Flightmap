@@ -367,10 +367,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CStripCtrl.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CTaskbar.cpp"
 				>
 			</File>
@@ -506,10 +502,6 @@
 			</File>
 			<File
 				RelativePath=".\CRatingCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CStripCtrl.h"
 				>
 			</File>
 			<File

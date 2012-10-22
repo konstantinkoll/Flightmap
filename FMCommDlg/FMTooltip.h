@@ -28,6 +28,7 @@ protected:
 	void Hide();
 
 	BOOL m_Themed;
+	BOOL m_Flat;
 	HICON m_Icon;
 	HBITMAP m_Bitmap;
 	CSize m_Size;

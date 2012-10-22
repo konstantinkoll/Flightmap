@@ -50,6 +50,8 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		return;
 	}
 
+	FMApplication* pApp = ((FMApplication*)AfxGetApp());
+
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
@@ -62,7 +64,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	INT Line = layout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
-	if (Themed && ((FMApplication*)AfxGetApp())->m_UseBgImages && (m_Design==FMDS_Blue))
+	if (Themed && pApp->m_UseBgImages && (m_Design==FMDS_Blue))
 	{
 		INT l = m_pBackdrop->m_pBitmap->GetWidth();
 		INT h = m_pBackdrop->m_pBitmap->GetHeight();
@@ -87,7 +89,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	else
 	{
 		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
-		if (Themed)
+		if (Themed && (pApp->OSVersion!=OS_Eight))
 		{
 			if (m_Design==FMDS_Blue)
 			{

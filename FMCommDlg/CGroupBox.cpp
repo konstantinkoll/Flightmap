@@ -66,6 +66,11 @@ void CGroupBox::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
+	Graphics g(dc);
+	g.SetCompositingMode(CompositingModeSourceOver);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+	FMApplication* pApp = (FMApplication*)AfxGetApp();
 	BOOL Themed = IsCtrlThemed();
 
 	// Background
@@ -84,49 +89,35 @@ void CGroupBox::OnPaint()
 	CRect rectBounds(rect);
 	rectBounds.top += sz.cy/2;
 
-	if (!Themed)
+	if (pApp->m_UseBgImages && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
 	{
-		rectBounds.left++;
-		rectBounds.top++;
-		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
+		rectBounds.right -= 3;
+		rectBounds.bottom -= 3;
 
-		rectBounds.OffsetRect(-1, -1);
-		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+		Matrix m1;
+		m1.Translate(2.0, 2.0);
 
-		clr = GetSysColor(COLOR_WINDOWTEXT);
+		Matrix m2;
+		m2.Translate(-1.0, -1.0);
+
+		GraphicsPath path;
+		CreateRoundRectangle(rectBounds, 2, path);
+
+		Pen pen(Color(224, 196, 240, 248));
+		g.DrawPath(&pen, &path);
+
+		path.Transform(&m1);
+		pen.SetColor(Color(128, 255, 255, 255));
+		g.DrawPath(&pen, &path);
+
+		path.Transform(&m2);
+		pen.SetColor(Color(64, 60, 96, 112));
+		g.DrawPath(&pen, &path);
+
+		clr = 0xCC6600;
 	}
 	else
-	{
-		Graphics g(dc);
-		g.SetCompositingMode(CompositingModeSourceOver);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-		if (((FMApplication*)AfxGetApp())->m_UseBgImages && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
-		{
-			rectBounds.right -= 3;
-			rectBounds.bottom -= 3;
-
-			Matrix m1;
-			m1.Translate(2.0, 2.0);
-
-			Matrix m2;
-			m2.Translate(-1.0, -1.0);
-
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen(Color(224, 196, 240, 248));
-			g.DrawPath(&pen, &path);
-
-			path.Transform(&m1);
-			pen.SetColor(Color(128, 255, 255, 255));
-			g.DrawPath(&pen, &path);
-
-			path.Transform(&m2);
-			pen.SetColor(Color(64, 60, 96, 112));
-			g.DrawPath(&pen, &path);
-		}
-		else
+		if (Themed && (pApp->OSVersion!=OS_Eight))
 		{
 			rectBounds.right -= 1;
 			rectBounds.bottom -= 1;
@@ -136,10 +127,20 @@ void CGroupBox::OnPaint()
 
 			Pen pen(Color(204, 204, 204));
 			g.DrawPath(&pen, &path);
-		}
 
-		clr = 0xCC6600;
-	}
+			clr = 0xCC6600;
+		}
+		else
+		{
+			rectBounds.left++;
+			rectBounds.top++;
+			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
+
+			rectBounds.OffsetRect(-1, -1);
+			dc.Draw3dRect(rectBounds, GetSysColor(Themed ? COLOR_SCROLLBAR : COLOR_3DSHADOW), GetSysColor(Themed ? COLOR_SCROLLBAR : COLOR_3DSHADOW));
+
+			clr = GetSysColor(COLOR_WINDOWTEXT);
+		}
 
 	// Caption
 	CRect rectCaption(rect);
@@ -150,7 +151,7 @@ void CGroupBox::OnPaint()
 	if (brush)
 		FillRect(dc, rectCaption, brush);
 
-	dc.SetTextColor(0xCC6600);
+	dc.SetTextColor(clr);
 	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

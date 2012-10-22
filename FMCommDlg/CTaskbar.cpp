@@ -242,7 +242,6 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 				}
 			case OS_XP:
 			case OS_Seven:
-			case OS_Eight:
 				{
 					UINT line = (rect.Height()-2)/2;
 
@@ -259,6 +258,14 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 					dc.FillSolidRect(0, rect.bottom-3, rect.right, 1, 0xFBEFE4);
 					dc.FillSolidRect(0, rect.bottom-2, rect.right, 1, 0xEADACD);
 					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xC3AFA0);
+
+					break;
+				}
+			case OS_Eight:
+				{
+					dc.FillSolidRect(0, 0, rect.right, rect.bottom-1, 0xF7F6F5);
+					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xEAE9E8);
+
 					break;
 				}
 			}
