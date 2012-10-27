@@ -33,6 +33,7 @@ protected:
 
 private:
 	CGdiPlusBitmapResource* m_pBackdrop;
+	CGdiPlusBitmapResource* m_pSlogan;
 	CGdiPlusBitmapResource* m_pLogo;
 	CGdiPlusBitmapResource* m_pSanta;
 	CBitmap m_BackBuffer;

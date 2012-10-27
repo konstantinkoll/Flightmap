@@ -745,6 +745,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Slogan.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Slogan.svg"
+			>
+		</File>
+		<File
 			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>

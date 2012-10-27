@@ -15,7 +15,7 @@ CLoungeView::CLoungeView()
 	: CWnd()
 {
 	hBackgroundBrush = NULL;
-	m_pBackdrop = m_pLogo = m_pSanta = NULL;
+	m_pBackdrop = m_pSlogan = m_pLogo = m_pSanta = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
 }
 
@@ -43,23 +43,31 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		g.DrawImage(m_pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
 
+		l = m_pSlogan->m_pBitmap->GetWidth();
+		h = m_pSlogan->m_pBitmap->GetHeight();
+		if ((rect.Width()>=520) && (rect.Height()>=150))
+			g.DrawImage(m_pSlogan->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+
 		SolidBrush brush(Color(0x14, 0x00, 0x00, 0x00));
 		for (INT a=0; a<5; a++)
 			g.FillRectangle(&brush, 0, 0, rect.Width(), a+1);
-
-		l = m_pLogo->m_pBitmap->GetWidth();
-		h = m_pLogo->m_pBitmap->GetHeight();
-		if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
-		{
-			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
-
-			if (m_pSanta)
-				g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-17);
-		}
 	}
 	else
 	{
 		dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
+
+		if (Themed)
+		{
+			INT l = m_pLogo->m_pBitmap->GetWidth();
+			INT h = m_pLogo->m_pBitmap->GetHeight();
+			if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
+			{
+				g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
+
+				if (m_pSanta)
+					g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-17);
+			}
+		}
 	}
 }
 
@@ -82,6 +90,7 @@ INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_pBackdrop = new CGdiPlusBitmapResource(IDB_DOCKED, _T("JPG"));
+	m_pSlogan = new CGdiPlusBitmapResource(IDB_SLOGAN, _T("PNG"));
 	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP_128, _T("PNG"));
 
 	SYSTEMTIME st;

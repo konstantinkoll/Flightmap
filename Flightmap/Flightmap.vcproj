@@ -848,6 +848,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Slogan.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Tasks.bmp"
 				>
 			</File>
