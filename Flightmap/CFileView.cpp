@@ -131,7 +131,7 @@ void CFileView::Init()
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_DELETE, 3);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_RENAME, 4);
 
-	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS | LVS_SINGLESEL;
+	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS | LVS_SINGLESEL | LVS_NOLABELWRAP;
 	CRect rect;
 	rect.SetRectEmpty();
 	m_wndTooltipList.Create(dwStyle, rect, this, 2);
@@ -311,8 +311,8 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pDispInfo->item.mask & LVIF_COLUMNS)
 	{
 		pDispInfo->item.cColumns = 2;
-		pDispInfo->item.puColumns[0] = 3;
-		pDispInfo->item.puColumns[1] = 1;
+		pDispInfo->item.puColumns[0] = 2;
+		pDispInfo->item.puColumns[1] = 3;
 	}
 
 	// Text
@@ -324,14 +324,11 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 			pDispInfo->item.pszText = pAttachment->Name;
 			break;
 		case 1:
-			StrFormatByteSize(pAttachment->Size, pDispInfo->item.pszText, pDispInfo->item.cchTextMax);
-			break;
 		case 2:
-		case 3:
 			{
 				FILETIME ft;
 				SYSTEMTIME st;
-				FileTimeToLocalFileTime(pDispInfo->item.iSubItem==2 ? &pAttachment->Created : &pAttachment->Modified, &ft);
+				FileTimeToLocalFileTime(pDispInfo->item.iSubItem==1 ? &pAttachment->Created : &pAttachment->Modified, &ft);
 				FileTimeToSystemTime(&ft, &st);
 
 				WCHAR Date[256] = L"";
@@ -342,6 +339,9 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 				swprintf_s(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, L"%s, %s", Date, Time);
 				break;
 			}
+		case 3:
+			StrFormatByteSize(pAttachment->Size, pDispInfo->item.pszText, pDispInfo->item.cchTextMax);
+			break;
 		}
 	}
 
@@ -453,13 +453,76 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 		swprintf_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndTooltipList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndTooltipList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndTooltipList.GetItemText(pTooltipData->Item, 3));
 
-		IMAGEINFO ii;
-		p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
+		CGdiPlusBitmap* pBitmap = p_Itinerary->DecodeAttachment(*pAttachment);
+		if (pBitmap->m_pBitmap)
+		{
+			INT l = pBitmap->m_pBitmap->GetWidth();
+			INT h = pBitmap->m_pBitmap->GetHeight();
+			if ((l<16) || (h<16))
+				goto UseIcon;
+
+			// Resolution
+			CString tmpMask;
+			CString tmpStr;
+			ENSURE(tmpMask.LoadString(IDS_RESOLUTION));
+
+			tmpStr.Format(tmpMask, l, h);
+			wcscat_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), tmpStr);
+
+			// Scaling
+			DOUBLE ScaleX = 256.0/(DOUBLE)l;
+			DOUBLE ScaleY = 256.0/(DOUBLE)h;
+			DOUBLE Scale = min(ScaleX, ScaleY);
+			if (Scale>1.0)
+				Scale = 1.0;
+
+			INT Width = 2+(INT)(Scale*(DOUBLE)l);
+			INT Height = 2+(INT)(Scale*(DOUBLE)h);
+
+			// Create bitmap
+			CDC dc;
+			dc.CreateCompatibleDC(NULL);
+
+			BITMAPINFOHEADER bmi = { sizeof(bmi) };
+			bmi.biWidth = Width;
+			bmi.biHeight = Height;
+			bmi.biPlanes = 1;
+			bmi.biBitCount = 24;
+
+			BYTE* pbData = NULL;
+			pTooltipData->hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
+			HGDIOBJ hOldBitmap = dc.SelectObject(pTooltipData->hBitmap);
+
+			// Draw
+			dc.FillSolidRect(0, 0, Width, Height, 0xFFFFFF);
+
+			Graphics g(dc);
+			g.SetCompositingMode(CompositingModeSourceOver);
+			g.SetSmoothingMode(SmoothingModeAntiAlias);
+			g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+
+			g.DrawImage(pBitmap->m_pBitmap, 0, 0, Width, Height);
+
+			dc.Draw3dRect(0, 0, Width, Height, 0x000000, 0x000000);
+			dc.SelectObject(hOldBitmap);
+
+			pTooltipData->cx = Width;
+			pTooltipData->cy = Height;
+		}
+		else
+		{
+UseIcon:
+			// Icon
+			IMAGEINFO ii;
+			p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
+
+			pTooltipData->hIcon = p_App->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
+			pTooltipData->cx = ii.rcImage.right-ii.rcImage.left;
+			pTooltipData->cy = ii.rcImage.bottom-ii.rcImage.top;
+		}
 
 		pTooltipData->Show = TRUE;
-		pTooltipData->hIcon = p_App->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
-		pTooltipData->cx = ii.rcImage.right-ii.rcImage.left;
-		pTooltipData->cy = ii.rcImage.bottom-ii.rcImage.top;
+		delete pBitmap;
 	}
 
 	*pResult = 0;

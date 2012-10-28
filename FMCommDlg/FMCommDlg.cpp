@@ -212,7 +212,7 @@ FMCommDlg_API HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UI
 	bmi.biPlanes = 1;
 	bmi.biBitCount = 24;
 
-	BYTE* pbData = 0;
+	BYTE* pbData = NULL;
 	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
 	HGDIOBJ hOldBitmap = dc.SelectObject(hBitmap);
 

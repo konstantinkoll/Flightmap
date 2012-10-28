@@ -467,13 +467,9 @@ BEGIN
     IDS_METADATA_KEYWORDS_PACIFIC 
                             "Flightmap Beispiel Flugplan Pazifik Überquerung"
     IDS_SUBITEM_NAME        "Name"
-    IDS_SUBITEM_SIZE        "Größe"
     IDS_SUBITEM_CREATED     "Erstellt am"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SUBITEM_MODIFIED    "Geändert am"
+    IDS_SUBITEM_SIZE        "Größe"
     IDS_ATTACHMENT_TOOLARGE "Angehängte Dateien dürfen eine Maximalgröße von 1 MB nicht überschreiten!"
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
     IDS_FILESTATUS_SINGULAR "%d Datei (%s)"
@@ -502,6 +498,7 @@ BEGIN
     IDS_FLIGHTS_PLURAL      "%d Flüge"
     IDS_ROUTESTYLE          "Stil"
     IDS_ANNOTATIONS         "Zusatzinformationen"
+    IDS_RESOLUTION          "\nAuflösung: %d×%d"
 END
 
 STRINGTABLE 
@@ -1079,13 +1076,9 @@ BEGIN
     IDS_METADATA_KEYWORDS_PACIFIC 
                             "Flightmap Sample Itinerary Pacific Crossing"
     IDS_SUBITEM_NAME        "Name"
-    IDS_SUBITEM_SIZE        "Size"
     IDS_SUBITEM_CREATED     "Created"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SUBITEM_MODIFIED    "Modified"
+    IDS_SUBITEM_SIZE        "Size"
     IDS_ATTACHMENT_TOOLARGE "The maximum size for attached files is 1 MB!"
     IDS_ATTACHMENT_TOOMANY  "The maximum number of attached files is 16 per flight!"
     IDS_FILESTATUS_SINGULAR "%d file (%s)"
@@ -1114,6 +1107,7 @@ BEGIN
     IDS_FLIGHTS_PLURAL      "%d flights"
     IDS_ROUTESTYLE          "Route style"
     IDS_ANNOTATIONS         "Annotations"
+    IDS_RESOLUTION          "\nResolution: %d×%d"
 END
 
 STRINGTABLE 

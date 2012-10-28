@@ -83,9 +83,9 @@
 #define IDS_METADATA_KEYWORDS_ATLANTIC  1035
 #define IDS_METADATA_KEYWORDS_PACIFIC   1036
 #define IDS_SUBITEM_NAME                1037
-#define IDS_SUBITEM_SIZE                1038
-#define IDS_SUBITEM_CREATED             1039
-#define IDS_SUBITEM_MODIFIED            1040
+#define IDS_SUBITEM_CREATED             1038
+#define IDS_SUBITEM_MODIFIED            1039
+#define IDS_SUBITEM_SIZE                1040
 #define IDS_ATTACHMENT_TOOLARGE         1041
 #define IDS_ATTACHMENT_TOOMANY          1042
 #define IDS_FILESTATUS_SINGULAR         1043
@@ -114,6 +114,7 @@
 #define IDS_FLIGHTS_PLURAL              1066
 #define IDS_ROUTESTYLE                  1067
 #define IDS_ANNOTATIONS                 1068
+#define IDS_RESOLUTION                  1069
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
