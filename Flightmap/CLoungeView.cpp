@@ -106,6 +106,8 @@ void CLoungeView::OnDestroy()
 {
 	if (m_pBackdrop)
 		delete m_pBackdrop;
+	if (m_pSlogan)
+		delete m_pSlogan;
 	if (m_pLogo)
 		delete m_pLogo;
 	if (m_pSanta)
