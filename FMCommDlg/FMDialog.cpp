@@ -50,7 +50,7 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		return;
 	}
 
-	FMApplication* pApp = ((FMApplication*)AfxGetApp());
+	FMApplication* pApp = FMGetApp();
 
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
@@ -154,7 +154,7 @@ BEGIN_MESSAGE_MAP(FMDialog, CDialog)
 	ON_WM_SIZE()
 	ON_WM_THEMECHANGED()
 	ON_WM_SYSCOLORCHANGE()
-	ON_REGISTERED_MESSAGE(((FMApplication*)AfxGetApp())->msgUseBgImagesChanged, OnUseBgImagesChanged)
+	ON_REGISTERED_MESSAGE(FMGetApp()->msgUseBgImagesChanged, OnUseBgImagesChanged)
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
@@ -252,7 +252,7 @@ void FMDialog::OnSysColorChange()
 
 LRESULT FMDialog::OnUseBgImagesChanged(WPARAM wParam, LPARAM /*lParam*/)
 {
-	((FMApplication*)AfxGetApp())->m_UseBgImages = (BOOL)wParam;
+	FMGetApp()->m_UseBgImages = (BOOL)wParam;
 
 	if (IsCtrlThemed())
 	{

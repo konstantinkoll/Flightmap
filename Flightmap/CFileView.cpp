@@ -9,7 +9,7 @@
 // CFileView
 //
 
-#define GetSelectedFile() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
+#define GetSelectedFile() m_wndTooltipList.GetNextItem(-1, LVIS_SELECTED)
 #define GetSelectedAttachment() GetAttachment(GetSelectedFile())
 
 CFileView::CFileView()
@@ -37,6 +37,7 @@ CFileView::CFileView()
 	p_Status = NULL;
 	p_Itinerary = NULL;
 	p_Flight = NULL;
+	p_App = (FMApplication*)AfxGetApp();
 }
 
 void CFileView::PreSubclassWindow()
@@ -52,7 +53,7 @@ void CFileView::AdjustLayout()
 {
 	if (!IsWindow(m_wndTaskbar))
 		return;
-	if (!IsWindow(m_wndExplorerList))
+	if (!IsWindow(m_wndTooltipList))
 		return;
 
 	CRect rect;
@@ -60,7 +61,7 @@ void CFileView::AdjustLayout()
 
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndExplorerList.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndTooltipList.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFileView::SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFlight)
@@ -69,19 +70,19 @@ void CFileView::SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFli
 	p_Itinerary = pItinerary;
 	p_Flight = pFlight;
 
-	m_wndExplorerList.SetView(p_Flight ? LV_VIEW_TILE : LV_VIEW_DETAILS);
+	m_wndTooltipList.SetView(p_Flight ? LV_VIEW_TILE : LV_VIEW_DETAILS);
 	Reload();
 
 	for (UINT a=0; a<4; a++)
-		m_wndExplorerList.SetColumnWidth(a, m_wndExplorerList.GetItemCount()==0 ? 130 : a<3 ? LVSCW_AUTOSIZE_USEHEADER : LVSCW_AUTOSIZE);
+		m_wndTooltipList.SetColumnWidth(a, m_wndTooltipList.GetItemCount()==0 ? 130 : a<3 ? LVSCW_AUTOSIZE_USEHEADER : LVSCW_AUTOSIZE);
 }
 
 void CFileView::Reload()
 {
-	m_wndExplorerList.SetItemCount(p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount);
+	m_wndTooltipList.SetItemCount(p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount);
 
-	if (m_wndExplorerList.GetNextItem(-1, LVIS_FOCUSED)==-1)
-		m_wndExplorerList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+	if (m_wndTooltipList.GetNextItem(-1, LVIS_FOCUSED)==-1)
+		m_wndTooltipList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 
@@ -133,32 +134,31 @@ void CFileView::Init()
 	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS | LVS_SINGLESEL;
 	CRect rect;
 	rect.SetRectEmpty();
-	m_wndExplorerList.Create(dwStyle, rect, this, 2);
+	m_wndTooltipList.Create(dwStyle, rect, this, 2);
 
-	FMApplication* pApp = (FMApplication*)AfxGetApp();
-	m_wndExplorerList.SetImageList(&pApp->m_SystemImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&pApp->m_SystemImageListLarge, LVSIL_NORMAL);
+	m_wndTooltipList.SetImageList(&p_App->m_SystemImageListSmall, LVSIL_SMALL);
+	m_wndTooltipList.SetImageList(&p_App->m_SystemImageListLarge, LVSIL_NORMAL);
 
 	for (UINT a=0; a<4; a++)
 	{
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_SUBITEM_NAME+a));
 
-		m_wndExplorerList.AddColumn(a, tmpStr, a);
+		m_wndTooltipList.AddColumn(a, tmpStr, a);
 	}
 
 	IMAGEINFO ii;
-	pApp->m_SystemImageListLarge.GetImageInfo(0, &ii);
+	p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
-	m_wndExplorerList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
+	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
+	m_wndTooltipList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
-	m_wndExplorerList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
-	m_wndExplorerList.SetFocus();
+	m_wndTooltipList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
+	m_wndTooltipList.SetFocus();
 
-	CHeaderCtrl* pHeaderCtrl = m_wndExplorerList.GetHeaderCtrl();
+	CHeaderCtrl* pHeaderCtrl = m_wndTooltipList.GetHeaderCtrl();
 	if (pHeaderCtrl)
 		m_wndHeader.SubclassWindow(pHeaderCtrl->GetSafeHwnd());
 
@@ -178,6 +178,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
 	ON_NOTIFY(LVN_BEGINLABELEDIT, 2, OnBeginLabelEdit)
 	ON_NOTIFY(LVN_ENDLABELEDIT, 2, OnEndLabelEdit)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, 2, OnRequestTooltipData)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
 	ON_COMMAND(IDM_FILEVIEW_OPEN, OnOpen)
@@ -210,7 +211,7 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 
 void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndExplorerList.SetFocus();
+	m_wndTooltipList.SetFocus();
 }
 
 void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
@@ -370,6 +371,16 @@ void CFileView::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 		PostMessage(WM_COMMAND, (WPARAM)IDM_FILEVIEW_OPEN);
 }
 
+void CFileView::OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	if (pNMListView->uChanged & LVIF_STATE)
+		m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+
+	*pResult = 0;
+}
+
 void CFileView::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
@@ -383,7 +394,7 @@ void CFileView::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			tmpStr.Truncate(Pos);
 
-			CEdit* pEdit = m_wndExplorerList.GetEditControl();
+			CEdit* pEdit = m_wndTooltipList.GetEditControl();
 			if (pEdit)
 				pEdit->SetWindowText(tmpStr);
 		}
@@ -428,12 +439,28 @@ void CFileView::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 }
 
-void CFileView::OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
+void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
-	if (pNMListView->uChanged & LVIF_STATE)
-		m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+	if (pTooltipData->Item!=-1)
+	{
+		AIRX_Attachment* pAttachment = GetAttachment(pTooltipData->Item);
+
+		CString SubitemNames[3];
+		for (UINT a=1; a<4; a++)
+			ENSURE(SubitemNames[a-1].LoadString(IDS_SUBITEM_NAME+a));
+
+		swprintf_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndTooltipList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndTooltipList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndTooltipList.GetItemText(pTooltipData->Item, 3));
+
+		IMAGEINFO ii;
+		p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
+
+		pTooltipData->Show = TRUE;
+		pTooltipData->hIcon = p_App->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
+		pTooltipData->cx = ii.rcImage.right-ii.rcImage.left;
+		pTooltipData->cy = ii.rcImage.bottom-ii.rcImage.top;
+	}
 
 	*pResult = 0;
 }
@@ -558,10 +585,10 @@ void CFileView::OnRename()
 	INT idx = GetSelectedFile();
 	if (idx!=-1)
 	{
-		if (GetFocus()!=&m_wndExplorerList)
-			m_wndExplorerList.SetFocus();
+		if (GetFocus()!=&m_wndTooltipList)
+			m_wndTooltipList.SetFocus();
 
-		m_wndExplorerList.EditLabel(idx);
+		m_wndTooltipList.EditLabel(idx);
 	}
 }
 
@@ -576,7 +603,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 			b = (p_Flight->AttachmentCount<AIRX_MaxAttachmentCount);
 		break;
 	default:
-		if (m_wndExplorerList.GetItemCount())
+		if (m_wndTooltipList.GetItemCount())
 			b = (GetSelectedFile()!=-1);
 	}
 

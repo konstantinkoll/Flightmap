@@ -248,7 +248,7 @@ FMCommDlg_API HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UI
 	g.DrawImage(MapIndicator->m_pBitmap, LocX, LocY);
 
 	// Pfad erstellen
-	FontFamily fontFamily(((FMApplication*)AfxGetApp())->GetDefaultFontFace());
+	FontFamily fontFamily(FMGetApp()->GetDefaultFontFace());
 	WCHAR pszBuf[4];
 	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 
@@ -703,7 +703,7 @@ FMCommDlg_API void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 	// Check due?
 	if (!Check)
-		Check = ((FMApplication*)AfxGetApp())->IsUpdateCheckDue();
+		Check = FMGetApp()->IsUpdateCheckDue();
 
 	// Perform check
 	CString VersionIni;

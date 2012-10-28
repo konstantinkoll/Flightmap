@@ -112,7 +112,7 @@ void CRatingCtrl::OnPaint()
 	dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_WINDOW));
 
 	PrepareBlend();
-	Blend(dc, rect, m_Rating, ((FMApplication*)AfxGetApp())->m_RatingBitmaps);
+	Blend(dc, rect, m_Rating, FMGetApp()->m_RatingBitmaps);
 
 	if (GetFocus()==this)
 	{

@@ -22,10 +22,11 @@ public:
 
 protected:
 	CWnd* p_Status;
+	FMApplication* p_App;
 	CItinerary* p_Itinerary;
 	AIRX_Flight* p_Flight;
 	CTaskbar m_wndTaskbar;
-	CExplorerList m_wndExplorerList;
+	CTooltipList m_wndTooltipList;
 	CTooltipHeader m_wndHeader;
 
 	void Reload();
@@ -43,6 +44,7 @@ protected:
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg void OnAdd();
 	afx_msg void OnOpen();

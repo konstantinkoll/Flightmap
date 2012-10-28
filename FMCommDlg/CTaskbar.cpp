@@ -43,7 +43,7 @@ UINT CTaskbar::GetPreferredHeight()
 	LOGFONT lf;
 	UINT h = 4*BORDER+(IsCtrlThemed() ? 4 : 3);
 
-	((FMApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
+	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
 	h += abs(lf.lfHeight);
 
 	return h;
@@ -71,7 +71,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 
 	CTaskButton* btn = new CTaskButton();
 	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &m_Icons,
-		ForceIcon || AddRight || (((FMApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
+		ForceIcon || AddRight || (FMGetApp()->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 	btn->EnableWindow(FALSE);
 
@@ -210,7 +210,7 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}
 		else
-			switch (((FMApplication*)AfxGetApp())->OSVersion)
+			switch (FMGetApp()->OSVersion)
 			{
 			case OS_Vista:
 				{

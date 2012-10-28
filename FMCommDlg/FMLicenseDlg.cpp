@@ -24,7 +24,7 @@ void FMLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		CString key;
 		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
 
-		((FMApplication*)AfxGetApp())->WriteString(_T("License"), key);
+		FMGetApp()->WriteString(_T("License"), key);
 
 		CString caption;
 		CString message;

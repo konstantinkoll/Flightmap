@@ -13,6 +13,7 @@
 #include "..\FMCommDlg\CTaskBar.h"
 #include "..\FMCommDlg\CTaskButton.h"
 #include "..\FMCommDlg\CTooltipHeader.h"
+#include "..\FMCommDlg\CTooltipList.h"
 #include "..\FMCommDlg\DynArray.h"
 #include "..\FMCommDlg\FMApplication.h"
 #include "..\FMCommDlg\FMColorDlg.h"
@@ -25,6 +26,8 @@
 #include "..\FMCommDlg\FMTooltip.h"
 #include "..\FMCommDlg\IATA.h"
 #include "..\FMCommDlg\License.h"
+
+#define FMGetApp() ((FMApplication*)AfxGetApp())
 
 #ifdef FMCommDlg_EXPORTS
 #define FMCommDlg_API

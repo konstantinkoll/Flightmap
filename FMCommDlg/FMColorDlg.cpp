@@ -19,7 +19,7 @@ FMColorDlg::FMColorDlg(COLORREF clrInit, DWORD dwFlags, CWnd* pParentWnd, CStrin
 	m_cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
 	m_cc.hInstance = (HWND)AfxGetResourceHandle();
 	m_cc.Flags |= CC_ENABLETEMPLATE | CC_SOLIDCOLOR;
-	m_cc.lpCustColors = ((FMApplication*)AfxGetApp())->m_CustomColors;
+	m_cc.lpCustColors = FMGetApp()->m_CustomColors;
 }
 
 

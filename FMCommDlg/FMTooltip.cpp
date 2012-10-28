@@ -211,7 +211,7 @@ void FMTooltip::Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, co
 
 	CRgn rgn;
 	m_Themed = IsCtrlThemed();
-	m_Flat = m_Themed && (((FMApplication*)AfxGetApp())->OSVersion==OS_Eight);
+	m_Flat = m_Themed && (FMGetApp()->OSVersion==OS_Eight);
 	if (m_Themed && !m_Flat)
 	{
 		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 4, 4);

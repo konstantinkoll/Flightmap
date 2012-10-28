@@ -75,7 +75,7 @@ INT CTaskButton::GetPreferredWidth()
 		CSize sz;
 
 		CDC* dc = GetDC();
-		HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(((FMApplication*)AfxGetApp())->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
+		HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(FMGetApp()->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
 		sz = dc->GetTextExtent(m_Caption);
 		dc->SelectObject(hOldFont);
 		ReleaseDC(dc);
@@ -141,13 +141,13 @@ void CTaskButton::OnPaint()
 	// Button
 	if (IsCtrlThemed())
 	{
-		CFont* pOldFont = dc.SelectObject(&((FMApplication*)AfxGetApp())->m_DefaultFont);
+		CFont* pOldFont = dc.SelectObject(&FMGetApp()->m_DefaultFont);
 
 		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		switch (((FMApplication*)AfxGetApp())->OSVersion)
+		switch (FMGetApp()->OSVersion)
 		{
 		case OS_Vista:
 			{

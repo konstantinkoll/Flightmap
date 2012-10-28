@@ -29,7 +29,7 @@ INT_PTR FMRegisterDlg::DoModal()
 	if (!dlt.Load(MAKEINTRESOURCE(m_nIDTemplate)))
 		return -1;
 
-	dlt.SetFont(((FMApplication*)AfxGetApp())->GetDefaultFontFace(), 9);
+	dlt.SetFont(FMGetApp()->GetDefaultFontFace(), 9);
 
 	LPSTR pdata = (LPSTR)GlobalLock(dlt.m_hTemplate);
 	m_lpszTemplateName = NULL;
@@ -74,7 +74,7 @@ void FMRegisterDlg::OnPurchase()
 	CCmdUI cmd;
 	cmd.m_nID = ID_APP_PURCHASE;
 
-	((FMApplication*)AfxGetApp())->OnCmdMsg(ID_APP_PURCHASE, CN_COMMAND, &cmd, NULL);
+	FMGetApp()->OnCmdMsg(ID_APP_PURCHASE, CN_COMMAND, &cmd, NULL);
 }
 
 void FMRegisterDlg::OnEnterLicenseKey()
