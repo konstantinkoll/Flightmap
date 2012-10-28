@@ -29,6 +29,7 @@ static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip };
 
 CDataGrid::CDataGrid()
+	: CWnd()
 {
 	p_Itinerary = NULL;
 	p_Edit = NULL;
