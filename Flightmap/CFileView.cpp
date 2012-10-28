@@ -498,10 +498,9 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 			Graphics g(dc);
 			g.SetCompositingMode(CompositingModeSourceOver);
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
 			g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-			g.DrawImage(pBitmap->m_pBitmap, 0, 0, Width, Height);
+			g.DrawImage(pBitmap->m_pBitmap, 1, 1, Width-2, Height-2);
 
 			dc.Draw3dRect(0, 0, Width, Height, 0x000000, 0x000000);
 			dc.SelectObject(hOldBitmap);
