@@ -198,14 +198,17 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 
 	if (m_pItinerary)
 	{
-		INT First = 0;
-		INT Last = m_pItinerary->m_Flights.m_ItemCount-1;
+		if (m_CurrentMainView==DataGrid)
+			Selected &= ((CDataGrid*)m_pWndMainView)->HasSelection();
 
-		if ((Selected) && (m_CurrentMainView==DataGrid))
-			((CDataGrid*)m_pWndMainView)->GetSelection(First, Last);
+		for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
+		{
+			if (Selected && (m_CurrentMainView==DataGrid))
+				if (!((CDataGrid*)m_pWndMainView)->IsSelected(a))
+					continue;
 
-		for (INT a=First; a<=Last; a++)
 			pKitchen->AddFlight(m_pItinerary->m_Flights.m_Items[a]);
+		}
 	}
 
 	return pKitchen;
@@ -484,14 +487,13 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 			const INT LineHeight = (INT)((DOUBLE)TextHeight*1.2);
 
 			BOOL FirstRow = TRUE;
-			INT First = 0;
-			INT Last = m_pItinerary->m_Flights.m_ItemCount-1;
 
-			if ((pdex.Flags & PD_SELECTION) && (m_CurrentMainView==DataGrid))
-				((CDataGrid*)m_pWndMainView)->GetSelection(First, Last);
-
-			for (INT a=First; a<=Last; a++)
+			for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
 			{
+				if ((pdex.Flags & PD_SELECTION) && (m_CurrentMainView==DataGrid))
+					if (!((CDataGrid*)m_pWndMainView)->IsSelected(a))
+						continue;
+
 				if (rectPage.Height()<LineHeight)
 				{
 					if (dc.EndPage()<0)
@@ -1362,7 +1364,7 @@ void CMainWnd::OnGoogleEarthOpen()
 	srand(rand());
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
-	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro))
+	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro))
 		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
 }
 
@@ -1419,7 +1421,7 @@ void CMainWnd::OnGoogleEarthExport()
 
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, theApp.m_GoogleEarthMergeMetro);
+		ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro);
 }
 
 

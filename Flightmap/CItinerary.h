@@ -54,6 +54,7 @@ struct AIRX_Route
 #define AIRX_UnknownTo              128
 #define AIRX_VisitedTo              256
 #define AIRX_GroundTransportation   512
+#define AIRX_Selected               1024
 
 #define AIRX_Unknown                '\0'
 #define AIRX_Economy                'Y'
@@ -183,7 +184,8 @@ public:
 
 	void AddFlight();
 	void InsertFlights(UINT Row, UINT Count=1, AIRX_Flight* pFlights=NULL);
-	void DeleteFlights(UINT Row, UINT Count=1);
+	void DeleteFlight(UINT Row);
+	void DeleteSelectedFlights();
 
 	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
 	CGdiPlusBitmap* DecodeAttachment(UINT Idx);

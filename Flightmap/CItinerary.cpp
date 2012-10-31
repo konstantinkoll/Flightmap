@@ -1229,13 +1229,33 @@ void CItinerary::InsertFlights(UINT Row, UINT Count, AIRX_Flight* pFlights)
 		}
 }
 
-void CItinerary::DeleteFlights(UINT Row, UINT Count)
+void CItinerary::DeleteFlight(UINT Row)
 {
-	for (UINT a=Row; a<Row+Count; a++)
-		while (m_Flights.m_Items[a].AttachmentCount)
-			DeleteAttachment(m_Flights.m_Items[a].Attachments[0]);
+	while (m_Flights.m_Items[Row].AttachmentCount)
+		DeleteAttachment(m_Flights.m_Items[Row].Attachments[0]);
 
-	m_Flights.DeleteItems(Row, Count);
+	m_Flights.DeleteItems(Row);
+	m_IsModified = TRUE;
+}
+
+void CItinerary::DeleteSelectedFlights()
+{
+	UINT Row = 0;
+	while (Row<m_Flights.m_ItemCount)
+	{
+		if (m_Flights.m_Items[Row].Flags & AIRX_Selected)
+		{
+			while (m_Flights.m_Items[Row].AttachmentCount)
+				DeleteAttachment(m_Flights.m_Items[Row].Attachments[0]);
+
+			m_Flights.DeleteItems(Row);
+			m_IsModified = TRUE;
+		}
+		else
+		{
+			Row++;
+		}
+	}
 }
 
 void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure)

@@ -25,7 +25,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
 	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE);
-	void GetSelection(INT& First, INT& Last, BOOL CurrentLineIfNone=FALSE);
+	BOOL IsSelected(UINT Idx, BOOL CurrentLineIfNone=FALSE);
 	UINT GetCurrentRow();
 
 protected:
@@ -37,7 +37,7 @@ protected:
 	FMTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;
-	CPoint m_SelectedItem;
+	CPoint m_FocusItem;
 	CPoint m_HotItem;
 	INT m_HotSubitem;
 	BOOL m_Hover;
@@ -57,7 +57,9 @@ protected:
 	BOOL HitTest(CPoint point, CPoint* item, INT* subitem=NULL);
 	void InvalidateItem(CPoint Item);
 	void InvalidateItem(UINT Row, UINT Attr);
-	void SelectItem(CPoint Item, BOOL ShiftSelect);
+	void InvalidateRow(UINT Row);
+	void SetFocusItem(CPoint FocusItem, BOOL ShiftSelect);
+	void SelectItem(UINT Idx, BOOL Select=TRUE, BOOL InternalCall=FALSE);
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -76,8 +78,10 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -112,7 +116,7 @@ private:
 	INT m_VScrollPos;
 
 	void DoCopy(BOOL Cut);
-	void DoDelete(INT Anfang, INT Ende);
+	void DoDelete();
 	void AutosizeColumn(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);
 };
