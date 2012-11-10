@@ -35,6 +35,7 @@ struct MapSettings
 	UINT Width;
 	UINT Height;
 	BOOL CenterPacific;
+	BOOL WideBorder;
 	BOOL ShowFlightRoutes;
 	BOOL StraightLines;
 	BOOL Arrows;

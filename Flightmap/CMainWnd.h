@@ -79,6 +79,7 @@ protected:
 	afx_msg void OnMapMergeMetro();
 	afx_msg void OnMapCenterAtlantic();
 	afx_msg void OnMapCenterPacific();
+	afx_msg void OnMapWideBorder();
 	afx_msg void OnMapShowFlightRoutes();
 	afx_msg void OnMapStraightLines();
 	afx_msg void OnMapArrows();

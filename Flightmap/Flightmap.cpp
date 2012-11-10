@@ -99,6 +99,7 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.Width = GetInt(_T("MapWidth"), 1024);
 	m_MapSettings.Height = GetInt(_T("MapHeight"), 768);
 	m_MapSettings.CenterPacific = GetInt(_T("MapCenterPacific"), FALSE);
+	m_MapSettings.WideBorder = GetInt(_T("MapWideBorder"), FALSE);
 	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapShowFlightRoutes"), TRUE);
 	m_MapSettings.StraightLines = GetInt(_T("MapStraightLines"), FALSE);
 	m_MapSettings.Arrows = GetInt(_T("MapArrows"), FALSE);
@@ -215,6 +216,7 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapWidth"), m_MapSettings.Width);
 		WriteInt(_T("MapHeight"), m_MapSettings.Height);
 		WriteInt(_T("MapCenterPacific"), m_MapSettings.CenterPacific);
+		WriteInt(_T("MapWideBorder"), m_MapSettings.WideBorder);
 		WriteInt(_T("MapShowFlightRoutes"), m_MapSettings.ShowFlightRoutes);
 		WriteInt(_T("MapStraightLines"), m_MapSettings.StraightLines);
 		WriteInt(_T("MapArrows"), m_MapSettings.Arrows);

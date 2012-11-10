@@ -168,10 +168,10 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	}
 
 	// Border
-	MinS = max(0, MinS-94);
-	MinZ = max(0, MinZ-54);
-	MaxS = min(8191, MaxS+94);
-	MaxZ = min(4095, MaxZ+54);
+	MinS = max(0, MinS-(m_Settings.WideBorder ? 294 : 94));
+	MinZ = max(0, MinZ-(m_Settings.WideBorder ? 254 : 54));
+	MaxS = min(8191, MaxS+(m_Settings.WideBorder ? 294 : 94));
+	MaxZ = min(4095, MaxZ+(m_Settings.WideBorder ? 254 : 54));
 
 	// Compute true boundaries and scale
 	if (((m_Settings.Width<BGWIDTH) || (m_Settings.Height<BGHEIGHT)) && (MaxZ>0))

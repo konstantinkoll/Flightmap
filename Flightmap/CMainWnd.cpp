@@ -584,6 +584,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_MERGEMETRO, OnMapMergeMetro)
 	ON_COMMAND(IDM_MAP_CENTERATLANTIC, OnMapCenterAtlantic)
 	ON_COMMAND(IDM_MAP_CENTERPACIFIC, OnMapCenterPacific)
+	ON_COMMAND(IDM_MAP_WIDEBORDER, OnMapWideBorder)
 	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
 	ON_COMMAND(IDM_MAP_STRAIGHTLINES, OnMapStraightLines)
 	ON_COMMAND(IDM_MAP_ARROWS, OnMapArrows)
@@ -752,10 +753,12 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCaption(IDS_BACKGROUND);
 		pPopup->AddGallery(IDM_MAP_BACKGROUND, IDB_BACKGROUNDS, CSize(96, 48), IDS_BACKGROUND_DEFAULT, 4, 2, theApp.m_MapSettings.BackgroundColor, FALSE);
 		pPopup->AddColor(IDM_MAP_BACKGROUNDCOLOR, &theApp.m_MapSettings.BackgroundColor);
-		pPopup->AddResolution(IDM_MAP_RESOLUTION, 1, &theApp.m_MapSettings.Width, &theApp.m_MapSettings.Height);
 		pPopup->AddSeparator();
 		pPopup->AddCheckbox(IDM_MAP_CENTERATLANTIC, TRUE);
 		pPopup->AddCheckbox(IDM_MAP_CENTERPACIFIC, TRUE);
+		pPopup->AddSeparator();
+		pPopup->AddResolution(IDM_MAP_RESOLUTION, 1, &theApp.m_MapSettings.Width, &theApp.m_MapSettings.Height);
+		pPopup->AddCheckbox(IDM_MAP_WIDEBORDER);
 		pPopup->AddCaption(IDS_FLIGHTROUTES);
 		pPopup->AddCheckbox(IDM_MAP_SHOWFLIGHTROUTES);
 		pPopup->AddSubmenu(IDM_MAP_ROUTESTYLE);
@@ -1123,6 +1126,11 @@ void CMainWnd::OnMapCenterPacific()
 	theApp.m_MapSettings.CenterPacific = TRUE;
 }
 
+void CMainWnd::OnMapWideBorder()
+{
+	theApp.m_MapSettings.WideBorder = !theApp.m_MapSettings.WideBorder;
+}
+
 void CMainWnd::OnMapShowFlightRoutes()
 {
 	theApp.m_MapSettings.ShowFlightRoutes = !theApp.m_MapSettings.ShowFlightRoutes;
@@ -1215,6 +1223,9 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_CENTERPACIFIC:
 		pCmdUI->SetCheck(theApp.m_MapSettings.CenterPacific);
+		break;
+	case IDM_MAP_WIDEBORDER:
+		pCmdUI->SetCheck(theApp.m_MapSettings.WideBorder);
 		break;
 	case IDM_MAP_SHOWFLIGHTROUTES:
 		pCmdUI->SetCheck(theApp.m_MapSettings.ShowFlightRoutes);
