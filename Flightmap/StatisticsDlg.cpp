@@ -6,6 +6,36 @@
 #include "StatisticsDlg.h"
 
 
+struct SortParameters
+{
+	CListCtrl* pList;
+	INT Column;
+	BOOL ConvertToNumber;
+};
+
+INT CALLBACK SortFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	SortParameters* sp = (SortParameters*)lParamSort;
+
+	CString item1= sp->pList->GetItemText((INT)lParam1, sp->Column);
+	CString item2= sp->pList->GetItemText((INT)lParam2, sp->Column);
+
+	if (sp->ConvertToNumber)
+	{
+		LONG i1;
+		if (swscanf(item1.GetBuffer(), _T("%i"), &i1)<1)
+			return 0;
+
+		LONG i2;
+		if (swscanf(item2.GetBuffer(), _T("%i"), &i2)<1)
+			return 0;
+
+		return i2-i1;
+	}
+
+	return item1.CompareNoCase(item2);
+}
+
 __forceinline void Prepare(CListCtrl& wndList)
 {
 	wndList.SetExtendedStyle(wndList.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
@@ -419,6 +449,7 @@ BEGIN_MESSAGE_MAP(StatisticsDlg, CDialog)
 	ON_BN_CLICKED(IDC_FILTER_BUSINESSTRIP, OnPostUpdateStatistics)
 	ON_BN_CLICKED(IDC_FILTER_LEISURETRIP, OnPostUpdateStatistics)
 	ON_MESSAGE_VOID(WM_RATINGCHANGED, OnPostUpdateStatistics)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortLists)
 END_MESSAGE_MAP()
 
 BOOL StatisticsDlg::OnInitDialog()
@@ -510,4 +541,18 @@ void StatisticsDlg::OnSelectIATA()
 
 		OnPostUpdateStatistics();
 	}
+}
+
+void StatisticsDlg::OnSortLists(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
+
+	SortParameters sp;
+	sp.pList = (CListCtrl*)CWnd::FromHandle(pLV->hdr.hwndFrom)->GetParent();
+	sp.Column = pLV->iItem;
+	sp.ConvertToNumber = (sp.Column==0) || ((sp.Column==1) && (sp.pList==&m_wndListCarrier));
+
+	sp.pList->SortItemsEx(SortFunc, (DWORD_PTR)&sp);
+
+	*pResult = 0;
 }

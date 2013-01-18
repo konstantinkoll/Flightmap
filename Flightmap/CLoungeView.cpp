@@ -65,7 +65,7 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
 
 				if (m_pSanta)
-					g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-17);
+					g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-56, rect.Height()-h-16);
 			}
 		}
 	}
@@ -96,7 +96,7 @@ INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 
-	if (st.wMonth==12)
+	if (st.wMonth!=12)
 		m_pSanta = new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG"));
 
 	return 0;

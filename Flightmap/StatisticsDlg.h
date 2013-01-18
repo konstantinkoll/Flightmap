@@ -38,5 +38,6 @@ protected:
 	afx_msg void OnPostUpdateStatistics();
 	afx_msg void OnUpdateStatistics();
 	afx_msg void OnSelectIATA();
+	afx_msg void OnSortLists(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 };

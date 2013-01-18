@@ -493,15 +493,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\air.png"
-			>
-		</File>
-		<File
 			RelativePath=".\airx.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\airx.png"
 			>
 		</File>
 		<File
@@ -510,6 +502,10 @@
 		</File>
 		<File
 			RelativePath=".\Backdrop Settings.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop.png"
 			>
 		</File>
 		<File
@@ -589,18 +585,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Hintergrund1.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund2.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund3.png"
-			>
-		</File>
-		<File
 			RelativePath=".\IATA-DE.TXT"
 			>
 		</File>
@@ -629,10 +613,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Logo alpha tiny.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Map_Small.ico"
 			>
 		</File>
@@ -645,19 +625,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\PDZVOR.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Plane.png"
 			>
 		</File>
 		<File
 			RelativePath=".\Plane_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Rating.png"
 			>
 		</File>
 		<File
