@@ -175,6 +175,30 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Backdrop1.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop1.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop2.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop2.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop3.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop3.png"
+			>
+		</File>
+		<File
 			RelativePath=".\DestinationFolder.ico"
 			>
 		</File>
@@ -188,30 +212,6 @@
 		</File>
 		<File
 			RelativePath=".\Flightmap.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund3.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund3.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund4.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund4.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund5.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Hintergrund5.png"
 			>
 		</File>
 		<File
