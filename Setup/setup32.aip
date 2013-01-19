@@ -118,10 +118,10 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="AppLogo.ico" SourcePath="AppLogo.ico"/>
-    <ROW Name="DestinationFolder.ico" SourcePath="DestinationFolder.ico"/>
     <ROW Name="Backdrop1.bmp" SourcePath="Backdrop1.bmp"/>
     <ROW Name="Backdrop2.bmp" SourcePath="Backdrop2.bmp"/>
     <ROW Name="Backdrop3.bmp" SourcePath="Backdrop3.bmp"/>
+    <ROW Name="DestinationFolder.ico" SourcePath="DestinationFolder.ico"/>
     <ROW Name="Info.ico" SourcePath="Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Install.ico"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
@@ -291,7 +291,7 @@
     <ROW Dialog_="MsiRMFilesInUse" Control="List" Type="ListBox" X="55" Y="120" Width="340" Height="140" Attributes="7" Property="FileInUseProcess" Control_Next="Options" MsiKey="MsiRMFilesInUse#List"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Options" Type="RadioButtonGroup" X="55" Y="265" Width="340" Height="48" Attributes="3" Property="AppsShutdownOption" Control_Next="Title" MsiKey="MsiRMFilesInUse#Options"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Text" Type="Text" X="55" Y="100" Width="340" Height="25" Attributes="65539" Text="The following applications are using files that need to be updated by this setup." Control_Next="List" TextLocId="Control.Text.MsiRMFilesInUse#Text" MsiKey="MsiRMFilesInUse#Text"/>
-    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="1" Y="0" Width="449" Height="360" Attributes="1" Text="Backdrop2.bmp" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
+    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="Backdrop2.bmp" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
     <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="Backdrop2.bmp" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
     <ROW Dialog_="FolderDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="FolderDlg#Bitmap"/>
     <ROW Dialog_="ShortcutsDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="ShortcutsDlg#Bitmap"/>
