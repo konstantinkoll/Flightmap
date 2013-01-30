@@ -33,8 +33,8 @@
     <STRING lang="de" value="Der [Wizard] wird [ProductName] auf Ihrem Computer installieren. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
   </ENTRY>
   <ENTRY id="Control.Text.LicenseAgreementDlg#AgreementText">
-    <STRING lang="en" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\Flightmap\Setup\EULA_en.rtf"/>
-    <STRING lang="de" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\Flightmap\Setup\EULA_de.rtf"/>
+    <STRING lang="en" value="EULA_en.rtf"/>
+    <STRING lang="de" value="EULA_de.rtf"/>
   </ENTRY>
   <ENTRY id="Property.Manufacturer">
     <STRING lang="en" value="liquidFOLDERS"/>
