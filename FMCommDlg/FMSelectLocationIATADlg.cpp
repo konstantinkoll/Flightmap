@@ -17,7 +17,7 @@ FMSelectLocationIATADlg::FMSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParent
 {
 	m_nIDTemplate = nIDTemplate;
 
-	p_App = (FMApplication*)AfxGetApp();
+	p_App = FMGetApp();
 	m_LastCountrySelected = p_App->GetInt(_T("LastCountrySelected"), 0);
 
 	if (Airport)

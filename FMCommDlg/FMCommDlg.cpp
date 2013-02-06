@@ -49,7 +49,7 @@ FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 
 FMCommDlg_API BOOL IsCtrlThemed()
 {
-	FMApplication* pApp = (FMApplication*)AfxGetApp();
+	FMApplication* pApp = FMGetApp();
 	if (pApp)
 		if (pApp->m_ThemeLibLoaded)
 			return pApp->zIsAppThemed();
@@ -68,7 +68,7 @@ FMCommDlg_API void DrawControlBorder(CWnd* pWnd)
 
 	CWindowDC dc(pWnd);
 
-	FMApplication* pApp = (FMApplication*)AfxGetApp();
+	FMApplication* pApp = FMGetApp();
 	if (pApp->m_ThemeLibLoaded)
 		if (pApp->zIsAppThemed())
 		{

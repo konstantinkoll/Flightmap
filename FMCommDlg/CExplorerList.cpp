@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "FMCommDlg.h"
 #include "CExplorerList.h"
 
 
@@ -12,7 +13,7 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	p_App = (FMApplication*)AfxGetApp();
+	p_App = FMGetApp();
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 }

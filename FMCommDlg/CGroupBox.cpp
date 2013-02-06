@@ -70,7 +70,7 @@ void CGroupBox::OnPaint()
 	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	FMApplication* pApp = (FMApplication*)AfxGetApp();
+	FMApplication* pApp = FMGetApp();
 	BOOL Themed = IsCtrlThemed();
 
 	// Background

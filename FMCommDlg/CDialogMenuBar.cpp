@@ -38,7 +38,7 @@ void CDialogCmdUI::SetCheck(INT nCheck)
 CDialogMenuBar::CDialogMenuBar()
 	: CWnd()
 {
-	p_App = (FMApplication*)AfxGetApp();
+	p_App = FMGetApp();
 	hTheme = NULL;
 	m_SelectedItem = m_HoverItem = -1;
 	m_LastMove.x = m_LastMove.y = -1;
@@ -761,7 +761,7 @@ void CDialogMenuBar::OnKillFocus(CWnd* /*pKillWnd*/)
 CDialogMenuPopup::CDialogMenuPopup()
 	: CWnd()
 {
-	p_App = (FMApplication*)AfxGetApp();
+	p_App = FMGetApp();
 
 	m_Gutter = m_BlueAreaStart = m_FirstRowOffset = 0;
 	m_Width = m_Height = 2*BORDERPOPUP;

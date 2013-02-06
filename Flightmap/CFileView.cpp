@@ -37,7 +37,7 @@ CFileView::CFileView()
 	p_Status = NULL;
 	p_Itinerary = NULL;
 	p_Flight = NULL;
-	p_App = (FMApplication*)AfxGetApp();
+	p_App = FMGetApp();
 }
 
 void CFileView::PreSubclassWindow()

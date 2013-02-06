@@ -28,7 +28,7 @@ void CGridHeader::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	FMApplication* pApp = (FMApplication*)AfxGetApp();
+	FMApplication* pApp = FMGetApp();
 	BOOL Themed = IsCtrlThemed();
 	BOOL Flat = (pApp->OSVersion==OS_XP) || (pApp->OSVersion==OS_Eight);
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));

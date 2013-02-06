@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "FMCommDlg.h"
 #include "CMainWindow.h"
 
 
@@ -12,7 +13,7 @@
 CMainWindow::CMainWindow()
 	: CWnd()
 {
-	p_App = (FMApplication*)AfxGetApp();
+	p_App = FMGetApp();
 	p_PopupWindow = NULL;
 	hAccelerator = NULL;
 	m_pDialogMenuBar = NULL;
