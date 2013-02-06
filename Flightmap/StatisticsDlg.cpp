@@ -23,11 +23,11 @@ INT CALLBACK SortFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	if (sp->ConvertToNumber)
 	{
 		LONG i1;
-		if (swscanf(item1.GetBuffer(), _T("%i"), &i1)<1)
+		if (swscanf_s(item1.GetBuffer(), _T("%i"), &i1)<1)
 			return 0;
 
 		LONG i2;
-		if (swscanf(item2.GetBuffer(), _T("%i"), &i2)<1)
+		if (swscanf_s(item2.GetBuffer(), _T("%i"), &i2)<1)
 			return 0;
 
 		return i2-i1;
