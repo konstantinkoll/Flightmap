@@ -26,16 +26,16 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParent, CItinerary* pI
 		ResetFlight(m_Flight);
 	}
 
-	m_Pages[0] = new EditFlightRoutePage(&m_Flight);
-	m_Pages[1] = new EditFlightOtherPage(&m_Flight, pItinerary);
-	m_Pages[2] = new EditFlightAttachmentsPage(&m_Flight, pItinerary);
+	m_pPages[0] = new EditFlightRoutePage(&m_Flight);
+	m_pPages[1] = new EditFlightOtherPage(&m_Flight, pItinerary);
+	m_pPages[2] = new EditFlightAttachmentsPage(&m_Flight, pItinerary);
 
 	// Seiten hinzufügen
 	const UINT nIDTemplates[EditFlightPages] = { IDD_EDITFLIGHT_ROUTE, IDD_EDITFLIGHT_OTHER, IDD_EDITFLIGHT_ATTACHMENTS };
 	for (UINT a=0; a<EditFlightPages; a++)
 	{
-		m_Pages[a]->Construct(nIDTemplates[a]);
-		AddPage(m_Pages[a]);
+		m_pPages[a]->Construct(nIDTemplates[a]);
+		AddPage(m_pPages[a]);
 	}
 
 	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
@@ -71,7 +71,7 @@ void EditFlightDlg::OnDestroy()
 {
 	for (UINT a=0; a<EditFlightPages; a++)
 	{
-		m_Pages[a]->DestroyWindow();
-		delete m_Pages[a];
+		m_pPages[a]->DestroyWindow();
+		delete m_pPages[a];
 	}
 }

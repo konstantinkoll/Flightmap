@@ -22,7 +22,7 @@ public:
 	AIRX_Flight m_Flight;
 
 protected:
-	CPropertyPage* m_Pages[EditFlightPages];
+	CPropertyPage* m_pPages[EditFlightPages];
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
