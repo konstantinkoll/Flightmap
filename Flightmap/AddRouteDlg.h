@@ -13,7 +13,7 @@
 class AddRouteDlg : public CDialog
 {
 public:
-	AddRouteDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
+	AddRouteDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

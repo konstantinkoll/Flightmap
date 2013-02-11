@@ -9,8 +9,8 @@
 // AttachmentsDlg
 //
 
-AttachmentsDlg::AttachmentsDlg(CItinerary* pItinerary, CWnd* pParent)
-	: CDialog(IDD_ATTACHMENTS, pParent)
+AttachmentsDlg::AttachmentsDlg(CItinerary* pItinerary, CWnd* pParentWnd)
+	: CDialog(IDD_ATTACHMENTS, pParentWnd)
 {
 	p_Itinerary = pItinerary;
 }

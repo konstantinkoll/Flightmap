@@ -11,8 +11,8 @@
 // AboutDlg
 //
 
-AboutDlg::AboutDlg(CWnd* pParent)
-	: FMDialog(IDD_ABOUT, FMDS_Blue, pParent)
+AboutDlg::AboutDlg(CWnd* pParentWnd)
+	: FMDialog(IDD_ABOUT, FMDS_Blue, pParentWnd)
 {
 	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
 	m_UseBgImages = theApp.m_UseBgImages;

@@ -9,8 +9,8 @@
 // ThreeDSettingsDlg
 //
 
-ThreeDSettingsDlg::ThreeDSettingsDlg(CWnd* pParent)
-	: CDialog(IDD_3DSETTINGS, pParent)
+ThreeDSettingsDlg::ThreeDSettingsDlg(CWnd* pParentWnd)
+	: CDialog(IDD_3DSETTINGS, pParentWnd)
 {
 }
 

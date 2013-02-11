@@ -9,8 +9,8 @@
 // AddRouteDlg
 //
 
-AddRouteDlg::AddRouteDlg(CItinerary* pItinerary, CWnd* pParent)
-	: CDialog(IDD_ADDROUTE, pParent)
+AddRouteDlg::AddRouteDlg(CItinerary* pItinerary, CWnd* pParentWnd)
+	: CDialog(IDD_ADDROUTE, pParentWnd)
 {
 	p_Itinerary = pItinerary;
 	ResetFlight(m_FlightTemplate);

@@ -13,7 +13,7 @@
 class FMRegisterDlg : public FMDialog
 {
 public:
-	FMRegisterDlg(CWnd* pParent=NULL);
+	FMRegisterDlg(CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual INT_PTR DoModal();

@@ -34,7 +34,7 @@ struct FMLicense
 class FMDialog : public CDialog
 {
 public:
-	FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParent=NULL);
+	FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

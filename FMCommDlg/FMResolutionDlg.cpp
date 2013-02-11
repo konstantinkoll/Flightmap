@@ -42,8 +42,8 @@ const FixedResolution FixedResolutions[] =
 	{ 8192, 4096, L"" }
 };
 
-FMResolutionDlg::FMResolutionDlg(UINT* pWidth, UINT* pHeight, CWnd* pParent)
-	: CDialog(IDD_RESOLUTION, pParent)
+FMResolutionDlg::FMResolutionDlg(UINT* pWidth, UINT* pHeight, CWnd* pParentWnd)
+	: CDialog(IDD_RESOLUTION, pParentWnd)
 {
 	ASSERT(pWidth);
 	ASSERT(pHeight);

@@ -11,8 +11,8 @@
 // FMDialog
 //
 
-FMDialog::FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParent)
-	: CDialog(nIDTemplate, pParent)
+FMDialog::FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd)
+	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
 	m_Design = Design;

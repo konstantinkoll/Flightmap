@@ -12,7 +12,7 @@
 class FMLicenseDlg : public FMDialog
 {
 public:
-	FMLicenseDlg(CWnd* pParent=NULL);
+	FMLicenseDlg(CWnd* pParentWnd=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

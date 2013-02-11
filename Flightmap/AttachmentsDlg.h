@@ -14,7 +14,7 @@
 class AttachmentsDlg : public CDialog
 {
 public:
-	AttachmentsDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
+	AttachmentsDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

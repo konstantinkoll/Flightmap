@@ -88,8 +88,8 @@ typedef CMap<CStringA, LPCSTR, UINT, UINT> CFlightsAirport;
 typedef CMap<CStringW, LPCWSTR, Airline, Airline> CFlightsCarrier;
 typedef CMap<CStringW, LPCWSTR, UINT, UINT> CFlightsEquipment;
 
-StatisticsDlg::StatisticsDlg(CItinerary* pItinerary, CWnd* pParent)
-	: CDialog(IDD_STATISTICS, pParent)
+StatisticsDlg::StatisticsDlg(CItinerary* pItinerary, CWnd* pParentWnd)
+	: CDialog(IDD_STATISTICS, pParentWnd)
 {
 	p_Itinerary = pItinerary;
 }

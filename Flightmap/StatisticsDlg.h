@@ -15,7 +15,7 @@
 class StatisticsDlg : public CDialog
 {
 public:
-	StatisticsDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
+	StatisticsDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

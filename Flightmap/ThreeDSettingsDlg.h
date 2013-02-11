@@ -12,7 +12,7 @@
 class ThreeDSettingsDlg : public CDialog
 {
 public:
-	ThreeDSettingsDlg(CWnd* pParent);
+	ThreeDSettingsDlg(CWnd* pParentWnd);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

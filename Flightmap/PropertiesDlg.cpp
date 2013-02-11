@@ -9,8 +9,8 @@
 // PropertiesDlg
 //
 
-PropertiesDlg::PropertiesDlg(CItinerary* pItinerary, CWnd* pParent)
-	: CDialog(IDD_PROPERTIES, pParent)
+PropertiesDlg::PropertiesDlg(CItinerary* pItinerary, CWnd* pParentWnd)
+	: CDialog(IDD_PROPERTIES, pParentWnd)
 {
 	ASSERT(pItinerary);
 

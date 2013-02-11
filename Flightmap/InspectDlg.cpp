@@ -11,8 +11,8 @@
 // InspectDlg
 //
 
-InspectDlg::InspectDlg(CItinerary* pItinerary, CWnd* pParent)
-	: CDialog(IDD_INSPECT, pParent)
+InspectDlg::InspectDlg(CItinerary* pItinerary, CWnd* pParentWnd)
+	: CDialog(IDD_INSPECT, pParentWnd)
 {
 	p_Itinerary = pItinerary;
 }

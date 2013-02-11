@@ -13,7 +13,7 @@
 class InspectDlg : public CDialog
 {
 public:
-	InspectDlg(CItinerary* pItinerary, CWnd* pParent=NULL);
+	InspectDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
 protected:
 	CItinerary* p_Itinerary;

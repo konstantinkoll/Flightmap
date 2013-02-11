@@ -12,7 +12,7 @@
 class AboutDlg : public FMDialog
 {
 public:
-	AboutDlg(CWnd* pParent=NULL);
+	AboutDlg(CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

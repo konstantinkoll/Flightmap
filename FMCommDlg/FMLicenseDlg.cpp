@@ -10,8 +10,8 @@
 // FMLicenseDlg
 //
 
-FMLicenseDlg::FMLicenseDlg(CWnd* pParent)
-	: FMDialog(IDD_ENTERLICENSEKEY, FMDS_Blue, pParent)
+FMLicenseDlg::FMLicenseDlg(CWnd* pParentWnd)
+	: FMDialog(IDD_ENTERLICENSEKEY, FMDS_Blue, pParentWnd)
 {
 }
 

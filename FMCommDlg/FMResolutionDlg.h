@@ -12,7 +12,7 @@
 class FMResolutionDlg : public CDialog
 {
 public:
-	FMResolutionDlg(UINT* pWidth, UINT* pHeight, CWnd* pParent=NULL);
+	FMResolutionDlg(UINT* pWidth, UINT* pHeight, CWnd* pParentWnd=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

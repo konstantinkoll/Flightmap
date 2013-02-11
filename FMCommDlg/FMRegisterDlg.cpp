@@ -10,8 +10,8 @@
 // FMRegisterDlg
 //
 
-FMRegisterDlg::FMRegisterDlg(CWnd* pParent)
-	: FMDialog(IDD_REGISTER, FMDS_Blue, pParent)
+FMRegisterDlg::FMRegisterDlg(CWnd* pParentWnd)
+	: FMDialog(IDD_REGISTER, FMDS_Blue, pParentWnd)
 {
 }
 
