@@ -517,6 +517,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\DestinationFolder.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Docked.jpg"
 			>
 		</File>
@@ -590,6 +594,14 @@
 		</File>
 		<File
 			RelativePath="IATA-EN.TXT"
+			>
+		</File>
+		<File
+			RelativePath=".\Info.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Install.ico"
 			>
 		</File>
 		<File
@@ -717,6 +729,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Shortcuts.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Slogan.png"
 			>
 		</File>
@@ -737,7 +753,23 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Tools.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Tools.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Wait.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Wallet_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Warning.ico"
 			>
 		</File>
 	</Files>
