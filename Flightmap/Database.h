@@ -2,7 +2,7 @@
 // StarAlliance
 //
 
-#define AllianceStarCount     30
+#define AllianceStarCount     27
 
 static const WCHAR AllianceStar[AllianceStarCount][64] = {
 	L"Adria Airways",
@@ -14,8 +14,6 @@ static const WCHAR AllianceStar[AllianceStarCount][64] = {
 	L"Asiana Airlines",
 	L"Austrian Airlines",
 	L"Avianca",
-	L"Blue1",
-	L"bmi",
 	L"Brussels Airlines",
 	L"Copa Airlines",
 	L"Croatia Airlines",
@@ -27,15 +25,13 @@ static const WCHAR AllianceStar[AllianceStarCount][64] = {
 	L"Shenzhen Airlines",
 	L"Singapore Airlines",
 	L"South African Airways",
-	L"Spanair",
 	L"Swiss",
 	L"TACA Airlines",
-	L"TAM",
+	L"TAM Airlines",
 	L"TAP Portugal",
 	L"Thai Airways",
 	L"Turkish Airlines",
 	L"United Airlines"
-	L"US Airways"
 };
 
 
@@ -71,7 +67,7 @@ static const WCHAR AllianceSkyTeam[AllianceSkyTeamCount][64] = {
 // OneWorld
 //
 
-#define AllianceOneWorldCount     15
+#define AllianceOneWorldCount     13
 
 static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
 	L"Air Berlin",
@@ -84,8 +80,6 @@ static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
 	L"Kingfisher Airlines",
 	L"LAN",
 	L"Malaysia Airlines",
-	L"Malév",
-	L"Mexicana",
 	L"Quantas",
 	L"Royal Jordanian",
 	L"S7 Airlines"
