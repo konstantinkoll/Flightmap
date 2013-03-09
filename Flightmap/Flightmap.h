@@ -108,7 +108,6 @@ public:
 	BOOL m_GlobeAntialising;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
-	BOOL m_GlobeShadows;
 	// User view settings
 	BOOL m_GlobeMergeMetro;
 	BOOL m_GlobeUseColors;

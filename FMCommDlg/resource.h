@@ -136,7 +136,6 @@
 #define IDC_ANTIALISING                 21403
 #define IDC_LIGHTING                    21404
 #define IDC_ATMOSPHERE                  21405
-#define IDC_SHADOWS                     21406
 #define IDD_CHOOSECOLOR                 21500
 #define IDD_RESOLUTION                  21600
 #define IDC_RESLIST                     21601

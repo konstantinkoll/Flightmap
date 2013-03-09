@@ -76,7 +76,6 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeAntialising = GetInt(_T("GlobeAntialising"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
-	m_GlobeShadows = GetInt(_T("GlobeShadows"), TRUE);
 	m_GlobeMergeMetro = GetInt(_T("GlobeMergeMetro"), FALSE);
 	m_GlobeUseColors = GetInt(_T("GlobeUseColors"), TRUE);
 	m_GlobeClamp = GetInt(_T("GlobeClamp"), FALSE);
@@ -193,7 +192,6 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeAntialising"), m_GlobeAntialising);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
-		WriteInt(_T("GlobeShadows"), m_GlobeShadows);
 		WriteInt(_T("GlobeMergeMetro"), m_GlobeMergeMetro);
 		WriteInt(_T("GlobeUseColors"), m_GlobeUseColors);
 		WriteInt(_T("GlobeClamp"), m_GlobeClamp);
