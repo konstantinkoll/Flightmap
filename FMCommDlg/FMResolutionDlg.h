@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CExplorerList.h"
+#include "CImageListTransparent.h"
 
 
 // FMResolutionDlg
@@ -17,9 +18,10 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	CExplorerList m_ResolutionList;
+	CExplorerList m_wndResolutionList;
 	CMFCMaskedEdit m_wndWidth;
 	CMFCMaskedEdit m_wndHeight;
+	CImageListTransparent m_Icons;
 	UINT* p_Width;
 	UINT* p_Height;
 

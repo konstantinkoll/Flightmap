@@ -751,6 +751,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\ResolutionIcons.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\SortIndicators.bmp"
 				>
 			</File>

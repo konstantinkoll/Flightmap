@@ -62,6 +62,7 @@
 #define IDB_SORTINDICATORS              20018
 #define IDB_NRT_REGISTERED              20019
 #define IDB_NRT_UNREGISTERED            20020
+#define IDB_RESOLUTIONICONS             20021
 #define IDS_PURCHASEURL                 20100
 #define IDS_UPDATEURL                   20101
 #define IDS_EXCLUSIVEURL                20102

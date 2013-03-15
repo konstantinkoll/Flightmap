@@ -476,6 +476,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="ResolutionIcons"
+			>
+			<File
+				RelativePath=".\ResolutionIcons\Camera.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionIcons\Computer.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionIcons\Screen.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionIcons\TV.ico"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\3DSettings_Tiny.ico"
 			>
