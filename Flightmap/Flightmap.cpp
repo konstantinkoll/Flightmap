@@ -58,7 +58,7 @@ BOOL CFlightmapApp::InitInstance()
 	// Icons
 	m_FlagIcons16[0] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16i));
 	m_FlagIcons16[1] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16));
-	m_FlagIcons32.Create(IDB_FLAGS_32, NULL, 0, 4, 32, 32);
+	m_FlagIcons32.Create(IDB_FLAGS_32, 32, 32);
 
 	// Registry auslesen
 	SetRegistryBase();

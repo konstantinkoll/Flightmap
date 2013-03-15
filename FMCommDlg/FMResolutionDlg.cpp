@@ -112,7 +112,7 @@ BOOL FMResolutionDlg::OnInitDialog()
 	m_wndHeight.SetWindowText(tmpStr);
 
 	// Icons
-	m_Icons.Create(IDB_RESOLUTIONICONS, NULL, 0, -1, 32, 32);
+	m_Icons.Create(IDB_RESOLUTIONICONS, 32, 32);
 	m_wndResolutionList.SetImageList(&m_Icons, LVSIL_NORMAL);
 
 	// Liste
