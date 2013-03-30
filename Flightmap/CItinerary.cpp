@@ -167,8 +167,9 @@ void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL Inclu
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
-			if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Carrier)==-1)
-				pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Carrier);
+			if (pItinerary->m_Flights.m_Items[a].Carrier[0])
+				if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Carrier)==-1)
+					pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Carrier);
 }
 
 void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
@@ -179,8 +180,9 @@ void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL Inc
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
-			if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Equipment)==-1)
-				pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Equipment);
+			if (pItinerary->m_Flights.m_Items[a].Equipment[0])
+				if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Equipment)==-1)
+					pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Equipment);
 }
 
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight)
