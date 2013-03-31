@@ -63,6 +63,8 @@
 #define IDB_NRT_REGISTERED              20019
 #define IDB_NRT_UNREGISTERED            20020
 #define IDB_RESOLUTIONICONS             20021
+#define IDB_ASCENDING                   20022
+#define IDB_DESCENDING                  20023
 #define IDS_PURCHASEURL                 20100
 #define IDS_UPDATEURL                   20101
 #define IDS_EXCLUSIVEURL                20102
@@ -180,6 +182,9 @@
 #define IDC_LIST_AIRPORT                22016
 #define IDC_LIST_CARRIER                22017
 #define IDC_LIST_EQUIPMENT              22018
+#define IDD_FILTER                      22100
+#define IDC_ASCENDING                   22101
+#define IDC_DESCENDING                  22102
 
 // Next default values for new objects
 // 
@@ -187,7 +192,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2012
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2046
+#define _APS_NEXT_CONTROL_VALUE         2047
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

@@ -460,6 +460,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FilterDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Flightmap.cpp"
 				>
 			</File>
@@ -623,6 +627,10 @@
 			</File>
 			<File
 				RelativePath=".\EditFlightRoutePage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FilterDlg.h"
 				>
 			</File>
 			<File

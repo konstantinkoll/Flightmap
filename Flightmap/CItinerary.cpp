@@ -718,9 +718,9 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 
 CItinerary::CItinerary(BOOL LoadAuthor)
 {
-	m_IsModified = m_IsOpen = FALSE;
-	m_DisplayName.LoadString(IDS_EMPTYITINERARY);
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
+	m_IsModified = m_IsOpen = FALSE;
+	ENSURE(m_DisplayName.LoadString(IDS_EMPTYITINERARY));
 
 	if (LoadAuthor)
 	{
@@ -743,6 +743,29 @@ CItinerary::CItinerary(BOOL LoadAuthor)
 	}
 }
 
+CItinerary::CItinerary(CItinerary* pItinerary)
+{
+	ASSERT(pItinerary);
+
+	m_IsModified = FALSE;
+	m_IsOpen = TRUE;
+	m_Metadata = pItinerary->m_Metadata;
+	m_Metadata.CurrentRow = 0;
+
+	if (pItinerary->m_FileName[0])
+	{
+		SetDisplayName(pItinerary->m_FileName);
+
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_FILTEREDITINERARY));
+		m_DisplayName += tmpStr;
+	}
+	else
+	{
+		m_DisplayName = pItinerary->m_DisplayName;
+	}
+}
+
 CItinerary::~CItinerary()
 {
 	for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
@@ -753,13 +776,13 @@ void CItinerary::NewSampleAtlantic()
 {
 	ASSERT(!m_IsOpen);
 
-	m_DisplayName.LoadString(IDS_SAMPLEITINERARY);
+	ENSURE(m_DisplayName.LoadString(IDS_SAMPLEITINERARY));
 	m_IsOpen = TRUE;
 
 	wcscpy_s(m_Metadata.Author, 256, L"liquidFOLDERS");
-	LoadString(AfxGetResourceHandle(), IDS_METADATA_COMMENTS, m_Metadata.Comments, 256);
-	LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_ATLANTIC, m_Metadata.Title, 256);
-	LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_ATLANTIC, m_Metadata.Keywords, 256);
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_COMMENTS, m_Metadata.Comments, 256));
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_ATLANTIC, m_Metadata.Title, 256));
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_ATLANTIC, m_Metadata.Keywords, 256));
 
 	AddFlight("DUS", "FRA", L"Lufthansa", L"Boeing 737", "LH 803", AIRX_Economy, "9F", "", L"", 500, (COLORREF)-1, MakeTime(2007, 1, 25, 6, 15));
 	AddFlight("FRA", "JFK", L"Lufthansa", L"Airbus A340", "LH 400", AIRX_Crew, "F/D", "D-AIHD", L"Stuttgart", 2565, (COLORREF)-1, MakeTime(2007, 1, 25, 9, 35));
@@ -772,13 +795,13 @@ void CItinerary::NewSamplePacific()
 {
 	ASSERT(!m_IsOpen);
 
-	m_DisplayName.LoadString(IDS_SAMPLEITINERARY);
+	ENSURE(m_DisplayName.LoadString(IDS_SAMPLEITINERARY));
 	m_IsOpen = TRUE;
 
 	wcscpy_s(m_Metadata.Author, 256, L"liquidFOLDERS");
-	LoadString(AfxGetResourceHandle(), IDS_METADATA_COMMENTS, m_Metadata.Comments, 256);
-	LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_PACIFIC, m_Metadata.Title, 256);
-	LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_PACIFIC, m_Metadata.Keywords, 256);
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_COMMENTS, m_Metadata.Comments, 256));
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_PACIFIC, m_Metadata.Title, 256));
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_PACIFIC, m_Metadata.Keywords, 256));
 
 	AddFlight("YVR", "DFW", L"American Airlines", L"Boeing 737", "AA 260", AIRX_Economy, "16A", "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 9, 12, 15));
 	AddFlight("DFW", "LAX", L"American Airlines", L"Boeing 737", "AA 2489", AIRX_Economy, "18D", "", L"", 1070, (COLORREF)-1, MakeTime(2012, 7, 9, 20, 35));
@@ -1202,10 +1225,174 @@ FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WO
 	return ft;
 }
 
+INT CItinerary::Compare(INT Eins, INT Zwei, UINT Attr, BOOL Descending)
+{
+	ASSERT(Attr<FMAttributeCount);
+	ASSERT(FMAttributes[Attr].Sortable);
+
+	const void* Dat1 = (BYTE*)&m_Flights.m_Items[Eins]+FMAttributes[Attr].Offset;
+	const void* Dat2 = (BYTE*)&m_Flights.m_Items[Zwei]+FMAttributes[Attr].Offset;
+
+	// Gewünschtes Attribut vergleichen
+	INT Cmp = 0;
+	UINT Eins32;
+	UINT Zwei32;
+	DOUBLE EinsDbl;
+	DOUBLE ZweiDbl;
+
+	switch (FMAttributes[Attr].Type)
+	{
+	case FMTypeUnicodeString:
+		Cmp = _wcsicmp((WCHAR*)Dat1, (WCHAR*)Dat2);
+		break;
+	case FMTypeAnsiString:
+		Cmp = _stricmp((CHAR*)Dat1, (CHAR*)Dat2);
+		break;
+	case FMTypeRating:
+		Eins32 = (*(UINT*)Dat1)>>FMAttributes[Attr].DataParameter;
+		Zwei32 = (*(UINT*)Dat2)>>FMAttributes[Attr].DataParameter;
+		if (Eins32<Zwei32)
+		{
+			Cmp = -1;
+		}
+		else
+			if (Eins32>Zwei32)
+			{
+				Cmp = 1;
+			}
+		break;
+	case FMTypeUINT:
+	case FMTypeTime:
+		Eins32 = *(UINT*)Dat1;
+		Zwei32 = *(UINT*)Dat2;
+		if (Eins32<Zwei32)
+		{
+			Cmp = -1;
+		}
+		else
+			if (Eins32>Zwei32)
+			{
+				Cmp = 1;
+			}
+		break;
+	case FMTypeDistance:
+		EinsDbl = *(DOUBLE*)Dat1;
+		ZweiDbl = *(DOUBLE*)Dat2;
+		if (EinsDbl<ZweiDbl)
+		{
+			Cmp = -1;
+		}
+		else
+			if (EinsDbl>ZweiDbl)
+			{
+				Cmp = 1;
+			}
+		break;
+	case FMTypeDateTime:
+		Cmp = CompareFileTime((FILETIME*)Dat1, (FILETIME*)Dat2);
+		break;
+	case FMTypeClass:
+		Eins32 = *(UCHAR*)Dat1;
+		Zwei32 = *(UCHAR*)Dat2;
+		if (Eins32<Zwei32)
+		{
+			Cmp = -1;
+		}
+		else
+			if (Eins32>Zwei32)
+			{
+				Cmp = 1;
+			}
+		break;
+	default:
+		ASSERT(FALSE);
+	}
+
+	// Ggf. Reihenfolge umkehren
+	return Descending ? Cmp : -Cmp;
+}
+
+void CItinerary::Heap(INT Wurzel, INT Anz, UINT Attr, BOOL Descending)
+{
+	while (Wurzel<=Anz/2-1)
+	{
+		INT Idx = (Wurzel+1)*2-1;
+		if (Idx+1<Anz)
+			if (Compare(Idx, Idx+1, Attr, Descending)<0)
+				Idx++;
+
+		if (Compare(Wurzel, Idx, Attr, Descending)<0)
+		{
+			std::swap(m_Flights.m_Items[Wurzel], m_Flights.m_Items[Idx]);
+			Wurzel = Idx;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+void CItinerary::Sort(UINT Attr, BOOL Descending)
+{
+	if (m_Flights.m_ItemCount>1)
+	{
+		for (INT a=m_Flights.m_ItemCount/2-1; a>=0; a--)
+			Heap(a, m_Flights.m_ItemCount, Attr, Descending);
+		for (INT a=m_Flights.m_ItemCount-1; a>0; a--)
+		{
+			std::swap(m_Flights.m_Items[0], m_Flights.m_Items[a]);
+			Heap(0, a, Attr, Descending);
+		}
+	}
+
+}
+
 void CItinerary::AddFlight()
 {
 	AIRX_Flight Flight;
 	ResetFlight(Flight);
+
+	m_Flights.AddItem(Flight);
+}
+
+void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
+{
+	ASSERT(pItinerary);
+	ASSERT(Row<pItinerary->m_Flights.m_ItemCount);
+
+	AIRX_Flight Flight = pItinerary->m_Flights.m_Items[Row];
+	Flight.AttachmentCount = 0;
+
+	for (UINT a=0; a<pItinerary->m_Flights.m_Items[Row].AttachmentCount; a++)
+	{
+		UINT Idx = AddAttachment(pItinerary, pItinerary->m_Flights.m_Items[Row].Attachments[a]);
+		if (Idx!=(UINT)-1)
+			Flight.Attachments[Flight.AttachmentCount++] = Idx;
+	}
+
+	m_Flights.AddItem(Flight);
+}
+
+void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure)
+{
+	AIRX_Flight Flight;
+	ResetFlight(Flight);
+
+	strcpy_s(Flight.From.Code, 4, From);
+	strcpy_s(Flight.To.Code, 4, To);
+	wcscpy_s(Flight.Carrier, 64, Carrier);
+	wcscpy_s(Flight.Equipment, 64, Equipment);
+	strcpy_s(Flight.FlightNo, 8, FlightNo);
+	Flight.Class = Class;
+	strcpy_s(Flight.Seat, 4, Seat);
+	strcpy_s(Flight.Registration, 16, Registration);
+	wcscpy_s(Flight.Name, 64, Name);
+	Flight.MilesAward = Flight.MilesStatus = Miles;
+	Flight.Color = Color;
+	Flight.From.Time = Departure;
+
+	CalcDistance(Flight);
 
 	m_Flights.AddItem(Flight);
 }
@@ -1258,29 +1445,6 @@ void CItinerary::DeleteSelectedFlights()
 			Row++;
 		}
 	}
-}
-
-void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure)
-{
-	AIRX_Flight Flight;
-	ResetFlight(Flight);
-
-	strcpy_s(Flight.From.Code, 4, From);
-	strcpy_s(Flight.To.Code, 4, To);
-	wcscpy_s(Flight.Carrier, 64, Carrier);
-	wcscpy_s(Flight.Equipment, 64, Equipment);
-	strcpy_s(Flight.FlightNo, 8, FlightNo);
-	Flight.Class = Class;
-	strcpy_s(Flight.Seat, 4, Seat);
-	strcpy_s(Flight.Registration, 16, Registration);
-	wcscpy_s(Flight.Name, 64, Name);
-	Flight.MilesAward = Flight.MilesStatus = Miles;
-	Flight.Color = Color;
-	Flight.From.Time = Departure;
-
-	CalcDistance(Flight);
-
-	m_Flights.AddItem(Flight);
 }
 
 void CItinerary::SetDisplayName(CString FileName)
@@ -1358,6 +1522,22 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 		free(Attachment.pData);
 
 	return Res;
+}
+
+UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Idx)
+{
+	ASSERT(pItinerary);
+	ASSERT(Idx<pItinerary->m_Attachments.m_ItemCount);
+
+	AIRX_Attachment Attachment = pItinerary->m_Attachments.m_Items[Idx];
+
+	Attachment.pData = malloc(Attachment.Size);
+	if (!Attachment.pData)
+		return (UINT)-1;
+
+	memcpy_s(Attachment.pData, Attachment.Size, pItinerary->m_Attachments.m_Items[Idx].pData, Attachment.Size);
+
+	return m_Attachments.AddItem(Attachment) ? m_Attachments.m_ItemCount-1 : (UINT)-1;
 }
 
 CGdiPlusBitmap* CItinerary::DecodeAttachment(UINT Idx)

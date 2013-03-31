@@ -441,6 +441,7 @@ BEGIN
     IDS_BACKGROUND_ABSTRACT "Abstrakt"
     IDS_BACKGROUND_COLOR    "Einfarbig"
     IDS_EMPTYITINERARY      "(Neuer Flugplan)"
+    IDS_FILTEREDITINERARY   " (gefiltert)"
     IDS_SAMPLEITINERARY     "(Beispiel-Flugplan)"
     IDS_NOTSAVED            "Möchten Sie die Änderungen speichern?"
     IDS_ATTACHMENTS         "Angehängte Dateien\nKlicken Sie auf das Symbol, um die\nangehängten Dateien zu betrachten."
@@ -574,8 +575,9 @@ STRINGTABLE
 BEGIN
     IDM_EDIT_INSERTROW      "&Zeile einfügen"
     IDM_EDIT_DELETE         "&Löschen"
-    IDM_EDIT_EDITFLIGHT     "&Flug bearbeiten..."
+    IDM_EDIT_EDITFLIGHT     "Flug &bearbeiten..."
     IDM_EDIT_ADDROUTE       "&Route hinzufügen..."
+    IDM_EDIT_FILTER         "&Filtern..."
     IDM_EDIT_SELECTALL      "&Alles auswählen"
 END
 
@@ -1051,6 +1053,7 @@ BEGIN
     IDS_BACKGROUND_ABSTRACT "Abstract"
     IDS_BACKGROUND_COLOR    "Solid color"
     IDS_EMPTYITINERARY      "(New itinerary)"
+    IDS_FILTEREDITINERARY   " (filtered)"
     IDS_SAMPLEITINERARY     "(Sample itinerary)"
     IDS_NOTSAVED            "The itinerary has been modified. Save?"
     IDS_ATTACHMENTS         "Attached files\nClick on the icon to view the\nfiles attached to this flight."
@@ -1184,8 +1187,9 @@ STRINGTABLE
 BEGIN
     IDM_EDIT_INSERTROW      "Insert ro&w"
     IDM_EDIT_DELETE         "&Delete"
-    IDM_EDIT_EDITFLIGHT     "Edit &flight..."
+    IDM_EDIT_EDITFLIGHT     "&Edit flight..."
     IDM_EDIT_ADDROUTE       "Add &route..."
+    IDM_EDIT_FILTER         "&Filter..."
     IDM_EDIT_SELECTALL      "Select &all"
 END
 

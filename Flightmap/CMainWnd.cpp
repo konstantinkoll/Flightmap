@@ -743,7 +743,9 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_EDIT_ADDROUTE, 5, CDMB_SMALL);
 		pPopup->AddCommand(IDM_EDIT_INSERTROW, -1, CDMB_SMALL, FALSE);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_EDIT_SELECTALL, 6, CDMB_SMALL, FALSE);
+		pPopup->AddCommand(IDM_EDIT_FILTER, 6, CDMB_SMALL);
+		pPopup->AddSeparator();
+		pPopup->AddCommand(IDM_EDIT_SELECTALL, 7, CDMB_SMALL, FALSE);
 		break;
 	case IDM_MAP:
 		pPopup->Create(this, IDB_MENUMAP_32, IDB_MENUMAP_16);

@@ -6,7 +6,9 @@
 #include "AddRouteDlg.h"
 #include "CDataGrid.h"
 #include "ChooseDetailsDlg.h"
+#include "CMainWnd.h"
 #include "EditFlightDlg.h"
+#include "FilterDlg.h"
 #include "Flightmap.h"
 #include "Resource.h"
 
@@ -867,6 +869,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_COMMAND(IDM_EDIT_DELETE, OnDelete)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
 	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
+	ON_COMMAND(IDM_EDIT_FILTER, OnFilter)
 	ON_COMMAND(IDM_EDIT_SELECTALL, OnSelectAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
 
@@ -1743,6 +1746,49 @@ void CDataGrid::OnAddRoute()
 	}
 }
 
+void CDataGrid::OnFilter()
+{
+	FilterDlg dlg(p_Itinerary, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		CItinerary* pItinerary = new CItinerary(p_Itinerary);
+
+		for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+		{
+			// Filter
+			const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[a];
+
+			if (strlen(dlg.m_Filter.Airport)==3)
+				if ((strcmp(dlg.m_Filter.Airport, pFlight->From.Code)!=0) && (strcmp(dlg.m_Filter.Airport, pFlight->To.Code)!=0))
+					continue;
+			if (dlg.m_Filter.Carrier[0])
+				if (wcscmp(dlg.m_Filter.Carrier, pFlight->Carrier)!=0)
+					continue;
+			if (dlg.m_Filter.Equipment[0])
+				if (wcscmp(dlg.m_Filter.Equipment, pFlight->Equipment)!=0)
+					continue;
+			if (dlg.m_Filter.Business)
+				if ((pFlight->Flags & AIRX_BusinessTrip)==0)
+					continue;
+			if (dlg.m_Filter.Leisure)
+				if ((pFlight->Flags & AIRX_LeisureTrip)==0)
+					continue;
+			if (pFlight->Flags>>28<dlg.m_Filter.Rating)
+				continue;
+
+			pItinerary->AddFlight(p_Itinerary, a);
+		}
+
+		if (dlg.m_Filter.SortBy>=0)
+			pItinerary->Sort((UINT)dlg.m_Filter.SortBy, dlg.m_Filter.Descending);
+
+		CMainWnd* pFrame = new CMainWnd();
+		pFrame->Create(pItinerary);
+		pFrame->ShowWindow(SW_SHOW);
+		pFrame->UpdateWindow();
+	}
+}
+
 void CDataGrid::OnSelectAll()
 {
 	ASSERT(p_Itinerary);
@@ -1773,6 +1819,7 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 				b = dobj.IsDataAvailable(theApp.CF_FLIGHTS);
 		}
 		break;
+	case IDM_EDIT_FILTER:
 	case IDM_EDIT_SELECTALL:
 		if (p_Itinerary)
 			b = p_Itinerary->m_Flights.m_ItemCount;

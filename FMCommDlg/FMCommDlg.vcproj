@@ -615,11 +615,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Ascending_16.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Backdrop_Blue.png"
 				>
 			</File>
 			<File
 				RelativePath=".\res\ChooseColor_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Descending_16.bmp"
 				>
 			</File>
 			<File
@@ -644,6 +652,10 @@
 			</File>
 			<File
 				RelativePath=".\res\FileProperties_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FilterByForm_Tiny.ico"
 				>
 			</File>
 			<File

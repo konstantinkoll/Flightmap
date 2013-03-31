@@ -244,6 +244,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FilterByForm_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterByForm_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Flipflops_16.png"
 				>
 			</File>
@@ -521,6 +529,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Ascending_16.bmp"
+			>
+		</File>
+		<File
 			RelativePath=".\Backdrop Settings.txt"
 			>
 		</File>
@@ -534,6 +546,10 @@
 		</File>
 		<File
 			RelativePath=".\ChooseColor_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Descending_16.bmp"
 			>
 		</File>
 		<File
@@ -574,6 +590,10 @@
 		</File>
 		<File
 			RelativePath=".\FileProperties_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\FilterByForm_Tiny.ico"
 			>
 		</File>
 		<File

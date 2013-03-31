@@ -109,7 +109,7 @@ struct AIRX_Attachment
 // Attributes
 //
 
-#define FMAttributeCount 24
+#define FMAttributeCount        24
 
 #define FMTypeUnicodeString     0
 #define FMTypeAnsiString        1
@@ -170,6 +170,7 @@ class CItinerary
 {
 public:
 	CItinerary(BOOL LoadAuthor=FALSE);
+	CItinerary(CItinerary* pItinerary);
 	~CItinerary();
 
 	void NewSampleAtlantic();
@@ -182,12 +183,16 @@ public:
 	static CString Flight2Text(AIRX_Flight& Flight);
 	CString Flight2Text(UINT Idx);
 
+	void Sort(UINT Attr, BOOL Ascending);
+
 	void AddFlight();
+	void AddFlight(CItinerary* pItinerary, UINT Row);
 	void InsertFlights(UINT Row, UINT Count=1, AIRX_Flight* pFlights=NULL);
 	void DeleteFlight(UINT Row);
 	void DeleteSelectedFlights();
 
 	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
+	UINT AddAttachment(CItinerary* pItinerary, UINT Idx);
 	CGdiPlusBitmap* DecodeAttachment(UINT Idx);
 	CGdiPlusBitmap* DecodeAttachment(AIRX_Attachment& Attachment);
 	void DeleteAttachment(UINT Idx, AIRX_Flight* pFlight=NULL);
@@ -203,6 +208,8 @@ public:
 
 private:
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
+	INT Compare(INT Eins, INT Zwei, UINT Attr, BOOL Descending);
+	void Heap(INT Wurzel, INT Anz, UINT Attr, BOOL Descending);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
 	void SetDisplayName(CString FileName);
 
