@@ -168,7 +168,7 @@ void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL Inclu
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
 			if (pItinerary->m_Flights.m_Items[a].Carrier[0])
-				if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Carrier)==-1)
+				if (pComboBox->FindStringExact(-1, pItinerary->m_Flights.m_Items[a].Carrier)==CB_ERR)
 					pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Carrier);
 }
 
@@ -181,7 +181,7 @@ void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL Inc
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
 			if (pItinerary->m_Flights.m_Items[a].Equipment[0])
-				if (pComboBox->FindString(-1, pItinerary->m_Flights.m_Items[a].Equipment)==-1)
+				if (pComboBox->FindStringExact(-1, pItinerary->m_Flights.m_Items[a].Equipment)==CB_ERR)
 					pComboBox->AddString(pItinerary->m_Flights.m_Items[a].Equipment);
 }
 
