@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DICTIONARY type="multilanguage" ignore="en">
+<DICTIONARY type="multilanguage">
   <ENTRY id="Control.Text.AdminWelcomeDlg#DescriptionNoClose">
     <STRING lang="en" value="The [Wizard] will create a server image of [ProductName], at a specified network location.  Click Next to continue or close the window to exit the [Wizard]."/>
     <STRING lang="de" value="Der [Wizard] erstellt ein Server-Image von [ProductName], in dem angegebenen Netzwerkpfad. &quot;Weiter&quot; um fortzufahren oder &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
@@ -35,6 +35,9 @@
   <ENTRY id="Control.Text.LicenseAgreementDlg#AgreementText">
     <STRING lang="en" value="EULA_en.rtf"/>
     <STRING lang="de" value="EULA_de.rtf"/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#Description">
+    <STRING lang="de" value="Um fortzufahren, müssen Sie den [ProductName]-Lizenzbedingungen zustimmen. Wenn Sie diese nicht akzeptieren wollen, klicken Sie auf &quot;Abbrechen&quot; um die Installation abzubrechen."/>
   </ENTRY>
   <ENTRY id="Property.Manufacturer">
     <STRING lang="en" value="liquidFOLDERS"/>
