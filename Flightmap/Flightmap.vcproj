@@ -480,10 +480,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Markup.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\PropertiesDlg.cpp"
 				>
 			</File>
@@ -655,10 +651,6 @@
 			</File>
 			<File
 				RelativePath=".\InspectDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Markup.h"
 				>
 			</File>
 			<File
