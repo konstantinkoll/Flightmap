@@ -716,6 +716,8 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 // CItinerary
 //
 
+#define AttachmentEndBuffer     1
+
 CItinerary::CItinerary(BOOL LoadAuthor)
 {
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
@@ -860,18 +862,18 @@ void CItinerary::OpenAIRX(CString FileName)
 						if (ReadRecord(f, &Attachment, sizeof(Attachment), Header.AttachmentRecordSize))
 						{
 							Attachment.IconID = -1;
-							if (Attachment.Flags & AIRX_Invalid)
-								Attachment.Flags &= ~AIRX_Valid;
 
 							if (pData)
 								free(pData);
 
-							pData = malloc(Attachment.Size);
+							pData = malloc(Attachment.Size+AttachmentEndBuffer);
 							if (pData)
 								if (f.Read(pData, Attachment.Size)==Attachment.Size)
 								{
 									Attachment.pData = pData;
 									pData = NULL;
+
+									ValidateAttachment(Attachment, TRUE);
 
 									m_Attachments.AddItem(Attachment);
 								}
@@ -1345,8 +1347,35 @@ void CItinerary::Sort(UINT Attr, BOOL Descending)
 			Heap(0, a, Attr, Descending);
 		}
 	}
-
 }
+
+AIRX_Attachment* CItinerary::GetGPSPath(AIRX_Flight& Flight)
+{
+	for (UINT a=0; a<Flight.AttachmentCount; a++)
+	{
+		AIRX_Attachment* pAttachment = &m_Attachments.m_Items[Flight.Attachments[a]];
+
+		WCHAR* pExtension = wcsrchr(pAttachment->Name, L'.');
+		if (pExtension)
+			if (_wcsicmp(pExtension, L".gpx")==0)
+			{
+				ValidateAttachment(*pAttachment);
+
+				if (pAttachment->Flags & AIRX_Valid)
+					return pAttachment;
+			}
+	}
+
+	return NULL;
+}
+
+AIRX_Attachment* CItinerary::GetGPSPath(UINT Row)
+{
+	ASSERT(Row<m_Flights.m_ItemCount);
+
+	return GetGPSPath(m_Flights.m_Items[Row]);
+}
+
 
 void CItinerary::AddFlight()
 {
@@ -1486,7 +1515,7 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 		return FALSE;
 	}
 
-	Attachment.pData = malloc(Attachment.Size);
+	Attachment.pData = malloc(Attachment.Size+AttachmentEndBuffer);
 	if (!Attachment.pData)
 		return FALSE;
 
@@ -1500,6 +1529,8 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 		{
 			f.Read(Attachment.pData, Attachment.Size);
 			f.Close();
+
+			ValidateAttachment(Attachment, TRUE);
 
 			if (m_Attachments.AddItem(Attachment))
 			{
@@ -1531,7 +1562,7 @@ UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Idx)
 
 	AIRX_Attachment Attachment = pItinerary->m_Attachments.m_Items[Idx];
 
-	Attachment.pData = malloc(Attachment.Size);
+	Attachment.pData = malloc(Attachment.Size+AttachmentEndBuffer);
 	if (!Attachment.pData)
 		return (UINT)-1;
 
@@ -1540,16 +1571,71 @@ UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Idx)
 	return m_Attachments.AddItem(Attachment) ? m_Attachments.m_ItemCount-1 : (UINT)-1;
 }
 
-CGdiPlusBitmap* CItinerary::DecodeAttachment(UINT Idx)
+CGdiPlusBitmap* CItinerary::DecodePictureAttachment(UINT Idx)
 {
 	ASSERT(Idx<m_Attachments.m_ItemCount);
 
-	return DecodeAttachment(m_Attachments.m_Items[Idx]);
+	return DecodePictureAttachment(m_Attachments.m_Items[Idx]);
 }
 
-CGdiPlusBitmap* CItinerary::DecodeAttachment(AIRX_Attachment& Attachment)
+CGdiPlusBitmap* CItinerary::DecodePictureAttachment(AIRX_Attachment& Attachment)
 {
 	return new CGdiPlusBitmapMemory(Attachment.pData, Attachment.Size);
+}
+
+CGPXFile* CItinerary::DecodeGPXAttachment(AIRX_Attachment& Attachment)
+{
+	if (Attachment.Size<16)
+		return NULL;
+
+	ASSERT(_msize(Attachment.pData)>=Attachment.Size+AttachmentEndBuffer);
+
+	// Terminating NUL
+	*((CHAR*)Attachment.pData+Attachment.Size) = '\0';
+
+	CGPXFile* pGPXFile = new CGPXFile();
+
+	try
+	{
+		pGPXFile->parse<parse_non_destructive>((CHAR*)Attachment.pData);
+	}
+	catch(parse_error e)
+	{
+		delete pGPXFile;
+		pGPXFile = NULL;
+	}
+
+	return pGPXFile;
+}
+
+void CItinerary::ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force)
+{
+	if (!Force)
+		if (Attachment.Flags & (AIRX_Valid | AIRX_Invalid))
+		{
+			if (Attachment.Flags & AIRX_Invalid)
+				Attachment.Flags &= ~AIRX_Valid;
+
+			return;
+		}
+
+	Attachment.Flags &= ~(AIRX_Valid | AIRX_Invalid);
+
+	WCHAR* pExtension = wcsrchr(Attachment.Name, L'.');
+	if (pExtension)
+		if (_wcsicmp(pExtension, L".gpx")==0)
+		{
+			UINT Mask = AIRX_Invalid;
+
+			CGPXFile* pGPXFile = DecodeGPXAttachment(Attachment);
+			if (pGPXFile)
+			{
+				Mask = AIRX_Valid;
+				delete pGPXFile;
+			}
+
+			Attachment.Flags |= Mask;
+		}
 }
 
 void CItinerary::DeleteAttachment(UINT Idx, AIRX_Flight* pFlight)

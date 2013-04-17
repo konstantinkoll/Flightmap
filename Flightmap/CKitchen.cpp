@@ -53,7 +53,7 @@ FMAirport* CKitchen::AddAirport(CHAR* Code)
 	return pAirport;
 }
 
-void CKitchen::AddFlight(AIRX_Flight& Flight)
+void CKitchen::AddFlight(AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 {
 	FMAirport* pFrom = AddAirport(Flight.From.Code);
 	FMAirport* pTo = AddAirport(Flight.To.Code);
@@ -108,6 +108,15 @@ void CKitchen::AddFlight(AIRX_Flight& Flight)
 				{
 					Route.EquipmentMultiple = (_wcsicmp(Route.Equipment, Flight.Equipment)!=0);
 				}
+			if (!Route.GPSPathMultiple && pGPSPath)
+				if (!Route.pGPSPath)
+				{
+					Route.pGPSPath = pGPSPath;
+				}
+				else
+				{
+					Route.GPSPathMultiple = TRUE;
+				}
 		}
 		else
 		{
@@ -129,6 +138,7 @@ void CKitchen::AddFlight(AIRX_Flight& Flight)
 				wcscpy_s(Route.Carrier, 256, Flight.Carrier);
 			if (Flight.Equipment[0]!=L'\0')
 				wcscpy_s(Route.Equipment, 256, Flight.Equipment);
+			Route.pGPSPath = pGPSPath;
 		}
 
 		if ((Route.DistanceNM==0.0) && (Flight.Flags & AIRX_DistanceValid))
@@ -141,12 +151,84 @@ void CKitchen::AddFlight(AIRX_Flight& Flight)
 	}
 }
 
+FlightSegments* CKitchen::ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile)
+{
+	if (!pGPXFile)
+		return NULL;
+
+	xml_node<>* pRootNode = pGPXFile->first_node("gpx");
+	if (!pRootNode)
+		return NULL;
+
+	// Anzahl Wegpunkte
+	UINT PointCount = 0;
+
+	for (xml_node<>* pTrkNode = pRootNode->first_node("trk"); pTrkNode; pTrkNode = pTrkNode->next_sibling())
+		for (xml_node<>* pTrkSegNode = pTrkNode->first_node("trkseg"); pTrkSegNode; pTrkSegNode = pTrkSegNode->next_sibling())
+			for (xml_node<>* pTrkPtNode = pTrkSegNode->first_node("trkpt"); pTrkPtNode; pTrkPtNode = pTrkPtNode->next_sibling())
+				PointCount++;
+
+	if (!PointCount)
+		return NULL;
+
+	// FlightSegments allokieren
+	FlightSegments* pSegments = (FlightSegments*)malloc(sizeof(FlightSegments)+3*sizeof(DOUBLE)*(PointCount-1));
+	pSegments->Route = Route;
+	pSegments->PointCount = PointCount;
+
+	// Punkte extrahieren
+	UINT Ptr = 0;
+
+	for (xml_node<>* pTrkNode = pRootNode->first_node("trk"); pTrkNode; pTrkNode = pTrkNode->next_sibling())
+		for (xml_node<>* pTrkSegNode = pTrkNode->first_node("trkseg"); pTrkSegNode; pTrkSegNode = pTrkSegNode->next_sibling())
+			for (xml_node<>* pTrkPtNode = pTrkSegNode->first_node("trkpt"); pTrkPtNode; pTrkPtNode = pTrkPtNode->next_sibling())
+			{
+				if (Ptr<PointCount)
+				{
+					xml_attribute<>* pAttributeLat = pTrkPtNode->first_attribute("lat");
+					xml_attribute<>* pAttributeLon = pTrkPtNode->first_attribute("lon");
+					if (pAttributeLat && pAttributeLon)
+					{
+						DOUBLE Latitude = 0.0;
+						DOUBLE Longitude = 0.0;
+
+						sscanf_s(pAttributeLat->value(), "%lf", &Latitude);
+						sscanf_s(pAttributeLon->value(), "%lf", &Longitude);
+
+						pSegments->Points[Ptr][0] = -PI*Latitude/180;
+						pSegments->Points[Ptr][1] = PI*Longitude/180;
+						pSegments->Points[Ptr][2] = 1.01;
+
+						Ptr++;
+					}
+				}
+			}
+
+	pSegments->PointCount = Ptr;
+
+	return pSegments;
+}
+
 FlightSegments* CKitchen::Tesselate(FlightRoute& Route)
 {
 	ASSERT(Route.pFrom);
 	ASSERT(Route.pTo);
 
 	const BOOL UseWaypoint = (Route.pFrom==Route.pTo) && ((Route.Waypoint.Latitude!=0) || (Route.Waypoint.Longitude!=0));
+
+	if (!Route.GPSPathMultiple && Route.pGPSPath)
+	{
+		CGPXFile* pGPXFile = CItinerary::DecodeGPXAttachment(*Route.pGPSPath);
+		if (pGPXFile)
+		{
+			FlightSegments* pSegments = ParseGPX(Route, pGPXFile);
+			delete pGPXFile;
+
+			if (pSegments)
+				return pSegments;
+		}
+	}
+
 	const DOUBLE Lat1 = PI*Route.pFrom->Location.Latitude/180;
 	const DOUBLE Lon1 = PI*Route.pFrom->Location.Longitude/180;
 	const DOUBLE Lat2 = PI*(UseWaypoint ? Route.Waypoint.Latitude : Route.pTo->Location.Latitude)/180;
@@ -155,6 +237,7 @@ FlightSegments* CKitchen::Tesselate(FlightRoute& Route)
 	const DOUBLE D = 2*asin(sqrt(pow(sin((Lat1-Lat2)/2),2)+cos(Lat1)*cos(Lat2)*pow(sin((Lon1-Lon2)/2),2)));
 	const UINT PointCount = (D<=0.1) ? 10 : (D<=0.5) ? 40 : 100;
 
+	// FlightSegments allokieren
 	FlightSegments* pSegments = (FlightSegments*)malloc(sizeof(FlightSegments)+3*sizeof(DOUBLE)*(PointCount-1));
 	pSegments->Route = Route;
 	pSegments->PointCount = PointCount;

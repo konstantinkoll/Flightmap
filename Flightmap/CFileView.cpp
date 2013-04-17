@@ -453,7 +453,7 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 		swprintf_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndTooltipList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndTooltipList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndTooltipList.GetItemText(pTooltipData->Item, 3));
 
-		CGdiPlusBitmap* pBitmap = p_Itinerary->DecodeAttachment(*pAttachment);
+		CGdiPlusBitmap* pBitmap = p_Itinerary->DecodePictureAttachment(*pAttachment);
 		if (pBitmap->m_pBitmap)
 		{
 			INT l = pBitmap->m_pBitmap->GetWidth();

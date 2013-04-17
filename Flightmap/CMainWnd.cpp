@@ -207,7 +207,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 				if (!((CDataGrid*)m_pWndMainView)->IsSelected(a))
 					continue;
 
-			pKitchen->AddFlight(m_pItinerary->m_Flights.m_Items[a]);
+			pKitchen->AddFlight(m_pItinerary->m_Flights.m_Items[a], m_pItinerary->GetGPSPath(a));
 		}
 	}
 

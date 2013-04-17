@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMCommDlg.h"
+#include "rapidxml.hpp"
 #include "Resource.h"
 
 
@@ -163,6 +164,16 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 };
 
 
+// CGPXFile
+//
+
+using namespace rapidxml;
+
+class CGPXFile : public xml_document<>
+{
+};
+
+
 // CItinerary
 //
 
@@ -184,6 +195,8 @@ public:
 	CString Flight2Text(UINT Idx);
 
 	void Sort(UINT Attr, BOOL Ascending);
+	AIRX_Attachment* GetGPSPath(AIRX_Flight& Flight);
+	AIRX_Attachment* GetGPSPath(UINT Idx);
 
 	void AddFlight();
 	void AddFlight(CItinerary* pItinerary, UINT Row);
@@ -193,8 +206,10 @@ public:
 
 	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
 	UINT AddAttachment(CItinerary* pItinerary, UINT Idx);
-	CGdiPlusBitmap* DecodeAttachment(UINT Idx);
-	CGdiPlusBitmap* DecodeAttachment(AIRX_Attachment& Attachment);
+	CGdiPlusBitmap* DecodePictureAttachment(UINT Idx);
+	static CGdiPlusBitmap* DecodePictureAttachment(AIRX_Attachment& Attachment);
+	static CGPXFile* DecodeGPXAttachment(AIRX_Attachment& Attachment);
+	static void ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force=FALSE);
 	void DeleteAttachment(UINT Idx, AIRX_Flight* pFlight=NULL);
 	void DeleteAttachments(AIRX_Flight* pFlight=NULL);
 

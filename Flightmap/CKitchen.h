@@ -42,6 +42,8 @@ struct FlightRoute
 	BOOL CarrierMultiple;
 	WCHAR Equipment[256];
 	BOOL EquipmentMultiple;
+	AIRX_Attachment* pGPSPath;
+	BOOL GPSPathMultiple;
 };
 
 struct FlightSegments
@@ -60,7 +62,7 @@ class CKitchen
 public:
 	CKitchen(CString DisplayName, BOOL MergeMetro=FALSE);
 
-	void AddFlight(AIRX_Flight& Flight);
+	void AddFlight(AIRX_Flight& Flight, AIRX_Attachment* pGPSPath);
 	static FlightSegments* Tesselate(FlightRoute& Route);
 
 	CString m_DisplayName;
@@ -75,4 +77,5 @@ protected:
 
 private:
 	FMAirport* AddAirport(CHAR* Code);
+	static FlightSegments* ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile);
 };

@@ -658,6 +658,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\rapidxml.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
