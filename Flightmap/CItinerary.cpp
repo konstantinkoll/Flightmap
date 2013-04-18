@@ -1597,7 +1597,7 @@ CGPXFile* CItinerary::DecodeGPXAttachment(AIRX_Attachment& Attachment)
 
 	try
 	{
-		pGPXFile->parse<parse_non_destructive>((CHAR*)Attachment.pData);
+		pGPXFile->parse<parse_non_destructive | parse_no_data_nodes>((CHAR*)Attachment.pData);
 	}
 	catch(parse_error e)
 	{
