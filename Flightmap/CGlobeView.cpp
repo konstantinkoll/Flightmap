@@ -244,7 +244,10 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 		pKitchen->m_FlightAirportCounts.Lookup(ga.pAirport->Code, Cnt);
 		CString tmpStr;
 		tmpStr.Format(Cnt==1 ? m_FlightCount_Singular : m_FlightCount_Plural, Cnt);
-		wcscpy_s(ga.CountString, 64, tmpStr.GetBuffer());
+		wcscpy_s(ga.CountStringLarge, 64, tmpStr.GetBuffer());
+
+		tmpStr.Format(_T("%d"), Cnt);
+		wcscpy_s(ga.CountStringSmall, 16, tmpStr.GetBuffer());
 
 		m_Airports.AddItem(ga);
 		pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
@@ -561,7 +564,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 			CHAR* Caption = (m_ShowAirportIATA ? ga->pAirport->Code : m_ShowAirportNames ? ga->NameString : NULL);
 			CHAR* Subcaption = ((m_ShowAirportIATA && m_ShowAirportNames) ? ga->NameString : NULL);
 			CHAR* Coordinates = (m_ShowGPS ? ga->CoordString : NULL);
-			WCHAR* Count = (m_ShowFlightCount ? ga->CountString : NULL);
+			WCHAR* Count = (m_ShowFlightCount ? (m_ShowAirportNames || m_ShowGPS) ? ga->CountStringLarge : ga->CountStringSmall : NULL);
 
 			DrawLabel(ga, Caption, Subcaption, Coordinates, Count, m_FocusItem==(INT)a, Themed);
 		}
@@ -1260,7 +1263,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 				if (!m_TooltipCtrl.IsWindowVisible())
 				{
 					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, m_Airports.m_Items[m_HotItem].pAirport, m_Airports.m_Items[m_HotItem].CountString);
+					m_TooltipCtrl.Track(point, m_Airports.m_Items[m_HotItem].pAirport, m_Airports.m_Items[m_HotItem].CountStringLarge);
 				}
 			}
 			else

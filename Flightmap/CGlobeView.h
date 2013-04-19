@@ -27,7 +27,8 @@ struct GlobeAirport
 	FMAirport* pAirport;
 	CHAR NameString[130];
 	CHAR CoordString[32];
-	WCHAR CountString[64];
+	WCHAR CountStringLarge[64];
+	WCHAR CountStringSmall[8];
 };
 
 
