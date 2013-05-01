@@ -26,7 +26,7 @@ using namespace CryptoPP;
 using namespace std;
 
 
-FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
+void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 {
 	path.Reset();
 
@@ -47,7 +47,7 @@ FMCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 	path.CloseFigure();
 }
 
-FMCommDlg_API BOOL IsCtrlThemed()
+BOOL IsCtrlThemed()
 {
 	FMApplication* pApp = FMGetApp();
 	if (pApp)
@@ -57,7 +57,7 @@ FMCommDlg_API BOOL IsCtrlThemed()
 	return FALSE;
 }
 
-FMCommDlg_API void DrawControlBorder(CWnd* pWnd)
+void DrawControlBorder(CWnd* pWnd)
 {
 	CRect rect;
 	pWnd->GetWindowRect(rect);
@@ -91,7 +91,7 @@ FMCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-FMCommDlg_API void FMErrorBox(UINT nResID, HWND hWnd)
+void FMErrorBox(UINT nResID, HWND hWnd)
 {
 	CString caption;
 	CString message;
@@ -114,22 +114,22 @@ static BOOL UseGermanDB = (GetUserDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
 static CGdiPlusBitmapResource* MapBackground = NULL;
 static CGdiPlusBitmapResource* MapIndicator = NULL;
 
-FMCommDlg_API UINT FMIATAGetCountryCount()
+UINT FMIATAGetCountryCount()
 {
 	return UseGermanDB ? CountryCount_DE : CountryCount_EN;
 }
 
-FMCommDlg_API UINT FMIATAGetAirportCount()
+UINT FMIATAGetAirportCount()
 {
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-FMCommDlg_API FMCountry* FMIATAGetCountry(UINT ID)
+FMCountry* FMIATAGetCountry(UINT ID)
 {
 	return UseGermanDB ? &Countries_DE[ID] : &Countries_EN[ID];
 }
 
-FMCommDlg_API INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer)
+INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer)
 {
 	if (Last>=(INT)FMIATAGetAirportCount()-1)
 		return -1;
@@ -138,7 +138,7 @@ FMCommDlg_API INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer)
 	return Last;
 }
 
-FMCommDlg_API INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer)
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer)
 {
 	INT Count = (INT)FMIATAGetAirportCount();
 
@@ -154,7 +154,7 @@ FMCommDlg_API INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirpo
 	return Last;
 }
 
-FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
+BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
 {
 	if (!Code)
 		return FALSE;
@@ -186,7 +186,7 @@ FMCommDlg_API BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
 	return FALSE;
 }
 
-FMCommDlg_API HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
+HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 {
 	ASSERT(pAirport);
 
@@ -301,7 +301,7 @@ __forceinline DOUBLE GetSeconds(DOUBLE c)
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
-FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero)
+void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero)
 {
 	sprintf_s(tmpStr, cCount, FillZero ? "%03u°%02u\'%02u\"%c" : "%u°%u\'%u\"%c",
 		(UINT)(fabs(c)+ROUNDOFF),
@@ -310,7 +310,7 @@ FMCommDlg_API void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cC
 		c>0 ? IsLatitude ? 'S' : 'W' : IsLatitude ? 'N' : 'E');
 }
 
-FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)
+void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)
 {
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
@@ -328,7 +328,7 @@ FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpS
 	}
 }
 
-FMCommDlg_API void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero)
+void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero)
 {
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
@@ -473,7 +473,7 @@ BOOL GetLicense(FMLicense* License)
 	return TRUE;
 }
 
-FMCommDlg_API BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
+BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
 {
 	// Setup
 	if (!LicenseRead || Reload)
@@ -490,7 +490,7 @@ FMCommDlg_API BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
 	return (wcsncmp(LicenseBuffer.ProductID, _T("Flightmap"), 9)==0) && (LicenseBuffer.Version.Major>=0);
 }
 
-FMCommDlg_API BOOL FMIsSharewareExpired()
+BOOL FMIsSharewareExpired()
 {
 	if (FMIsLicensed())
 		return FALSE;
@@ -549,7 +549,7 @@ FMCommDlg_API BOOL FMIsSharewareExpired()
 
 // Update
 
-FMCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 {
 	if (Version)
 		Version->Empty();
@@ -590,7 +590,7 @@ FMCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Co
 	}
 }
 
-FMCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
+CString GetLatestVersion(CString& CurrentVersion)
 {
 	CString VersionIni;
 
@@ -696,7 +696,7 @@ __forceinline INT ParseVersion(CString ver, Version* v)
 	return swscanf_s(ver, L"%d.%d.%d", &v->Major, &v->Minor, &v->Build);
 }
 
-FMCommDlg_API void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
+void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 {
 	BOOL UpdateFound = FALSE;
 	BOOL Check = Force;
