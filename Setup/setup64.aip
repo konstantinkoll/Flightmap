@@ -397,7 +397,7 @@
     <ROW Dialog="FolderDlg" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="35" Title="[ProductName] [Setup]" Control_First="Bitmap" Control_Default="Next" Control_Cancel="Cancel" TitleLocId="Dialog.FolderDlg" MsiKey="FolderDlg"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiExtComponent">
-    <ROW Extension="air" Component_="Flightmap.exe" ProgId_="Flightmap.Itinerary" Feature_="air" Options="39"/>
+    <ROW Extension="air" Component_="Flightmap.exe" ProgId_="Flightmap.Itinerary1" Feature_="air" Options="39"/>
     <ROW Extension="airx" Component_="Flightmap.exe" ProgId_="Flightmap.Itinerary2" Feature_="airx" Options="39"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
@@ -443,8 +443,8 @@
     <ROW Module="policy_9_0_Microsoft_VC90_MFC_x86_x64.msm" Path="MSM_x64\policy_9_0_Microsoft_VC90_MFC_x86_x64.msm" Feature="Flightmap" Directory="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiProgIdComponent">
-    <ROW ProgId="Flightmap.Itinerary" Description="Flightmap itinerary" Icon_="ext.exe" MacDefaultDocType="true"/>
-    <ROW ProgId="Flightmap.Itinerary2" Description="Flightmap itinerary" Icon_="ext_1.exe" MacDefaultDocType="true"/>
+    <ROW ProgId="Flightmap.Itinerary1" Description="Flightmap Itinerary" Icon_="ext.exe" MacDefaultDocType="true"/>
+    <ROW ProgId="Flightmap.Itinerary2" Description="Flightmap Itinerary" Icon_="ext_1.exe" MacDefaultDocType="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRadioButtonComponent">
     <ROW Property="AppsShutdownOption" Order="1" Value="All" X="5" Y="5" Width="330" Height="20" Text="Automatically &amp;close applications and attempt to restart them after setup is complete" TextLocId="RadioButton.Text.AppsShutdownOption#1" MsiKey="AppsShutdownOption#1"/>

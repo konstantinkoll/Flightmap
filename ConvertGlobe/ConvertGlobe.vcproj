@@ -293,7 +293,7 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
+				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				DebugInformationFormat="3"
