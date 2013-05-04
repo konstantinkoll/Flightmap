@@ -182,7 +182,7 @@ void FMResolutionDlg::OnDestroy()
 
 void FMResolutionDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	EndDialog(IDOK);
+	PostMessage(WM_COMMAND, IDOK);
 }
 
 void FMResolutionDlg::OnUserDefinedRes()
