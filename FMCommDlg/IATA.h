@@ -5,7 +5,7 @@
 struct FMCountry
 {
 	UINT ID;
-	CHAR Name[64];
+	CHAR Name[31];
 };
 
 struct FMGeoCoordinates
@@ -19,6 +19,6 @@ struct FMAirport
 	INT CountryID;
 	CHAR Code[4];
 	CHAR MetroCode[4];
-	CHAR Name[64];
+	CHAR Name[44];
 	FMGeoCoordinates Location;
 };
