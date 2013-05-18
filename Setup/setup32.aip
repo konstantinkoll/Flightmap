@@ -35,10 +35,10 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{28794D1C-747A-4CE0-A079-58817299CCA7} 1031:{E79246F0-101A-47FF-A83F-580FEEBBD7E2} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{88D2A50C-4EB6-4C5E-8F73-77293B097A02} 1031:{90234146-F00C-4F42-911C-3D14849C7E94} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Flightmap" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.1.0"/>
+    <ROW Property="ProductVersion" Value="2.1.1"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="ShortcutLogoIcon" Value="Shortcuts.ico" Type="1" MsiKey="ShortcutLogoIcon"/>
@@ -56,17 +56,17 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AIShRegAnswer" ComponentId="{8FC27830-7BFA-4909-981C-730B8EE1ACC9}" Directory_="APPDIR" Attributes="4" KeyPath="AIShRegAnswer"/>
-    <ROW Component="AI_CustomARPName" ComponentId="{241DC564-3ABF-4E8D-BE6F-0A7DD86C9CAF}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
-    <ROW Component="AI_DisableModify" ComponentId="{B155C791-BBE6-49AB-BD6F-011D15BB3243}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{F87E785A-73E3-4382-BD63-4C4435E67107}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
+    <ROW Component="AI_DisableModify" ComponentId="{8F68F10B-4BFA-46B8-8A71-CD6617A7263A}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{71C49A5A-DEA2-40E2-80F9-4CAC1BD71E98}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
     <ROW Component="Flightmap.exe" ComponentId="{897EB601-F468-41BD-BF1A-3A6B04B42BAE}" Directory_="APPDIR" Attributes="0" KeyPath="Flightmap.exe"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{1998089A-5245-44AB-88B1-B333A6AF15CC}" Directory_="SHORTCUTDIR" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="File_Type_Associations" Feature_Parent="Flightmap" Title="File Type Associations" Description="File Type Associations" Display="0" Level="1" Directory_="APPDIR" Attributes="8" Options="13" Components="AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_ExePath AI_CustomARPName AI_DisableModify Flightmap.exe SHORTCUTDIR AIShRegAnswer"/>
-    <ROW Feature="air" Feature_Parent="File_Type_Associations" Title="air" Description=".air" Display="0" Level="1" Directory_="APPDIR" Attributes="8" Options="27" Components="AI_CustomARPName AI_DisableModify Flightmap.exe"/>
-    <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title="airx" Description=".airx" Display="0" Level="1" Directory_="APPDIR" Attributes="8" Options="27" Components="Flightmap.exe AI_CustomARPName AI_DisableModify"/>
+    <ROW Feature="File_Type_Associations" Feature_Parent="Flightmap" Title="File Type Associations" Description="File Type Associations" Display="0" Level="1" Directory_="APPDIR" Attributes="8" Options="13"/>
+    <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_ExePath Flightmap.exe SHORTCUTDIR AIShRegAnswer AI_CustomARPName AI_DisableModify"/>
+    <ROW Feature="air" Feature_Parent="File_Type_Associations" Title="air" Description=".air" Display="0" Level="1" Directory_="APPDIR" Attributes="8" Options="27" Components="Flightmap.exe"/>
+    <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title="airx" Description=".airx" Display="0" Level="1" Directory_="APPDIR" Attributes="8" Options="27" Components="Flightmap.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="Flightmap"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -463,7 +463,7 @@
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@flightmap.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="Flightmap" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="2.1.0" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="2.1.1" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://flightmap.net/tour" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
