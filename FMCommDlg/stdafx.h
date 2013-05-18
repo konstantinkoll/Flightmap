@@ -8,6 +8,9 @@
 #define VC_EXTRALEAN            // Selten verwendete Teile der Windows-Header nicht einbinden.
 #endif
 
+#define _DO_NOT_DECLARE_INTERLOCKED_INTRINSICS_IN_MEMORY
+#include <intrin.h>
+
 #include "targetver.h"
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // Einige CString-Konstruktoren sind explizit.
