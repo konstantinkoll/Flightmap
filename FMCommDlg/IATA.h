@@ -17,7 +17,7 @@ struct FMGeoCoordinates
 struct FMAirport
 {
 	INT CountryID;
-	CHAR Code[54];
+	CHAR Code[4];
 	CHAR MetroCode[4];
 	CHAR Name[64];
 	FMGeoCoordinates Location;
