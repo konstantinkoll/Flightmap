@@ -24,7 +24,6 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CItinerary* pItinerary);
-	CItinerary* Load(CString FileName);
 
 protected:
 	HICON m_hIcon;

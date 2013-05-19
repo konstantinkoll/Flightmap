@@ -745,6 +745,28 @@ CItinerary::CItinerary(BOOL LoadAuthor)
 	}
 }
 
+CItinerary::CItinerary(CString FileName)
+{
+	CItinerary();
+
+	CString Ext = FileName;
+	Ext.MakeLower();
+	INT pos = Ext.ReverseFind(L'\\');
+	if (pos!=-1)
+		Ext.Delete(0, pos+1);
+	pos = Ext.ReverseFind(L'.');
+	if (pos!=-1)
+		Ext.Delete(0, pos+1);
+
+	if (Ext==_T("airx"))
+		OpenAIRX(FileName);
+	if (Ext==_T("air"))
+		OpenAIR(FileName);
+	if (Ext==_T("csv"))
+		OpenCSV(FileName);
+}
+
+
 CItinerary::CItinerary(CItinerary* pItinerary)
 {
 	ASSERT(pItinerary);

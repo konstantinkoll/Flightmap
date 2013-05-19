@@ -120,45 +120,22 @@ void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 	if (m_pItinerary)
-	{
 		if (!m_pItinerary->m_DisplayName.IsEmpty())
 		{
 			caption.Insert(0, _T(" - "));
 			caption.Insert(0, m_pItinerary->m_DisplayName);
 		}
-	}
 
 	SetWindowText(caption);
 	AdjustLayout();
 	SetFocus();
 }
 
-CItinerary* CMainWnd::Load(CString FileName)
-{
-	CItinerary* pItinerary = new CItinerary();
-
-	CString Ext = FileName;
-	Ext.MakeLower();
-	INT pos = Ext.ReverseFind(L'\\');
-	if (pos!=-1)
-		Ext.Delete(0, pos+1);
-	pos = Ext.ReverseFind(L'.');
-	if (pos!=-1)
-		Ext.Delete(0, pos+1);
-
-	if (Ext==_T("airx"))
-		pItinerary->OpenAIRX(FileName);
-	if (Ext==_T("air"))
-		pItinerary->OpenAIR(FileName);
-	if (Ext==_T("csv"))
-		pItinerary->OpenCSV(FileName);
-
-	return pItinerary;
-}
-
 void CMainWnd::Open(CString FileName)
 {
-	m_pItinerary = Load(FileName);
+	ASSERT(!m_pItinerary);
+
+	m_pItinerary = new CItinerary(FileName);
 
 	UpdateWindowStatus();
 }

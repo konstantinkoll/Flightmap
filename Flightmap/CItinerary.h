@@ -181,6 +181,7 @@ class CItinerary
 {
 public:
 	CItinerary(BOOL LoadAuthor=FALSE);
+	CItinerary(CString FileName);
 	CItinerary(CItinerary* pItinerary);
 	~CItinerary();
 
