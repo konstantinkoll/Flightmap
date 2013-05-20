@@ -307,7 +307,7 @@ void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsL
 		(UINT)(fabs(c)+ROUNDOFF),
 		(UINT)GetMinutes(c),
 		(UINT)(GetSeconds(c)+0.5),
-		c>0 ? IsLatitude ? 'S' : 'W' : IsLatitude ? 'N' : 'E');
+		c>0 ? IsLatitude ? 'S' : 'E' : IsLatitude ? 'N' : 'W');
 }
 
 void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)
