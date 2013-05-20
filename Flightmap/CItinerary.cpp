@@ -746,9 +746,8 @@ CItinerary::CItinerary(BOOL LoadAuthor)
 }
 
 CItinerary::CItinerary(CString FileName)
+	: CItinerary()
 {
-	CItinerary();
-
 	CString Ext = FileName;
 	Ext.MakeLower();
 	INT pos = Ext.ReverseFind(L'\\');
