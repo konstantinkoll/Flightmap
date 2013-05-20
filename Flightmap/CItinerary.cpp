@@ -718,53 +718,50 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 
 #define AttachmentEndBuffer     1
 
-CItinerary::CItinerary(BOOL LoadAuthor)
+CItinerary::CItinerary(CString FileName)
 {
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
 	m_IsModified = m_IsOpen = FALSE;
 	ENSURE(m_DisplayName.LoadString(IDS_EMPTYITINERARY));
 
-	if (LoadAuthor)
+	// Author
+	FMLicense License;
+	if (FMIsLicensed(&License))
 	{
-		FMLicense License;
-		if (FMIsLicensed(&License))
+		wcscpy_s(m_Metadata.Author, 256, License.RegName);
+	}
+	else
+	{
+		HKEY hKey;
+		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
 		{
-			wcscpy_s(m_Metadata.Author, 256, License.RegName);
-		}
-		else
-		{
-			HKEY hKey;
-			if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
-			{
-				DWORD Length = 256;
-				RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);
+			DWORD Length = 256;
+			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);
 
-				RegCloseKey(hKey);
-			}
+			RegCloseKey(hKey);
 		}
 	}
+
+	// File
+	if (!FileName.IsEmpty())
+	{
+		CString Ext = FileName;
+		Ext.MakeLower();
+		INT pos = Ext.ReverseFind(L'\\');
+		if (pos!=-1)
+			Ext.Delete(0, pos+1);
+		pos = Ext.ReverseFind(L'.');
+		if (pos!=-1)
+			Ext.Delete(0, pos+1);
+
+		if (Ext==_T("airx"))
+			OpenAIRX(FileName);
+		if (Ext==_T("air"))
+			OpenAIR(FileName);
+		if (Ext==_T("csv"))
+			OpenCSV(FileName);
+	}
 }
-
-CItinerary::CItinerary(CString FileName)
-	: CItinerary()
-{
-	CString Ext = FileName;
-	Ext.MakeLower();
-	INT pos = Ext.ReverseFind(L'\\');
-	if (pos!=-1)
-		Ext.Delete(0, pos+1);
-	pos = Ext.ReverseFind(L'.');
-	if (pos!=-1)
-		Ext.Delete(0, pos+1);
-
-	if (Ext==_T("airx"))
-		OpenAIRX(FileName);
-	if (Ext==_T("air"))
-		OpenAIR(FileName);
-	if (Ext==_T("csv"))
-		OpenCSV(FileName);
-}
-
 
 CItinerary::CItinerary(CItinerary* pItinerary)
 {

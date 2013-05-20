@@ -45,6 +45,12 @@ typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
 typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
 
+struct CDS_Wakeup
+{
+	GUID AppID;
+	WCHAR FileName[MAX_PATH];
+};
+
 
 // FMApplication:
 // Siehe FMApplication.cpp für die Implementierung dieser Klasse
@@ -55,7 +61,7 @@ typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam,
 class FMApplication : public CWinAppEx
 {
 public:
-	FMApplication();
+	FMApplication(GUID& AppID);
 	virtual ~FMApplication();
 
 	CImageList m_SystemImageListSmall;
@@ -70,8 +76,10 @@ public:
 	CFont m_CaptionFont;
 	UINT OSVersion;
 	BOOL m_UseBgImages;
-	UINT msgUseBgImagesChanged;
-	UINT msgDistanceSettingChanged;
+	UINT m_WakeupMsg;
+	UINT m_UseBgImagesChangedMsg;
+	UINT m_DistanceSettingChangedMsg;
+	GUID m_AppID;
 	COLORREF m_CustomColors[16];
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
@@ -93,6 +101,7 @@ public:
 	BOOL m_AeroLibLoaded;
 
 	virtual BOOL InitInstance();
+	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);

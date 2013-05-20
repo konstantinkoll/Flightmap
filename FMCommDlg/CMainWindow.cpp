@@ -140,6 +140,8 @@ BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
 	ON_MESSAGE_VOID(WM_CLOSEPOPUP, OnClosePopup)
+	ON_REGISTERED_MESSAGE(FMGetApp()->m_WakeupMsg, OnWakeup)
+	ON_WM_COPYDATA()
 END_MESSAGE_MAP()
 
 INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -226,4 +228,23 @@ void CMainWindow::OnClosePopup()
 		Invalidate();
 		UpdateWindow();				// Essential, as window's redraw flag may be false
 	}
+}
+
+LRESULT CMainWindow::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	return 24878;
+}
+
+BOOL CMainWindow::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
+{
+	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
+		return FALSE;
+
+	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
+	if (cds.AppID!=p_App->m_AppID)
+		return FALSE;
+
+	p_App->OpenCommandLine(cds.FileName[0] ? cds.FileName : NULL);
+
+	return TRUE;
 }

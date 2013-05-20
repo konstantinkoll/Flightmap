@@ -532,8 +532,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 	ON_MESSAGE(WM_GALLERYCHANGED, OnGalleryChanged)
-	ON_REGISTERED_MESSAGE(theApp.msgUseBgImagesChanged, OnUseBgImagesChanged)
-	ON_REGISTERED_MESSAGE(theApp.msgDistanceSettingChanged, OnDistanceSettingChanged)
+	ON_REGISTERED_MESSAGE(theApp.m_UseBgImagesChangedMsg, OnUseBgImagesChanged)
+	ON_REGISTERED_MESSAGE(theApp.m_DistanceSettingChangedMsg, OnDistanceSettingChanged)
 
 	ON_COMMAND(IDM_FILE_NEW, OnFileNew)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
@@ -838,7 +838,7 @@ LRESULT CMainWnd::OnUseBgImagesChanged(WPARAM wParam, LPARAM /*lParam*/)
 {
 	theApp.m_UseBgImages = (BOOL)wParam;
 
-	return m_pWndMainView ? m_pWndMainView->SendMessage(theApp.msgUseBgImagesChanged) : NULL;
+	return m_pWndMainView ? m_pWndMainView->SendMessage(theApp.m_UseBgImagesChangedMsg) : NULL;
 }
 
 LRESULT CMainWnd::OnDistanceSettingChanged(WPARAM wParam, LPARAM /*lParam*/)
@@ -858,7 +858,7 @@ void CMainWnd::OnFileNew()
 {
 	if (CloseFile())
 	{
-		m_pItinerary = new CItinerary(TRUE);
+		m_pItinerary = new CItinerary();
 		UpdateWindowStatus();
 	}
 }

@@ -180,16 +180,12 @@ class CGPXFile : public xml_document<>
 class CItinerary
 {
 public:
-	CItinerary(BOOL LoadAuthor=FALSE);
-	CItinerary(CString FileName);
+	CItinerary(CString FileName=_T(""));
 	CItinerary(CItinerary* pItinerary);
 	~CItinerary();
 
 	void NewSampleAtlantic();
 	void NewSamplePacific();
-	void OpenAIRX(CString FileName);
-	void OpenAIR(CString FileName);
-	void OpenCSV(CString FileName);
 	void SaveAIRX(CString FileName);
 
 	static CString Flight2Text(AIRX_Flight& Flight);
@@ -223,6 +219,9 @@ public:
 	CString m_DisplayName;
 
 private:
+	void OpenAIRX(CString FileName);
+	void OpenAIR(CString FileName);
+	void OpenCSV(CString FileName);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	INT Compare(INT Eins, INT Zwei, UINT Attr, BOOL Descending);
 	void Heap(INT Wurzel, INT Anz, UINT Attr, BOOL Descending);

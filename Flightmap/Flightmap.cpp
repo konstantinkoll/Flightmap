@@ -9,6 +9,35 @@
 #include "CMainWnd.h"
 
 
+GUID theAppID =	// {8269ADBF-A534-469d-A58D-7EBA84634B70}
+	{ 0x8269adbf, 0xa534, 0x469d, { 0xa5, 0x8d, 0x7e, 0xba, 0x84, 0x63, 0x4b, 0x70 } };
+
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+{
+	if (GetWindow(hWnd, GW_OWNER))
+		return TRUE;
+
+	DWORD_PTR Result;
+	if (SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, NULL, SMTO_NORMAL, 500, &Result))
+		if (Result==24878)
+		{
+			CDS_Wakeup cdsw;
+			ZeroMemory(&cdsw, sizeof(cdsw));
+			cdsw.AppID = theAppID;
+			if (lParam)
+				wcscpy_s(cdsw.FileName, MAX_PATH, (WCHAR*)lParam);
+
+			COPYDATASTRUCT cds;
+			cds.cbData = sizeof(cdsw);
+			cds.lpData = &cdsw;
+			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&cds))
+				return FALSE;
+		}
+
+	return TRUE;
+}
+
+
 // CFlightmapApp
 
 BEGIN_MESSAGE_MAP(CFlightmapApp, FMApplication)
@@ -19,8 +48,9 @@ END_MESSAGE_MAP()
 // CFlightmapApp-Erstellung
 
 CFlightmapApp::CFlightmapApp()
-	: FMApplication()
+	: FMApplication(theAppID)
 {
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.Flightmap.NewWindow"));
 	m_NagCounter = 3;
 	m_AppInitialized = FALSE;
 	m_FlagIcons16[0] = m_FlagIcons16[1] = NULL;
@@ -38,6 +68,9 @@ CFlightmapApp theApp;
 
 BOOL CFlightmapApp::InitInstance()
 {
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc==2 ? __wargv[1] : NULL)))
+		return FALSE;
+
 	if (!FMApplication::InitInstance())
 		return FALSE;
 
@@ -156,10 +189,7 @@ BOOL CFlightmapApp::InitInstance()
 	if (m_MapSettings.Height>4096)
 		m_MapSettings.Height = 4096;
 
-	CMainWnd* pFrame = new CMainWnd();
-	pFrame->Create(__argc==2 ? new CItinerary(__wargv[1]) : new CItinerary(TRUE));
-	pFrame->ShowWindow(SW_SHOW);
-	pFrame->UpdateWindow();
+	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
 
 	if (!FMIsLicensed())
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
@@ -169,6 +199,16 @@ BOOL CFlightmapApp::InitInstance()
 	m_AppInitialized = TRUE;
 
 	return TRUE;
+}
+
+CWnd* CFlightmapApp::OpenCommandLine(WCHAR* CmdLine)
+{
+	CMainWnd* pFrame = new CMainWnd();
+	pFrame->Create(new CItinerary(CmdLine));
+	pFrame->ShowWindow(SW_SHOW);
+	pFrame->UpdateWindow();
+
+	return pFrame;
 }
 
 INT CFlightmapApp::ExitInstance()
@@ -438,13 +478,13 @@ void CFlightmapApp::OnAppAbout()
 		if (m_UseBgImages!=dlg.m_UseBgImages)
 		{
 			m_UseBgImages = dlg.m_UseBgImages;
-			SendMessage(HWND_BROADCAST, msgUseBgImagesChanged, (WPARAM)m_UseBgImages, NULL);
+			SendMessage(HWND_BROADCAST, m_UseBgImagesChangedMsg, (WPARAM)m_UseBgImages, NULL);
 		}
 
 		if (m_UseStatuteMiles!=dlg.m_UseStatuteMiles)
 		{
 			m_UseStatuteMiles = dlg.m_UseStatuteMiles;
-			SendMessage(HWND_BROADCAST, msgDistanceSettingChanged, (WPARAM)m_UseStatuteMiles, NULL);
+			SendMessage(HWND_BROADCAST, m_DistanceSettingChangedMsg, (WPARAM)m_UseStatuteMiles, NULL);
 		}
 	}
 }

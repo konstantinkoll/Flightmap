@@ -42,8 +42,11 @@ void PlayRegSound(CString Identifier)
 
 // FMApplication-Erstellung
 
-FMApplication::FMApplication()
+FMApplication::FMApplication(GUID& AppID)
 {
+	// ID
+	m_AppID = AppID;
+
 	// Version
 	OSVERSIONINFO osInfo;
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
@@ -55,8 +58,9 @@ FMApplication::FMApplication()
 	SetDllDirectory(_T(""));
 
 	// Messages
-	msgUseBgImagesChanged = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
-	msgDistanceSettingChanged = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
+	m_WakeupMsg = 0;
+	m_UseBgImagesChangedMsg = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
+	m_DistanceSettingChangedMsg = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
 
 	// Custom colors
 	ZeroMemory(&m_CustomColors, sizeof(m_CustomColors));
@@ -205,6 +209,11 @@ BOOL FMApplication::InitInstance()
 	ResetNagCounter;
 
 	return TRUE;
+}
+
+CWnd* FMApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
+{
+	return NULL;
 }
 
 INT FMApplication::ExitInstance()

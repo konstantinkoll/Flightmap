@@ -64,6 +64,7 @@ public:
 	CFlightmapApp();
 
 	virtual BOOL InitInstance();
+	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void AddFrame(CMainWindow* pFrame);
