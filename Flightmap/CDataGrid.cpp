@@ -1168,15 +1168,20 @@ void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		if ((m_TooltipCtrl.IsWindowVisible()) && ((Item!=m_HotItem) || (Subitem!=m_HotSubitem)))
 			m_TooltipCtrl.Deactivate();
 
-	if (OnItem && ((Item!=m_HotItem) || (Subitem!=m_HotSubitem)))
+	if (!OnItem)
 	{
-		InvalidateItem(m_HotItem);
-		m_HotItem = Item;
-		m_HotSubitem = Subitem;
-		InvalidateItem(m_HotItem);
-
-		SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
+		m_HotItem.x = m_HotItem.y = m_HotSubitem = -1;
 	}
+	else
+		if ((Item!=m_HotItem) || (Subitem!=m_HotSubitem))
+		{
+			InvalidateItem(m_HotItem);
+			m_HotItem = Item;
+			m_HotSubitem = Subitem;
+			InvalidateItem(m_HotItem);
+
+			SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
+		}
 }
 
 void CDataGrid::OnMouseLeave()
