@@ -1391,6 +1391,12 @@ void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			InvalidateItem(m_FocusItem);
 		}
 		break;
+	case VK_ESCAPE:
+		if (GetOwner()->GetStyle() & WS_OVERLAPPEDWINDOW)
+			break;
+	case VK_F11:
+		OnFullScreen();
+		break;
 	default:
 		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
