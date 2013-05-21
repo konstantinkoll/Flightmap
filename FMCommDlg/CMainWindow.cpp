@@ -187,6 +187,7 @@ BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_NCACTIVATE()
 	ON_WM_ACTIVATE()
 	ON_WM_THEMECHANGED()
+	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
@@ -258,6 +259,21 @@ LRESULT CMainWindow::OnThemeChanged()
 	AdjustLayout();
 
 	return TRUE;
+}
+
+LRESULT CMainWindow::OnDisplayChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (!(GetStyle() & WS_OVERLAPPEDWINDOW))
+	{
+		MONITORINFO mi;
+		ZeroMemory(&mi, sizeof(mi));
+		mi.cbSize = sizeof(mi);
+
+		if (GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY), &mi))
+			::SetWindowPos(m_hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right-mi.rcMonitor.left, mi.rcMonitor.bottom-mi.rcMonitor.top, SWP_NOOWNERZORDER);
+	}
+
+	return NULL;
 }
 
 void CMainWindow::OnSize(UINT nType, INT cx, INT cy)
