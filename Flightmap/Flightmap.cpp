@@ -398,20 +398,6 @@ void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
 		OpenAirportGoogleEarth(pAirport);
 }
 
-void CFlightmapApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
-{
-	UINT sz;
-	LPBYTE buf = NULL;
-	CWinAppEx::GetBinary(lpszEntry, &buf, &sz);
-	if (buf)
-	{
-		if (sz<size)
-			size = sz;
-		memcpy_s(pData, size, buf, size);
-		free(buf);
-	}
-}
-
 
 void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di)
 {

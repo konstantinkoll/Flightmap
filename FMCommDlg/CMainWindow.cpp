@@ -20,10 +20,30 @@ CMainWindow::CMainWindow()
 	m_Active = TRUE;
 }
 
-BOOL CMainWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd, UINT nID)
+BOOL CMainWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix)
 {
-	return CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
-		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, pParentWnd, nID);
+	m_PlacementPrefix = lpszPlacementPrefix;
+
+	CRect rect;
+	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
+	rect.DeflateRect(32, 32);
+
+	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
+		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
+		return FALSE;
+
+	ZeroMemory(&m_WindowPlacement, sizeof(m_WindowPlacement));
+	p_App->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &m_WindowPlacement, sizeof(m_WindowPlacement));
+
+	if (m_WindowPlacement.length==sizeof(m_WindowPlacement))
+	{
+		SetWindowPlacement(&m_WindowPlacement);
+
+		if (IsIconic())
+			ShowWindow(SW_RESTORE);
+	}
+
+	return TRUE;
 }
 
 BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
@@ -132,6 +152,7 @@ void CMainWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 
 BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_CREATE()
+	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 	ON_WM_NCACTIVATE()
 	ON_WM_ACTIVATE()
@@ -152,6 +173,21 @@ INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Active = (CWnd::GetActiveWindow()==this);
 
 	return 0;
+}
+
+void CMainWindow::OnClose()
+{
+	if (GetStyle() & WS_OVERLAPPEDWINDOW)
+	{
+		m_WindowPlacement.length = sizeof(m_WindowPlacement);
+		if (!GetWindowPlacement(&m_WindowPlacement))
+			goto Skip;
+	}
+
+	p_App->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&m_WindowPlacement, sizeof(m_WindowPlacement));
+
+Skip:
+	CWnd::OnClose();
 }
 
 void CMainWindow::OnDestroy()

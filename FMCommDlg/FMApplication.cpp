@@ -425,3 +425,17 @@ BOOL FMApplication::IsUpdateCheckDue()
 
 	return FALSE;
 }
+
+void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
+{
+	UINT sz;
+	LPBYTE buf = NULL;
+	CWinAppEx::GetBinary(lpszEntry, &buf, &sz);
+	if (buf)
+	{
+		if (sz<size)
+			size = sz;
+		memcpy_s(pData, size, buf, size);
+		free(buf);
+	}
+}

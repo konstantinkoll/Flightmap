@@ -117,6 +117,7 @@ public:
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 
 protected:
 	UINT m_NagCounter;

@@ -132,8 +132,6 @@ public:
 protected:
 	BOOL m_AppInitialized;
 
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 };

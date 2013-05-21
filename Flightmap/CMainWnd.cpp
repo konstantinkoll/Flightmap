@@ -48,14 +48,10 @@ BOOL CMainWnd::Create(CItinerary* pItinerary)
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
-	CRect rect;
-	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
-	rect.DeflateRect(32, 32);
-
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 
-	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, _T("Main"));
 }
 
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)

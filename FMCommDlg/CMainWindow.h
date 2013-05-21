@@ -28,17 +28,20 @@ public:
 	virtual void AdjustLayout();
 	virtual void PostNcDestroy();
 
-	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd=NULL, UINT nID=0);
+	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""));
 	void RegisterPopupWindow(CWnd* pPopupWnd);
 
 protected:
 	FMApplication* p_App;
 	CWnd* p_PopupWindow;
 	CDialogMenuBar* m_pDialogMenuBar;
+	CString m_PlacementPrefix;
+	WINDOWPLACEMENT m_WindowPlacement;
 	BOOL m_Active;
 	HACCEL hAccelerator;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnNcActivate(BOOL bActive);
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
