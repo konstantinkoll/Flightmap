@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CGlobeView.h"
+#include "CGlobeWnd.h"
 #include "CGoogleEarthFile.h"
 #include "Resource.h"
 #include "ThreeDSettingsDlg.h"
@@ -1050,6 +1051,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBEVIEW_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBEVIEW_AUTOSIZE, OnAutosize)
+	ON_COMMAND(IDM_GLOBEVIEW_FULLSCREEN, OnFullScreen)
 	ON_COMMAND(IDM_GLOBEVIEW_COLORS, OnColors)
 	ON_COMMAND(IDM_GLOBEVIEW_CLAMP, OnClamp)
 	ON_COMMAND(IDM_GLOBEVIEW_SPOTS, OnSpots)
@@ -1446,6 +1448,8 @@ void CGlobeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		pPopup->AddCommand(IDM_GLOBEVIEW_JUMPTOLOCATION, 0, CDMB_LARGE);
 		pPopup->AddSeparator();
 		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_FULLSCREEN, FALSE, TRUE);
 	}
 
 	pPopup->Track(pos);
@@ -1528,6 +1532,11 @@ void CGlobeView::OnAutosize()
 {
 	m_GlobeTarget.Zoom = 600;
 	UpdateScene();
+}
+
+void CGlobeView::OnFullScreen()
+{
+	((CGlobeWnd*)GetOwner())->ToggleFullScreen();
 }
 
 void CGlobeView::OnColors()
@@ -1614,6 +1623,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_GLOBEVIEW_AUTOSIZE:
 		b = m_GlobeTarget.Zoom!=600;
+		break;
+	case IDM_GLOBEVIEW_FULLSCREEN:
+		pCmdUI->SetCheck(!(GetOwner()->GetStyle() & WS_OVERLAPPEDWINDOW));
 		break;
 	case IDM_GLOBEITEM_OPENGOOGLEEARTH:
 		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());

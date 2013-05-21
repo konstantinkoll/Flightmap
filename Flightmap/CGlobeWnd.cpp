@@ -51,7 +51,7 @@ void CGlobeWnd::AdjustLayout()
 	CRect rect;
 	GetClientRect(rect);
 
-	if (m_pDialogMenuBar)
+	if (m_pDialogMenuBar && (GetStyle() & WS_OVERLAPPEDWINDOW))
 		rect.top += m_pDialogMenuBar->GetPreferredHeight();
 
 	m_wndGlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
@@ -143,6 +143,8 @@ LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMIN, 1, CDMB_SMALL, FALSE);
 		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMOUT, 2, CDMB_SMALL, FALSE);
 		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_GLOBEVIEW_FULLSCREEN, FALSE, TRUE);
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_COLORS);
 		pPopup->AddCheckbox(IDM_GLOBEVIEW_CLAMP);

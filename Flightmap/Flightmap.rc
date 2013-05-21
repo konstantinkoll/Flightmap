@@ -705,6 +705,7 @@ STRINGTABLE
 BEGIN
     IDM_GLOBEVIEW_ZOOMOUT   "Ver&kleinern"
     IDM_GLOBEVIEW_AUTOSIZE  "Größe &anpassen"
+    IDM_GLOBEVIEW_FULLSCREEN "&Vollbild"
     IDM_GLOBEVIEW_COLORS    "&Farben benutzen"
     IDM_GLOBEVIEW_CLAMP     "&Echte Flughöhen"
     IDM_GLOBEVIEW_SPOTS     "O&rte markieren"
@@ -1317,6 +1318,7 @@ STRINGTABLE
 BEGIN
     IDM_GLOBEVIEW_ZOOMOUT   "Zoom &out"
     IDM_GLOBEVIEW_AUTOSIZE  "Size to f&it"
+    IDM_GLOBEVIEW_FULLSCREEN "&Full screen"
     IDM_GLOBEVIEW_COLORS    "Use colo&rs"
     IDM_GLOBEVIEW_CLAMP     "&True flight levels"
     IDM_GLOBEVIEW_SPOTS     "Show loca&tions"

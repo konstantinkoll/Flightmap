@@ -29,6 +29,7 @@ public:
 	virtual void PostNcDestroy();
 
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""));
+	void ToggleFullScreen();
 	void RegisterPopupWindow(CWnd* pPopupWnd);
 
 protected:

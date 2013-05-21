@@ -115,6 +115,7 @@ protected:
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
+	afx_msg void OnFullScreen();
 	afx_msg void OnColors();
 	afx_msg void OnClamp();
 	afx_msg void OnSpots();

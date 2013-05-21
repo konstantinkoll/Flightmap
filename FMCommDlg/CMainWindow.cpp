@@ -128,15 +128,45 @@ BOOL CMainWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO
 	return p_App->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
+void CMainWindow::ToggleFullScreen()
+{
+	DWORD dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
+	if (dwStyle & WS_OVERLAPPEDWINDOW)
+	{
+		MONITORINFO mi;
+		ZeroMemory(&mi, sizeof(mi));
+		mi.cbSize = sizeof(mi);
+
+		if (GetWindowPlacement(&m_WindowPlacement) && GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY), &mi))
+		{
+			SetWindowLong(m_hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+			::SetWindowPos(m_hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right-mi.rcMonitor.left, mi.rcMonitor.bottom-mi.rcMonitor.top, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		}
+	}
+	else
+	{
+		SetWindowLong(m_hWnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPlacement(&m_WindowPlacement);
+		::SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+	}
+
+	AdjustLayout();
+}
+
 void CMainWindow::AdjustLayout()
 {
 	if (m_pDialogMenuBar)
-	{
-		CRect rect;
-		GetClientRect(rect);
+		if (GetStyle() & WS_OVERLAPPEDWINDOW)
+		{
+			CRect rect;
+			GetClientRect(rect);
 
-		m_pDialogMenuBar->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.top+m_pDialogMenuBar->GetPreferredHeight(), SWP_NOACTIVATE | SWP_NOZORDER);
-	}
+			m_pDialogMenuBar->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.top+m_pDialogMenuBar->GetPreferredHeight(), SWP_NOACTIVATE | SWP_NOZORDER);
+		}
+		else
+		{
+			m_pDialogMenuBar->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER);
+		}
 }
 
 void CMainWindow::PostNcDestroy()
