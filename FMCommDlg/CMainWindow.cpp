@@ -50,19 +50,9 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
 	{
-	case WM_KEYDOWN:
-		if (pMsg->wParam==VK_F10)
-			if (m_pDialogMenuBar)
-				if (!m_pDialogMenuBar->HasFocus())
-				{
-					OnClosePopup();
-					m_pDialogMenuBar->SetFocus();
-					return TRUE;
-				}
-		break;
 	case WM_SYSKEYDOWN:
-		if (pMsg->wParam==VK_MENU)
-			if (m_pDialogMenuBar)
+		if ((pMsg->wParam==VK_F10) || (pMsg->wParam==VK_MENU))
+			if (m_pDialogMenuBar && (GetStyle() & WS_OVERLAPPEDWINDOW))
 				if (!m_pDialogMenuBar->HasFocus())
 				{
 					OnClosePopup();

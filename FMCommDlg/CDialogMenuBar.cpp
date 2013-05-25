@@ -701,7 +701,7 @@ void CDialogMenuBar::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CDialogMenuBar::OnSysKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if ((nChar==VK_MENU) && (m_SelectedItem==-1))
+	if (((nChar==VK_MENU) || (nChar==VK_F10)) && (m_SelectedItem==-1))
 		SelectItem(0, TRUE);
 
 	CWnd::OnSysKeyUp(nChar, nRepCnt, nFlags);
