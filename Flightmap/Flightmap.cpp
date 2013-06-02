@@ -74,6 +74,10 @@ BOOL CFlightmapApp::InitInstance()
 	if (!FMApplication::InitInstance())
 		return FALSE;
 
+	// AppID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.Flightmap");
+
 	// Pfad zu Google Earth
 	HKEY hKey;
 	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)

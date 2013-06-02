@@ -129,6 +129,26 @@ FMApplication::FMApplication(GUID& AppID)
 		m_AeroLibLoaded = FALSE;
 	}
 
+	// Shell
+	hModShell = LoadLibrary(_T("SHELL32.DLL"));
+	if (hModShell)
+	{
+		zSetCurrentProcessExplicitAppUserModelID = (PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)GetProcAddress(hModShell, "SetCurrentProcessExplicitAppUserModelID");
+
+		m_ShellLibLoaded = (zSetCurrentProcessExplicitAppUserModelID!=NULL);
+		if (!m_ShellLibLoaded)
+		{
+			FreeLibrary(hModShell);
+			hModShell = NULL;
+		}
+	}
+	else
+	{
+		zSetCurrentProcessExplicitAppUserModelID = NULL;
+
+		m_ShellLibLoaded = FALSE;
+	}
+
 	// Fonts
 	CString face = GetDefaultFontFace();
 
@@ -172,6 +192,8 @@ FMApplication::~FMApplication()
 		FreeLibrary(hModThemes);
 	if (hModAero)
 		FreeLibrary(hModAero);
+	if (hModShell)
+		FreeLibrary(hModShell);
 }
 
 
