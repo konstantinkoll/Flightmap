@@ -609,12 +609,12 @@ CString GetLatestVersion(CString& CurrentVersion)
 	// Licensed?
 	if (FMIsLicensed())
 	{
-		CurrentVersion += _T(";licensed");
+		CurrentVersion += _T("; licensed");
 	}
 	else
 		if (FMIsSharewareExpired())
 		{
-			CurrentVersion += _T(";expired");
+			CurrentVersion += _T("; expired");
 		}
 
 	CurrentVersion += _T(")");
