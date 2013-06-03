@@ -898,6 +898,10 @@ void CItinerary::OpenAIRX(CString FileName)
 						}
 					}
 				}
+				else
+				{
+					FMErrorBox(IDS_ILLEGALFORMAT, GetActiveWindow());
+				}
 
 			f.Close();
 		}
@@ -931,40 +935,47 @@ void CItinerary::OpenAIR(CString FileName)
 			UINT Count = 0;
 			f.Read(&Count, sizeof(Count));
 
-			for (UINT a=0; a<Count; a++)
+			if ((ULONGLONG)Count*30>f.GetLength())
 			{
-				AIRX_Flight Flight;
-				ResetFlight(Flight);
+				FMErrorBox(IDS_ILLEGALFORMAT, GetActiveWindow());
+			}
+			else
+			{
+				for (UINT a=0; a<Count; a++)
+				{
+					AIRX_Flight Flight;
+					ResetFlight(Flight);
 
-				ReadUTF7CHAR(f, Flight.From.Code, 4);
-				ReadUTF7CHAR(f, Flight.To.Code, 4);
-				ReadUTF7WCHAR(f, Flight.Carrier, 64);
-				ReadUTF7WCHAR(f, Flight.Equipment, 64);
-				ReadUTF7CHAR(f, Flight.FlightNo, 8);
+					ReadUTF7CHAR(f, Flight.From.Code, 4);
+					ReadUTF7CHAR(f, Flight.To.Code, 4);
+					ReadUTF7WCHAR(f, Flight.Carrier, 64);
+					ReadUTF7WCHAR(f, Flight.Equipment, 64);
+					ReadUTF7CHAR(f, Flight.FlightNo, 8);
 
-				CString Class = ReadUTF7String(f);
-				Flight.Class = (Class==_T("Y")) ? AIRX_Economy : (Class==_T("Y+")) ? AIRX_PremiumEconomy : (Class==_T("J")) ? AIRX_Business : (Class==_T("F")) ? AIRX_First : (Class==_T("C")) ? AIRX_Crew : AIRX_Unknown;
+					CString Class = ReadUTF7String(f);
+					Flight.Class = (Class==_T("Y")) ? AIRX_Economy : (Class==_T("Y+")) ? AIRX_PremiumEconomy : (Class==_T("J")) ? AIRX_Business : (Class==_T("F")) ? AIRX_First : (Class==_T("C")) ? AIRX_Crew : AIRX_Unknown;
 
-				ReadUTF7FILETIME(f, Flight.From.Time);
-				ReadUTF7COLORREF(f, Flight.Color);
-				ReadUTF7CHAR(f, Flight.Seat, 4);
-				ReadUTF7CHAR(f, Flight.Registration, 16);
-				ReadUTF7WCHAR(f, Flight.Name, 64);
+					ReadUTF7FILETIME(f, Flight.From.Time);
+					ReadUTF7COLORREF(f, Flight.Color);
+					ReadUTF7CHAR(f, Flight.Seat, 4);
+					ReadUTF7CHAR(f, Flight.Registration, 16);
+					ReadUTF7WCHAR(f, Flight.Name, 64);
 
-				if (ReadUTF7String(f).MakeUpper()==_T("A"))
-					Flight.Flags = AIRX_AwardFlight;
+					if (ReadUTF7String(f).MakeUpper()==_T("A"))
+						Flight.Flags = AIRX_AwardFlight;
 
-				ReadUTF7UINT(f, Flight.MilesAward);
-				ReadUTF7UINT(f, Flight.MilesStatus);
-				ReadUTF7FILETIME(f, Flight.To.Time);
-				ReadUTF7CHAR(f, Flight.EtixCode, 7);
-				ReadUTF7WCHAR(f, Flight.Fare, 16);
+					ReadUTF7UINT(f, Flight.MilesAward);
+					ReadUTF7UINT(f, Flight.MilesStatus);
+					ReadUTF7FILETIME(f, Flight.To.Time);
+					ReadUTF7CHAR(f, Flight.EtixCode, 7);
+					ReadUTF7WCHAR(f, Flight.Fare, 16);
 
-				for (UINT b=0; b<15; b++)
-					ReadUTF7String(f);
+					for (UINT b=0; b<15; b++)
+						ReadUTF7String(f);
 
-				CalcDistance(Flight, TRUE);
-				m_Flights.AddItem(Flight);
+					CalcDistance(Flight, TRUE);
+					m_Flights.AddItem(Flight);
+				}
 			}
 
 			f.Close();
