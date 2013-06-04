@@ -316,8 +316,11 @@
     <ROW Dialog_="FileAssociationsDlg" Control="Text" Type="Text" X="55" Y="110" Width="340" Height="20" Attributes="65539" Text="Please select the file types you want to automatically open with [ProductName]:" Control_Next="CheckBox_1" TextLocId="Control.Text.FileAssociationsDlg#Text" MsiKey="FileAssociationsDlg#Text"/>
     <ROW Dialog_="FileAssociationsDlg" Control="FileAssociationsDlgDialogInitializer" Type="DialogInitializer" X="0" Y="0" Width="0" Height="0" Attributes="0"/>
     <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_1" Type="CheckBox" X="55" Y="140" Width="340" Height="11" Attributes="3" Property="AIR_CHECKBOX" Text=".air" Control_Next="CheckBox_2"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_2" Type="CheckBox" X="55" Y="155" Width="340" Height="11" Attributes="3" Property="AIRX_CHECKBOX" Text=".airx" Control_Next="Bitmap"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_2" Type="CheckBox" X="55" Y="155" Width="340" Height="11" Attributes="3" Property="AIRX_CHECKBOX" Text=".airx" Control_Next="PushButton_Cancel"/>
     <ROW Dialog_="FileAssociationsDlg" Control="Title" Type="Text" X="55" Y="10" Width="308" Height="58" Attributes="196611" Text="Select File Associations" TextStyle="TitleFont" Control_Next="Text" TextLocId="Control.Text.FileAssociationsDlg#Title" MsiKey="FileAssociationsDlg#Title"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="Back" Type="PushButton" X="245" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Control_Next="Title" TextLocId="-" MsiKey="FileAssociationsDlg#Back"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="Next" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Control_Next="Cancel" TextLocId="-" MsiKey="FileAssociationsDlg#Next"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
@@ -364,6 +367,7 @@
     <ROW Dialog_="AdminWelcomeDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="AdminInstallPointDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="CustomizeDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
