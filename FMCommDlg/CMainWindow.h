@@ -32,6 +32,8 @@ public:
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""));
 	void ToggleFullScreen();
 	void RegisterPopupWindow(CWnd* pPopupWnd);
+	void SetProgressState(TBPFLAG tbpFlags);
+	void SetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal);
 
 protected:
 	FMApplication* p_App;

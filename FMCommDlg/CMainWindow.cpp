@@ -174,6 +174,19 @@ void CMainWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 		p_PopupWindow = pPopupWnd;
 }
 
+void CMainWindow::SetProgressState(TBPFLAG tbpFlags)
+{
+	if (m_pTaskbarList3)
+		m_pTaskbarList3->SetProgressState(GetSafeHwnd(), tbpFlags);
+}
+
+void CMainWindow::SetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
+{
+	if (m_pTaskbarList3)
+		m_pTaskbarList3->SetProgressValue(GetSafeHwnd(), ullCompleted, ullTotal);
+}
+
+
 BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
