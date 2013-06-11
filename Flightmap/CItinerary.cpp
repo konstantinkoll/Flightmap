@@ -843,6 +843,7 @@ void CItinerary::OpenAIRX(CString FileName)
 		m_FileName = FileName;
 		SetDisplayName(FileName);
 		theApp.AddToRecentList(FileName);
+		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
 		try
 		{
@@ -929,6 +930,7 @@ void CItinerary::OpenAIR(CString FileName)
 	{
 		SetDisplayName(FileName);
 		theApp.AddToRecentList(FileName);
+		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
 		try
 		{
@@ -1001,6 +1003,7 @@ void CItinerary::OpenCSV(CString FileName)
 	{
 		SetDisplayName(FileName);
 		theApp.AddToRecentList(FileName);
+		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
 		try
 		{
@@ -1170,6 +1173,7 @@ void CItinerary::SaveAIRX(CString FileName)
 		m_FileName = FileName;
 		SetDisplayName(FileName);
 		theApp.AddToRecentList(FileName);
+		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
 		try
 		{
