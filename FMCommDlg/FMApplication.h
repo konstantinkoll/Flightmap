@@ -81,6 +81,7 @@ public:
 	UINT m_WakeupMsg;
 	UINT m_UseBgImagesChangedMsg;
 	UINT m_DistanceSettingChangedMsg;
+	UINT m_TaskbarButtonCreated;
 	GUID m_AppID;
 	COLORREF m_CustomColors[16];
 

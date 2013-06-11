@@ -601,6 +601,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ITaskbarList3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\License.h"
 				>
 			</File>

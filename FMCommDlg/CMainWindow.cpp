@@ -5,10 +5,13 @@
 #include "stdafx.h"
 #include "FMCommDlg.h"
 #include "CMainWindow.h"
+#include <shlobj.h>
 
 
 // CMainWindow
 //
+
+const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
 
 CMainWindow::CMainWindow()
 	: CWnd()
@@ -17,6 +20,7 @@ CMainWindow::CMainWindow()
 	p_PopupWindow = NULL;
 	hAccelerator = NULL;
 	m_pDialogMenuBar = NULL;
+	m_pTaskbarList3 = NULL;
 	m_Active = TRUE;
 }
 
@@ -182,6 +186,7 @@ BEGIN_MESSAGE_MAP(CMainWindow, CWnd)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
 	ON_MESSAGE_VOID(WM_CLOSEPOPUP, OnClosePopup)
+	ON_REGISTERED_MESSAGE(FMGetApp()->m_TaskbarButtonCreated, OnTaskbarButtonCreated)
 	ON_REGISTERED_MESSAGE(FMGetApp()->m_WakeupMsg, OnWakeup)
 	ON_WM_COPYDATA()
 END_MESSAGE_MAP()
@@ -218,6 +223,9 @@ void CMainWindow::OnDestroy()
 		m_pDialogMenuBar->DestroyWindow();
 		delete m_pDialogMenuBar;
 	}
+
+	if (m_pTaskbarList3)
+		m_pTaskbarList3->Release();
 
 	CWnd::OnDestroy();
 }
@@ -300,6 +308,22 @@ void CMainWindow::OnClosePopup()
 		Invalidate();
 		UpdateWindow();				// Essential, as window's redraw flag may be false
 	}
+}
+
+LRESULT CMainWindow::OnTaskbarButtonCreated(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (p_App->OSVersion>=OS_Seven)
+	{
+		if (m_pTaskbarList3)
+		{
+			m_pTaskbarList3->Release();
+			m_pTaskbarList3 = NULL;
+		}
+
+		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void**)&m_pTaskbarList3);
+	}
+
+	return NULL;
 }
 
 LRESULT CMainWindow::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)

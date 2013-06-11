@@ -61,6 +61,7 @@ FMApplication::FMApplication(GUID& AppID)
 	m_WakeupMsg = 0;
 	m_UseBgImagesChangedMsg = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
 	m_DistanceSettingChangedMsg = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
+	m_TaskbarButtonCreated = RegisterWindowMessageA("TaskbarButtonCreated");
 
 	// Custom colors
 	ZeroMemory(&m_CustomColors, sizeof(m_CustomColors));

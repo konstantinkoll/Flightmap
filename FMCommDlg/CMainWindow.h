@@ -5,6 +5,7 @@
 #pragma once
 #include "FMApplication.h"
 #include "CDialogMenuBar.h"
+#include "ITaskbarList3.h"
 
 
 // CMainWindow
@@ -36,6 +37,7 @@ protected:
 	FMApplication* p_App;
 	CWnd* p_PopupWindow;
 	CDialogMenuBar* m_pDialogMenuBar;
+	ITaskbarList3* m_pTaskbarList3;
 	CString m_PlacementPrefix;
 	WINDOWPLACEMENT m_WindowPlacement;
 	BOOL m_Active;
@@ -51,6 +53,7 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnClosePopup();
+	afx_msg LRESULT CMainWindow::OnTaskbarButtonCreated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	DECLARE_MESSAGE_MAP()
