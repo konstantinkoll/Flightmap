@@ -292,9 +292,8 @@ void CMainWnd::ExportText(CString FileName)
 
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
-	CStdioFile f;
-
-	if (!f.Open(FileName, CFile::modeCreate | CFile::modeWrite))
+	FILE *fStream;
+	if (_tfopen_s(&fStream, FileName, _T("wt,ccs=UTF-8")))
 	{
 		FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
 	}
@@ -302,6 +301,7 @@ void CMainWnd::ExportText(CString FileName)
 	{
 		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
 
+		CStdioFile f(fStream);
 		try
 		{
 			for (UINT a=0; a<Limit; a++)

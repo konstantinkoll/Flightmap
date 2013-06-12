@@ -5,16 +5,7 @@
 #pragma once
 #include "stdafx.h"
 #include "CGoogleEarthFile.h"
-
-
-void CookAttributeString(CString& tmpStr)
-{
-	tmpStr.Replace(_T("<"), _T("_"));
-	tmpStr.Replace(_T(">"), _T("_"));
-	tmpStr.Replace(_T("&"), _T("&amp;"));
-	tmpStr.Replace(_T("–"), _T("&#8211;"));
-	tmpStr.Replace(_T("—"), _T("&#8212;"));
-}
+#include <io.h>
 
 
 // CGoogleEarthFile
@@ -30,23 +21,25 @@ BOOL CGoogleEarthFile::Open(LPCTSTR lpszFileName, LPCTSTR lpszDisplayName)
 	if (m_IsOpen)
 		return FALSE;
 
-	m_IsOpen = CStdioFile::Open(lpszFileName, CFile::modeCreate | CFile::modeWrite);
-	if (m_IsOpen)
+	if (_tfopen_s(&m_pStream, lpszFileName, _T("wt,ccs=UTF-8")))
+		return FALSE;
+
+	m_hFile = (HANDLE)_get_osfhandle(_fileno(m_pStream));
+	m_IsOpen = TRUE;
+
+	WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
+
+	if (lpszDisplayName)
 	{
-		WriteString(_T("<?xml version=\"1.0\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
-
-		if (lpszDisplayName)
-		{
-			WriteString(_T("<name>"));
-			WriteString(lpszDisplayName);
-			WriteString(_T("</name>\n"));
-		}
-
-		WriteString(_T("<open>1</open>\n"));
-		WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
-		WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
-		WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
+		WriteString(_T("<name>"));
+		WriteString(lpszDisplayName);
+		WriteString(_T("</name>\n"));
 	}
+
+	WriteString(_T("<open>1</open>\n"));
+	WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
+	WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
+	WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
 
 	return m_IsOpen;
 }
@@ -56,7 +49,6 @@ void CGoogleEarthFile::WriteAirport(FMAirport* pAirport)
 	WriteString(_T("<Placemark>\n<name>"));
 
 	CString tmpStr(pAirport->Code);
-	CookAttributeString(tmpStr);
 	WriteString(tmpStr);
 
 	WriteString(_T("</name>\n<description>"));
@@ -150,8 +142,6 @@ void CGoogleEarthFile::WriteAttribute(UINT ResID, CString Value)
 	{
 		CString Name;
 		ENSURE(Name.LoadString(ResID));
-		CookAttributeString(Name);
-		CookAttributeString(Value);
 
 		WriteString(_T("&lt;b&gt;"));
 		WriteString(Name);

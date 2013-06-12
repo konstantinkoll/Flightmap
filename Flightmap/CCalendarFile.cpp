@@ -5,6 +5,7 @@
 #pragma once
 #include "stdafx.h"
 #include "CCalendarFile.h"
+#include <io.h>
 
 
 // CCalendarFile
@@ -20,35 +21,37 @@ BOOL CCalendarFile::Open(LPCTSTR lpszFileName, LPCTSTR lpszComment, LPCTSTR lpsz
 	if (m_IsOpen)
 		return FALSE;
 
-	m_IsOpen = CStdioFile::Open(lpszFileName, CFile::modeCreate | CFile::modeWrite);
-	if (m_IsOpen)
-	{
-		CString Version;
-		GetFileVersion(AfxGetInstanceHandle(), &Version);
+	if (_tfopen_s(&m_pStream, lpszFileName, _T("wt,ccs=UTF-8")))
+		return FALSE;
 
-		WriteString(_T("BEGIN:VCALENDAR\n"));
-		WriteString(_T("PRODID:-//liquidFOLDERS//Flightmap ")+Version);
-		WriteString(_T("//EN\nVERSION:2.0\n"));
-		WriteString(_T("METHOD:PUBLISH\n"));
+	m_hFile = (HANDLE)_get_osfhandle(_fileno(m_pStream));
+	m_IsOpen = TRUE;
 
-		if (lpszComment)
-			if (*lpszComment!=L'\0')
-			{
-				WriteString(_T("COMMENT:"));
-				WriteString(lpszComment);
-				WriteString(_T("\n"));
-			}
+	CString Version;
+	GetFileVersion(AfxGetInstanceHandle(), &Version);
 
-		if (lpszDescription)
-			if (*lpszDescription!=L'\0')
-			{
-				WriteString(_T("DESCRIPTION:"));
-				WriteString(lpszDescription);
-				WriteString(_T("\n"));
-			}
-	}
+	WriteString(_T("BEGIN:VCALENDAR\n"));
+	WriteString(_T("PRODID:-//liquidFOLDERS//Flightmap ")+Version);
+	WriteString(_T("//EN\nVERSION:2.0\n"));
+	WriteString(_T("METHOD:PUBLISH\n"));
 
-	return m_IsOpen;
+	if (lpszComment)
+		if (*lpszComment!=L'\0')
+		{
+			WriteString(_T("COMMENT:"));
+			WriteString(lpszComment);
+			WriteString(_T("\n"));
+		}
+
+	if (lpszDescription)
+		if (*lpszDescription!=L'\0')
+		{
+			WriteString(_T("DESCRIPTION:"));
+			WriteString(lpszDescription);
+			WriteString(_T("\n"));
+		}
+
+	return TRUE;
 }
 
 void CCalendarFile::WriteRoute(AIRX_Flight& Flight)
