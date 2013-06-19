@@ -1049,7 +1049,7 @@ BEGIN
     IDS_IATACODES           "IATA codes"
     IDS_YOULOOKAT           "You look at %s"
     IDS_DRIVENOTREADY       "The drive is not ready!"
-    IDS_ILLEGALFORMAT       "The file is corrupt, damaged or has a wring extension!"
+    IDS_ILLEGALFORMAT       "The file is corrupt, damaged or has a wrong extension!"
     IDS_FLIGHTCOUNT_SINGULAR "%d movement"
     IDS_FLIGHTCOUNT_PLURAL  "%d movements"
     IDS_BACKGROUND_DEFAULT  "Default"
