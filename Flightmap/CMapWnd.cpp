@@ -233,10 +233,10 @@ INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuLeft(IDM_MAPWND);
 	m_pDialogMenuBar->AddMenuLeft(IDM_MAPVIEW);
 
-	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 1);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 2);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 3);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 4);
 
 	if (!m_wndMapView.Create(this, 2))
 		return -1;

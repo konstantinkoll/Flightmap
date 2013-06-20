@@ -613,10 +613,11 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuLeft(IDM_GOOGLEEARTH);
 	m_pDialogMenuBar->AddMenuLeft(IDM_STATISTICS);
 
-	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
+	m_pDialogMenuBar->AddMenuRight(IDM_DETAILS_CHOOSE, 0);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 1);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 2);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 3);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 4);
 
 	theApp.AddFrame(this);
 

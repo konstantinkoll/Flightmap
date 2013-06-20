@@ -98,10 +98,10 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBEWND);
 	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBEVIEW);
 
-	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 0);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 1);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 2);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 3);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 1);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 2);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 3);
+	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 4);
 
 	m_wndGlobeView.Create(this, 2);
 
