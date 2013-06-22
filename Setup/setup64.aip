@@ -66,6 +66,7 @@
     <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_ExePath AI_CustomARPName AI_DisableModify Flightmap.exe SHORTCUTDIR AIShRegAnswer ApplicationDescription"/>
     <ROW Feature="air" Feature_Parent="File_Type_Associations" Title=".air" Description="Description" Display="5" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
     <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title=".airx" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
+    <ROW Feature="csv" Feature_Parent="File_Type_Associations" Title=".csv" Description="Description" Display="9" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="Flightmap"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -84,11 +85,12 @@
     <ATTRIBUTE name="Folder" value="..\Temp"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DefaultProgramsComponent">
-    <ROW ApplicationDescription="Flightmap" ApplicationName="[ProductName]" CapabilitiesPath="SOFTWARE\[ProductName]" Defaults="air|airx" RegistryKey="ApplicationDescription" RegistryAppName="ApplicationName" RegistryRegisterApp="ProductName_2"/>
+    <ROW ApplicationDescription="Flightmap" ApplicationName="[ProductName]" CapabilitiesPath="SOFTWARE\[ProductName]" Defaults="air|airx|csv" RegistryKey="ApplicationDescription" RegistryAppName="ApplicationName" RegistryRegisterApp="ProductName_2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DefaultProgramsExtComponent">
     <ROW DefaultProgram="ApplicationDescription" Extension="air" Component_="Flightmap.exe" Registry="air"/>
     <ROW DefaultProgram="ApplicationDescription" Extension="airx" Component_="Flightmap.exe" Registry="airx"/>
+    <ROW DefaultProgram="ApplicationDescription" Extension="csv" Component_="Flightmap.exe" Registry="csv"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
@@ -142,6 +144,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
     <ROW Property="AIR_CHECKBOX" Value="1"/>
     <ROW Property="AIRX_CHECKBOX" Value="1"/>
+    <ROW Property="CSV_CHECKBOX" Value="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
     <ROW Dialog_="FolderDlg" Control="Back" Type="PushButton" X="245" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Control_Next="FolderEdit" TextLocId="-" MsiKey="FolderDlg#Back"/>
@@ -313,14 +316,15 @@
     <ROW Dialog_="PatchWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="PatchWelcomeDlg#Bitmap"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="OK" MsiKey="MsiRMFilesInUse#Bitmap"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="LicenseAgreementDlg#Bitmap"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="Text" Type="Text" X="55" Y="110" Width="340" Height="20" Attributes="65539" Text="Please select the file types you want to automatically open with [ProductName]:" Control_Next="CheckBox_1" TextLocId="Control.Text.FileAssociationsDlg#Text" MsiKey="FileAssociationsDlg#Text"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="Text" Type="Text" X="55" Y="110" Width="340" Height="20" Attributes="65539" Text="Please select the file types you want to automatically open with [ProductName]:" Control_Next="PushButton_Cancel" TextLocId="Control.Text.FileAssociationsDlg#Text" MsiKey="FileAssociationsDlg#Text"/>
     <ROW Dialog_="FileAssociationsDlg" Control="FileAssociationsDlgDialogInitializer" Type="DialogInitializer" X="0" Y="0" Width="0" Height="0" Attributes="0"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_1" Type="CheckBox" X="55" Y="140" Width="340" Height="11" Attributes="3" Property="AIR_CHECKBOX" Text=".air" Control_Next="CheckBox_2"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_2" Type="CheckBox" X="55" Y="155" Width="340" Height="11" Attributes="3" Property="AIRX_CHECKBOX" Text=".airx" Control_Next="PushButton_Cancel"/>
     <ROW Dialog_="FileAssociationsDlg" Control="Title" Type="Text" X="55" Y="10" Width="308" Height="58" Attributes="196611" Text="Select File Associations" TextStyle="TitleFont" Control_Next="Text" TextLocId="Control.Text.FileAssociationsDlg#Title" MsiKey="FileAssociationsDlg#Title"/>
     <ROW Dialog_="FileAssociationsDlg" Control="Back" Type="PushButton" X="245" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Control_Next="Title" TextLocId="-" MsiKey="FileAssociationsDlg#Back"/>
     <ROW Dialog_="FileAssociationsDlg" Control="Next" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Control_Next="Cancel" TextLocId="-" MsiKey="FileAssociationsDlg#Next"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="CheckBox_1" TextLocId="-"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_1" Type="CheckBox" X="55" Y="134" Width="340" Height="11" Attributes="3" Property="AIR_CHECKBOX" Text=".air" Control_Next="CheckBox_2"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_2" Type="CheckBox" X="55" Y="149" Width="340" Height="11" Attributes="3" Property="AIRX_CHECKBOX" Text=".airx" Control_Next="CheckBox_3"/>
+    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_3" Type="CheckBox" X="55" Y="164" Width="340" Height="11" Attributes="3" Property="CSV_CHECKBOX" Text=".csv" Control_Next="Bitmap"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
@@ -336,7 +340,7 @@
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
     <ROW Dialog_="PatchWelcomeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_PATCH" Ordering="3"/>
     <ROW Dialog_="FileAssociationsDlg" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="NewDialog" Argument="ShortcutsDlg" Condition="AI_INSTALL" Ordering="5"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="NewDialog" Argument="ShortcutsDlg" Condition="AI_INSTALL" Ordering="15"/>
     <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="AddLocal" Argument="air" Condition="AIR_CHECKBOX" Ordering="1"/>
     <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="Remove" Argument="air" Condition="NOT (AIR_CHECKBOX)" Ordering="2"/>
     <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIR_CHECKBOX]" Argument="1" Condition="AI_INSTALL AND ( &amp;air = 3 )" Ordering="1"/>
@@ -357,7 +361,7 @@
     <ROW Dialog_="WelcomeDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="ShortcutsDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AI_EXT_SELECTED]" Argument="1" Condition="AI_MAINT AND NOT (AI_EXT_SELECTED)" Ordering="9"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="AddLocal" Argument="csv" Condition="CSV_CHECKBOX" Ordering="5"/>
     <ROW Dialog_="FolderDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="MaintenanceWelcomeDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
@@ -368,6 +372,12 @@
     <ROW Dialog_="AdminInstallPointDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="CustomizeDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
     <ROW Dialog_="FileAssociationsDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="Remove" Argument="csv" Condition="NOT (CSV_CHECKBOX)" Ordering="6"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="1" Condition="AI_INSTALL AND ( &amp;csv = 3 )" Ordering="9"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="{}" Condition="AI_INSTALL AND ( &amp;csv &lt;&gt; 3 )" Ordering="10"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="1" Condition="AI_MAINT AND ( ( ( !csv = 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;csv = 3 ) AND AI_EXT_SELECTED ) )" Ordering="11"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="{}" Condition="AI_MAINT AND ( ( ( !csv &lt;&gt; 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;csv &lt;&gt; 3 ) AND AI_EXT_SELECTED ) )" Ordering="12"/>
+    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AI_EXT_SELECTED]" Argument="1" Condition="AI_MAINT AND NOT (AI_EXT_SELECTED)" Ordering="13"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
@@ -404,6 +414,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiExtComponent">
     <ROW Extension="air" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="air" Options="43"/>
     <ROW Extension="airx" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="airx" Options="39"/>
+    <ROW Extension="csv" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="csv" Options="43"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="Flightmap_1.exe" SourcePath="Flightmap.ico" Index="0"/>
@@ -481,6 +492,7 @@
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="air" Root="2" Key="SOFTWARE\[ProductName]\Capabilities\FileAssociations" Name=".air" Value="liquidFOLDERS.Flightmap" Component_="ApplicationDescription"/>
     <ROW Registry="airx" Root="2" Key="SOFTWARE\[ProductName]\Capabilities\FileAssociations" Name=".airx" Value="liquidFOLDERS.Flightmap" Component_="ApplicationDescription"/>
+    <ROW Registry="csv" Root="2" Key="SOFTWARE\[ProductName]\Capabilities\FileAssociations" Name=".csv" Value="liquidFOLDERS.Flightmap" Component_="ApplicationDescription"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
     <ROW FileKey="_" Component_="Flightmap.exe" DirProperty="APPDIR" InstallMode="2"/>
@@ -505,5 +517,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiVerbComponent">
     <ROW Extension_="air" Component_="Flightmap.exe" Verb="open" Sequence="0" Command="&amp;Open" Argument="&quot;%1&quot;"/>
     <ROW Extension_="airx" Component_="Flightmap.exe" Verb="open" Sequence="0" Command="&amp;Open" Argument="&quot;%1&quot;"/>
+    <ROW Extension_="csv" Component_="Flightmap.exe" Verb="open" Sequence="0" Command="&amp;Open" Argument="&quot;%1&quot;"/>
   </COMPONENT>
 </DOCUMENT>

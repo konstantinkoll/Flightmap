@@ -2506,7 +2506,7 @@ void CDialogMenuSeparator::OnPaint(CDC* pDC, LPRECT rect, BOOL /*Selected*/, UIN
 }
 
 
-// CDialogMenuTitle
+// CDialogMenuCaption
 //
 
 CDialogMenuCaption::CDialogMenuCaption(CDialogMenuPopup* pParentPopup, UINT ResID)
