@@ -52,7 +52,7 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 		p_Flight->Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : (Class==5) ? AIRX_Charter : AIRX_Unknown;
 
-		p_Flight->Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight);
+		p_Flight->Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight | AIRX_Upgrade | AIRX_Cancelled);
 		p_Flight->Flags |= m_wndRating.GetRating()<<FMAttributes[21].DataParameter;
 
 		if (((CButton*)GetDlgItem(IDC_LEISURETRIP))->GetCheck())
@@ -61,6 +61,10 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 			p_Flight->Flags |= AIRX_BusinessTrip;
 		if (((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->GetCheck())
 			p_Flight->Flags |= AIRX_AwardFlight;
+		if (((CButton*)GetDlgItem(IDC_UPGRADE))->GetCheck())
+			p_Flight->Flags |= AIRX_Upgrade;
+		if (((CButton*)GetDlgItem(IDC_CANCELLED))->GetCheck())
+			p_Flight->Flags |= AIRX_Cancelled;
 	}
 }
 
@@ -89,6 +93,8 @@ BOOL EditFlightOtherPage::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_LEISURETRIP))->SetCheck(p_Flight->Flags & AIRX_LeisureTrip);
 	((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->SetCheck(p_Flight->Flags & AIRX_BusinessTrip);
 	((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->SetCheck(p_Flight->Flags & AIRX_AwardFlight);
+	((CButton*)GetDlgItem(IDC_UPGRADE))->SetCheck(p_Flight->Flags & AIRX_Upgrade);
+	((CButton*)GetDlgItem(IDC_CANCELLED))->SetCheck(p_Flight->Flags & AIRX_Cancelled);
 
 	// Rating
 	m_wndRating.SetRating((p_Flight->Flags>>FMAttributes[21].DataParameter) & 0xF);

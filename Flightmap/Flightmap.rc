@@ -265,12 +265,14 @@ BEGIN
     LTEXT           "Preis:",IDC_STATIC,148,112,49,8
     EDITTEXT        IDC_FARE,201,110,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "&Geschäftsreise",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,148,130,93,10
-    CONTROL         "&Persönlicher Reisegrund",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,142,93,10
+    CONTROL         "&Persönlicher Reisegrund",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,143,93,10
+    CONTROL         "Flug &nicht angetreten",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,156,93,10
     LTEXT           "Prämienmeilen:",IDC_STATIC,265,92,60,8
     EDITTEXT        IDC_AWARDMILES,328,90,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     LTEXT           "Statusmeilen:",IDC_STATIC,265,112,60,8
     EDITTEXT        IDC_STATUSMILES,328,110,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "P&rämienflug",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,130,103,10
+    CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,143,103,10
     PUSHBUTTON      "Farbe aus&wählen...",IDC_CHOOSECOLOR,9,187,114,14,WS_GROUP
     CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,198,188,40,13
     LTEXT           "Sitz:",IDC_STATIC,294,190,29,8
@@ -447,14 +449,16 @@ BEGIN
     IDS_SAMPLEITINERARY     "(Beispiel-Flugplan)"
     IDS_NOTSAVED            "Möchten Sie die Änderungen speichern?"
     IDS_ATTACHMENTS         "Angehängte Dateien\nKlicken Sie auf das Symbol, um die\nangehängten Dateien zu betrachten."
-    IDS_AWARDFLIGHT         "Prämienflug"
-    IDS_GROUNDTRANSPORTATION "Bodenbeförderung\nSchiffsreise, Busfahrt o.ä."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_AWARDFLIGHT         "Prämienflug"
+    IDS_GROUNDTRANSPORTATION "Bodenbeförderung\nSchiffsreise, Busfahrt o.ä."
     IDS_BUSINESSTRIP        "Geschäftsreise"
     IDS_LEISURETRIP         "Privater Reisegrund"
+    IDS_UPGRADE             "Upgrade"
+    IDS_CANCELLED           "Flug nicht angetreten\nDieser Flug wird weder dargestellt\nnoch exportiert"
     IDS_EDITFLIGHT          "Flug bearbeiten"
     IDS_CUEBANNER_DATETIME  " JJJJ-MM-TT SS:MM"
     IDS_CUEBANNER_TIME      " SS:MM"
@@ -467,6 +471,10 @@ BEGIN
     IDS_METADATA_TITLE_PACIFIC "Pazifik-Überquerung"
     IDS_METADATA_KEYWORDS_ATLANTIC 
                             "Flightmap Beispiel Flugplan Atlantik Überquerung"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_METADATA_KEYWORDS_PACIFIC 
                             "Flightmap Beispiel Flugplan Pazifik Überquerung"
     IDS_SUBITEM_NAME        "Name"
@@ -477,13 +485,22 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
     IDS_FILESTATUS_SINGULAR "%d Datei (%s)"
     IDS_FILESTATUS_PLURAL   "%d Dateien (%s)"
-    IDS_INSPECT_METADATA_NONE "Der Flugplan enthält keine versteckten Metadaten."
-    IDS_INSPECT_METADATA_PRESENT "Der Flugplan enthält versteckte Metadaten wie Autor oder Titel, die persönliche Informationen preisgeben könnten."
-    IDS_INSPECT_ATTACHMENTS_NONE "Der Flugplan enthält keine angehängten Dateien."
-    IDS_INSPECT_ATTACHMENTS_SINGULAR "Der Flugplan enthält %d angehängte Datei, die einen Speicherplatz von %s belegt."
-    IDS_INSPECT_ATTACHMENTS_PLURAL "Der Flugplan enthält %d angehängte Dateien, die einen Speicherplatz von %s belegen."
+    IDS_INSPECT_METADATA_NONE 
+                            "Der Flugplan enthält keine versteckten Metadaten."
+    IDS_INSPECT_METADATA_PRESENT 
+                            "Der Flugplan enthält versteckte Metadaten wie Autor oder Titel, die persönliche Informationen preisgeben könnten."
+    IDS_INSPECT_ATTACHMENTS_NONE 
+                            "Der Flugplan enthält keine angehängten Dateien."
+    IDS_INSPECT_ATTACHMENTS_SINGULAR 
+                            "Der Flugplan enthält %d angehängte Datei, die einen Speicherplatz von %s belegt."
+    IDS_INSPECT_ATTACHMENTS_PLURAL 
+                            "Der Flugplan enthält %d angehängte Dateien, die einen Speicherplatz von %s belegen."
     IDS_DELETE_CAPTION      "Löschen"
     IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
@@ -500,6 +517,10 @@ BEGIN
     IDS_FLIGHTS_SINGULAR    "%d Flug"
     IDS_FLIGHTS_PLURAL      "%d Flüge"
     IDS_ROUTESTYLE          "Stil"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ANNOTATIONS         "Zusatzinformationen"
     IDS_RESOLUTION          "\nAuflösung: %d×%d"
 END
@@ -600,6 +621,10 @@ BEGIN
     IDM_MAP_SHOWFLIGHTROUTES "Flug&routen zeigen"
     IDM_MAP_ROUTESTYLE      "S&til"
     IDM_MAP_STRAIGHTLINES   "&Gerade Linien"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_ARROWS          "&Pfeilspitzen"
     IDM_MAP_USECOUNT        "Häufige Routen &dicker"
     IDM_MAP_ANNOTATIONS     "&Zusatzinformationen"
@@ -611,15 +636,15 @@ BEGIN
     IDM_MAP_SMALLFONT       "&Kleinere Schrift"
     IDM_MAP_NOTEINNERCOLOR  "S&chriftfarbe"
     IDM_MAP_NOTEOUTERCOLOR  "&Umrandung"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_MAP_USECOLORS       "&Farben benutzen"
     IDM_MAP_ROUTECOLOR      "&Standardfarbe"
     IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
     IDM_MAP_LOCATIONINNERCOLOR "Far&be"
     IDM_MAP_LOCATIONOUTERCOLOR "&Umrandung"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
     IDM_MAP_IATAINNERCOLOR  "S&chriftfarbe"
     IDM_MAP_IATAOUTERCOLOR  "&Umrandung"
@@ -648,6 +673,10 @@ BEGIN
     IDM_STATISTICS_OPEN     "Zeigt eine statistische Auswertung\ndes Flugplans an.\nStatistik ö&ffnen"
     IDM_STATISTICS_MERGE_DIRECTIONS "&Richtung von Routen ignorieren"
     IDM_STATISTICS_MERGE_AWARDS "&Prämienflüge als normale Flüge"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STATISTICS_MERGE_CLASSES "&Y+, Y und Charterflüge als Y"
 END
 
@@ -888,12 +917,14 @@ BEGIN
     LTEXT           "Fare:",IDC_STATIC,148,112,49,8
     EDITTEXT        IDC_FARE,201,110,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "&Business trip",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,148,130,93,10
-    CONTROL         "&Leisure trip",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,142,51,10
+    CONTROL         "&Leisure trip",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,143,51,10
+    CONTROL         "Flight &cancelled",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,156,93,10
     LTEXT           "Award miles:",IDC_STATIC,265,92,60,8
     EDITTEXT        IDC_AWARDMILES,328,90,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     LTEXT           "Status miles:",IDC_STATIC,265,112,60,8
     EDITTEXT        IDC_STATUSMILES,328,110,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "&Award flight",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,130,103,10
+    CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,143,103,10
     PUSHBUTTON      "C&hoose color...",IDC_CHOOSECOLOR,9,187,114,14,WS_GROUP
     LTEXT           "Rating:",IDC_STATIC,145,190,50,8
     CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,198,188,40,13
@@ -1061,14 +1092,16 @@ BEGIN
     IDS_SAMPLEITINERARY     "(Sample itinerary)"
     IDS_NOTSAVED            "The itinerary has been modified. Save?"
     IDS_ATTACHMENTS         "Attached files\nClick on the icon to view the\nfiles attached to this flight."
-    IDS_AWARDFLIGHT         "Award flight"
-    IDS_GROUNDTRANSPORTATION "Ground transportation\n(cruise ship, bus etc.)"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_AWARDFLIGHT         "Award flight"
+    IDS_GROUNDTRANSPORTATION "Ground transportation\n(cruise ship, bus etc.)"
     IDS_BUSINESSTRIP        "Business trip"
     IDS_LEISURETRIP         "Leisure trip"
+    IDS_UPGRADE             "Upgrade"
+    IDS_CANCELLED           "Flight cancelled\nThis flight will be neither\nvisualized nor exported"
     IDS_EDITFLIGHT          "Edit flight"
     IDS_CUEBANNER_DATETIME  " YYYY-MM-DD HH:MM"
     IDS_CUEBANNER_TIME      " HH:MM"
@@ -1081,6 +1114,10 @@ BEGIN
     IDS_METADATA_TITLE_PACIFIC "Pacific crossing"
     IDS_METADATA_KEYWORDS_ATLANTIC 
                             "Flightmap Sample Itinerary Atlantic Crossing"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_METADATA_KEYWORDS_PACIFIC 
                             "Flightmap Sample Itinerary Pacific Crossing"
     IDS_SUBITEM_NAME        "Name"
@@ -1092,12 +1129,19 @@ BEGIN
     IDS_FILESTATUS_SINGULAR "%d file (%s)"
     IDS_FILESTATUS_PLURAL   "%d files (%s)"
     IDS_INSPECT_METADATA_NONE "The itinerary contains no hidden metadata."
-    IDS_INSPECT_METADATA_PRESENT "The itinerary contains hidden metadata like author or title that could reveal personal information."
+    IDS_INSPECT_METADATA_PRESENT 
+                            "The itinerary contains hidden metadata like author or title that could reveal personal information."
     IDS_INSPECT_ATTACHMENTS_NONE "The itinerary contains no attached files."
-    IDS_INSPECT_ATTACHMENTS_SINGULAR "The itinerary contains %d file which occupies %s of memory."
-    IDS_INSPECT_ATTACHMENTS_PLURAL "The itinerary contains %d files which occupy %s of memory."
+    IDS_INSPECT_ATTACHMENTS_SINGULAR 
+                            "The itinerary contains %d file which occupies %s of memory."
+    IDS_INSPECT_ATTACHMENTS_PLURAL 
+                            "The itinerary contains %d files which occupy %s of memory."
     IDS_DELETE_CAPTION      "Delete"
     IDS_DELETE_FILE         "Are you sure you want to delete the file?"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
@@ -1114,6 +1158,10 @@ BEGIN
     IDS_FLIGHTS_SINGULAR    "%d flight"
     IDS_FLIGHTS_PLURAL      "%d flights"
     IDS_ROUTESTYLE          "Route style"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_ANNOTATIONS         "Annotations"
     IDS_RESOLUTION          "\nResolution: %d×%d"
 END
@@ -1214,6 +1262,10 @@ BEGIN
     IDM_MAP_SHOWFLIGHTROUTES "Show &flight routes"
     IDM_MAP_ROUTESTYLE      "Route s&tyle"
     IDM_MAP_STRAIGHTLINES   "&Straight lines"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_ARROWS          "Arro&ws"
     IDM_MAP_USECOUNT        "&Fatten frequent routes"
     IDM_MAP_ANNOTATIONS     "A&nnotations"
@@ -1225,15 +1277,15 @@ BEGIN
     IDM_MAP_SMALLFONT       "&Small font"
     IDM_MAP_NOTEINNERCOLOR  "&Color"
     IDM_MAP_NOTEOUTERCOLOR  "&Border"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_MAP_USECOLORS       "Use flight colo&rs"
     IDM_MAP_ROUTECOLOR      "&Default color"
     IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
     IDM_MAP_LOCATIONINNERCOLOR "&Color"
     IDM_MAP_LOCATIONOUTERCOLOR "&Border"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_MAP_SHOWIATACODES   "Show &IATA codes"
     IDM_MAP_IATAINNERCOLOR  "&Color"
     IDM_MAP_IATAOUTERCOLOR  "&Border"
@@ -1262,6 +1314,10 @@ BEGIN
     IDM_STATISTICS_OPEN     "Open a statistic analysis\nof the itinerary.\n&Open statistics"
     IDM_STATISTICS_MERGE_DIRECTIONS "Merge route &directions"
     IDM_STATISTICS_MERGE_AWARDS "Merge &award and revenue flights"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STATISTICS_MERGE_CLASSES "Merge &Y+, Y and charter flights"
 END
 

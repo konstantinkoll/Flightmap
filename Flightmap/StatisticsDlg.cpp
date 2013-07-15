@@ -150,6 +150,10 @@ void StatisticsDlg::UpdateStatistics()
 	{
 		const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[a];
 
+		// Cancelled
+		if (pFlight->Flags & AIRX_Cancelled)
+			continue;
+
 		// Filter
 		if (strlen(FilterAirport)==3)
 			if ((strcmp(FilterAirport, pFlight->From.Code)!=0) && (strcmp(FilterAirport, pFlight->To.Code)!=0))

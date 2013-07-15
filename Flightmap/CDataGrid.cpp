@@ -16,9 +16,10 @@
 // CDataGrid
 //
 
-#define MINWIDTH     50
-#define MAXWIDTH     750
-#define MARGIN       3
+#define MINWIDTH      50
+#define MAXWIDTH      750
+#define MARGIN        3
+#define FLAGCOUNT     7
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
@@ -28,7 +29,7 @@
                                             DeleteDC(hdcMem); }
 
 static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip };
+static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
 
 CDataGrid::CDataGrid()
 	: CWnd()
@@ -590,7 +591,7 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* item, INT* subitem)
 							switch (FMAttributes[Attr].Type)
 							{
 							case FMTypeFlags:
-								if (x<18*5)
+								if (x<18*FLAGCOUNT)
 									if (x%18<16)
 										*subitem = x/18;
 								break;
@@ -736,7 +737,7 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			HDC hdcMem = CreateCompatibleDC(dc);
 			CPoint pt(rect.left, rect.top+(rect.Height()-16)/2);
 
-			for (UINT a=0; a<5; a++)
+			for (UINT a=0; a<FLAGCOUNT; a++)
 			{
 				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, theApp.m_FlagIcons16[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : Flight.AttachmentCount>0 ? 1 : 0]);
 				AlphaBlend(dc, pt.x, pt.y, 16, 16, hdcMem, a*16, 0, 16, 16, BF);
@@ -952,6 +953,7 @@ void CDataGrid::OnPaint()
 	const COLORREF colBackground = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	const COLORREF colLines = Themed ? theApp.OSVersion==OS_Eight ? 0xEAE9E8 : 0xDDDCDA : GetSysColor(COLOR_SCROLLBAR);
 	const COLORREF colText = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+	const COLORREF colDisabled = Themed ? 0xA0A0A0 : GetSysColor(COLOR_3DFACE);
 	dc.FillSolidRect(rect, colBackground);
 
 	if (p_Itinerary)
@@ -988,7 +990,7 @@ void CDataGrid::OnPaint()
 						if (row<p_Itinerary->m_Flights.m_ItemCount)
 						{
 							const DWORD Flags = p_Itinerary->m_Flights.m_Items[row].Flags;
-							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP) || (theApp.OSVersion==OS_Eight))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : colText);
+							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP) || (theApp.OSVersion==OS_Eight))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : (Flags & AIRX_Cancelled) ? colDisabled : colText);
 							DrawCell(dc, p_Itinerary->m_Flights.m_Items[row], Attr, rectItem, Selected);
 						}
 					}
@@ -1478,9 +1480,16 @@ void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 						else
 						{
 							*((DWORD*)pData) ^= DisplayFlags[Subitem];
-
 							p_Itinerary->m_IsModified = TRUE;
-							InvalidateItem(Item);
+
+							if (DisplayFlags[Subitem]==AIRX_Cancelled)
+							{
+								InvalidateRow(Item.y);
+							}
+							else
+							{
+								InvalidateItem(Item);
+							}
 						}
 						break;
 					case FMTypeRating:

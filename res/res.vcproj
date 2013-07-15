@@ -180,6 +180,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Cross_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Cross_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Cut_16.png"
 				>
 			</File>
@@ -449,6 +457,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Table_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Upgrade_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Upgrade_32.png"
 				>
 			</File>
 			<File
