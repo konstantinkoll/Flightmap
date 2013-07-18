@@ -339,6 +339,10 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 			wcscat_s(pBuffer, cCount, L"B");
 		if (Flight.Flags & AIRX_LeisureTrip)
 			wcscat_s(pBuffer, cCount, L"L");
+		if (Flight.Flags & AIRX_Upgrade)
+			wcscat_s(pBuffer, cCount, L"U");
+		if (Flight.Flags & AIRX_Cancelled)
+			wcscat_s(pBuffer, cCount, L"C");
 		break;
 	case FMTypeDateTime:
 		if ((((FILETIME*)pData)->dwHighDateTime!=0) || (((FILETIME*)pData)->dwLowDateTime!=0))
@@ -557,6 +561,10 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 			Flight.Flags |= AIRX_BusinessTrip;
 		if (wcschr(pStr, L'L'))
 			Flight.Flags |= AIRX_LeisureTrip;
+		if (wcschr(pStr, L'U'))
+			Flight.Flags |= AIRX_Upgrade;
+		if (wcschr(pStr, L'C'))
+			Flight.Flags |= AIRX_Cancelled;
 		break;
 	case FMTypeDateTime:
 		ScanDateTime(pStr, *((FILETIME*)pData));
@@ -1005,6 +1013,9 @@ void CItinerary::OpenCSV(CString FileName)
 		theApp.AddToRecentList(FileName);
 		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
+		WCHAR Separator[4];
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLIST, Separator, 4);
+
 		try
 		{
 			CString caption;
@@ -1075,7 +1086,7 @@ void CItinerary::OpenCSV(CString FileName)
 				INT Pos = 0;
 				UINT Column = 0;
 				CString resToken;
-				while (Tokenize(caption, resToken, Pos, _T(";")) && (Column<100))
+				while (Tokenize(caption, resToken, Pos, Separator) && (Column<100))
 				{
 					resToken.MakeUpper();
 
@@ -1103,7 +1114,7 @@ void CItinerary::OpenCSV(CString FileName)
 					Pos = 0;
 					Column = 0;
 
-					while (Tokenize(line, resToken, Pos, _T(";")) && (Column<100))
+					while (Tokenize(line, resToken, Pos, Separator) && (Column<100))
 					{
 						if ((INT)Column==RouteMapping)
 						{

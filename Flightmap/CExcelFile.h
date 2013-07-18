@@ -20,6 +20,9 @@ public:
 	void WriteRoute(AIRX_Flight& Flight);
 	void Close();
 
+protected:
+	WCHAR m_Separator[4];
+
 private:
 	BOOL m_IsOpen;
 };

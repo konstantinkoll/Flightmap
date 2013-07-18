@@ -13,6 +13,8 @@
 CExcelFile::CExcelFile()
 {
 	m_IsOpen = FALSE;
+
+	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLIST, m_Separator, 4);
 }
 
 BOOL CExcelFile::Open(LPCTSTR lpszFileName)
@@ -22,7 +24,11 @@ BOOL CExcelFile::Open(LPCTSTR lpszFileName)
 
 	m_IsOpen = CStdioFile::Open(lpszFileName, CFile::modeCreate | CFile::modeWrite);
 	if (m_IsOpen)
-		WriteString(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Carrier;Flight;Codeshares;Equipment;Registration;Aircraft name;Class;Seat;Color;Etix code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time\n"));
+	{
+		CString tmpStr(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Carrier;Flight;Codeshares;Equipment;Registration;Aircraft name;Class;Seat;Color;Etix code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time\n"));
+		tmpStr.Replace(_T(";"), m_Separator);
+		WriteString(tmpStr);
+	}
 
 	return m_IsOpen;
 }
@@ -47,11 +53,11 @@ void CExcelFile::WriteRoute(AIRX_Flight& Flight)
 			tmpBuffer = Buffer;
 		}
 
-		tmpBuffer.Replace(_T(";"), _T("_"));
+		tmpBuffer.Replace(m_Separator, _T("_"));
 		tmpStr += tmpBuffer;
 
 		if (a<FMAttributeCount-1)
-			tmpStr += _T(";");
+			tmpStr += m_Separator;
 	}
 
 	WriteString(tmpStr+_T("\n"));
