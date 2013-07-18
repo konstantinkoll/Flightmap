@@ -39,7 +39,7 @@ protected:
 	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportExcel(CString FileName);
 	void ExportCalendar(CString FileName);
-	BOOL ExportGoogleEarth(CString FileName, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	BOOL ExportGoogleEarth(CString FileName, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportText(CString FileName);
 	void ExportMap(DWORD FilterIndex=3, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void SaveAs(DWORD FilterIndex=1);
@@ -105,6 +105,7 @@ protected:
 
 	afx_msg void OnGoogleEarthOpen();
 	afx_msg void OnGoogleEarthMergeMetro();
+	afx_msg void OnGoogleEarthUseCount();
 	afx_msg void OnGoogleEarthColors();
 	afx_msg void OnGoogleEarthClamp();
 	afx_msg void OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI);

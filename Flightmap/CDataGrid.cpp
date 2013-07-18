@@ -67,7 +67,14 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 			case VK_EXECUTE:
 			case VK_RETURN:
 				DestroyEdit(TRUE);
-				SetFocusItem(CPoint(m_FocusItem.x, m_FocusItem.y+1), FALSE);
+
+				for (INT col=m_FocusItem.x+1; col<FMAttributeCount; col++)
+					if (m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]])
+					{
+						SetFocusItem(CPoint(col, m_FocusItem.y), FALSE);
+						break;
+					}
+
 				return TRUE;
 			case VK_ESCAPE:
 				DestroyEdit(FALSE);
@@ -1366,6 +1373,8 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 			break;
 		case VK_RIGHT:
+		case VK_EXECUTE:
+		case VK_RETURN:
 			for (INT col=item.x+1; col<FMAttributeCount; col++)
 				if (m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]])
 				{
@@ -1383,8 +1392,6 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				item.y = 0;
 			break;
 		case VK_DOWN:
-		case VK_EXECUTE:
-		case VK_RETURN:
 			if (item.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 				item.y++;
 			break;
@@ -1463,7 +1470,7 @@ void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 			SelectItem(Item.y, !IsSelected(Item.y));
 		}
 		else
-			if (p_Itinerary && (Item==m_FocusItem) && (Subitem!=-1))
+			if (p_Itinerary && (Item==m_FocusItem))
 			{
 				if (Item.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 				{
@@ -1478,27 +1485,33 @@ void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 							EditFlight(Item, 2);
 						}
 						else
-						{
-							*((DWORD*)pData) ^= DisplayFlags[Subitem];
-							p_Itinerary->m_IsModified = TRUE;
+							if (Subitem!=-1)
+							{
+								*((DWORD*)pData) ^= DisplayFlags[Subitem];
+								p_Itinerary->m_IsModified = TRUE;
 
-							if (DisplayFlags[Subitem]==AIRX_Cancelled)
-							{
-								InvalidateRow(Item.y);
+								if (DisplayFlags[Subitem]==AIRX_Cancelled)
+								{
+									InvalidateRow(Item.y);
+								}
+								else
+								{
+									InvalidateItem(Item);
+								}
 							}
-							else
-							{
-								InvalidateItem(Item);
-							}
-						}
 						break;
 					case FMTypeRating:
-						*((DWORD*)pData) &= ~(15<<FMAttributes[Attr].DataParameter);
-						*((DWORD*)pData) |= (Subitem<<FMAttributes[Attr].DataParameter);
+						if (Subitem!=-1)
+						{
+							*((DWORD*)pData) &= ~(15<<FMAttributes[Attr].DataParameter);
+							*((DWORD*)pData) |= (Subitem<<FMAttributes[Attr].DataParameter);
 
-						p_Itinerary->m_IsModified = TRUE;
-						InvalidateItem(Item);
+							p_Itinerary->m_IsModified = TRUE;
+							InvalidateItem(Item);
+						}
 						break;
+					default:
+						EditCell();
 					}
 				}
 			}
@@ -1530,20 +1543,11 @@ void CDataGrid::OnLButtonUp(UINT nFlags, CPoint point)
 		}
 }
 
-void CDataGrid::OnLButtonDblClk(UINT nFlags, CPoint point)
+void CDataGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
 	CPoint Item;
 	if (HitTest(point, &Item))
-		if (Item==m_FocusItem)
-			switch (FMAttributes[m_ViewParameters.ColumnOrder[Item.x]].Type)
-			{
-			case FMTypeFlags:
-			case FMTypeRating:
-				OnLButtonDown(nFlags, point);
-				break;
-			default:
-				EditCell();
-			}
+		EditFlight(Item);
 }
 
 void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)

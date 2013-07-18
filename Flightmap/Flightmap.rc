@@ -108,13 +108,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.4"
+            VALUE "FileVersion", "2.1.5"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.4"
+            VALUE "ProductVersion", "2.1.5"
         END
     END
     BLOCK "VarFileInfo"
@@ -663,6 +663,7 @@ BEGIN
     IDM_GOOGLEEARTH_OPEN    "Öffnet den Flugplan\nin Google Earth.\nIn Google Earth ö&ffnen"
     IDM_GOOGLEEARTH_EXPORT  "Exportiert den Flugplan\nals Google Earth Overlay.\nE&xportieren"
     IDM_GOOGLEEARTH_MERGEMETRO "&Metropolitan-Codes zusammenfassen"
+    IDM_GOOGLEEARTH_USECOUNT "Häufige Routen &dicker"
     IDM_GOOGLEEARTH_COLORS  "&Farben benutzen"
     IDM_GOOGLEEARTH_CLAMP   "&Echte Flughöhen"
 END
@@ -1304,6 +1305,7 @@ BEGIN
     IDM_GOOGLEEARTH_OPEN    "Open the itinerary\nin Google Earth.\n&Open in Google Earth"
     IDM_GOOGLEEARTH_EXPORT  "Export the itinerary\nas Google Earth overlay.\nE&xport"
     IDM_GOOGLEEARTH_MERGEMETRO "&Merge metropolitan areas"
+    IDM_GOOGLEEARTH_USECOUNT "&Fatten frequent routes"
     IDM_GOOGLEEARTH_COLORS  "Use colo&rs"
     IDM_GOOGLEEARTH_CLAMP   "&True flight levels"
 END

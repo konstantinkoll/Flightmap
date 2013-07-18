@@ -124,6 +124,7 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_GoogleEarthMergeMetro = GetInt(_T("GoogleEarthMergeMetro"), FALSE);
+	m_GoogleEarthUseCount = GetInt(_T("GoogleEarthUseCount"), FALSE);
 	m_GoogleEarthUseColors = GetInt(_T("GoogleEarthUseColors"), TRUE);
 	m_GoogleEarthClamp = GetInt(_T("GoogleEarthClamp"), FALSE);
 	m_MergeDirections = GetInt(_T("MergeDirections"), TRUE);
@@ -247,6 +248,7 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
 		WriteInt(_T("GoogleEarthMergeMetro"), m_GoogleEarthMergeMetro);
+		WriteInt(_T("GoogleEarthUseCount"), m_GoogleEarthUseCount);
 		WriteInt(_T("GoogleEarthUseColors"), m_GoogleEarthUseColors);
 		WriteInt(_T("GoogleEarthClamp"), m_GoogleEarthClamp);
 		WriteInt(_T("MergeDirections"), m_MergeDirections);

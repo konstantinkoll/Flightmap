@@ -469,6 +469,8 @@ BOOL StatisticsDlg::OnInitDialog()
 	// Filter
 	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);
 	PrepareEquipmentCtrl(&m_wndFilterEquipment, p_Itinerary, FALSE);
+	m_wndFilterCarrier.InsertString(0, _T(""));
+	m_wndFilterEquipment.InsertString(0, _T(""));
 	m_wndFilterRating.SetRating(0);
 
 	// Class

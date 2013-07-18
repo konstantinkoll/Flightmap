@@ -249,7 +249,7 @@ void CMainWnd::ExportCalendar(CString FileName)
 	}
 }
 
-BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, BOOL Selected, BOOL MergeMetro)
+BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors, BOOL Clamp, BOOL Selected, BOOL MergeMetro)
 {
 	CGoogleEarthFile f;
 
@@ -265,7 +265,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseColors, BOOL Clamp, B
 
 		try
 		{
-			f.WriteRoutes(pKitchen, UseColors, Clamp, FALSE);
+			f.WriteRoutes(pKitchen, UseCount, UseColors, Clamp, FALSE);
 
 			CFlightAirports::CPair* pPair = pKitchen->m_FlightAirports.PGetFirstAssoc();
 			while (pPair)
@@ -389,7 +389,7 @@ void CMainWnd::SaveAs(DWORD FilterIndex)
 		if (Ext==_T("ics"))
 			ExportCalendar(dlg.GetPathName());
 		if (Ext==_T("kml"))
-			ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
+			ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp);
 		if (Ext==_T("jpg"))
 			ExportMap(dlg.GetPathName(), ImageFormatJPEG);
 		if (Ext==_T("png"))
@@ -588,6 +588,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_GOOGLEEARTH_OPEN, OnGoogleEarthOpen)
 	ON_COMMAND(IDM_GOOGLEEARTH_EXPORT, OnGoogleEarthExport)
 	ON_COMMAND(IDM_GOOGLEEARTH_MERGEMETRO, OnGoogleEarthMergeMetro)
+	ON_COMMAND(IDM_GOOGLEEARTH_USECOUNT, OnGoogleEarthUseCount)
 	ON_COMMAND(IDM_GOOGLEEARTH_COLORS, OnGoogleEarthColors)
 	ON_COMMAND(IDM_GOOGLEEARTH_CLAMP, OnGoogleEarthClamp)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GOOGLEEARTH_OPEN, IDM_GOOGLEEARTH_CLAMP, OnUpdateGoogleEarthCommands)
@@ -795,6 +796,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddSeparator(TRUE);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_MERGEMETRO);
 		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_GOOGLEEARTH_USECOUNT);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_COLORS);
 		pPopup->AddCheckbox(IDM_GOOGLEEARTH_CLAMP);
 		break;
@@ -1355,13 +1357,18 @@ void CMainWnd::OnGoogleEarthOpen()
 	srand(rand());
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
-	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro))
+	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro))
 		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
 }
 
 void CMainWnd::OnGoogleEarthMergeMetro()
 {
 	theApp.m_GoogleEarthMergeMetro = !theApp.m_GoogleEarthMergeMetro;
+}
+
+void CMainWnd::OnGoogleEarthUseCount()
+{
+	theApp.m_GoogleEarthUseCount = !theApp.m_GoogleEarthUseCount;
 }
 
 void CMainWnd::OnGoogleEarthColors()
@@ -1389,6 +1396,9 @@ void CMainWnd::OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI)
 	case IDM_GOOGLEEARTH_MERGEMETRO:
 		pCmdUI->SetCheck(theApp.m_GoogleEarthMergeMetro);
 		break;
+	case IDM_GOOGLEEARTH_USECOUNT:
+		pCmdUI->SetCheck(theApp.m_GoogleEarthUseCount);
+		break;
 	case IDM_GOOGLEEARTH_COLORS:
 		pCmdUI->SetCheck(theApp.m_GoogleEarthUseColors);
 		break;
@@ -1412,7 +1422,7 @@ void CMainWnd::OnGoogleEarthExport()
 
 	CFileDialog dlg(FALSE, _T(".kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
-		ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro);
+		ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro);
 }
 
 

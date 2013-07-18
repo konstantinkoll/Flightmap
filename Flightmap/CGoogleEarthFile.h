@@ -18,8 +18,8 @@ public:
 
 	BOOL Open(LPCTSTR lpszFileName, LPCTSTR lpszDisplayName=NULL);
 	void WriteAirport(FMAirport* pAirport);
-	void WriteRoute(FlightSegments* pSegments, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL FreeSegments=TRUE);
-	void WriteRoutes(CKitchen* pKitchen, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL FreeKitchen=TRUE);
+	void WriteRoute(FlightSegments* pSegments, UINT MaxRouteCount=0, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL FreeSegments=TRUE);
+	void WriteRoutes(CKitchen* pKitchen, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL FreeKitchen=TRUE);
 	void Close();
 
 private:

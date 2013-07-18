@@ -122,6 +122,7 @@ public:
 	BOOL m_GlobeShowCrosshairs;
 	// Google Earth
 	BOOL m_GoogleEarthMergeMetro;
+	BOOL m_GoogleEarthUseCount;
 	BOOL m_GoogleEarthUseColors;
 	BOOL m_GoogleEarthClamp;
 	// Statistics

@@ -65,7 +65,7 @@ void CGoogleEarthFile::WriteAirport(FMAirport* pAirport)
 	WriteString(_T("</Placemark>\n"));
 }
 
-void CGoogleEarthFile::WriteRoute(FlightSegments* pSegments, BOOL UseColors, BOOL Clamp, BOOL FreeSegments)
+void CGoogleEarthFile::WriteRoute(FlightSegments* pSegments, UINT MaxRouteCount, BOOL UseCount, BOOL UseColors, BOOL Clamp, BOOL FreeSegments)
 {
 	CString tmpStr;
 	CHAR tmpBuf[256];
@@ -88,7 +88,10 @@ void CGoogleEarthFile::WriteRoute(FlightSegments* pSegments, BOOL UseColors, BOO
 	tmpStr.Format(_T("%02X%02X%02X"), (Color>>16) & 0xFF, (Color>>8) & 0xFF, Color & 0xFF);
 	WriteString(tmpStr);
 
-	WriteString(_T("</color><width>2.5</width></LineStyle></Style>\n"));
+	const DOUBLE Width = (UseCount && (MaxRouteCount!=0)) ? (0.5+(4.5*((DOUBLE)pSegments->Route.Count)/((DOUBLE)MaxRouteCount))) : 2.5;
+	tmpStr.Format(_T("</color><width>%.1lf</width></LineStyle></Style>\n"), Width);
+	WriteString(tmpStr);
+
 	WriteString(_T("<LineString>\n"));
 	WriteString(_T("<tessellate>0</tessellate>\n"));
 	WriteString(_T("<altitudeMode>absolute</altitudeMode>\n"));
@@ -111,12 +114,12 @@ void CGoogleEarthFile::WriteRoute(FlightSegments* pSegments, BOOL UseColors, BOO
 		free(pSegments);
 }
 
-void CGoogleEarthFile::WriteRoutes(CKitchen* pKitchen, BOOL UseColors, BOOL Clamp, BOOL FreeKitchen)
+void CGoogleEarthFile::WriteRoutes(CKitchen* pKitchen, BOOL UseCount, BOOL UseColors, BOOL Clamp, BOOL FreeKitchen)
 {
 	CFlightRoutes::CPair* pPair = pKitchen->m_FlightRoutes.PGetFirstAssoc();
 	while (pPair)
 	{
-		WriteRoute(pKitchen->Tesselate(pPair->value), UseColors, Clamp);
+		WriteRoute(pKitchen->Tesselate(pPair->value), pKitchen->m_MaxRouteCount, UseCount, UseColors, Clamp);
 
 		pPair = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair);
 	}
