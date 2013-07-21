@@ -154,6 +154,10 @@ void StatisticsDlg::UpdateStatistics()
 		if (pFlight->Flags & AIRX_Cancelled)
 			continue;
 
+		// Empty lines
+		if ((strlen(pFlight->From.Code)!=3) || (strlen(pFlight->To.Code)!=3))
+			continue;
+
 		// Filter
 		if (strlen(FilterAirport)==3)
 			if ((strcmp(FilterAirport, pFlight->From.Code)!=0) && (strcmp(FilterAirport, pFlight->To.Code)!=0))

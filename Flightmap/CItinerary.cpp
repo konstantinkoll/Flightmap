@@ -88,6 +88,29 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 	}
 }
 
+void CalcFuture(AIRX_Flight& Flight, SYSTEMTIME* pTime)
+{
+	Flight.Flags &= ~AIRX_FutureFlight;
+	if ((Flight.From.Time.dwLowDateTime==0) && (Flight.From.Time.dwHighDateTime==0))
+		return;
+
+	SYSTEMTIME stNow;
+	if (pTime)
+	{
+		stNow = *pTime;
+	}
+	else
+	{
+		GetLocalTime(&stNow);
+	}
+
+	SYSTEMTIME stFlight;
+	FileTimeToSystemTime(&Flight.From.Time, &stFlight);
+
+	if ((stFlight.wYear>stNow.wYear) || ((stFlight.wYear==stNow.wYear) && (stFlight.wMonth>stNow.wMonth)) || ((stFlight.wYear==stNow.wYear) && (stFlight.wMonth==stNow.wMonth) && (stFlight.wDay>stNow.wDay)))
+		Flight.Flags |= AIRX_FutureFlight;
+}
+
 void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 {
 	ASSERT(pEdit);
@@ -853,6 +876,9 @@ void CItinerary::OpenAIRX(CString FileName)
 		theApp.AddToRecentList(FileName);
 		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+
 		try
 		{
 			AIRX_Header Header;
@@ -871,6 +897,8 @@ void CItinerary::OpenAIRX(CString FileName)
 						if (ReadRecord(f, &Flight, sizeof(Flight), Header.FlightRecordSize))
 						{
 							CalcDistance(Flight, TRUE);
+							CalcFuture(Flight, &st);
+
 							if (Flight.AttachmentCount>AIRX_MaxAttachmentCount)
 								Flight.AttachmentCount = AIRX_MaxAttachmentCount;
 
@@ -940,6 +968,9 @@ void CItinerary::OpenAIR(CString FileName)
 		theApp.AddToRecentList(FileName);
 		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
 
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+
 		try
 		{
 			UINT Count = 0;
@@ -984,6 +1015,8 @@ void CItinerary::OpenAIR(CString FileName)
 						ReadUTF7String(f);
 
 					CalcDistance(Flight, TRUE);
+					CalcFuture(Flight, &st);
+
 					m_Flights.AddItem(Flight);
 				}
 			}
@@ -1012,6 +1045,9 @@ void CItinerary::OpenCSV(CString FileName)
 		SetDisplayName(FileName);
 		theApp.AddToRecentList(FileName);
 		SHAddToRecentDocs(SHARD_PATHW, FileName.GetBuffer());
+
+		SYSTEMTIME st;
+		GetLocalTime(&st);
 
 		WCHAR Separator[4];
 		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLIST, Separator, 4);
@@ -1132,6 +1168,8 @@ void CItinerary::OpenCSV(CString FileName)
 					if (route.IsEmpty())
 					{
 						CalcDistance(Flight, TRUE);
+						CalcFuture(Flight);
+
 						m_Flights.AddItem(Flight);
 					}
 					else
@@ -1152,6 +1190,8 @@ void CItinerary::OpenCSV(CString FileName)
 								StringToAttribute(To.GetBuffer(), Flight, 3);
 
 								CalcDistance(Flight, TRUE);
+								CalcFuture(Flight, &st);
+
 								m_Flights.AddItem(Flight);
 							}
 
@@ -1466,6 +1506,7 @@ void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipmen
 	Flight.From.Time = Departure;
 
 	CalcDistance(Flight);
+	CalcFuture(Flight);
 
 	m_Flights.AddItem(Flight);
 }
@@ -1478,9 +1519,14 @@ void CItinerary::InsertFlights(UINT Row, UINT Count, AIRX_Flight* pFlights)
 			const SIZE_T sz = Count*sizeof(AIRX_Flight);
 			memcpy_s(&m_Flights.m_Items[Row], sz, pFlights, sz);
 
+			SYSTEMTIME st;
+			GetLocalTime(&st);
+
 			for (UINT a=Row; a<Row+Count; a++)
 			{
 				CalcDistance(m_Flights.m_Items[a], TRUE);
+				CalcFuture(m_Flights.m_Items[a], &st);
+
 				m_Flights.m_Items[a].AttachmentCount = 0;
 			}
 		}

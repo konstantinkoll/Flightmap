@@ -58,6 +58,7 @@ struct AIRX_Route
 #define AIRX_Selected               1024
 #define AIRX_Cancelled              2048
 #define AIRX_Upgrade                4096
+#define AIRX_FutureFlight           8192
 
 #define AIRX_Unknown                '\0'
 #define AIRX_Economy                'Y'
@@ -239,6 +240,7 @@ private:
 
 void ResetFlight(AIRX_Flight& Flight);
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
+void CalcFuture(AIRX_Flight& Flight, SYSTEMTIME* pTime=NULL);
 void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight=NULL);
 void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);
 void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);

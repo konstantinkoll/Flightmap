@@ -44,6 +44,7 @@ protected:
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 	INT m_SelectionAnchor;
+	WORD m_wDay;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -64,6 +65,7 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

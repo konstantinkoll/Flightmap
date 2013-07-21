@@ -327,32 +327,35 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint i
 			case L'A':
 			case L'a':
 				*((DWORD*)pData) ^= AIRX_AwardFlight;
-
-				p_Itinerary->m_IsModified = TRUE;
-				InvalidateItem(item);
 				break;
 			case L'G':
 			case L'g':
 				*((DWORD*)pData) ^= AIRX_GroundTransportation;
-
-				p_Itinerary->m_IsModified = TRUE;
-				InvalidateItem(item);
 				break;
 			case L'B':
 			case L'b':
 				*((DWORD*)pData) ^= AIRX_BusinessTrip;
-
-				p_Itinerary->m_IsModified = TRUE;
-				InvalidateItem(item);
 				break;
 			case L'L':
 			case L'l':
 				*((DWORD*)pData) ^= AIRX_LeisureTrip;
+				break;
+			case L'U':
+			case L'u':
+				*((DWORD*)pData) ^= AIRX_Upgrade;
+				break;
+			case L'C':
+			case L'c':
+				*((DWORD*)pData) ^= AIRX_Cancelled;
 
 				p_Itinerary->m_IsModified = TRUE;
-				InvalidateItem(item);
-				break;
+				InvalidateRow(item.y);
+			default:
+				return;
 			}
+
+		p_Itinerary->m_IsModified = TRUE;
+		InvalidateItem(item);
 
 		return;
 	case FMTypeRating:
@@ -835,10 +838,17 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 			p_Itinerary->m_IsModified = TRUE;
 			InvalidateItem(item);
 
-			if ((Attr==0) || (Attr==3))
+			switch (Attr)
 			{
+			case 0:
+			case 3:
 				CalcDistance(p_Itinerary->m_Flights.m_Items[item.y], TRUE);
 				InvalidateItem(item.y, 6);
+				break;
+			case 1:
+				CalcFuture(p_Itinerary->m_Flights.m_Items[item.y]);
+				InvalidateRow(item.y);
+				break;
 			}
 		}
 	}
@@ -847,6 +857,8 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 
 BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -922,6 +934,12 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	VERIFY(m_wndHeader.SetOrderArray(FMAttributeCount, m_ViewParameters.ColumnOrder));
 	m_IgnoreHeaderItemChange = FALSE;
 
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	m_wDay = st.wDay;
+
+	SetTimer(1, 1000, NULL);
+
 	m_TooltipCtrl.Create(this);
 
 	LOGFONT lf;
@@ -931,6 +949,41 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ResetScrollbars();
 
 	return 0;
+}
+
+void CDataGrid::OnDestroy()
+{
+	KillTimer(1);
+
+	CWnd::OnDestroy();
+}
+
+void CDataGrid::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent==1)
+	{
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+
+		if (st.wDay!=m_wDay)
+		{
+			m_wDay = st.wDay;
+
+			if (p_Itinerary)
+			{
+				for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+					CalcFuture(p_Itinerary->m_Flights.m_Items[a], &st);
+
+				Invalidate();
+			}
+		}
+	}
+
+	CWnd::OnTimer(nIDEvent);
+
+	// Eat bogus WM_TIMER messages
+	MSG msg;
+	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
 BOOL CDataGrid::OnEraseBkgnd(CDC* /*pDC*/)
@@ -997,7 +1050,7 @@ void CDataGrid::OnPaint()
 						if (row<p_Itinerary->m_Flights.m_ItemCount)
 						{
 							const DWORD Flags = p_Itinerary->m_Flights.m_Items[row].Flags;
-							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP) || (theApp.OSVersion==OS_Eight))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : (Flags & AIRX_Cancelled) ? colDisabled : colText);
+							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP) || (theApp.OSVersion==OS_Eight))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : (Flags & AIRX_Cancelled) ? colDisabled : (Flags & AIRX_FutureFlight) ? 0x008000 : colText);
 							DrawCell(dc, p_Itinerary->m_Flights.m_Items[row], Attr, rectItem, Selected);
 						}
 					}
@@ -1021,7 +1074,6 @@ void CDataGrid::OnPaint()
 				x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]];
 
 			CRect rect(x-2, m_FocusItem.y*m_RowHeight+m_HeaderHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[m_FocusItem.x]]+1, m_FocusItem.y*m_RowHeight+m_HeaderHeight-m_VScrollPos+m_RowHeight+1);
-			//rect.InflateRect(1, 1);
 
 			for (UINT a=0; a<3; a++)
 			{
@@ -1357,10 +1409,17 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					p_Itinerary->m_IsModified = TRUE;
 					InvalidateItem(m_FocusItem);
 
-					if ((Attr==0) || (Attr==3))
+					switch (Attr)
 					{
+					case 0:
+					case 3:
 						CalcDistance(p_Itinerary->m_Flights.m_Items[m_FocusItem.y], TRUE);
 						InvalidateItem(m_FocusItem.y, 6);
+						break;
+					case 1:
+						CalcFuture(p_Itinerary->m_Flights.m_Items[m_FocusItem.y]);
+						InvalidateRow(m_FocusItem.y);
+						break;
 					}
 				}
 			return;
@@ -1746,6 +1805,8 @@ void CDataGrid::OnAddRoute()
 				StringToAttribute(To.GetBuffer(), dlg.m_FlightTemplate, 3);
 
 				CalcDistance(dlg.m_FlightTemplate, TRUE);
+				CalcFuture(dlg.m_FlightTemplate);
+
 				p_Itinerary->m_Flights.AddItem(dlg.m_FlightTemplate);
 
 				Added = TRUE;

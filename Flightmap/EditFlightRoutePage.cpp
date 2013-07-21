@@ -31,6 +31,7 @@ void EditFlightRoutePage::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		CalcDistance(*p_Flight, TRUE);
+		CalcFuture(*p_Flight);
 
 		p_Flight->Flags &= ~AIRX_GroundTransportation;
 		if (((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->GetCheck())

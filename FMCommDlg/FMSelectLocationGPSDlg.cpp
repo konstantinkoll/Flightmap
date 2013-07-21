@@ -88,6 +88,7 @@ BOOL FMSelectLocationGPSDlg::OnInitDialog()
 void FMSelectLocationGPSDlg::OnDestroy()
 {
 	KillTimer(1);
+
 	CDialog::OnDestroy();
 }
 
