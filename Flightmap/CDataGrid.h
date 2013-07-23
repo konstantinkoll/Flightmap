@@ -25,7 +25,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
 	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE);
-	BOOL IsSelected(UINT Idx, BOOL CurrentLineIfNone=FALSE);
+	BOOL IsSelected(UINT Idx);
 	UINT GetCurrentRow();
 
 protected:
@@ -121,5 +121,6 @@ private:
 	void DoCopy(BOOL Cut);
 	void DoDelete();
 	void AutosizeColumn(UINT Attr);
+	void FinishEdit(WCHAR* pStr, CPoint item);
 	void DestroyEdit(BOOL Accept=FALSE);
 };

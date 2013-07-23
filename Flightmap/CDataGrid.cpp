@@ -144,11 +144,11 @@ BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected)
 	return FALSE;
 }
 
-BOOL CDataGrid::IsSelected(UINT Idx, BOOL CurrentLineIfNoneSelected)
+BOOL CDataGrid::IsSelected(UINT Idx)
 {
 	ASSERT(p_Itinerary);
 
-	return (CurrentLineIfNoneSelected && ((INT)Idx==m_FocusItem.y)) ? TRUE : (Idx<p_Itinerary->m_Flights.m_ItemCount) ? (p_Itinerary->m_Flights.m_Items[Idx].Flags & AIRX_Selected ) : FALSE;
+	return (Idx<p_Itinerary->m_Flights.m_ItemCount) ? (p_Itinerary->m_Flights.m_Items[Idx].Flags & AIRX_Selected ) : FALSE;
 }
 
 UINT CDataGrid::GetCurrentRow()
@@ -166,13 +166,24 @@ void CDataGrid::DoCopy(BOOL Cut)
 	{
 		UINT Count = 0;
 
-		// CF_UNICODETEXT
+		// Text erstellen
 		CString Buffer;
-		for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-			if (IsSelected(a, TRUE))
+		if (HasSelection())
+		{
+			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+				if (IsSelected(a))
+				{
+					Buffer += p_Itinerary->Flight2Text(a);
+					Count++;
+				}
+		}
+		else
+			if (m_FocusItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 			{
-				Buffer += p_Itinerary->Flight2Text(a);
-				Count++;
+				WCHAR tmpBuf[256];
+				AttributeToString(p_Itinerary->m_Flights.m_Items[m_FocusItem.y], m_ViewParameters.ColumnOrder[m_FocusItem.x], tmpBuf, 256);
+
+				Buffer = tmpBuf;
 			}
 
 		EmptyClipboard();
@@ -186,20 +197,23 @@ void CDataGrid::DoCopy(BOOL Cut)
 		SetClipboardData(CF_UNICODETEXT, ClipBuffer);
 
 		// CF_FLIGHTS
-		sz = Count*sizeof(AIRX_Flight);
-		ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
-		pBuffer = GlobalLock(ClipBuffer);
+		if (Count)
+		{
+			sz = Count*sizeof(AIRX_Flight);
+			ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+			pBuffer = GlobalLock(ClipBuffer);
 
-		AIRX_Flight* pFlight = (AIRX_Flight*)pBuffer;
-		for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-			if (IsSelected(a, TRUE))
-			{
-				*pFlight = p_Itinerary->m_Flights.m_Items[a];
-				pFlight++;
-			}
+			AIRX_Flight* pFlight = (AIRX_Flight*)pBuffer;
+			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+				if (IsSelected(a))
+				{
+					*pFlight = p_Itinerary->m_Flights.m_Items[a];
+					pFlight++;
+				}
 
-		GlobalUnlock(ClipBuffer);
-		SetClipboardData(theApp.CF_FLIGHTS, ClipBuffer);
+			GlobalUnlock(ClipBuffer);
+			SetClipboardData(theApp.CF_FLIGHTS, ClipBuffer);
+		}
 
 		CloseClipboard();
 
@@ -210,17 +224,17 @@ void CDataGrid::DoCopy(BOOL Cut)
 
 void CDataGrid::DoDelete()
 {
-	if (!HasSelection())
+	if (HasSelection())
 	{
-		p_Itinerary->DeleteFlight(m_FocusItem.y);
+		p_Itinerary->DeleteSelectedFlights();
+
+		m_SelectionAnchor = -1;
+		AdjustLayout();
 	}
 	else
 	{
-		p_Itinerary->DeleteSelectedFlights();
+		FinishEdit(L"", m_FocusItem);
 	}
-
-	m_SelectionAnchor = -1;
-	AdjustLayout();
 }
 
 void CDataGrid::AdjustLayout()
@@ -805,6 +819,31 @@ void CDataGrid::AutosizeColumn(UINT Attr)
 	m_ViewParameters.ColumnWidth[Attr] = theApp.m_ViewParameters.ColumnWidth[Attr] = min(Width, MAXWIDTH);
 }
 
+void CDataGrid::FinishEdit(WCHAR* pStr, CPoint item)
+{
+	ASSERT(p_Itinerary);
+
+	const UINT Attr = m_ViewParameters.ColumnOrder[item.x];
+	StringToAttribute(pStr, p_Itinerary->m_Flights.m_Items[item.y], Attr);
+
+	p_Itinerary->m_IsModified = TRUE;
+	InvalidateItem(item);
+
+	switch (Attr)
+	{
+	case 0:
+	case 3:
+		CalcDistance(p_Itinerary->m_Flights.m_Items[item.y], TRUE);
+		InvalidateItem(item.y, 6);
+		break;
+	case 1:
+		CalcFuture(p_Itinerary->m_Flights.m_Items[item.y]);
+	case 20:
+		InvalidateRow(item.y);
+		break;
+	}
+}
+
 void CDataGrid::DestroyEdit(BOOL Accept)
 {
 	if (p_Edit)
@@ -832,24 +871,7 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 				AdjustLayout();
 			}
 
-			const UINT Attr = m_ViewParameters.ColumnOrder[item.x];
-			StringToAttribute(tmpBuf, p_Itinerary->m_Flights.m_Items[item.y], Attr);
-
-			p_Itinerary->m_IsModified = TRUE;
-			InvalidateItem(item);
-
-			switch (Attr)
-			{
-			case 0:
-			case 3:
-				CalcDistance(p_Itinerary->m_Flights.m_Items[item.y], TRUE);
-				InvalidateItem(item.y, 6);
-				break;
-			case 1:
-				CalcFuture(p_Itinerary->m_Flights.m_Items[item.y]);
-				InvalidateRow(item.y);
-				break;
-			}
+			FinishEdit(tmpBuf, item);
 		}
 	}
 }
@@ -1403,24 +1425,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			else
 				if (m_FocusItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 				{
-					const UINT Attr = m_ViewParameters.ColumnOrder[m_FocusItem.x];
-					StringToAttribute(L"", p_Itinerary->m_Flights.m_Items[m_FocusItem.y], Attr);
-
-					p_Itinerary->m_IsModified = TRUE;
-					InvalidateItem(m_FocusItem);
-
-					switch (Attr)
-					{
-					case 0:
-					case 3:
-						CalcDistance(p_Itinerary->m_Flights.m_Items[m_FocusItem.y], TRUE);
-						InvalidateItem(m_FocusItem.y, 6);
-						break;
-					case 1:
-						CalcFuture(p_Itinerary->m_Flights.m_Items[m_FocusItem.y]);
-						InvalidateRow(m_FocusItem.y);
-						break;
-					}
+					FinishEdit(L"", m_FocusItem);
 				}
 			return;
 		case VK_LEFT:
@@ -1740,14 +1745,38 @@ void CDataGrid::OnPaste()
 
 	if (OpenClipboard())
 	{
+		// CF_FLIGHTS
 		HGLOBAL ClipBuffer = GetClipboardData(theApp.CF_FLIGHTS);
-		LPVOID pBuffer = GlobalLock(ClipBuffer);
+		if (ClipBuffer)
+		{
+			LPVOID pBuffer = GlobalLock(ClipBuffer);
 
-		p_Itinerary->InsertFlights(m_FocusItem.y, (UINT)(GlobalSize(ClipBuffer)/sizeof(AIRX_Flight)), (AIRX_Flight*)pBuffer);
-		p_Itinerary->m_IsModified = TRUE;
-		m_SelectionAnchor = -1;
-		AdjustLayout();
+			p_Itinerary->InsertFlights(m_FocusItem.y, (UINT)(GlobalSize(ClipBuffer)/sizeof(AIRX_Flight)), (AIRX_Flight*)pBuffer);
+			p_Itinerary->m_IsModified = TRUE;
+			m_SelectionAnchor = -1;
+			AdjustLayout();
 
+			goto Finish;
+		}
+
+		// CF_UNICODETEXT
+		ClipBuffer = GetClipboardData(CF_UNICODETEXT);
+		if (ClipBuffer)
+		{
+			LPVOID pBuffer = GlobalLock(ClipBuffer);
+
+			if (m_FocusItem.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
+			{
+				p_Itinerary->AddFlight();
+				m_FocusItem.y = p_Itinerary->m_Flights.m_ItemCount-1;
+
+				AdjustLayout();
+			}
+
+			FinishEdit((WCHAR*)pBuffer, m_FocusItem);
+		}
+
+Finish:
 		GlobalUnlock(ClipBuffer);
 		CloseClipboard();
 	}
@@ -1886,16 +1915,11 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_EDIT_CUT:
-	case IDM_EDIT_COPY:
-	case IDM_EDIT_DELETE:
-		b &= HasSelection(TRUE);
-		break;
 	case IDM_EDIT_PASTE:
 		{
 			COleDataObject dobj;
 			if (dobj.AttachClipboard())
-				b = dobj.IsDataAvailable(theApp.CF_FLIGHTS);
+				b = dobj.IsDataAvailable(theApp.CF_FLIGHTS) || dobj.IsDataAvailable(CF_UNICODETEXT);
 		}
 		break;
 	case IDM_EDIT_FILTER:

@@ -96,6 +96,7 @@ struct AIRX_Flight
 	UINT FlightTime;
 	UINT AttachmentCount;
 	UINT Attachments[AIRX_MaxAttachmentCount];
+	UINT UpgradeVoucher;
 };
 
 struct AIRX_Attachment
@@ -113,7 +114,7 @@ struct AIRX_Attachment
 // Attributes
 //
 
-#define FMAttributeCount        24
+#define FMAttributeCount        25
 
 #define FMTypeUnicodeString     0
 #define FMTypeAnsiString        1
@@ -163,7 +164,8 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 132, FALSE, FALSE, TRUE },					// Flags
 	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 28, RatingBitmapWidth+7, FALSE, TRUE, TRUE },	// Rating
 	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 255, 100, TRUE, TRUE, TRUE },			// Comments
-	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, FlightTime), 0, 100, FALSE, TRUE, TRUE }					// Flight time
+	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, FlightTime), 0, 100, FALSE, TRUE, TRUE },					// Flight time
+	{ IDS_COLUMN24, FMTypeUINT, offsetof(AIRX_Flight, UpgradeVoucher), 0, 70, FALSE, TRUE, TRUE }				// Voucher used
 };
 
 

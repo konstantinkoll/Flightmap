@@ -30,6 +30,7 @@ protected:
 	CMFCMaskedEdit m_wndFare;
 	CMFCMaskedEdit m_wndAwardMiles;
 	CMFCMaskedEdit m_wndStatusMiles;
+	CMFCMaskedEdit m_wndUpgradeVoucher;
 	CMFCMaskedEdit m_wndSeat;
 	CRatingCtrl m_wndRating;
 

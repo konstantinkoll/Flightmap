@@ -153,6 +153,7 @@
 #define IDS_COLUMN21                    1221
 #define IDS_COLUMN22                    1222
 #define IDS_COLUMN23                    1223
+#define IDS_COLUMN24                    1224
 #define IDD_EDITFLIGHT_ROUTE            2000
 #define IDC_FROM_IATA                   2001
 #define IDC_FROM_SELECT                 2002
@@ -189,11 +190,13 @@
 #define IDC_CANCELLED                   2117
 #define IDC_AWARDMILES                  2118
 #define IDC_STATUSMILES                 2119
-#define IDC_AWARDFLIGHT                 2120
-#define IDC_UPGRADE                     2121
-#define IDC_CHOOSECOLOR                 2122
-#define IDC_RATING                      2123
-#define IDC_SEAT                        2124
+#define IDC_UPGRADEVOUCHER              2120
+#define IDC_AWARDFLIGHT                 2121
+#define IDC_UPGRADE                     2122
+#define IDC_CHOOSECOLOR                 2123
+#define IDC_RATING                      2124
+#define IDC_SEAT                        2125
+#define IDC_STATUSMILES2                2126
 #define IDD_EDITFLIGHT_ATTACHMENTS      2200
 #define IDC_FILEVIEW                    2201
 #define IDC_FILESTATUS                  2202

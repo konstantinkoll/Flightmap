@@ -544,14 +544,13 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		*end = L'\0';
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
-	WCHAR tmpStr[16];
 	WCHAR* pWChar;
 	CHAR* pChar;
 
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		wcscpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter+1, (WCHAR*)pStr);
+		wcscpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (WCHAR*)pStr);
 		if ((Attr==2) || (Attr==5) || (Attr==9))
 		{
 			pWChar = (WCHAR*)pData;
@@ -564,7 +563,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		break;
 	case FMTypeAnsiString:
 		pChar = (CHAR*)pData;
-		WideCharToMultiByte(CP_ACP, 0, pStr, -1, pChar, FMAttributes[Attr].DataParameter+1, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pStr, -1, pChar, FMAttributes[Attr].DataParameter, NULL, NULL);
 		while (*pChar)
 		{
 			*pChar = (CHAR)toupper(*pChar);
@@ -596,14 +595,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		ScanTime(pStr, *((UINT*)pData));
 		break;
 	case FMTypeClass:
-		wcscpy_s(tmpStr, 16, pStr);
-		pWChar = tmpStr;
-		while (*pWChar)
-		{
-			*pWChar = (WCHAR)toupper(*pWChar);
-			pWChar++;
-		}
-		*((CHAR*)pData) = (wcscmp(L"Y", tmpStr)==0) ? AIRX_Economy : (wcscmp(L"Y+", tmpStr)==0) ? AIRX_PremiumEconomy : (wcscmp(L"J", tmpStr)==0) ? AIRX_Business : (wcscmp(L"F", tmpStr)==0) ? AIRX_First : ((wcscmp(L"C", tmpStr)==0) || (wcscmp(L"CREW", tmpStr)==0) || (wcscmp(L"CREW/DCM", tmpStr)==0)) ? AIRX_Crew : ((wcscmp(L"H", tmpStr)==0) || (wcscmp(L"CHARTER", tmpStr)==0)) ? AIRX_Charter : AIRX_Unknown;
+		*((CHAR*)pData) = (_wcsicmp(L"Y", pStr)==0) ? AIRX_Economy : (_wcsicmp(L"Y+", pStr)==0) ? AIRX_PremiumEconomy : (_wcsicmp(L"J", pStr)==0) ? AIRX_Business : (_wcsicmp(L"F", pStr)==0) ? AIRX_First : ((_wcsicmp(L"C", pStr)==0) || (_wcsicmp(L"CREW", pStr)==0) || (_wcsicmp(L"CREW/DCM", pStr)==0)) ? AIRX_Crew : ((_wcsicmp(L"H", pStr)==0) || (_wcsicmp(L"CHARTER", pStr)==0)) ? AIRX_Charter : AIRX_Unknown;
 		break;
 	case FMTypeColor:
 		ScanColor(pStr, *((COLORREF*)pData));
@@ -1112,6 +1104,9 @@ void CItinerary::OpenCSV(CString FileName)
 				map[L"RATING"] = 21;
 				map[L"COMMENTS"] = 22;
 				map[L"FLIGHT TIME"] = 23;
+				map[L"VOUCHER"] = 24;
+				map[L"EVOUCHER"] = 24;
+				map[L"UPGRADE VOUCHER"] = 24;
 
 				INT RouteMapping = -1;
 				INT Mapping[100];

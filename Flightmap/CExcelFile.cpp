@@ -25,7 +25,7 @@ BOOL CExcelFile::Open(LPCTSTR lpszFileName)
 	m_IsOpen = CStdioFile::Open(lpszFileName, CFile::modeCreate | CFile::modeWrite);
 	if (m_IsOpen)
 	{
-		CString tmpStr(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Carrier;Flight;Codeshares;Equipment;Registration;Aircraft name;Class;Seat;Color;Etix code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time\n"));
+		CString tmpStr(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Carrier;Flight;Codeshares;Equipment;Registration;Aircraft name;Class;Seat;Color;Etix code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time;Voucher\n"));
 		tmpStr.Replace(_T(";"), m_Separator);
 		WriteString(tmpStr);
 	}

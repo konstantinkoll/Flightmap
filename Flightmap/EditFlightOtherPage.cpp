@@ -37,6 +37,7 @@ void EditFlightOtherPage::DoDataExchange(CDataExchange* pDX)
 	DDX_MaskedText(pDX, IDC_FARE, m_wndFare, 17, p_Flight);
 	DDX_MaskedText(pDX, IDC_AWARDMILES, m_wndAwardMiles, 18, p_Flight);
 	DDX_MaskedText(pDX, IDC_STATUSMILES, m_wndStatusMiles, 19, p_Flight);
+	DDX_MaskedText(pDX, IDC_UPGRADEVOUCHER, m_wndUpgradeVoucher, 24, p_Flight);
 	DDX_MaskedText(pDX, IDC_SEAT, m_wndSeat, 14, p_Flight);
 	DDX_Control(pDX, IDC_RATING, m_wndRating);
 
