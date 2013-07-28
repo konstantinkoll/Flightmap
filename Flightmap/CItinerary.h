@@ -249,6 +249,8 @@ void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOO
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight=NULL);
 
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
+void TimeToString(WCHAR* pBuffer, SIZE_T cCount, UINT Time);
+void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft);
 void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route);
 void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);

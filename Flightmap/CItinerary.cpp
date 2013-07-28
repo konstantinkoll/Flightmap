@@ -309,6 +309,26 @@ void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
 	}
 }
 
+void TimeToString(WCHAR* pBuffer, SIZE_T cCount, UINT Time)
+{
+	swprintf(pBuffer, cCount, L"%02d:%02d", Time/60, Time%60);
+}
+
+void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft)
+{
+	SYSTEMTIME st;
+	FileTimeToSystemTime(&ft, &st);
+
+	if ((st.wHour!=0) || (st.wMinute!=0))
+	{
+		swprintf(pBuffer, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
+	}
+	else
+	{
+		swprintf(pBuffer, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
+	}
+}
+
 void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route)
 {
 	if (Route.DistanceNM==-1)
@@ -334,8 +354,6 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
 	*pBuffer = L'\0';
-
-	SYSTEMTIME st;
 
 	switch (FMAttributes[Attr].Type)
 	{
@@ -369,21 +387,11 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		break;
 	case FMTypeDateTime:
 		if ((((FILETIME*)pData)->dwHighDateTime!=0) || (((FILETIME*)pData)->dwLowDateTime!=0))
-		{
-			FileTimeToSystemTime((FILETIME*)pData, &st);
-			if ((st.wHour!=0) || (st.wMinute!=0))
-			{
-				swprintf(pBuffer, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
-			}
-			else
-			{
-				swprintf(pBuffer, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
-			}
-		}
+			DateTimeToString(pBuffer, cCount, *((FILETIME*)pData));
 		break;
 	case FMTypeTime:
 		if (*((UINT*)pData))
-			swprintf(pBuffer, cCount, L"%02d:%02d", *((UINT*)pData)/60, *((UINT*)pData)%60);
+			TimeToString(pBuffer, cCount, *((UINT*)pData));
 		break;
 	case FMTypeClass:
 		switch (*((CHAR*)pData))

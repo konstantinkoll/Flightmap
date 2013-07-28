@@ -525,6 +525,10 @@ STRINGTABLE
 BEGIN
     IDS_ANNOTATIONS         "Zusatzinformationen"
     IDS_RESOLUTION          "\nAuflösung: %d×%d"
+    IDS_TOOLTIP_UINT        "Minimum: %d\nMaximum: %d\nDurchschnitt: %.2lf"
+    IDS_TOOLTIP_TIME        "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
+    IDS_TOOLTIP_DISTANCE    "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
+    IDS_TOOLTIP_DATETIME    "Erster Flug: %s\nLetzter Flug: %s"
 END
 
 STRINGTABLE 
@@ -1170,6 +1174,10 @@ STRINGTABLE
 BEGIN
     IDS_ANNOTATIONS         "Annotations"
     IDS_RESOLUTION          "\nResolution: %d×%d"
+    IDS_TOOLTIP_UINT        "Minimum: %d\nMaximum: %d\nAverage: %.2lf"
+    IDS_TOOLTIP_TIME        "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
+    IDS_TOOLTIP_DISTANCE    "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
+    IDS_TOOLTIP_DATETIME    "First flight: %s\nLast flight: %s"
 END
 
 STRINGTABLE 

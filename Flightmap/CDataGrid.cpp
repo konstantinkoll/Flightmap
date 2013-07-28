@@ -1299,8 +1299,9 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 						m_TooltipCtrl.Track(point, (CHAR*)&pFlight->To.Code, _T(""));
 					break;
 				default:
-					if (FMAttributes[Attr].Type==FMTypeFlags)
+					switch (FMAttributes[Attr].Type)
 					{
+					case FMTypeFlags:
 						if (m_HotSubitem!=-1)
 						{
 							CString caption;
@@ -1316,27 +1317,130 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 
 							m_TooltipCtrl.Track(point, theApp.m_FlagIcons32.ExtractIcon(m_HotSubitem), NULL, CSize(32, 32), caption, message);
 						}
-					}
-					else
-					{
+					case FMTypeColor:
+						break;
+					case FMTypeUINT:
+					case FMTypeDistance:
+					case FMTypeDateTime:
+					case FMTypeTime:
+						if (IsSelected(m_HotItem.y))
+						{
+							UINT U;
+							UINT UMin = 0xFFFFFFFF;
+							UINT UMax = 0;
+							ULONGLONG USum = 0;
+							FILETIME F;
+							FILETIME FMin = { 0xFFFFFFFF, 0xFFFFFFFF };
+							FILETIME FMax = { 0, 0 };
+							DOUBLE D;
+							DOUBLE DMin = 100000.0;
+							DOUBLE DMax = 0.0;
+							DOUBLE DSum = 0.0;
+							UINT Count = 0;
+
+							for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+								if (IsSelected(a))
+								{
+									const LPVOID pData = (((BYTE*)&p_Itinerary->m_Flights.m_Items[a])+FMAttributes[Attr].Offset);
+
+									switch (FMAttributes[Attr].Type)
+									{
+									case FMTypeUINT:
+									case FMTypeTime:
+										U = *((UINT*)pData);
+										if (U)
+										{
+											if (U<UMin)
+												UMin = U;
+											if (U>UMax)
+												UMax = U;
+											USum += U;
+											Count++;
+										}
+										break;
+									case FMTypeDistance:
+										D = *((DOUBLE*)pData);
+										if (D)
+										{
+											if (D<DMin)
+												DMin = D;
+											if (D>DMax)
+												DMax = D;
+											DSum += D;
+											Count++;
+										}
+										break;
+									case FMTypeDateTime:
+										F = *((FILETIME*)pData);
+										if ((F.dwHighDateTime!=0) || (F.dwLowDateTime!=0))
+										{
+											if ((F.dwHighDateTime<FMin.dwHighDateTime) || ((F.dwHighDateTime==FMin.dwHighDateTime) && (F.dwLowDateTime<FMin.dwLowDateTime)))
+												FMin = F;
+											if ((F.dwHighDateTime>FMax.dwHighDateTime) || ((F.dwHighDateTime==FMax.dwHighDateTime) && (F.dwLowDateTime>FMax.dwLowDateTime)))
+												FMax = F;
+											Count++;
+										}
+										break;
+									}
+								}
+
+							if (Count)
+							{
+								CString msg;
+								CString mask;
+								WCHAR tmpMin[256];
+								WCHAR tmpMax[256];
+								WCHAR tmpAvg[256];
+
+								switch (FMAttributes[Attr].Type)
+								{
+								case FMTypeUINT:
+									ENSURE(mask.LoadString(IDS_TOOLTIP_UINT));
+									msg.Format(mask, UMin, UMax, (DOUBLE)USum/(DOUBLE)Count);
+									break;
+								case FMTypeTime:
+									TimeToString(tmpMin, 256, UMin);
+									TimeToString(tmpMax, 256, UMax);
+									TimeToString(tmpAvg, 256, (UINT)((DOUBLE)USum/(DOUBLE)Count));
+									ENSURE(mask.LoadString(IDS_TOOLTIP_TIME));
+									msg.Format(mask, tmpMin, tmpMax, tmpAvg);
+									break;
+								case FMTypeDistance:
+									DistanceToString(tmpMin, 256, DMin);
+									DistanceToString(tmpMax, 256, DMax);
+									DistanceToString(tmpAvg, 256, DSum/(DOUBLE)Count);
+									ENSURE(mask.LoadString(IDS_TOOLTIP_DISTANCE));
+									msg.Format(mask, tmpMin, tmpMax, tmpAvg);
+									break;
+								case FMTypeDateTime:
+									DateTimeToString(tmpMin, 256, FMin);
+									DateTimeToString(tmpMax, 256, FMax);
+									ENSURE(mask.LoadString(IDS_TOOLTIP_DATETIME));
+									msg.Format(mask, tmpMin, tmpMax);
+									break;
+								}
+
+								CString cpt;
+								ENSURE(cpt.LoadString(IDS_COLUMN0+Attr));
+
+								m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), cpt, msg);
+							}
+							break;
+						}
+					default:
 						AttributeToString(p_Itinerary->m_Flights.m_Items[m_HotItem.y], Attr, tmpStr, 256);
 
 						if (tmpStr[0]!=L'\0')
-							if (FMAttributes[Attr].Type==FMTypeColor)
-							{
+						{
+							CClientDC dc(this);
+
+							CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+							CSize szText = dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr));
+							dc.SelectObject(pOldFont);
+
+							if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-2*MARGIN-1) || (FMAttributes[Attr].Type==FMTypeColor))
 								m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), _T(""), tmpStr);
-							}
-							else
-							{
-								CClientDC dc(this);
-
-								CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-								CSize szText = dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr));
-								dc.SelectObject(pOldFont);
-
-								if (szText.cx>m_ViewParameters.ColumnWidth[Attr]-2*MARGIN-1)
-									m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), _T(""), tmpStr);
-							}
+						}
 					}
 				}
 			}

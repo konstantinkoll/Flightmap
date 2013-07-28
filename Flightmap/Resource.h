@@ -119,6 +119,10 @@
 #define IDS_ROUTESTYLE                  1071
 #define IDS_ANNOTATIONS                 1072
 #define IDS_RESOLUTION                  1073
+#define IDS_TOOLTIP_UINT                1074
+#define IDS_TOOLTIP_TIME                1075
+#define IDS_TOOLTIP_DISTANCE            1076
+#define IDS_TOOLTIP_DATETIME            1077
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
