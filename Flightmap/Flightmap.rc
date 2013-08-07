@@ -440,8 +440,8 @@ BEGIN
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_DRIVENOTREADY       "Der Datenträger ist nicht bereit!"
     IDS_ILLEGALFORMAT       "Die Datei ist beschädigt, hat eine falsche Endung oder ein unbekanntes Format!"
-    IDS_FLIGHTCOUNT_SINGULAR "%d Flugbewegung"
-    IDS_FLIGHTCOUNT_PLURAL  "%d Flugbewegungen"
+    IDS_FLIGHTCOUNT_SINGULAR "%u Flugbewegung"
+    IDS_FLIGHTCOUNT_PLURAL  "%u Flugbewegungen"
     IDS_BACKGROUND_DEFAULT  "Standard"
     IDS_BACKGROUND_NIGHT    "Nacht"
     IDS_BACKGROUND_ABSTRACT "Abstrakt"
@@ -485,8 +485,8 @@ BEGIN
     IDS_SUBITEM_SIZE        "Größe"
     IDS_ATTACHMENT_TOOLARGE "Angehängte Dateien dürfen eine Maximalgröße von 1 MB nicht überschreiten!"
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
-    IDS_FILESTATUS_SINGULAR "%d Datei (%s)"
-    IDS_FILESTATUS_PLURAL   "%d Dateien (%s)"
+    IDS_FILESTATUS_SINGULAR "%u Datei (%s)"
+    IDS_FILESTATUS_PLURAL   "%u Dateien (%s)"
     IDS_INSPECT_METADATA_NONE 
                             "Der Flugplan enthält keine versteckten Metadaten."
     IDS_INSPECT_METADATA_PRESENT 
@@ -494,9 +494,9 @@ BEGIN
     IDS_INSPECT_ATTACHMENTS_NONE 
                             "Der Flugplan enthält keine angehängten Dateien."
     IDS_INSPECT_ATTACHMENTS_SINGULAR 
-                            "Der Flugplan enthält %d angehängte Datei, die einen Speicherplatz von %s belegt."
+                            "Der Flugplan enthält %u angehängte Datei, die einen Speicherplatz von %s belegt."
     IDS_INSPECT_ATTACHMENTS_PLURAL 
-                            "Der Flugplan enthält %d angehängte Dateien, die einen Speicherplatz von %s belegen."
+                            "Der Flugplan enthält %u angehängte Dateien, die einen Speicherplatz von %s belegen."
     IDS_DELETE_CAPTION      "Löschen"
     IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
 END
@@ -513,19 +513,19 @@ BEGIN
     IDS_CLASS_Y             "Economy"
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
-    IDS_MILES               "%d (%d Statusmeilen)"
+    IDS_MILES               "%u (%u Statusmeilen)"
     IDS_FLIGHTS             "Flüge"
     IDS_ROUTE               "Route"
-    IDS_FLIGHTS_SINGULAR    "%d Flug"
-    IDS_FLIGHTS_PLURAL      "%d Flüge"
+    IDS_FLIGHTS_SINGULAR    "%u Flug"
+    IDS_FLIGHTS_PLURAL      "%u Flüge"
     IDS_ROUTESTYLE          "Stil"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ANNOTATIONS         "Zusatzinformationen"
-    IDS_RESOLUTION          "\nAuflösung: %d×%d"
-    IDS_TOOLTIP_UINT        "Minimum: %d\nMaximum: %d\nDurchschnitt: %.2lf"
+    IDS_RESOLUTION          "\nAuflösung: %u×%u"
+    IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nDurchschnitt: %.2lf"
     IDS_TOOLTIP_TIME        "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
     IDS_TOOLTIP_DISTANCE    "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
     IDS_TOOLTIP_DATETIME    "Erster Flug: %s\nLetzter Flug: %s"
@@ -1091,8 +1091,8 @@ BEGIN
     IDS_YOULOOKAT           "You look at %s"
     IDS_DRIVENOTREADY       "The drive is not ready!"
     IDS_ILLEGALFORMAT       "The file is corrupt, damaged or has a wrong extension!"
-    IDS_FLIGHTCOUNT_SINGULAR "%d movement"
-    IDS_FLIGHTCOUNT_PLURAL  "%d movements"
+    IDS_FLIGHTCOUNT_SINGULAR "%u movement"
+    IDS_FLIGHTCOUNT_PLURAL  "%u movements"
     IDS_BACKGROUND_DEFAULT  "Default"
     IDS_BACKGROUND_NIGHT    "City lights"
     IDS_BACKGROUND_ABSTRACT "Abstract"
@@ -1136,16 +1136,16 @@ BEGIN
     IDS_SUBITEM_SIZE        "Size"
     IDS_ATTACHMENT_TOOLARGE "The maximum size for attached files is 1 MB!"
     IDS_ATTACHMENT_TOOMANY  "The maximum number of attached files is 16 per flight!"
-    IDS_FILESTATUS_SINGULAR "%d file (%s)"
-    IDS_FILESTATUS_PLURAL   "%d files (%s)"
+    IDS_FILESTATUS_SINGULAR "%u file (%s)"
+    IDS_FILESTATUS_PLURAL   "%u files (%s)"
     IDS_INSPECT_METADATA_NONE "The itinerary contains no hidden metadata."
     IDS_INSPECT_METADATA_PRESENT 
                             "The itinerary contains hidden metadata like author or title that could reveal personal information."
     IDS_INSPECT_ATTACHMENTS_NONE "The itinerary contains no attached files."
     IDS_INSPECT_ATTACHMENTS_SINGULAR 
-                            "The itinerary contains %d file which occupies %s of memory."
+                            "The itinerary contains %u file which occupies %s of memory."
     IDS_INSPECT_ATTACHMENTS_PLURAL 
-                            "The itinerary contains %d files which occupy %s of memory."
+                            "The itinerary contains %u files which occupy %s of memory."
     IDS_DELETE_CAPTION      "Delete"
     IDS_DELETE_FILE         "Are you sure you want to delete the file?"
 END
@@ -1162,19 +1162,19 @@ BEGIN
     IDS_CLASS_Y             "Economy"
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
-    IDS_MILES               "%d (%d status miles)"
+    IDS_MILES               "%u (%u status miles)"
     IDS_FLIGHTS             "Flights"
     IDS_ROUTE               "Route"
-    IDS_FLIGHTS_SINGULAR    "%d flight"
-    IDS_FLIGHTS_PLURAL      "%d flights"
+    IDS_FLIGHTS_SINGULAR    "%u flight"
+    IDS_FLIGHTS_PLURAL      "%u flights"
     IDS_ROUTESTYLE          "Route style"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_ANNOTATIONS         "Annotations"
-    IDS_RESOLUTION          "\nResolution: %d×%d"
-    IDS_TOOLTIP_UINT        "Minimum: %d\nMaximum: %d\nAverage: %.2lf"
+    IDS_RESOLUTION          "\nResolution: %u×%u"
+    IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nAverage: %.2lf"
     IDS_TOOLTIP_TIME        "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
     IDS_TOOLTIP_DISTANCE    "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
     IDS_TOOLTIP_DATETIME    "First flight: %s\nLast flight: %s"

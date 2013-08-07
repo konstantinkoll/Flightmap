@@ -103,12 +103,12 @@ BOOL FMResolutionDlg::OnInitDialog()
 
 	m_wndWidth.SetValidChars(_T("0123456789"));
 	m_wndWidth.SetLimitText(4);
-	tmpStr.Format(_T("%d"), *p_Width);
+	tmpStr.Format(_T("%u"), *p_Width);
 	m_wndWidth.SetWindowText(tmpStr);
 
 	m_wndHeight.SetValidChars(_T("0123456789"));
 	m_wndHeight.SetLimitText(4);
-	tmpStr.Format(_T("%d"), *p_Height);
+	tmpStr.Format(_T("%u"), *p_Height);
 	m_wndHeight.SetWindowText(tmpStr);
 
 	// Icons
@@ -140,7 +140,7 @@ BOOL FMResolutionDlg::OnInitDialog()
 	for (UINT a=0; a<sizeof(FixedResolutions)/sizeof(FixedResolution); a++)
 	{
 		CString tmpStr;
-		tmpStr.Format(_T("%d×%d"), FixedResolutions[a].Width, FixedResolutions[a].Height);
+		tmpStr.Format(_T("%u×%u"), FixedResolutions[a].Width, FixedResolutions[a].Height);
 
 		lvi.iItem = a;
 		lvi.cColumns = 1;

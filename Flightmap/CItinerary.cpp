@@ -301,11 +301,11 @@ void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
 {
 	if (theApp.m_UseStatuteMiles)
 	{
-		swprintf(pBuffer, cCount, L"%d mi (%d km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
+		swprintf(pBuffer, cCount, L"%u mi (%u km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
 	}
 	else
 	{
-		swprintf(pBuffer, cCount, L"%d nm (%d km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
+		swprintf(pBuffer, cCount, L"%u nm (%u km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
 	}
 }
 
@@ -365,7 +365,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 		break;
 	case FMTypeUINT:
 		if (*((UINT*)pData))
-			swprintf(pBuffer, cCount, L"%d", *((UINT*)pData));
+			swprintf(pBuffer, cCount, L"%u", *((UINT*)pData));
 		break;
 	case FMTypeDistance:
 		if (Flight.Flags & AIRX_DistanceValid)
@@ -429,7 +429,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 
 __forceinline void ScanUINT(LPCWSTR str, UINT& num)
 {
-	swscanf_s(str, L"%d", &num);
+	swscanf_s(str, L"%u", &num);
 }
 
 void ScanDateTime(LPCWSTR str, FILETIME& ft)
@@ -1009,7 +1009,7 @@ void CItinerary::OpenAIR(CString FileName)
 					ReadUTF7UINT(f, Flight.MilesStatus);
 					ReadUTF7FILETIME(f, Flight.To.Time);
 					ReadUTF7CHAR(f, Flight.EtixCode, 7);
-					ReadUTF7WCHAR(f, Flight.Fare, 16);
+					ReadUTF7UINT(f, Flight.Fare);
 
 					for (UINT b=0; b<15; b++)
 						ReadUTF7String(f);

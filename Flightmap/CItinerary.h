@@ -91,7 +91,8 @@ struct AIRX_Flight
 	COLORREF Color;
 	UINT MilesAward;
 	UINT MilesStatus;
-	WCHAR Fare[16];
+	UINT Fare;
+	BYTE Dummy[12];
 	WCHAR Codeshares[64];
 	UINT FlightTime;
 	UINT AttachmentCount;

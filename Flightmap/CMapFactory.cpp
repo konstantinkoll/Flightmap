@@ -537,7 +537,7 @@ Skip:
 			}
 			if (m_Settings.NoteFlightCount)
 			{
-				CString tmpMask(_T("%d"));
+				CString tmpMask(_T("%u"));
 				if (MaxLines>1)
 				{
 					if (!Buf.IsEmpty())

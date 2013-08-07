@@ -2436,7 +2436,7 @@ CDialogMenuResolution::CDialogMenuResolution(CDialogMenuPopup* pParentPopup, UIN
 	: CDialogMenuCommand(pParentPopup, CmdID, IconID, CDMB_SMALL)
 {
 	CString tmpStr;
-	tmpStr.Format(_T("%s (%d×%d)..."), m_Caption, *pWidth, *pHeight);
+	tmpStr.Format(_T("%s (%u×%u)..."), m_Caption, *pWidth, *pHeight);
 	m_Caption = tmpStr;
 
 	p_Width = pWidth;

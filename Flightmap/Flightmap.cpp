@@ -172,7 +172,7 @@ BOOL CFlightmapApp::InitInstance()
 	for (UINT a=0; a<10; a++)
 	{
 		CString tmpStr;
-		tmpStr.Format(_T("RecentFile%d"), a);
+		tmpStr.Format(_T("RecentFile%u"), a);
 		
 		CString FileName = GetString(tmpStr);
 		if (!FileName.IsEmpty())
@@ -289,7 +289,7 @@ INT CFlightmapApp::ExitInstance()
 		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)
 		{
 			CString tmpStr;
-			tmpStr.Format(_T("RecentFile%d"), a);
+			tmpStr.Format(_T("RecentFile%u"), a);
 			WriteString(tmpStr, m_RecentFiles.GetNext(p));
 		}
 	}

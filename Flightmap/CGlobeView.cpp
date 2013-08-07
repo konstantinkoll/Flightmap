@@ -247,7 +247,7 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 		tmpStr.Format(Cnt==1 ? m_FlightCount_Singular : m_FlightCount_Plural, Cnt);
 		wcscpy_s(ga.CountStringLarge, 64, tmpStr.GetBuffer());
 
-		tmpStr.Format(_T("%d"), Cnt);
+		tmpStr.Format(_T("%u"), Cnt);
 		wcscpy_s(ga.CountStringSmall, 16, tmpStr.GetBuffer());
 
 		m_Airports.AddItem(ga);

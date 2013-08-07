@@ -119,6 +119,7 @@ void StatisticsDlg::UpdateStatistics()
 	LONG FlightTime = 0;
 	AIRX_Route Longest = { "", "", -1.0 };
 	AIRX_Route Shortest = { "", "", -1.0 };
+	ULONG Spent = 0;
 	ULONG Miles[2][2] = {{ 0, 0 }, { 0, 0 }};
 	UINT FlightsByClass[10] = { 0 };
 	DOUBLE DistanceNMByClass[10] = { 0.0 };
@@ -238,6 +239,8 @@ void StatisticsDlg::UpdateStatistics()
 				DistanceNMByClass[Class] += pFlight->DistanceNM;
 		}
 
+		Spent += pFlight->Fare;
+
 		if ((strlen(pFlight->From.Code)==3) && (strlen(pFlight->To.Code)==3))
 		{
 			BOOL Swap = (strcmp(pFlight->To.Code, pFlight->From.Code)<0) && theApp.m_MergeDirections;
@@ -278,7 +281,7 @@ void StatisticsDlg::UpdateStatistics()
 	DistanceToString(tmpBuf, 256, DistanceNM);
 	GetDlgItem(IDC_TOTALDISTANCE)->SetWindowText(tmpBuf);
 
-	swprintf(tmpBuf, 256, L"%dd %02d:%02d", FlightTime/1440, (FlightTime/60)%24 ,FlightTime%60);
+	swprintf(tmpBuf, 256, L"%ud %02u:%02u", FlightTime/1440, (FlightTime/60)%24 ,FlightTime%60);
 	GetDlgItem(IDC_TOTALFLIGHTTIME)->SetWindowText(FlightTime ? tmpBuf : L"—");
 
 	RouteToString(tmpBuf, 256, Longest);
@@ -286,6 +289,9 @@ void StatisticsDlg::UpdateStatistics()
 
 	RouteToString(tmpBuf, 256, Shortest);
 	GetDlgItem(IDC_SHORTESTFLIGHT)->SetWindowText(tmpBuf);
+
+	swprintf(tmpBuf, 256, L"%lu", Spent);
+	GetDlgItem(IDC_TOTALMONEYSPENT)->SetWindowText(Spent ? tmpBuf : L"—");
 
 	MilesToString(tmpStr, Miles[0][0], Miles[0][1]);
 	GetDlgItem(IDC_TOTALMILESEARNED)->SetWindowText(tmpStr);
