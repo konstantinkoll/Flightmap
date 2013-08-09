@@ -1988,6 +1988,19 @@ void CDataGrid::OnFilter()
 			if (pFlight->Flags>>28<dlg.m_Filter.Rating)
 				continue;
 
+			if (dlg.m_Filter.DepartureMonth | dlg.m_Filter.DepartureYear)
+			{
+				SYSTEMTIME st;
+				FileTimeToSystemTime(&pFlight->From.Time, &st);
+
+				if (dlg.m_Filter.DepartureMonth)
+					if (dlg.m_Filter.DepartureMonth!=st.wMonth)
+						continue;
+				if (dlg.m_Filter.DepartureYear)
+					if (dlg.m_Filter.DepartureYear!=st.wYear)
+						continue;
+			}
+
 			pItinerary->AddFlight(p_Itinerary, a);
 		}
 

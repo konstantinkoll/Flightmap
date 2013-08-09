@@ -24,6 +24,7 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILTER_CARRIER, m_wndFilterCarrier);
 	DDX_Control(pDX, IDC_FILTER_EQUIPMENT, m_wndFilterEquipment);
 	DDX_Control(pDX, IDC_FILTER_RATING, m_wndFilterRating);
+	DDX_Control(pDX, IDC_FILTER_MONTH, m_wndFilterMonth);
 	DDX_Control(pDX, IDC_VIEWATTRIBUTES, m_wndSortAttributes);
 	DDX_Control(pDX, IDC_ASCENDING, m_wndAscending);
 
@@ -39,6 +40,14 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 		m_Filter.Business = ((CButton*)GetDlgItem(IDC_FILTER_BUSINESSTRIP))->GetCheck();
 		m_Filter.Leisure = ((CButton*)GetDlgItem(IDC_FILTER_LEISURETRIP))->GetCheck();
 		m_Filter.Rating = m_wndFilterRating.GetRating();
+
+		m_Filter.DepartureMonth = m_wndFilterMonth.GetCurSel();
+		if (m_Filter.DepartureMonth==CB_ERR)
+			m_Filter.DepartureMonth = 0;
+
+		GetDlgItem(IDC_FILTER_YEAR)->GetWindowText(tmpStr);
+		if (swscanf_s(tmpStr.GetBuffer(), L"%u", &m_Filter.DepartureYear)!=1)
+			m_Filter.DepartureYear = 0;
 
 		INT Idx = m_wndSortAttributes.GetNextItem(-1, LVIS_SELECTED);
 		m_Filter.SortBy = (Idx==-1) ? -1 : (INT)m_wndSortAttributes.GetItemData(Idx);

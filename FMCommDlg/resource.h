@@ -41,6 +41,8 @@
 #define IDC_COLOR_BLUEACCEL             728
 #define IDC_COLOR_SOLID_LEFT            730
 #define IDC_COLOR_SOLID_RIGHT           731
+#define IDC_COMBO1                      2047
+#define IDC_EDIT1                       2048
 #define IDB_FLIGHTMAP_128               20000
 #define IDB_FLIGHTMAP_256               20001
 #define IDB_BACKDROP_BLUE               20002
@@ -184,8 +186,10 @@
 #define IDC_LIST_CARRIER                22018
 #define IDC_LIST_EQUIPMENT              22019
 #define IDD_FILTER                      22100
-#define IDC_ASCENDING                   22101
-#define IDC_DESCENDING                  22102
+#define IDC_FILTER_MONTH                22101
+#define IDC_FILTER_YEAR                 22102
+#define IDC_ASCENDING                   22103
+#define IDC_DESCENDING                  22104
 
 // Next default values for new objects
 // 
@@ -193,7 +197,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2012
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2047
+#define _APS_NEXT_CONTROL_VALUE         2049
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

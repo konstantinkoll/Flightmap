@@ -20,6 +20,8 @@ struct FlightFilter
 	UCHAR Rating;
 	INT SortBy;
 	BOOL Descending;
+	UINT DepartureMonth;
+	UINT DepartureYear;
 };
 
 class FilterDlg : public CDialog
@@ -38,6 +40,7 @@ protected:
 	CComboBox m_wndFilterCarrier;
 	CComboBox m_wndFilterEquipment;
 	CRatingCtrl m_wndFilterRating;
+	CComboBox m_wndFilterMonth;
 	CListCtrl m_wndSortAttributes;
 	CButton m_wndAscending;
 
