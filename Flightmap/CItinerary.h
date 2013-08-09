@@ -92,7 +92,7 @@ struct AIRX_Flight
 	UINT MilesAward;
 	UINT MilesStatus;
 	UINT Fare;
-	BYTE Dummy[12];
+	BYTE Dummy[28];
 	WCHAR Codeshares[64];
 	UINT FlightTime;
 	UINT AttachmentCount;
