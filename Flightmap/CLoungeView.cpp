@@ -96,7 +96,7 @@ INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 
-	if (st.wMonth!=12)
+	if (st.wMonth==12)
 		m_pSanta = new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG"));
 
 	return 0;
