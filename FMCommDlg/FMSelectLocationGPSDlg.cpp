@@ -112,7 +112,7 @@ void FMSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	CHAR Buffer[16];
 	FMGeoCoordinateToString(m_Location.Latitude, Buffer, 16, TRUE, FALSE);
 	GetDlgItem(IDC_LATITUDE)->SetWindowText(CString(Buffer));
-	FMGeoCoordinateToString(m_Location.Longitude, Buffer, 16, TRUE, FALSE);
+	FMGeoCoordinateToString(m_Location.Longitude, Buffer, 16, FALSE, FALSE);
 	GetDlgItem(IDC_LONGITUDE)->SetWindowText(CString(Buffer));
 
 	*pResult = 0;
