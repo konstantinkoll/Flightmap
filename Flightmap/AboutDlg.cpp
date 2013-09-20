@@ -21,12 +21,14 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP_128, _T("PNG"), AfxGetResourceHandle()));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
+	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
 }
 
 void AboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	FMDialog::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_VERSIONINFO, m_wndVersionInfo);
 	DDX_Radio(pDX, IDC_NAUTICALMILES, m_UseStatuteMiles);
 	DDX_Check(pDX, IDC_BGIMAGES, m_UseBgImages);
 
@@ -76,11 +78,41 @@ BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
 	ON_BN_CLICKED(IDD_3DSETTINGS, On3DSettings)
 	ON_BN_CLICKED(IDC_EXCLUSIVE, OnExclusive)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
+	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
 END_MESSAGE_MAP()
 
 BOOL AboutDlg::OnInitDialog()
 {
 	FMDialog::OnInitDialog();
+
+	// Version
+#ifdef _M_X64
+#define ISET _T(" (x64)")
+#else
+#define ISET _T(" (x32)")
+#endif
+
+	TIMESTAMP;
+
+	CString caption;
+	m_wndVersionInfo.GetWindowText(caption);
+	CString text;
+	text.Format(caption, m_Version+ISET, Timestamp, m_Copyright);
+	m_wndVersionInfo.SetWindowTextW(text);
+
+	CFont font;
+	font.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
+	m_wndVersionInfo.SetFont(&font);
+	font.Detach();
+
+	CRect rectWnd;
+	m_wndVersionInfo.GetWindowRect(&rectWnd);
+	ScreenToClient(&rectWnd);
+	rectWnd.left = 148;
+	rectWnd.top = 75;
+	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Lizenz
 	CheckLicenseKey();
@@ -93,41 +125,19 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
 	CRect r(rect);
-	r.top = 15;
+	r.top = 23;
 	r.left = 148;
 
-	CFont font1;
-	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
+	CFont font;
+	font.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, theApp.GetDefaultFontFace());
-	CFont* pOldFont = dc.SelectObject(&font1);
+		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
+	CFont* pOldFont = dc.SelectObject(&font);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(_T("Flightmap"), r, fmt);
-	r.top += 45;
-
-	CFont font2;
-	font2.CreateFont(24, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, theApp.GetDefaultFontFace());
-	dc.SelectObject(&font2);
-
-#ifdef _M_X64
-#define ISET _T(" (x64)")
-#else
-#define ISET _T(" (x32)")
-#endif
-
-	dc.DrawText(_T("Version ")+m_Version+ISET, r, fmt);
-	r.top += 25;
-
-	TIMESTAMP;
-	dc.DrawText(_T("Built ")+Timestamp, r, fmt);
-	r.top += 25;
-
-	dc.DrawText(m_Copyright, r, fmt);
 
 	dc.SelectObject(pOldFont);
 }
@@ -158,4 +168,14 @@ void AboutDlg::OnEnableAutoUpdate()
 void AboutDlg::OnUpdateNow()
 {
 	FMCheckForUpdate(TRUE, this);
+}
+
+void AboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	CString url;
+	ENSURE(url.LoadString(IDS_ABOUTURL));
+
+	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+
+	*pResult = 0;
 }

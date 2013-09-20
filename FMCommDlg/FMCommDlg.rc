@@ -118,6 +118,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,218,261,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,275,261,50,14,WS_GROUP
+    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt %s. %s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,318,80
     CONTROL         "Maßeinheiten",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,66
     LTEXT           "Entfernungsangaben werden immer in Kilometern (km) angezeigt, und zusätzlich in Meilen:",IDC_STATIC,14,103,142,25
     CONTROL         "&Nautische Meilen (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,142,10
@@ -611,6 +613,7 @@ BEGIN
     IDS_PURCHASEURL         "http://flightmap.net/purchase"
     IDS_UPDATEURL           "http://flightmap.net/download"
     IDS_EXCLUSIVEURL        "http://flightmap.net/exclusive"
+    IDS_ABOUTURL            "http://liquidfolders.net/start/de/"
     IDS_ERROR               "Fehler"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!\nLizenzschlüssel von Flightmap 1.x können leider nicht weiterbenutzt werden."
     IDS_LICFILEFILTER       "Lizenzdateien"
@@ -619,11 +622,11 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
-    IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AUTOMATIC           "Automatisch wählen"
@@ -710,6 +713,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,218,261,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,275,261,50,14,WS_GROUP
+    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s. %s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,318,80
     CONTROL         "Distance units",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,66
     LTEXT           "Distances are always displayed in kilometers (km), and additionally in miles:",IDC_STATIC,14,103,142,25
     CONTROL         "&Nautical miles (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,142,10
@@ -1203,6 +1208,7 @@ BEGIN
     IDS_PURCHASEURL         "http://flightmap.net/purchase"
     IDS_UPDATEURL           "http://flightmap.net/download"
     IDS_EXCLUSIVEURL        "http://flightmap.net/exclusive"
+    IDS_ABOUTURL            "http://liquidfolders.net/start/en/"
     IDS_ERROR               "Error"
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!\nLicense keys for Flightmap 1.x have expired."
     IDS_LICFILEFILTER       "License files"
@@ -1211,11 +1217,11 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u of %u"
     IDS_XOFY_PLURAL         "%u of %u"
     IDS_UPDATE              "Update"
-    IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
     IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
     IDS_AUTOMATIC           "Choose automatically"

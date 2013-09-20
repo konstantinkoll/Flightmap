@@ -28,9 +28,11 @@ protected:
 	afx_msg void On3DSettings();
 	afx_msg void OnExclusive();
 	afx_msg void OnUpdateNow();
+	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CString m_Version;
 	CString m_Copyright;
+	CWnd m_wndVersionInfo;
 };
