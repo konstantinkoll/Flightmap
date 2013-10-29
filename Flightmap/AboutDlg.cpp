@@ -6,6 +6,7 @@
 #include "AboutDlg.h"
 #include "ThreeDSettingsDlg.h"
 #include "Flightmap.h"
+#include <wininet.h>
 
 
 // AboutDlg
@@ -72,8 +73,18 @@ void AboutDlg::CheckLicenseKey(FMLicense* License)
 	GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
 }
 
+void AboutDlg::CheckInternetConnection()
+{
+	DWORD Flags;
+	BOOL Connected = InternetGetConnectedState(&Flags, 0);
+
+	GetDlgItem(IDC_EXCLUSIVE)->EnableWindow(Connected);
+	GetDlgItem(IDC_UPDATENOW)->EnableWindow(Connected);
+}
+
 
 BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
+	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDD_3DSETTINGS, On3DSettings)
 	ON_BN_CLICKED(IDC_EXCLUSIVE, OnExclusive)
@@ -117,7 +128,30 @@ BOOL AboutDlg::OnInitDialog()
 	// Lizenz
 	CheckLicenseKey();
 
+	// Internet
+	CheckInternetConnection();
+	SetTimer(1, 1000, NULL);
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void AboutDlg::OnDestroy()
+{
+	KillTimer(1);
+
+	FMDialog::OnDestroy();
+}
+
+void AboutDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent==1)
+		CheckInternetConnection();
+
+	FMDialog::OnTimer(nIDEvent);
+
+	// Eat bogus WM_TIMER messages
+	MSG msg;
+	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
 void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
