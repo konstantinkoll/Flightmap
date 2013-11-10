@@ -17,6 +17,7 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 {
 	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
 	m_UseBgImages = theApp.m_UseBgImages;
+	m_CaptionTop = 0;
 
 	m_pLogo = new CGdiPlusBitmapResource();
 	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP_128, _T("PNG"), AfxGetResourceHandle()));
@@ -109,9 +110,9 @@ BOOL AboutDlg::OnInitDialog()
 	m_wndVersionInfo.GetWindowText(caption);
 	CString text;
 	text.Format(caption, m_Version+ISET, Timestamp, m_Copyright);
-	m_wndVersionInfo.SetWindowTextW(text);
+	m_wndVersionInfo.SetWindowText(text);
 
-	CFont font;
+/*	CFont font;
 	font.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
@@ -123,6 +124,33 @@ BOOL AboutDlg::OnInitDialog()
 	ScreenToClient(&rectWnd);
 	rectWnd.left = 148;
 	rectWnd.top = 75;
+	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+*/
+
+	m_CaptionFont.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
+
+	m_VersionFont.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
+	m_wndVersionInfo.SetFont(&m_VersionFont);
+
+	CDC* dc = GetDC();
+	CFont* pOldFont = dc->SelectObject(&m_CaptionFont);
+	INT HeightCaption = dc->GetTextExtent(_T("Wy")).cy+8;
+	dc->SelectObject(&m_VersionFont);
+	INT HeightVersion = dc->GetTextExtent(_T("Wy")).cy*3;
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
+
+	m_CaptionTop = (128+(FMGetApp()->OSVersion==OS_XP ? 24 : 16)-HeightCaption-HeightVersion)/2;
+
+	CRect rectWnd;
+	m_wndVersionInfo.GetWindowRect(&rectWnd);
+	ScreenToClient(&rectWnd);
+	rectWnd.left = 148;
+	rectWnd.top = m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Lizenz
@@ -159,14 +187,10 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
 	CRect r(rect);
-	r.top = 23;
+	r.top = m_CaptionTop;
 	r.left = 148;
 
-	CFont font;
-	font.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
-	CFont* pOldFont = dc.SelectObject(&font);
+	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(0x000000);

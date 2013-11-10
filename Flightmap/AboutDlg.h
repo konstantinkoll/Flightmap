@@ -36,6 +36,9 @@ protected:
 private:
 	void CheckInternetConnection();
 
+	CFont m_CaptionFont;
+	CFont m_VersionFont;
+	INT m_CaptionTop;
 	CString m_Version;
 	CString m_Copyright;
 	CWnd m_wndVersionInfo;
