@@ -300,11 +300,20 @@ BOOL FMTooltip::OnEraseBkgnd(CDC* /*pDC*/)
 
 void FMTooltip::OnPaint()
 {
-	CPaintDC dc(this);
+	CPaintDC pDC(this);
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CRect rect;
-	GetClientRect(rect);
+	CBitmap buffer;
+	buffer.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+
+	CRect rect(rectClient);
 	rect.DeflateRect(1, 1);
 
 	// Background
@@ -330,35 +339,34 @@ void FMTooltip::OnPaint()
 
 	CPen penLine(PS_SOLID, 1, clrLine);
 	CPen* pOldPen = dc.SelectObject(&penLine);
-	rect.InflateRect(1, 1);
 
 	if (m_Themed && !m_Flat)
 	{
 		const INT nOffset = 2;
 
-		dc.MoveTo(rect.left+nOffset, rect.top);
-		dc.LineTo(rect.right-nOffset-1, rect.top);
+		dc.MoveTo(rectClient.left+nOffset, rectClient.top);
+		dc.LineTo(rectClient.right-nOffset-1, rectClient.top);
 
-		dc.LineTo(rect.right-1, rect.top+nOffset);
-		dc.LineTo(rect.right-1, rect.bottom-1-nOffset);
+		dc.LineTo(rectClient.right-1, rectClient.top+nOffset);
+		dc.LineTo(rectClient.right-1, rectClient.bottom-1-nOffset);
 
-		dc.LineTo(rect.right-nOffset-1, rect.bottom-1);
-		dc.LineTo(rect.left+nOffset, rect.bottom-1);
+		dc.LineTo(rectClient.right-nOffset-1, rectClient.bottom-1);
+		dc.LineTo(rectClient.left+nOffset, rectClient.bottom-1);
 
-		dc.LineTo(rect.left, rect.bottom-1-nOffset);
-		dc.LineTo(rect.left, rect.top+nOffset);
+		dc.LineTo(rectClient.left, rectClient.bottom-1-nOffset);
+		dc.LineTo(rectClient.left, rectClient.top+nOffset);
 
-		dc.LineTo(rect.left+nOffset, rect.top);
+		dc.LineTo(rectClient.left+nOffset, rectClient.top);
 	}
 	else
 	{
-		dc.Draw3dRect(rect, clrLine, clrLine);
+		dc.Draw3dRect(rectClient, clrLine, clrLine);
 	}
 
 	dc.SelectObject(pOldPen);
 
 	// Interior
-	rect.DeflateRect(AFX_TEXT_MARGIN+3, AFX_TEXT_MARGIN+2);
+	rect.DeflateRect(AFX_TEXT_MARGIN+2, AFX_TEXT_MARGIN+1);
 	dc.SetTextColor(clrText);
 
 	if (m_Bitmap)
@@ -419,4 +427,7 @@ void FMTooltip::OnPaint()
 
 		dc.SelectObject(pOldFont);
 	}
+
+	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
 }
