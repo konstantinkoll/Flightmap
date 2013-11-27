@@ -218,14 +218,14 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,293,207,50,14,WS_GROUP
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 349, 228
+IDD_REGISTER DIALOGEX 0, 0, 349, 231
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Unregistrierte Version"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,7,209,50,12
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,209,100,12
-    DEFPUSHBUTTON   "Fortsetzen",IDOK,292,209,50,12
+    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,7,210,50,14
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,210,100,14
+    DEFPUSHBUTTON   "Fortsetzen",IDOK,292,210,50,14
     LTEXT           "Dieses ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile!",IDC_TEXTROW1,7,7,335,8
     LTEXT           "- Die von Flightmap erzeugten Karten haben keine magentafarbenen Balken mehr:",IDC_TEXTROW2,7,19,335,8
     CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
@@ -490,7 +490,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 342
         TOPMARGIN, 7
-        BOTTOMMARGIN, 221
+        BOTTOMMARGIN, 224
     END
 
     IDD_3DSETTINGS, DIALOG
@@ -813,14 +813,14 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,293,207,50,14,WS_GROUP
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 327, 228
+IDD_REGISTER DIALOGEX 0, 0, 327, 231
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Unregistered version"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&Purchase",IDC_PURCHASE,7,209,50,12
-    PUSHBUTTON      "&Enter license key...",IDC_ENTERLICENSEKEY,64,209,80,12
-    DEFPUSHBUTTON   "Continue",IDOK,270,209,50,12
+    PUSHBUTTON      "&Purchase",IDC_PURCHASE,7,210,50,14
+    PUSHBUTTON      "&Enter license key...",IDC_ENTERLICENSEKEY,64,210,80,14
+    DEFPUSHBUTTON   "Continue",IDOK,270,210,50,14
     LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits!",IDC_TEXTROW1,7,7,313,8
     LTEXT           "- Most importantly, maps created by Flightmap won't be defaced by magenta bars any more:",IDC_TEXTROW2,7,19,313,8
     CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
@@ -1083,9 +1083,8 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 320
-        VERTGUIDE, 182
         TOPMARGIN, 7
-        BOTTOMMARGIN, 221
+        BOTTOMMARGIN, 224
     END
 
     IDD_3DSETTINGS, DIALOG
