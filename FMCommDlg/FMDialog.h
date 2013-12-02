@@ -42,7 +42,6 @@ public:
 	UINT GetDesign() const;
 
 protected:
-	CGdiPlusBitmapResource* m_pLogo;
 	UINT m_nIDTemplate;
 	UINT m_Design;
 

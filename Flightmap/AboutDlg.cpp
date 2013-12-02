@@ -19,8 +19,11 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	m_UseBgImages = theApp.m_UseBgImages;
 	m_CaptionTop = 0;
 
-	m_pLogo = new CGdiPlusBitmapResource();
-	ENSURE(m_pLogo->Load(IDB_FLIGHTMAP_128, _T("PNG"), AfxGetResourceHandle()));
+	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP_128, _T("PNG"));
+
+	SYSTEMTIME st;
+	GetSystemTime(&st);
+	m_pSanta = (st.wMonth==12) ? new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG")) : NULL;
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -85,6 +88,7 @@ void AboutDlg::CheckInternetConnection()
 
 
 BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
+	ON_WM_DESTROY()
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDD_3DSETTINGS, On3DSettings)
@@ -112,21 +116,7 @@ BOOL AboutDlg::OnInitDialog()
 	text.Format(caption, m_Version+ISET, Timestamp, m_Copyright);
 	m_wndVersionInfo.SetWindowText(text);
 
-/*	CFont font;
-	font.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
-	m_wndVersionInfo.SetFont(&font);
-	font.Detach();
-
-	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(&rectWnd);
-	ScreenToClient(&rectWnd);
-	rectWnd.left = 148;
-	rectWnd.top = 75;
-	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-*/
-
+	// Hintergrund
 	m_CaptionFont.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
@@ -144,12 +134,12 @@ BOOL AboutDlg::OnInitDialog()
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
-	m_CaptionTop = (128+(FMGetApp()->OSVersion==OS_XP ? 24 : 16)-HeightCaption-HeightVersion)/2;
+	m_CaptionTop = (128+(FMGetApp()->OSVersion==OS_XP ? 20 : 12)-HeightCaption-HeightVersion)/2;
 
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(&rectWnd);
 	ScreenToClient(&rectWnd);
-	rectWnd.left = 148;
+	rectWnd.left = m_pSanta ? 178 : 148;
 	rectWnd.top = m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
@@ -166,6 +156,11 @@ BOOL AboutDlg::OnInitDialog()
 void AboutDlg::OnDestroy()
 {
 	KillTimer(1);
+
+	if (m_pLogo)
+		delete m_pLogo;
+	if (m_pSanta)
+		delete m_pSanta;
 
 	FMDialog::OnDestroy();
 }
@@ -186,9 +181,13 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
+	g.DrawImage(m_pLogo->m_pBitmap, m_pSanta ? 39 : 9, 12, 128, 128);
+	if (m_pSanta)
+		g.DrawImage(m_pSanta->m_pBitmap, -6, 2);
+
 	CRect r(rect);
 	r.top = m_CaptionTop;
-	r.left = 148;
+	r.left = m_pSanta ? 178 : 148;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 

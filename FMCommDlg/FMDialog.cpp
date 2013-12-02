@@ -18,7 +18,7 @@ FMDialog::FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd)
 	m_Design = Design;
 	hIconS = hIconL = NULL;
 	hBackgroundBrush = NULL;
-	m_pBackdrop = m_pLogo = NULL;
+	m_pBackdrop = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
 }
 
@@ -107,10 +107,6 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
 		}
 	}
-
-	// Logo
-	if (m_pLogo)
-		g.DrawImage(m_pLogo->m_pBitmap, 9, 14, m_pLogo->m_pBitmap->GetWidth(), m_pLogo->m_pBitmap->GetHeight());
 }
 
 void FMDialog::CheckLicenseKey(FMLicense* License)
@@ -187,8 +183,6 @@ void FMDialog::OnDestroy()
 {
 	if (m_pBackdrop)
 		delete m_pBackdrop;
-	if (m_pLogo)
-		delete m_pLogo;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)

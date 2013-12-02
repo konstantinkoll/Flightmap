@@ -36,6 +36,8 @@ protected:
 private:
 	void CheckInternetConnection();
 
+	CGdiPlusBitmapResource* m_pLogo;
+	CGdiPlusBitmapResource* m_pSanta;
 	CFont m_CaptionFont;
 	CFont m_VersionFont;
 	INT m_CaptionTop;
