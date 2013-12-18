@@ -10,7 +10,7 @@
 //
 
 EditFlightRoutePage::EditFlightRoutePage(AIRX_Flight* pFlight)
-	: CPropertyPage(IDD_EDITFLIGHT_ROUTE)
+	: CPropertyPage()
 {
 	ASSERT(pFlight);
 

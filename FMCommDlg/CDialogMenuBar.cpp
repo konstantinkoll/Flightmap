@@ -132,7 +132,7 @@ void CDialogMenuBar::AddMenuLeft(UINT nID)
 	ENSURE(LoadString(AfxGetResourceHandle(), nID, i.Name, 256));
 
 	WCHAR* pChar = wcschr(i.Name, L'&');
-	i.Accelerator = pChar ? toupper(*(pChar+1)) : 0;
+	i.Accelerator = pChar ? towupper(*(pChar+1)) : 0;
 
 	CDC* pDC = GetDC();
 	CFont* pOldFont = pDC->SelectObject(&m_MenuFont);
@@ -889,7 +889,7 @@ void CDialogMenuPopup::AddItem(CDialogMenuItem* pItem, INT FirstRowOffset)
 		i.Enabled = pItem->IsEnabled();
 		i.Checked = pItem->IsChecked();
 	}
-	i.Accelerator = toupper(pItem->GetAccelerator());
+	i.Accelerator = towupper(pItem->GetAccelerator());
 
 	m_Items.AddItem(i);
 
@@ -1637,9 +1637,9 @@ INT CDialogMenuItem::GetOuterBorder()
 	return BORDERPOPUP;
 }
 
-UINT CDialogMenuItem::GetAccelerator()
+WCHAR CDialogMenuItem::GetAccelerator()
 {
-	return 0;
+	return L'\0';
 }
 
 BOOL CDialogMenuItem::IsEnabled()
@@ -2056,11 +2056,11 @@ __forceinline INT CDialogMenuCommand::GetInnerBorder()
 	return m_PreferredSize==CDMB_SMALL ? BORDER-1 : BORDER+1;
 }
 
-UINT CDialogMenuCommand::GetAccelerator()
+WCHAR CDialogMenuCommand::GetAccelerator()
 {
 	INT Pos = m_Caption.Find(L'&');
 
-	return (Pos==-1) ? 0 : m_Caption[Pos+1];
+	return (Pos==-1) ? L'\0' : m_Caption[Pos+1];
 }
 
 BOOL CDialogMenuCommand::IsEnabled()

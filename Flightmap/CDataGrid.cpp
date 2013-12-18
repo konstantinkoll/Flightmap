@@ -8,6 +8,7 @@
 #include "ChooseDetailsDlg.h"
 #include "CMainWnd.h"
 #include "EditFlightDlg.h"
+#include "FindReplaceDlg.h"
 #include "FilterDlg.h"
 #include "Flightmap.h"
 #include "Resource.h"
@@ -911,6 +912,8 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_COMMAND(IDM_EDIT_DELETE, OnDelete)
 	ON_COMMAND(IDM_EDIT_EDITFLIGHT, OnEditFlight)
 	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
+	ON_COMMAND(IDM_EDIT_FIND, OnFind)
+	ON_COMMAND(IDM_EDIT_REPLACE, OnReplace)
 	ON_COMMAND(IDM_EDIT_FILTER, OnFilter)
 	ON_COMMAND(IDM_EDIT_SELECTALL, OnSelectAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
@@ -1465,7 +1468,12 @@ BOOL CDataGrid::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
-	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	INT nScrollLines;
+	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
+	if (nScrollLines<1)
+		nScrollLines = 1;
+
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
 		m_TooltipCtrl.Deactivate();
@@ -1958,6 +1966,22 @@ void CDataGrid::OnAddRoute()
 	}
 }
 
+void CDataGrid::OnFind()
+{
+	FindReplaceDlg dlg(this, 0);
+	if (dlg.DoModal()==IDOK)
+	{
+	}
+}
+
+void CDataGrid::OnReplace()
+{
+	FindReplaceDlg dlg(this, 1);
+	if (dlg.DoModal()==IDOK)
+	{
+	}
+}
+
 void CDataGrid::OnFilter()
 {
 	FilterDlg dlg(p_Itinerary, this);
@@ -2032,13 +2056,20 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_EDIT_CUT:
+	case IDM_EDIT_COPY:
+	case IDM_EDIT_DELETE:
+		b = (HasSelection(TRUE));
+		break;
 	case IDM_EDIT_PASTE:
 		{
 			COleDataObject dobj;
 			if (dobj.AttachClipboard())
-				b = dobj.IsDataAvailable(theApp.CF_FLIGHTS) || dobj.IsDataAvailable(CF_UNICODETEXT);
+				b &= dobj.IsDataAvailable(theApp.CF_FLIGHTS) || dobj.IsDataAvailable(CF_UNICODETEXT);
 		}
 		break;
+	case IDM_EDIT_FIND:
+	case IDM_EDIT_REPLACE:
 	case IDM_EDIT_FILTER:
 	case IDM_EDIT_SELECTALL:
 		if (p_Itinerary)

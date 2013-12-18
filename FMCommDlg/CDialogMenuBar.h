@@ -47,7 +47,7 @@ struct MenuBarItem
 	INT Right;
 	INT MinWidth;
 	WCHAR Name[256];
-	UINT Accelerator;
+	WCHAR Accelerator;
 };
 
 class CDialogMenuBar : public CWnd
@@ -239,7 +239,7 @@ public:
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
 	virtual INT GetOuterBorder();
-	virtual UINT GetAccelerator();
+	virtual WCHAR GetAccelerator();
 	virtual BOOL IsEnabled();
 	virtual BOOL IsChecked();
 	virtual BOOL IsSelectable();
@@ -317,7 +317,7 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetMinWidth();
 	virtual INT GetMinGutter();
-	virtual UINT GetAccelerator();
+	virtual WCHAR GetAccelerator();
 	virtual BOOL IsEnabled();
 	virtual BOOL IsSelectable();
 

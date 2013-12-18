@@ -396,6 +396,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Replace_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Replace_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Resolution_16.png"
 				>
 			</File>
@@ -425,6 +433,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\SaveSelection_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Search_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Search_32.png"
 				>
 			</File>
 			<File

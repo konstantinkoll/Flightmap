@@ -123,6 +123,7 @@
 #define IDS_TOOLTIP_TIME                1075
 #define IDS_TOOLTIP_DISTANCE            1076
 #define IDS_TOOLTIP_DATETIME            1077
+#define IDS_FINDREPLACE                 1078
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
@@ -207,6 +208,14 @@
 #define IDD_ADDROUTE                    2300
 #define IDC_ROUTE                       2301
 #define IDD_ATTACHMENTS                 2400
+#define IDD_FIND                        2500
+#define IDC_SEARCHTERM                  2501
+#define IDC_MATCHCASE                   2502
+#define IDC_MATCHENTIRECELL             2503
+#define IDC_MATCHCOLUMNONLY             2504
+#define IDD_REPLACE                     2600
+#define IDC_REPLACETERM                 2601
+#define IDC_REPLACEALL                  2602
 #define IDM_FILE                        3000
 #define IDM_FILE_NEW                    3001
 #define IDM_FILE_NEWSAMPLE1             3002
@@ -236,8 +245,10 @@
 #define IDM_EDIT_DELETE                 3105
 #define IDM_EDIT_EDITFLIGHT             3106
 #define IDM_EDIT_ADDROUTE               3107
-#define IDM_EDIT_FILTER                 3108
-#define IDM_EDIT_SELECTALL              3109
+#define IDM_EDIT_FIND                   3108
+#define IDM_EDIT_REPLACE                3109
+#define IDM_EDIT_FILTER                 3110
+#define IDM_EDIT_SELECTALL              3111
 #define IDM_MAP                         3200
 #define IDM_MAP_OPEN                    3201
 #define IDM_MAP_EXPORT_BMP              3202
@@ -340,7 +351,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8013
 #define _APS_NEXT_COMMAND_VALUE         32784
-#define _APS_NEXT_CONTROL_VALUE         8039
+#define _APS_NEXT_CONTROL_VALUE         8044
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

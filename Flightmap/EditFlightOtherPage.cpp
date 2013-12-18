@@ -10,7 +10,7 @@
 //
 
 EditFlightOtherPage::EditFlightOtherPage(AIRX_Flight* pFlight, CItinerary* pItinerary)
-	: CPropertyPage(IDD_EDITFLIGHT_OTHER)
+	: CPropertyPage()
 {
 	ASSERT(pFlight);
 

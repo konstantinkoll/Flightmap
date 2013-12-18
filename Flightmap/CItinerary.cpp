@@ -537,7 +537,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 	ASSERT(Attr<FMAttributeCount);
 	ASSERT(pStr);
 
-	while (*pStr==L' ')
+	while ((*pStr!=L'\0') && (*pStr<=L' '))
 		pStr++;
 
 	WCHAR* ptr = pStr;
@@ -564,7 +564,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 			pWChar = (WCHAR*)pData;
 			while (*pWChar)
 			{
-				*pWChar = (WCHAR)toupper(*pWChar);
+				*pWChar = (WCHAR)towupper(*pWChar);
 				pWChar++;
 			}
 		}

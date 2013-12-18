@@ -488,6 +488,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FindReplaceDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FindReplacePage.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Flightmap.cpp"
 				>
 			</File>
@@ -651,6 +659,14 @@
 			</File>
 			<File
 				RelativePath=".\FilterDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FindReplaceDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FindReplacePage.h"
 				>
 			</File>
 			<File

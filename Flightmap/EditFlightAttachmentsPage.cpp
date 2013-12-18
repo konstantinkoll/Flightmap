@@ -10,7 +10,7 @@
 //
 
 EditFlightAttachmentsPage::EditFlightAttachmentsPage(AIRX_Flight* pFlight, CItinerary* pItinerary)
-	: CPropertyPage(IDD_EDITFLIGHT_ATTACHMENTS)
+	: CPropertyPage()
 {
 	ASSERT(pFlight);
 

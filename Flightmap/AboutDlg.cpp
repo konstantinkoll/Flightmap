@@ -19,7 +19,7 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	m_UseBgImages = theApp.m_UseBgImages;
 	m_CaptionTop = 0;
 
-	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP_128, _T("PNG"));
+	ENSURE(m_Logo.Load(IDB_FLIGHTMAP_128, _T("PNG")));
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
@@ -157,8 +157,6 @@ void AboutDlg::OnDestroy()
 {
 	KillTimer(1);
 
-	if (m_pLogo)
-		delete m_pLogo;
 	if (m_pSanta)
 		delete m_pSanta;
 
@@ -181,7 +179,7 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(m_pLogo->m_pBitmap, m_pSanta ? 39 : 9, 12, 128, 128);
+	g.DrawImage(m_Logo.m_pBitmap, m_pSanta ? 39 : 9, 12, 128, 128);
 	if (m_pSanta)
 		g.DrawImage(m_pSanta->m_pBitmap, -6, 2);
 

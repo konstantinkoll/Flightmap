@@ -96,6 +96,8 @@ protected:
 	afx_msg void OnDelete();
 	afx_msg void OnEditFlight();
 	afx_msg void OnAddRoute();
+	afx_msg void OnFind();
+	afx_msg void OnReplace();
 	afx_msg void OnFilter();
 	afx_msg void OnSelectAll();
 	afx_msg void OnUpdateEditCommands(CCmdUI* pCmdUI);
