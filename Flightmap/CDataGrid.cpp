@@ -884,8 +884,10 @@ void CDataGrid::FindReplace(INT iSelectPage)
 	{
 		theApp.m_FindReplaceSettings = m_FindReplaceSettings = dlg.m_FindReplaceSettings;
 
+		// Something to search?
 		if (m_FindReplaceSettings.SearchTerm[0]!=L'\0')
 		{
+			// Append search term to "recent" list
 			for (POSITION p=theApp.m_RecentSearchTerms.GetHeadPosition(); p; )
 			{
 				POSITION pl = p;
@@ -897,6 +899,7 @@ void CDataGrid::FindReplace(INT iSelectPage)
 
 			if (m_FindReplaceSettings.DoReplace && (m_FindReplaceSettings.ReplaceTerm[0]!=L'\0'))
 			{
+				// Append replace term to "recent" list
 				for (POSITION p=theApp.m_RecentReplaceTerms.GetHeadPosition(); p; )
 				{
 					POSITION pl = p;
@@ -2139,6 +2142,13 @@ void CDataGrid::OnChooseDetails()
 	if (dlg.DoModal()==IDOK)
 	{
 		theApp.m_ViewParameters = m_ViewParameters;
+
+		for (INT col=m_FocusItem.x; col>=0; col--)
+			if (m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]])
+			{
+				m_FocusItem.x = col;
+				break;
+			}
 
 		AdjustHeader();
 		AdjustLayout();
