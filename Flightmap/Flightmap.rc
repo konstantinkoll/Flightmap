@@ -137,6 +137,7 @@ BEGIN
     "^V",           IDM_EDIT_PASTE,         ASCII,  NOINVERT
     VK_INSERT,      IDM_EDIT_PASTE,         VIRTKEY, SHIFT, NOINVERT
     "^F",           IDM_EDIT_FIND,          ASCII,  NOINVERT
+    "^H",           IDM_EDIT_REPLACE,       ASCII,  NOINVERT
     "^R",           IDM_EDIT_REPLACE,       ASCII,  NOINVERT
     "^A",           IDM_EDIT_SELECTALL,     ASCII,  NOINVERT
     VK_NUMPAD5,     IDM_EDIT_SELECTALL,     VIRTKEY, CONTROL, NOINVERT

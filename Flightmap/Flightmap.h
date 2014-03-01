@@ -93,6 +93,10 @@ public:
 
 	MapSettings m_MapSettings;
 
+	FindReplaceSettings m_FindReplaceSettings;
+	CList<CString> m_RecentSearchTerms;
+	CList<CString> m_RecentReplaceTerms;
+
 	// Spreadsheet
 	ViewParameters m_ViewParameters;
 	// Map

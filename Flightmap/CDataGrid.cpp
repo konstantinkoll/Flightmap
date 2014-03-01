@@ -877,6 +877,41 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 	}
 }
 
+void CDataGrid::FindReplace(INT iSelectPage)
+{
+	FindReplaceDlg dlg(this, iSelectPage);
+	if (dlg.DoModal()==IDOK)
+	{
+		theApp.m_FindReplaceSettings = m_FindReplaceSettings = dlg.m_FindReplaceSettings;
+
+		if (m_FindReplaceSettings.SearchTerm[0]!=L'\0')
+		{
+			for (POSITION p=theApp.m_RecentSearchTerms.GetHeadPosition(); p; )
+			{
+				POSITION pl = p;
+				if (theApp.m_RecentSearchTerms.GetNext(p)==m_FindReplaceSettings.SearchTerm)
+					theApp.m_RecentSearchTerms.RemoveAt(pl);
+			}
+
+			theApp.m_RecentSearchTerms.AddHead(m_FindReplaceSettings.SearchTerm);
+
+			if (m_FindReplaceSettings.DoReplace && (m_FindReplaceSettings.ReplaceTerm[0]!=L'\0'))
+			{
+				for (POSITION p=theApp.m_RecentReplaceTerms.GetHeadPosition(); p; )
+				{
+					POSITION pl = p;
+					if (theApp.m_RecentReplaceTerms.GetNext(p)==m_FindReplaceSettings.ReplaceTerm)
+						theApp.m_RecentReplaceTerms.RemoveAt(pl);
+				}
+
+				theApp.m_RecentReplaceTerms.AddHead(m_FindReplaceSettings.ReplaceTerm);
+			}
+
+			// TODO
+		}
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_CREATE()
@@ -1968,18 +2003,12 @@ void CDataGrid::OnAddRoute()
 
 void CDataGrid::OnFind()
 {
-	FindReplaceDlg dlg(this, 0);
-	if (dlg.DoModal()==IDOK)
-	{
-	}
+	FindReplace(0);
 }
 
 void CDataGrid::OnReplace()
 {
-	FindReplaceDlg dlg(this, 1);
-	if (dlg.DoModal()==IDOK)
-	{
-	}
+	FindReplace(1);
 }
 
 void CDataGrid::OnFilter()
@@ -2076,7 +2105,7 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 			b = p_Itinerary->m_Flights.m_ItemCount;
 		break;
 	}
-
+b=TRUE;
 	pCmdUI->Enable(b);
 }
 

@@ -158,6 +158,9 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.IATAInnerColor = GetInt(_T("MapIATAInnerColor"), 0xFFFFFF);
 	m_MapSettings.IATAOuterColor = GetInt(_T("MapIATAOuterColor"), 0x000000);
 
+	m_FindReplaceSettings.Flags = GetInt(_T("FindReplaceFlags"), 0);
+	m_FindReplaceSettings.SearchTerm[0] = m_FindReplaceSettings.ReplaceTerm[0] = L'\0';
+
 	for (UINT a=0; a<FMAttributeCount; a++)
 	{
 		m_ViewParameters.ColumnOrder[a] = a;
@@ -171,12 +174,23 @@ BOOL CFlightmapApp::InitInstance()
 
 	for (UINT a=0; a<10; a++)
 	{
-		CString tmpStr;
-		tmpStr.Format(_T("RecentFile%u"), a);
-		
-		CString FileName = GetString(tmpStr);
-		if (!FileName.IsEmpty())
-			m_RecentFiles.AddTail(FileName);
+		CString tmpName;
+		CString tmpValue;
+
+		tmpName.Format(_T("RecentFile%u"), a);
+		tmpValue = GetString(tmpName);
+		if (!tmpValue.IsEmpty())
+			m_RecentFiles.AddTail(tmpValue);
+
+		tmpName.Format(_T("RecentSearchTerm%u"), a);
+		tmpValue = GetString(tmpName);
+		if (!tmpValue.IsEmpty())
+			m_RecentSearchTerms.AddTail(tmpValue);
+
+		tmpName.Format(_T("RecentReplaceTerm%u"), a);
+		tmpValue = GetString(tmpName);
+		if (!tmpValue.IsEmpty())
+			m_RecentReplaceTerms.AddTail(tmpValue);
 	}
 
 	if (m_nTextureSize<0)
@@ -282,15 +296,33 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapIATAInnerColor"), m_MapSettings.IATAInnerColor);
 		WriteInt(_T("MapIATAOuterColor"), m_MapSettings.IATAOuterColor);
 
+		WriteInt(_T("FindReplaceFlags"), m_FindReplaceSettings.Flags);
+
 		WriteBinary(_T("ColumnOrder"), (LPBYTE)&m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
 		WriteBinary(_T("ColumnWidth"), (LPBYTE)&m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
 
-		UINT a=0;
+		CString tmpName;
+		UINT a;
+
+		a = 0;
 		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)
 		{
-			CString tmpStr;
-			tmpStr.Format(_T("RecentFile%u"), a);
-			WriteString(tmpStr, m_RecentFiles.GetNext(p));
+			tmpName.Format(_T("RecentFile%u"), a);
+			WriteString(tmpName, m_RecentFiles.GetNext(p));
+		}
+
+		a = 0;
+		for (POSITION p=m_RecentSearchTerms.GetHeadPosition(); p && (a<10); a++)
+		{
+			tmpName.Format(_T("RecentSearchTerm%u"), a);
+			WriteString(tmpName, m_RecentSearchTerms.GetNext(p));
+		}
+
+		a = 0;
+		for (POSITION p=m_RecentReplaceTerms.GetHeadPosition(); p && (a<10); a++)
+		{
+			tmpName.Format(_T("RecentReplaceTerm%u"), a);
+			WriteString(tmpName, m_RecentReplaceTerms.GetNext(p));
 		}
 	}
 

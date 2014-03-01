@@ -10,6 +10,19 @@
 // CDataGrid
 //
 
+#define FRS_MATCHCASE           1
+#define FRS_MATCHENTIRECELL     2
+#define FRS_MATCHCOLUMNONLY     4
+#define FRS_REPLACEALL          8
+
+struct FindReplaceSettings
+{
+	BOOL DoReplace;
+	UINT Flags;
+	WCHAR SearchTerm[256];
+	WCHAR ReplaceTerm[256];
+};
+
 struct ViewParameters
 {
 	INT ColumnOrder[FMAttributeCount];
@@ -45,6 +58,7 @@ protected:
 	BOOL m_IgnoreHeaderItemChange;
 	INT m_SelectionAnchor;
 	WORD m_wDay;
+	FindReplaceSettings m_FindReplaceSettings;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -62,6 +76,7 @@ protected:
 	void SetFocusItem(CPoint FocusItem, BOOL ShiftSelect);
 	void SelectItem(UINT Idx, BOOL Select=TRUE, BOOL InternalCall=FALSE);
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
+	void FindReplace(INT iSelectPage);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
