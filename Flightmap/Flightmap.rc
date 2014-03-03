@@ -580,6 +580,11 @@ BEGIN
     IDS_TOOLTIP_DISTANCE    "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
     IDS_TOOLTIP_DATETIME    "Erster Flug: %s\nLetzter Flug: %s"
     IDS_FINDREPLACE         "Suchen und Ersetzen"
+    IDS_ILLEGALCOLUMN_FIND  "Die gewählte Spalte kann nicht durchsucht werden!"
+    IDS_ILLEGALCOLUMN_REPLACE  "In der gewählten Spalte kann nichts ersetzt werden!"
+    IDS_ALLREPLACED         "Alle Begriffe wurden ersetzt."
+    IDS_SEARCHTERMNOTFOUND  "Der Suchbegriff ist nicht vorhanden!"
+    IDS_REPLACEQUESTION     "Soll dieser Begriff ersetzt werden?"
 END
 
 STRINGTABLE 
@@ -1275,6 +1280,11 @@ BEGIN
     IDS_TOOLTIP_DISTANCE    "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
     IDS_TOOLTIP_DATETIME    "First flight: %s\nLast flight: %s"
     IDS_FINDREPLACE         "Find and replace"
+    IDS_ILLEGALCOLUMN_FIND  "This column is not searchable!"
+    IDS_ILLEGALCOLUMN_REPLACE  "You cannot replace items in this column!"
+    IDS_ALLREPLACED         "All terms have been replaced."
+    IDS_SEARCHTERMNOTFOUND  "The search term has not been found!"
+    IDS_REPLACEQUESTION     "Do you want to replace this occurence?"
 END
 
 STRINGTABLE 

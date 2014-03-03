@@ -2039,11 +2039,18 @@ void CDataGrid::OnFindReplaceAgain()
 	if (!m_FindReplaceSettings.FirstAction && (m_FindReplaceSettings.Flags & FRS_MATCHCOLUMNONLY))
 		if (!ColumnValid(m_ViewParameters.ColumnOrder[m_FocusItem.x]))
 		{
-			// TODO
+			CString caption;
+			CString message;
+			ENSURE(caption.LoadString(IDS_FINDREPLACE));
+			ENSURE(message.LoadString(m_FindReplaceSettings.DoReplace ? IDS_ILLEGALCOLUMN_REPLACE : IDS_ILLEGALCOLUMN_FIND));
+
+			MessageBox(message, caption, MB_ICONERROR | MB_OK);
+
 			return;
 		}
 
 	BOOL StartOver = FALSE;
+	BOOL Replaced = FALSE;
 	CPoint item = m_FocusItem;
 Again:
 	// If not called from dialog, goto next cell
@@ -2069,7 +2076,13 @@ Again:
 
 			if (StartOver)
 			{
-				// TODO
+				CString caption;
+				CString message;
+				ENSURE(caption.LoadString(IDS_FINDREPLACE));
+				ENSURE(message.LoadString((m_FindReplaceSettings.DoReplace && Replaced) ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND));
+
+				MessageBox(message, caption, (m_FindReplaceSettings.DoReplace && Replaced) ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
+
 				return;
 			}
 
@@ -2080,19 +2093,46 @@ FoundPosition:
 	m_FindReplaceSettings.FirstAction = FALSE;
 
 	// Match
+	const UINT Attr = m_ViewParameters.ColumnOrder[item.x];
+
 	WCHAR tmpStr[256];
-	AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], m_ViewParameters.ColumnOrder[item.x], tmpStr, 256);
+	AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], Attr, tmpStr, 256);
 
 	if ((m_FindReplaceSettings.Flags & FRS_MATCHCASE)==0)
 		ToUpper(tmpStr);
 
-	BOOL Match = m_FindReplaceSettings.Flags & FRS_MATCHENTIRECELL ? wcscmp(SearchTerm, tmpStr)==0 : wcsstr(tmpStr, SearchTerm)!=NULL;
+	const BOOL Match = m_FindReplaceSettings.Flags & FRS_MATCHENTIRECELL ? wcscmp(SearchTerm, tmpStr)==0 : wcsstr(tmpStr, SearchTerm)!=NULL;
 	if (!Match)
 		goto Again;
 
 	// Process
 	if (m_FindReplaceSettings.DoReplace)
 	{
+		Replaced = TRUE;
+
+		if ((m_FindReplaceSettings.Flags & FRS_REPLACEALL)==0)
+		{
+			SetFocusItem(item, FALSE);
+
+			CString caption;
+			CString message;
+			ENSURE(caption.LoadString(IDS_FINDREPLACE));
+			ENSURE(message.LoadString(IDS_REPLACEQUESTION));
+
+			switch (MessageBox(message, caption, MB_ICONQUESTION | MB_YESNOCANCEL))
+			{
+			case IDNO:
+				goto Again;
+			case IDCANCEL:
+				return;
+			}
+		}
+
+		StringToAttribute(m_FindReplaceSettings.ReplaceTerm, p_Itinerary->m_Flights.m_Items[item.y], Attr);
+		p_Itinerary->m_IsModified = TRUE;
+
+		InvalidateItem(item);
+		goto Again;
 	}
 	else
 	{

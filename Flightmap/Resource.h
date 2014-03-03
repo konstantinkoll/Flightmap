@@ -124,6 +124,11 @@
 #define IDS_TOOLTIP_DISTANCE            1076
 #define IDS_TOOLTIP_DATETIME            1077
 #define IDS_FINDREPLACE                 1078
+#define IDS_ILLEGALCOLUMN_FIND          1079
+#define IDS_ILLEGALCOLUMN_REPLACE       1080
+#define IDS_ALLREPLACED                 1081
+#define IDS_SEARCHTERMNOTFOUND          1082
+#define IDS_REPLACEQUESTION             1083
 #define IDS_FILEFILTER_AIR              1100
 #define IDS_FILEFILTER_AIRX             1101
 #define IDS_FILEFILTER_BMP              1102
