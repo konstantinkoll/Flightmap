@@ -13,7 +13,7 @@
 class FindReplaceDlg : public CPropertySheet
 {
 public:
-	FindReplaceDlg(CWnd* pParentWnd, INT iSelectPage);
+	FindReplaceDlg(CWnd* pParentWnd, INT iSelectPage, UINT Attr);
 
 	FindReplaceSettings m_FindReplaceSettings;
 

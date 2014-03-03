@@ -10,12 +10,13 @@
 // FindReplacePage
 //
 
-FindReplacePage::FindReplacePage(FindReplaceSettings* pFindReplaceSettings)
+FindReplacePage::FindReplacePage(FindReplaceSettings* pFindReplaceSettings, BOOL AllowColumnOnly)
 	: CPropertyPage()
 {
 	ASSERT(pFindReplaceSettings);
 
 	p_FindReplaceSettings = pFindReplaceSettings;
+	m_AllowColumnOnly = AllowColumnOnly;
 }
 
 void FindReplacePage::DoDataExchange(CDataExchange* pDX)
@@ -55,6 +56,7 @@ void FindReplacePage::DoDataExchange(CDataExchange* pDX)
 		}
 
 		p_FindReplaceSettings->DoReplace = Replace;
+		p_FindReplaceSettings->FirstAction = TRUE;
 	}
 	else
 	{
@@ -64,7 +66,7 @@ void FindReplacePage::DoDataExchange(CDataExchange* pDX)
 
 		m_wndMatchCase.SetCheck(p_FindReplaceSettings->Flags & FRS_MATCHCASE);
 		m_wndMatchEntireCell.SetCheck(p_FindReplaceSettings->Flags & FRS_MATCHENTIRECELL);
-		m_wndMatchColumnOnly.SetCheck(p_FindReplaceSettings->Flags & FRS_MATCHCOLUMNONLY);
+		m_wndMatchColumnOnly.SetCheck(m_AllowColumnOnly && (p_FindReplaceSettings->Flags & FRS_MATCHCOLUMNONLY));
 
 		if (Replace)
 		{
@@ -84,6 +86,8 @@ END_MESSAGE_MAP()
 BOOL FindReplacePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
+
+	m_wndMatchColumnOnly.EnableWindow(m_AllowColumnOnly);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

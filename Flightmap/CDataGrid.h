@@ -17,6 +17,7 @@
 
 struct FindReplaceSettings
 {
+	BOOL FirstAction;
 	BOOL DoReplace;
 	UINT Flags;
 	WCHAR SearchTerm[256];
@@ -113,6 +114,7 @@ protected:
 	afx_msg void OnAddRoute();
 	afx_msg void OnFind();
 	afx_msg void OnReplace();
+	afx_msg void OnFindReplaceAgain();
 	afx_msg void OnFilter();
 	afx_msg void OnSelectAll();
 	afx_msg void OnUpdateEditCommands(CCmdUI* pCmdUI);

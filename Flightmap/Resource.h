@@ -247,8 +247,9 @@
 #define IDM_EDIT_ADDROUTE               3107
 #define IDM_EDIT_FIND                   3108
 #define IDM_EDIT_REPLACE                3109
-#define IDM_EDIT_FILTER                 3110
-#define IDM_EDIT_SELECTALL              3111
+#define IDM_EDIT_FINDREPLACEAGAIN       3110
+#define IDM_EDIT_FILTER                 3111
+#define IDM_EDIT_SELECTALL              3112
 #define IDM_MAP                         3200
 #define IDM_MAP_OPEN                    3201
 #define IDM_MAP_EXPORT_BMP              3202

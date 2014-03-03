@@ -11,15 +11,15 @@
 
 static UINT LastPageSelected = 0;
 
-FindReplaceDlg::FindReplaceDlg(CWnd* pParentWnd, INT iSelectPage)
+FindReplaceDlg::FindReplaceDlg(CWnd* pParentWnd, INT iSelectPage, UINT Attr)
 	: CPropertySheet(IDS_FINDREPLACE, pParentWnd, iSelectPage)
 {
 	m_FindReplaceSettings = theApp.m_FindReplaceSettings;
 
-	m_pPages[0] = new FindReplacePage(&m_FindReplaceSettings);
+	m_pPages[0] = new FindReplacePage(&m_FindReplaceSettings, FMAttributes[Attr].Searchable);
 	m_pPages[0]->Construct(IDD_FIND);
 
-	m_pPages[1] = new FindReplacePage(&m_FindReplaceSettings);
+	m_pPages[1] = new FindReplacePage(&m_FindReplaceSettings, FMAttributes[Attr].Searchable && FMAttributes[Attr].Editable);
 	m_pPages[1]->Construct(IDD_REPLACE);
 
 	AddPage(m_pPages[0]);

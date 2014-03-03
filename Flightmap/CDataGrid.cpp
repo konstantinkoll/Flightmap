@@ -40,6 +40,9 @@ CDataGrid::CDataGrid()
 	m_HeaderItemClicked = m_FocusItem.x = m_FocusItem.y = m_HotItem.x = m_HotItem.y = m_HotSubitem = m_SelectionAnchor = -1;
 	m_Hover = m_IgnoreHeaderItemChange = FALSE;
 	m_ViewParameters = theApp.m_ViewParameters;
+
+	m_FindReplaceSettings = theApp.m_FindReplaceSettings;
+	m_FindReplaceSettings.FirstAction = FALSE;
 }
 
 CDataGrid::~CDataGrid()
@@ -879,7 +882,7 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 
 void CDataGrid::FindReplace(INT iSelectPage)
 {
-	FindReplaceDlg dlg(this, iSelectPage);
+	FindReplaceDlg dlg(this, iSelectPage, m_ViewParameters.ColumnOrder[m_FocusItem.x]);
 	if (dlg.DoModal()==IDOK)
 	{
 		theApp.m_FindReplaceSettings = m_FindReplaceSettings = dlg.m_FindReplaceSettings;
@@ -910,7 +913,7 @@ void CDataGrid::FindReplace(INT iSelectPage)
 				theApp.m_RecentReplaceTerms.AddHead(m_FindReplaceSettings.ReplaceTerm);
 			}
 
-			// TODO
+			OnFindReplaceAgain();
 		}
 	}
 }
@@ -952,6 +955,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_COMMAND(IDM_EDIT_ADDROUTE, OnAddRoute)
 	ON_COMMAND(IDM_EDIT_FIND, OnFind)
 	ON_COMMAND(IDM_EDIT_REPLACE, OnReplace)
+	ON_COMMAND(IDM_EDIT_FINDREPLACEAGAIN, OnFindReplaceAgain)
 	ON_COMMAND(IDM_EDIT_FILTER, OnFilter)
 	ON_COMMAND(IDM_EDIT_SELECTALL, OnSelectAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_EDIT_CUT, IDM_EDIT_SELECTALL, OnUpdateEditCommands)
@@ -2014,6 +2018,88 @@ void CDataGrid::OnReplace()
 	FindReplace(1);
 }
 
+void CDataGrid::OnFindReplaceAgain()
+{
+	ASSERT(m_FindReplaceSettings.SearchTerm[0]);
+
+	#define ColumnValid(Attr) (FMAttributes[Attr].Searchable && (m_FindReplaceSettings.DoReplace ? FMAttributes[Attr].Editable : TRUE))
+	#define ToUpper(str) \
+		{ WCHAR* pChar = str; \
+		  while (*pChar) \
+			*(pChar++) = (WCHAR)toupper(*pChar); }
+
+	// Prepare search term
+	WCHAR SearchTerm[256];
+	wcscpy_s(SearchTerm, 256, m_FindReplaceSettings.SearchTerm);
+
+	if ((m_FindReplaceSettings.Flags & FRS_MATCHCASE)==0)
+		ToUpper(SearchTerm);
+
+	// Check for valid column
+	if (!m_FindReplaceSettings.FirstAction && (m_FindReplaceSettings.Flags & FRS_MATCHCOLUMNONLY))
+		if (!ColumnValid(m_ViewParameters.ColumnOrder[m_FocusItem.x]))
+		{
+			// TODO
+			return;
+		}
+
+	BOOL StartOver = FALSE;
+	CPoint item = m_FocusItem;
+Again:
+	// If not called from dialog, goto next cell
+	if (!m_FindReplaceSettings.FirstAction)
+	{
+		if ((m_FindReplaceSettings.Flags & FRS_MATCHCOLUMNONLY)==0)
+		{
+			for (INT col=item.x+1; col<FMAttributeCount; col++)
+				if (m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[col]])
+					if (ColumnValid(m_ViewParameters.ColumnOrder[col]))
+					{
+						item.x = col;
+						goto FoundPosition;
+					}
+
+			item.x = 0;
+		}
+
+		item.y++;
+		if (item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
+		{
+			item.y = 0;
+
+			if (StartOver)
+			{
+				// TODO
+				return;
+			}
+
+			StartOver = TRUE;
+		}
+	}
+FoundPosition:
+	m_FindReplaceSettings.FirstAction = FALSE;
+
+	// Match
+	WCHAR tmpStr[256];
+	AttributeToString(p_Itinerary->m_Flights.m_Items[item.y], m_ViewParameters.ColumnOrder[item.x], tmpStr, 256);
+
+	if ((m_FindReplaceSettings.Flags & FRS_MATCHCASE)==0)
+		ToUpper(tmpStr);
+
+	BOOL Match = m_FindReplaceSettings.Flags & FRS_MATCHENTIRECELL ? wcscmp(SearchTerm, tmpStr)==0 : wcsstr(tmpStr, SearchTerm)!=NULL;
+	if (!Match)
+		goto Again;
+
+	// Process
+	if (m_FindReplaceSettings.DoReplace)
+	{
+	}
+	else
+	{
+		SetFocusItem(item, FALSE);
+	}
+}
+
 void CDataGrid::OnFilter()
 {
 	FilterDlg dlg(p_Itinerary, this);
@@ -2091,7 +2177,7 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 	case IDM_EDIT_CUT:
 	case IDM_EDIT_COPY:
 	case IDM_EDIT_DELETE:
-		b = (HasSelection(TRUE));
+		b = HasSelection(TRUE);
 		break;
 	case IDM_EDIT_PASTE:
 		{
@@ -2100,15 +2186,17 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 				b &= dobj.IsDataAvailable(theApp.CF_FLIGHTS) || dobj.IsDataAvailable(CF_UNICODETEXT);
 		}
 		break;
+	case IDM_EDIT_FINDREPLACEAGAIN:
+		b &= (m_FindReplaceSettings.SearchTerm[0]!=L'\0');
 	case IDM_EDIT_FIND:
 	case IDM_EDIT_REPLACE:
 	case IDM_EDIT_FILTER:
 	case IDM_EDIT_SELECTALL:
 		if (p_Itinerary)
-			b = p_Itinerary->m_Flights.m_ItemCount;
+			b &= (p_Itinerary->m_Flights.m_ItemCount!=0);
 		break;
 	}
-b=TRUE;
+//b=TRUE;
 	pCmdUI->Enable(b);
 }
 

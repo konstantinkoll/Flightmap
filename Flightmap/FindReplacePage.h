@@ -12,12 +12,13 @@
 class FindReplacePage : public CPropertyPage
 {
 public:
-	FindReplacePage(FindReplaceSettings* pFindReplaceSettings);
+	FindReplacePage(FindReplaceSettings* pFindReplaceSettings, BOOL AllowColumnOnly);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
 	FindReplaceSettings* p_FindReplaceSettings;
+	BOOL m_AllowColumnOnly;
 	CComboBox m_wndSearchTerm;
 	CComboBox m_wndReplaceTerm;
 	CButton m_wndMatchCase;
