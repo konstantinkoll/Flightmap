@@ -691,7 +691,8 @@ END
 STRINGTABLE 
 BEGIN
     IDM_MAP_ARROWS          "&Pfeilspitzen"
-    IDM_MAP_USECOUNT        "Häufige Routen &dicker"
+    IDM_MAP_USECOUNT_WIDTH  "Häufige Routen &dicker"
+    IDM_MAP_USECOUNT_OPACITY "Häufige Routen &intensiver"
     IDM_MAP_ANNOTATIONS     "&Zusatzinformationen"
     IDM_MAP_DISTANCE        "&Entfernung"
     IDM_MAP_FLIGHTTIME      "Flug&zeit"
@@ -1391,7 +1392,8 @@ END
 STRINGTABLE 
 BEGIN
     IDM_MAP_ARROWS          "Arro&ws"
-    IDM_MAP_USECOUNT        "&Fatten frequent routes"
+    IDM_MAP_USECOUNT_WIDTH  "Draw frequent routes &wider"
+    IDM_MAP_USECOUNT_OPACITY "Draw frequent routes more &opaque"
     IDM_MAP_ANNOTATIONS     "A&nnotations"
     IDM_MAP_DISTANCE        "&Distance"
     IDM_MAP_FLIGHTTIME      "Flight &time"
@@ -1428,7 +1430,7 @@ BEGIN
     IDM_GOOGLEEARTH_OPEN    "Open the itinerary\nin Google Earth.\n&Open in Google Earth"
     IDM_GOOGLEEARTH_EXPORT  "Export the itinerary\nas Google Earth overlay.\nE&xport"
     IDM_GOOGLEEARTH_MERGEMETRO "&Merge metropolitan areas"
-    IDM_GOOGLEEARTH_USECOUNT "&Fatten frequent routes"
+    IDM_GOOGLEEARTH_USECOUNT "Draw frequent routes &wider"
     IDM_GOOGLEEARTH_COLORS  "Use colo&rs"
     IDM_GOOGLEEARTH_CLAMP   "&True flight levels"
 END

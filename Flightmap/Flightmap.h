@@ -39,7 +39,8 @@ struct MapSettings
 	BOOL ShowFlightRoutes;
 	BOOL StraightLines;
 	BOOL Arrows;
-	BOOL UseCount;
+	BOOL UseCountWidth;
+	BOOL UseCountOpacity;
 	BOOL NoteDistance;
 	BOOL NoteFlightTime;
 	BOOL NoteFlightCount;

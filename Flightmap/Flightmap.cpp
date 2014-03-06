@@ -140,7 +140,8 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapShowFlightRoutes"), TRUE);
 	m_MapSettings.StraightLines = GetInt(_T("MapStraightLines"), FALSE);
 	m_MapSettings.Arrows = GetInt(_T("MapArrows"), FALSE);
-	m_MapSettings.UseCount = GetInt(_T("MapUseCount"), FALSE);
+	m_MapSettings.UseCountWidth = GetInt(_T("MapUseCountWidth"), FALSE);
+	m_MapSettings.UseCountOpacity = GetInt(_T("MapUseCountOpacity"), FALSE);
 	m_MapSettings.NoteDistance = GetInt(_T("MapNoteDistance"), FALSE);
 	m_MapSettings.NoteFlightTime = GetInt(_T("MapNoteFlightTime"), FALSE);
 	m_MapSettings.NoteFlightCount = GetInt(_T("MapNoteFlightCount"), FALSE);
@@ -278,7 +279,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapShowFlightRoutes"), m_MapSettings.ShowFlightRoutes);
 		WriteInt(_T("MapStraightLines"), m_MapSettings.StraightLines);
 		WriteInt(_T("MapArrows"), m_MapSettings.Arrows);
-		WriteInt(_T("MapUseCount"), m_MapSettings.UseCount);
+		WriteInt(_T("MapUseCountWidth"), m_MapSettings.UseCountWidth);
+		WriteInt(_T("MapUseCountOpacity"), m_MapSettings.UseCountOpacity);
 		WriteInt(_T("MapNoteDistance"), m_MapSettings.NoteDistance);
 		WriteInt(_T("MapNoteFlightTime"), m_MapSettings.NoteFlightTime);
 		WriteInt(_T("MapNoteFlightCount"), m_MapSettings.NoteFlightCount);

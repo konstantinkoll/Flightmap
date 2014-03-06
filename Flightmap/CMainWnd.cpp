@@ -564,7 +564,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_MAP_SHOWFLIGHTROUTES, OnMapShowFlightRoutes)
 	ON_COMMAND(IDM_MAP_STRAIGHTLINES, OnMapStraightLines)
 	ON_COMMAND(IDM_MAP_ARROWS, OnMapArrows)
-	ON_COMMAND(IDM_MAP_USECOUNT, OnMapUseCount)
+	ON_COMMAND(IDM_MAP_USECOUNT_WIDTH, OnMapUseCountWidth)
+	ON_COMMAND(IDM_MAP_USECOUNT_OPACITY, OnMapUseCountOpacity)
 	ON_COMMAND(IDM_MAP_DISTANCE, OnMapDistance)
 	ON_COMMAND(IDM_MAP_FLIGHTTIME, OnMapFlightTime)
 	ON_COMMAND(IDM_MAP_FLIGHTCOUNT, OnMapFlightCount)
@@ -772,7 +773,9 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCaption(IDS_ROUTESTYLE);
 		pPopup->AddCheckbox(IDM_MAP_STRAIGHTLINES);
 		pPopup->AddCheckbox(IDM_MAP_ARROWS);
-		pPopup->AddCheckbox(IDM_MAP_USECOUNT);
+		pPopup->AddSeparator();
+		pPopup->AddCheckbox(IDM_MAP_USECOUNT_WIDTH);
+		pPopup->AddCheckbox(IDM_MAP_USECOUNT_OPACITY);
 		break;
 	case IDM_MAP_ANNOTATIONS:
 		pPopup->Create(this);
@@ -1161,9 +1164,14 @@ void CMainWnd::OnMapSmallFont()
 	theApp.m_MapSettings.NoteSmallFont = !theApp.m_MapSettings.NoteSmallFont;
 }
 
-void CMainWnd::OnMapUseCount()
+void CMainWnd::OnMapUseCountWidth()
 {
-	theApp.m_MapSettings.UseCount = !theApp.m_MapSettings.UseCount;
+	theApp.m_MapSettings.UseCountWidth = !theApp.m_MapSettings.UseCountWidth;
+}
+
+void CMainWnd::OnMapUseCountOpacity()
+{
+	theApp.m_MapSettings.UseCountOpacity = !theApp.m_MapSettings.UseCountOpacity;
 }
 
 void CMainWnd::OnMapUseColors()
@@ -1221,10 +1229,14 @@ void CMainWnd::OnUpdateMapCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_MAP_ARROWS:
 		pCmdUI->SetCheck(theApp.m_MapSettings.Arrows);
+		b = theApp.m_MapSettings.ShowFlightRoutes && !theApp.m_MapSettings.UseCountOpacity;
+		break;
+	case IDM_MAP_USECOUNT_WIDTH:
+		pCmdUI->SetCheck(theApp.m_MapSettings.UseCountWidth);
 		b = theApp.m_MapSettings.ShowFlightRoutes;
 		break;
-	case IDM_MAP_USECOUNT:
-		pCmdUI->SetCheck(theApp.m_MapSettings.UseCount);
+	case IDM_MAP_USECOUNT_OPACITY:
+		pCmdUI->SetCheck(theApp.m_MapSettings.UseCountOpacity);
 		b = theApp.m_MapSettings.ShowFlightRoutes;
 		break;
 	case IDM_MAP_DISTANCE:

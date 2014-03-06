@@ -26,8 +26,8 @@ void AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
 // CColor
 //
 
-CColor::CColor(COLORREF clr)
-	: Color(clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF)
+CColor::CColor(COLORREF clr, BYTE alpha)
+	: Color(alpha, clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF)
 {
 }
 
@@ -249,8 +249,9 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	if (m_Settings.ShowFlightRoutes)
 	{
 #define PreparePen(Route) \
-	CColor col(((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : Route.Color); \
-	const DOUBLE Width = (m_Settings.UseCount && (pKitchen->m_MaxRouteCount!=0)) ? (0.5+(5.9*((DOUBLE)Route.Count)/((DOUBLE)pKitchen->m_MaxRouteCount))) : 3.2; \
+	const BYTE Alpha = (m_Settings.UseCountOpacity && (pKitchen->m_MaxRouteCount!=0)) ? 0x40+(BYTE)(191.0*((DOUBLE)Route.Count)/((DOUBLE)pKitchen->m_MaxRouteCount)) : 0xFF; \
+	CColor col(((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : Route.Color, Alpha); \
+	const DOUBLE Width = (m_Settings.UseCountWidth && (pKitchen->m_MaxRouteCount!=0)) ? (0.5+(5.9*((DOUBLE)Route.Count)/((DOUBLE)pKitchen->m_MaxRouteCount))) : 3.2; \
 	Pen pen(col, (REAL)(Width*Upscale));
 
 		if (!m_Settings.StraightLines)
@@ -270,7 +271,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 						CompS(pSegments->Points[b][1]), CompZ(pSegments->Points[b][0]),
 						MinS, MinZ, Scale);
 
-				if (m_Settings.Arrows)
+				if (m_Settings.Arrows && !m_Settings.UseCountOpacity)
 				{
 					SolidBrush brush(col);
 
@@ -339,7 +340,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 				const BOOL UseWaypoint = (pFrom==pTo) && ((pPair2->value.Waypoint.Latitude!=0.0) || (pPair2->value.Waypoint.Longitude!=0.0));
 				DrawLine(g, pen, pFrom->S, pFrom->Z, UseWaypoint ? (pPair2->value.Waypoint.Longitude*4096.0)/180.0+4096.0+MapOffset : pTo->S, UseWaypoint ? (pPair2->value.Waypoint.Latitude*2048.0)/90.0+2048.0 : pTo->Z, MinS, MinZ, Scale, &pPair2->value.LabelS, &pPair2->value.LabelZ);
 
-				if (m_Settings.Arrows && !UseWaypoint)
+				if (m_Settings.Arrows && !m_Settings.UseCountOpacity && !UseWaypoint)
 				{
 					SolidBrush brush(col);
 
@@ -722,9 +723,7 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ, DOUBLE Scale, DOUBLE* MidS, DOUBLE* MidZ)
 {
 #define Line(pen, x1, y1, x2, y2) \
-	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1), (REAL)(x2), (REAL)(y2)); \
-	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1+1.0), (REAL)(x2), (REAL)(y2+1.0)); \
-	g.DrawLine(&pen, (REAL)(x1+1.0), (REAL)(y1), (REAL)(x2+1.0), (REAL)(y2));
+	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1), (REAL)(x2), (REAL)(y2));
 
 	x1 -= MinS;
 	x2 -= MinS;

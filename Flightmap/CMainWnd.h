@@ -82,7 +82,8 @@ protected:
 	afx_msg void OnMapShowFlightRoutes();
 	afx_msg void OnMapStraightLines();
 	afx_msg void OnMapArrows();
-	afx_msg void OnMapUseCount();
+	afx_msg void OnMapUseCountWidth();
+	afx_msg void OnMapUseCountOpacity();
 	afx_msg void OnMapDistance();
 	afx_msg void OnMapFlightTime();
 	afx_msg void OnMapFlightCount();

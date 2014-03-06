@@ -13,7 +13,7 @@
 class CColor : public Color
 {
 public:
-	CColor(COLORREF clr);
+	CColor(COLORREF clr, BYTE alpha=0xFF);
 };
 
 
