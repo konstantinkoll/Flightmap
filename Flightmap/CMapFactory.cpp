@@ -723,7 +723,12 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x2, DOUBLE y2, INT MinS, INT MinZ, DOUBLE Scale, DOUBLE* MidS, DOUBLE* MidZ)
 {
 #define Line(pen, x1, y1, x2, y2) \
-	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1), (REAL)(x2), (REAL)(y2));
+	g.DrawLine(&pen, (REAL)(x1), (REAL)(y1), (REAL)(x2), (REAL)(y2)); \
+	if (!m_Settings.UseCountOpacity) \
+	{ \
+		g.DrawLine(&pen, (REAL)(x1)+1, (REAL)(y1), (REAL)(x2)+1, (REAL)(y2)); \
+		g.DrawLine(&pen, (REAL)(x1), (REAL)(y1)+1, (REAL)(x2), (REAL)(y2)+1); \
+	}
 
 	x1 -= MinS;
 	x2 -= MinS;
