@@ -33,10 +33,10 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{758E1C6F-EEF6-4641-8085-6FD3C62D989B} 1031:{7295F763-59E6-48E5-93CE-526749B758C8} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{79868938-617D-48C8-9EEE-7F0237D19A30} 1031:{0AE77D09-E42B-4528-9F7C-EB323BD77AB6} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Flightmap" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.1.7"/>
+    <ROW Property="ProductVersion" Value="2.1.8"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="ShortcutLogoIcon" Value="Shortcuts.ico" Type="1" MsiKey="ShortcutLogoIcon"/>
@@ -66,7 +66,7 @@
     <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_ExePath AI_CustomARPName AI_DisableModify Flightmap.exe SHORTCUTDIR AIShRegAnswer ApplicationDescription"/>
     <ROW Feature="air" Feature_Parent="File_Type_Associations" Title=".air" Description="Description" Display="5" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title=".airx" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="csv" Feature_Parent="File_Type_Associations" Title=".csv" Description="Description" Display="9" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
+    <ROW Feature="csv" Feature_Parent="File_Type_Associations" Title=".csv" Description="Description" Display="9" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe AI_CustomARPName AI_DisableModify"/>
     <ATTRIBUTE name="CurrentFeature" value="Flightmap"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -479,7 +479,7 @@
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@flightmap.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="Flightmap" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="2.1.7" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="2.1.8" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://flightmap.net/tour" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
@@ -497,9 +497,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
     <ROW FileKey="_" Component_="Flightmap.exe" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="Flightmap.exe" DirProperty="SHORTCUTDIR" InstallMode="2"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveRegComponent">
-    <ROW RemoveRegistry="MapUseCount" Root="-1" Key="Software\[ProductName]" Name="MapUseCount" Component_="Flightmap.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="Flightmap" Directory_="SHORTCUTDIR" Name="Flight~1|Flightmap" Component_="Flightmap.exe" Target="[#Flightmap.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
