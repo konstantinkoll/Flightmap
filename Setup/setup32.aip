@@ -498,6 +498,9 @@
     <ROW FileKey="_" Component_="Flightmap.exe" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="Flightmap.exe" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveRegComponent">
+    <ROW RemoveRegistry="MapUseCount" Root="-1" Key="Software\[ProductName]" Name="MapUseCount" Component_="Flightmap.exe"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="Flightmap" Directory_="SHORTCUTDIR" Name="Flight~1|Flightmap" Component_="Flightmap.exe" Target="[#Flightmap.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Flightmap_1" Directory_="DesktopFolder" Name="Flight~1|Flightmap" Component_="Flightmap.exe" Target="[#Flightmap.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
