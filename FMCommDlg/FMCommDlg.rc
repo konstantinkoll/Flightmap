@@ -93,6 +93,13 @@ IDD_INSPECT             ICON                    "res\\FileInspect_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 IDD_STATISTICS          ICON                    "res\\Statistics_Tiny.ico"
 IDD_FILTER              ICON                    "res\\FilterByForm_Tiny.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// TTF
+//
+
+IDF_LETTERGOTHIC        TTF                     "res\\Letter_Gothic.ttf"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 

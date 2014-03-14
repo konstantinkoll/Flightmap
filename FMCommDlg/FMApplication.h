@@ -114,6 +114,7 @@ public:
 	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
+	static HANDLE LoadFontFromResource(UINT id, HMODULE hInst=NULL);
 	static void PlayStandardSound();
 	static void PlayNavigateSound();
 	static void PlayWarningSound();
@@ -139,4 +140,5 @@ private:
 	HMODULE hModThemes;
 	HMODULE hModAero;
 	HMODULE hModShell;
+	HANDLE hFontLetterGothic;
 };

@@ -11,6 +11,7 @@
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
+#define IDF_LETTERGOTHIC                300
 #define IDC_COLOR_HUESCROLL             700
 #define IDC_COLOR_SATSCROLL             701
 #define IDC_COLOR_LUMSCROLL             702

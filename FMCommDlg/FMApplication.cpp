@@ -150,6 +150,9 @@ FMApplication::FMApplication(GUID& AppID)
 		m_ShellLibLoaded = FALSE;
 	}
 
+	// Eingebettete Schrift
+	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC, AfxGetResourceHandle());
+
 	// Fonts
 	CString face = GetDefaultFontFace();
 
@@ -195,6 +198,8 @@ FMApplication::~FMApplication()
 		FreeLibrary(hModAero);
 	if (hModShell)
 		FreeLibrary(hModShell);
+	if (hFontLetterGothic)
+		RemoveFontMemResourceEx(hFontLetterGothic);
 }
 
 
@@ -300,6 +305,25 @@ void FMApplication::SendMail(CString Subject)
 
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
+
+HANDLE FMApplication::LoadFontFromResource(UINT id, HMODULE hInst)
+{
+	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(id), L"TTF");
+	if (!hResource)
+		return NULL;
+
+	LPVOID pResourceData = LockResource(LoadResource(hInst, hResource));
+	if (!pResourceData)
+		return NULL;
+
+	DWORD Size = SizeofResource(hInst, hResource);
+	if (!Size)
+		return NULL;
+
+	DWORD nFonts;
+	return AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+}
+
 
 
 void FMApplication::OnAppSupport()
