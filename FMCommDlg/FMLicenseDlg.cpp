@@ -45,6 +45,12 @@ void FMLicenseDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+
+BEGIN_MESSAGE_MAP(FMLicenseDlg, FMDialog)
+	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
+	ON_EN_CHANGE(IDC_LICENSEKEY, OnChange)
+END_MESSAGE_MAP()
+
 void FMLicenseDlg::OnLoadLicense()
 {
 	CString tmpStr;
@@ -84,12 +90,16 @@ void FMLicenseDlg::OnLoadLicense()
 			f.Close();
 
 			GetDlgItem(IDC_LICENSEKEY)->SetWindowText(key);
+			GetDlgItem(IDOK)->EnableWindow(TRUE);
 			GetDlgItem(IDOK)->SetFocus();
 		}
 	}
 }
 
+void FMLicenseDlg::OnChange()
+{
+	CString key;
+	GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
 
-BEGIN_MESSAGE_MAP(FMLicenseDlg, FMDialog)
-	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
-END_MESSAGE_MAP()
+	GetDlgItem(IDOK)->EnableWindow(!key.IsEmpty());
+}

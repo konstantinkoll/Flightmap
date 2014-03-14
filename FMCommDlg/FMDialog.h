@@ -46,7 +46,6 @@ protected:
 	UINT m_Design;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
-	virtual void CheckLicenseKey(FMLicense* License=NULL);
 
 	CWnd* GetBottomWnd() const;
 
@@ -57,7 +56,6 @@ protected:
 	afx_msg void OnSysColorChange();
 	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 
 private:

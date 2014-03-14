@@ -58,23 +58,22 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void AboutDlg::CheckLicenseKey(FMLicense* License)
+void AboutDlg::CheckLicenseKey()
 {
 	FMLicense l;
-	if (!License)
-		License = &l;
 
-	FMDialog::CheckLicenseKey(License);
+	if (FMIsLicensed(&l))
+		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
 
 	// Lizenzinformationen
-	GetDlgItem(IDC_NAME)->SetWindowText(License->RegName);
-	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(License->PurchaseDate);
-	GetDlgItem(IDC_ID)->SetWindowText(License->PurchaseID);
-	GetDlgItem(IDC_PRODUCT)->SetWindowText(License->ProductID);
+	GetDlgItem(IDC_NAME)->SetWindowText(l.RegName);
+	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(l.PurchaseDate);
+	GetDlgItem(IDC_ID)->SetWindowText(l.PurchaseID);
+	GetDlgItem(IDC_PRODUCT)->SetWindowText(l.ProductID);
 
 	GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
+	GetDlgItem(IDC_QUANTITY)->SetWindowText(l.Quantity);
 }
 
 void AboutDlg::CheckInternetConnection()
@@ -95,6 +94,7 @@ BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
 	ON_BN_CLICKED(IDC_EXCLUSIVE, OnExclusive)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
 	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
+	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
 
 BOOL AboutDlg::OnInitDialog()
@@ -233,4 +233,12 @@ void AboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
 
 	*pResult = 0;
+}
+
+void AboutDlg::OnEnterLicenseKey()
+{
+	FMLicenseDlg dlg(this);
+	dlg.DoModal();
+
+	CheckLicenseKey();
 }

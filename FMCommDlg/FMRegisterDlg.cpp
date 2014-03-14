@@ -79,7 +79,8 @@ void FMRegisterDlg::OnPurchase()
 
 void FMRegisterDlg::OnEnterLicenseKey()
 {
-	FMDialog::OnEnterLicenseKey();
+	FMLicenseDlg dlg(this);
+	dlg.DoModal();
 
 	if (FMIsLicensed())
 		EndDialog(IDOK);

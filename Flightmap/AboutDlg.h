@@ -21,7 +21,6 @@ public:
 
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
-	virtual void CheckLicenseKey(FMLicense* License=NULL);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
@@ -31,9 +30,11 @@ protected:
 	afx_msg void OnExclusive();
 	afx_msg void OnUpdateNow();
 	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 
 private:
+	void CheckLicenseKey();
 	void CheckInternetConnection();
 
 	CGdiPlusBitmapResource m_Logo;

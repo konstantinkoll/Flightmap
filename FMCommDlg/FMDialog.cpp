@@ -109,18 +109,6 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	}
 }
 
-void FMDialog::CheckLicenseKey(FMLicense* License)
-{
-	// Ggf. "Lizenzschlüssel eingeben" verschwinden lassen
-	if (FMIsLicensed(License))
-	{
-		CWnd* btn = GetDlgItem(IDC_ENTERLICENSEKEY);
-
-		if (btn)
-			btn->ShowWindow(SW_HIDE);
-	}
-}
-
 void FMDialog::GetLayoutRect(LPRECT lpRect) const
 {
 	GetClientRect(lpRect);
@@ -152,7 +140,6 @@ BEGIN_MESSAGE_MAP(FMDialog, CDialog)
 	ON_WM_SYSCOLORCHANGE()
 	ON_REGISTERED_MESSAGE(FMGetApp()->m_UseBgImagesChangedMsg, OnUseBgImagesChanged)
 	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
 
 BOOL FMDialog::OnInitDialog()
@@ -275,13 +262,4 @@ HBRUSH FMDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 
 	return hbr;
-}
-
-
-void FMDialog::OnEnterLicenseKey()
-{
-	FMLicenseDlg dlg(this);
-	dlg.DoModal();
-
-	CheckLicenseKey();
 }
