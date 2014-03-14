@@ -18,6 +18,7 @@
 #include "InspectDlg.h"
 #include "PropertiesDlg.h"
 #include "StatisticsDlg.h"
+#include <Winspool.h>
 
 
 // CMainWnd
@@ -1056,6 +1057,9 @@ void CMainWnd::OnFileQuit()
 
 void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
+	TCHAR szPrinterName[256];
+	DWORD cchPrinterName;
+
 	BOOL b = TRUE;
 
 	switch (pCmdUI->m_nID)
@@ -1068,11 +1072,13 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_SAVEAS_TXT:
 	case IDM_FILE_SAVEAS_OTHER:
 	case IDM_FILE_PRINT:
-	case IDM_FILE_PRINT_QUICK:
 	case IDM_FILE_PREPARE:
 	case IDM_FILE_PREPARE_PROPERTIES:
 	case IDM_FILE_CLOSE:
 		b = (m_pItinerary!=NULL);
+		break;
+	case IDM_FILE_PRINT_QUICK:
+		b = (m_pItinerary!=NULL) && GetDefaultPrinter(szPrinterName, &cchPrinterName);
 		break;
 	case IDM_FILE_PREPARE_ATTACHMENTS:
 		b = m_pItinerary ? m_pItinerary->m_Attachments.m_ItemCount : FALSE;

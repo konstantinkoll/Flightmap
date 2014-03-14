@@ -6,6 +6,7 @@
 #include "CLoungeView.h"
 #include "CMapWnd.h"
 #include "Flightmap.h"
+#include <Winspool.h>
 
 
 // CMapWnd
@@ -389,7 +390,22 @@ void CMapWnd::OnMapWndClose()
 
 void CMapWnd::OnUpdateMapWndCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(pCmdUI->m_nID==IDM_MAPWND_CLOSE ? TRUE : m_pBitmap!=NULL);
+	TCHAR szPrinterName[256];
+	DWORD cchPrinterName;
+
+	BOOL b = (m_pBitmap!=NULL);
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_FILE_CLOSE:
+		b = TRUE;
+		break;
+	case IDM_MAPWND_PRINT_QUICK:
+		b &= GetDefaultPrinter(szPrinterName, &cchPrinterName);
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }
 
 
