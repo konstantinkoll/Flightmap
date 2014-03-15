@@ -312,7 +312,11 @@ HANDLE FMApplication::LoadFontFromResource(UINT id, HMODULE hInst)
 	if (!hResource)
 		return NULL;
 
-	LPVOID pResourceData = LockResource(LoadResource(hInst, hResource));
+	HGLOBAL hMemory = LoadResource(hInst, hResource);
+	if (!hMemory)
+		return NULL;
+
+	LPVOID pResourceData = LockResource(hMemory);
 	if (!pResourceData)
 		return NULL;
 
@@ -321,7 +325,10 @@ HANDLE FMApplication::LoadFontFromResource(UINT id, HMODULE hInst)
 		return NULL;
 
 	DWORD nFonts;
-	return AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+	HANDLE res = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+
+	UnlockResource(hMemory);
+	return res;
 }
 
 
