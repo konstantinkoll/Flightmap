@@ -20,7 +20,6 @@ public:
 protected:
 	void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
@@ -32,10 +31,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGdiPlusBitmapResource* m_pBackdrop;
-	CGdiPlusBitmapResource* m_pSlogan;
-	CGdiPlusBitmapResource* m_pLogo;
-	CGdiPlusBitmapResource* m_pSanta;
 	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;

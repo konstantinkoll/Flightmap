@@ -7,19 +7,19 @@
 #include "CGdiPlusBitmap.h"
 #include <uxtheme.h>
 
-#define RatingBitmapWidth        88
-#define RatingBitmapHeight       15
-#define MaxRating                10
+#define RatingBitmapWidth      88
+#define RatingBitmapHeight     15
+#define MaxRating              10
 
-#define OS_XP                     0
-#define OS_Vista                  1
-#define OS_Seven                  2
-#define OS_Eight                  3
+#define OS_XP                   0
+#define OS_Vista                1
+#define OS_Seven                2
+#define OS_Eight                3
 
-#define NAG_NOTLICENSED           0
-#define NAG_EXPIRED               1
-#define NAG_COUNTER               0
-#define NAG_FORCE                 2
+#define NAG_NOTLICENSED         0
+#define NAG_EXPIRED             1
+#define NAG_COUNTER             0
+#define NAG_FORCE               2
 
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
@@ -51,6 +51,12 @@ struct CDS_Wakeup
 {
 	GUID AppID;
 	WCHAR FileName[MAX_PATH];
+};
+
+struct ResourceCacheItem
+{
+	CGdiPlusBitmapResource* pImage;
+	UINT nResID;
 };
 
 
@@ -114,7 +120,8 @@ public:
 	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
-	static HANDLE LoadFontFromResource(UINT id, HMODULE hInst=NULL);
+	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
+	static HANDLE LoadFontFromResource(UINT nID, HMODULE hInst=NULL);
 	static void PlayStandardSound();
 	static void PlayNavigateSound();
 	static void PlayWarningSound();
@@ -127,6 +134,7 @@ public:
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 
 protected:
+	CList<ResourceCacheItem> m_ResourceCache;
 	UINT m_NagCounter;
 
 	afx_msg void OnAppPurchase();

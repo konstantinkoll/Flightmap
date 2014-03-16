@@ -11,7 +11,7 @@
 //
 
 FMLicenseDlg::FMLicenseDlg(CWnd* pParentWnd)
-	: FMDialog(IDD_ENTERLICENSEKEY, FMDS_Blue, pParentWnd)
+	: FMDialog(IDD_ENTERLICENSEKEY, pParentWnd)
 {
 }
 
@@ -24,7 +24,7 @@ void FMLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		CString key;
 		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
 
-		FMGetApp()->WriteString(_T("License"), key);
+		p_App->WriteString(_T("License"), key);
 
 		CString caption;
 		CString message;

@@ -33,8 +33,7 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 	}
 
 	p_Airport = NULL;
-	m_Location.Latitude = 0;
-	m_Location.Longitude = 0;
+	m_Location.Latitude = m_Location.Longitude = 0;
 }
 
 CMapPreviewCtrl::~CMapPreviewCtrl()

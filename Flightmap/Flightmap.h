@@ -76,7 +76,7 @@ public:
 	void AddRecentList(CDialogMenuPopup* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
-	static void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
+	void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
 
 	CList<CMainWindow*> m_MainFrames;
 	CList<CString> m_RecentFiles;

@@ -11,7 +11,7 @@
 //
 
 FMRegisterDlg::FMRegisterDlg(CWnd* pParentWnd)
-	: FMDialog(IDD_REGISTER, FMDS_Blue, pParentWnd)
+	: FMDialog(IDD_REGISTER, pParentWnd)
 {
 }
 
@@ -29,7 +29,7 @@ INT_PTR FMRegisterDlg::DoModal()
 	if (!dlt.Load(MAKEINTRESOURCE(m_nIDTemplate)))
 		return -1;
 
-	dlt.SetFont(FMGetApp()->GetDefaultFontFace(), 9);
+	dlt.SetFont(p_App->GetDefaultFontFace(), 9);
 
 	LPSTR pdata = (LPSTR)GlobalLock(dlt.m_hTemplate);
 	m_lpszTemplateName = NULL;
@@ -74,7 +74,7 @@ void FMRegisterDlg::OnPurchase()
 	CCmdUI cmd;
 	cmd.m_nID = ID_APP_PURCHASE;
 
-	FMGetApp()->OnCmdMsg(ID_APP_PURCHASE, CN_COMMAND, &cmd, NULL);
+	p_App->OnCmdMsg(ID_APP_PURCHASE, CN_COMMAND, &cmd, NULL);
 }
 
 void FMRegisterDlg::OnEnterLicenseKey()

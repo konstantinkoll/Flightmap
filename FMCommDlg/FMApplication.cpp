@@ -246,6 +246,9 @@ CWnd* FMApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 INT FMApplication::ExitInstance()
 {
+	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
+		delete m_ResourceCache.GetNext(p).pImage;
+
 	for (UINT a=0; a<=MaxRating; a++)
 		DeleteObject(m_RatingBitmaps[a]);
 
@@ -306,9 +309,27 @@ void FMApplication::SendMail(CString Subject)
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
-HANDLE FMApplication::LoadFontFromResource(UINT id, HMODULE hInst)
+CGdiPlusBitmap* FMApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType, HMODULE hInst)
 {
-	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(id), L"TTF");
+	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
+	{
+		ResourceCacheItem item = m_ResourceCache.GetNext(p);
+
+		if (item.nResID==nID)
+			return item.pImage;
+	}
+
+	ResourceCacheItem item;
+	item.pImage = new CGdiPlusBitmapResource(nID, pType, hInst);
+	item.nResID = nID;
+
+	m_ResourceCache.AddTail(item);
+	return item.pImage;
+}
+
+HANDLE FMApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
+{
+	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(nID), L"TTF");
 	if (!hResource)
 		return NULL;
 

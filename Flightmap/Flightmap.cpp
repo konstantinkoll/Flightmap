@@ -441,12 +441,10 @@ void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
 
 void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di)
 {
-	CGdiPlusBitmapResource Logo(IDB_FLIGHTMAP_256, _T("PNG"));
-
 	Graphics g(dc);
 	g.SetPageUnit(UnitPixel);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
-	g.DrawImage(Logo.m_pBitmap, (REAL)(rect.left*0.95), (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
+	g.DrawImage(GetCachedResourceImage(IDB_FLIGHTMAP_256, _T("PNG"))->m_pBitmap, (REAL)(rect.left*0.95), (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
 
 	CFont fntTitle;
 	fntTitle.CreateFont((INT)Spacer, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,

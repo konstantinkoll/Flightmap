@@ -4,7 +4,6 @@
 
 #pragma once
 #include "IATA.h"
-#include "CGdiPlusBitmap.h"
 
 
 // CMapSelectionCtrl
@@ -18,19 +17,15 @@ struct tagGPSDATA
 	FMGeoCoordinates* pCoord;
 };
 
-static CGdiPlusBitmapResource* Map = NULL;
-
 class CMapSelectionCtrl : public CWnd
 {
 public:
 	CMapSelectionCtrl();
-	~CMapSelectionCtrl();
 
 	void OnBlink();
 	void SetGeoCoordinates(const FMGeoCoordinates Coord);
 
 protected:
-	CGdiPlusBitmapResource* m_Indicator;
 	FMGeoCoordinates m_Coord;
 
 	void UpdateLocation(CPoint point);

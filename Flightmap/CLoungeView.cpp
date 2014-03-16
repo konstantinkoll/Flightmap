@@ -15,7 +15,6 @@ CLoungeView::CLoungeView()
 	: CWnd()
 {
 	hBackgroundBrush = NULL;
-	m_pBackdrop = m_pSlogan = m_pLogo = m_pSanta = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
 }
 
@@ -31,22 +30,26 @@ BOOL CLoungeView::Create(CWnd* pParentWnd, UINT nID)
 
 void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
+	FMApplication* pApp = FMGetApp();
+
 	BOOL Themed = IsCtrlThemed();
 	if (Themed && theApp.m_UseBgImages)
 	{
-		INT l = m_pBackdrop->m_pBitmap->GetWidth();
-		INT h = m_pBackdrop->m_pBitmap->GetHeight();
+		CGdiPlusBitmap* pBackdrop = pApp->GetCachedResourceImage(IDB_DOCKED, _T("JPG"));
+		INT l = pBackdrop->m_pBitmap->GetWidth();
+		INT h = pBackdrop->m_pBitmap->GetHeight();
 
 		DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
 		l = max(rect.Width(), (INT)(l*f));
 		h = max(rect.Height(), (INT)(h*f));
 
-		g.DrawImage(m_pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
+		g.DrawImage(pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
 
-		l = m_pSlogan->m_pBitmap->GetWidth();
-		h = m_pSlogan->m_pBitmap->GetHeight();
+		CGdiPlusBitmap* pSlogan = pApp->GetCachedResourceImage(IDB_SLOGAN, _T("PNG"));
+		l = pSlogan->m_pBitmap->GetWidth();
+		h = pSlogan->m_pBitmap->GetHeight();
 		if ((rect.Width()>=520) && (rect.Height()>=150))
-			g.DrawImage(m_pSlogan->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+			g.DrawImage(pSlogan->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
 		SolidBrush brush(Color(0x14, 0x00, 0x00, 0x00));
 		for (INT a=0; a<5; a++)
@@ -58,14 +61,22 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		if (Themed)
 		{
-			INT l = m_pLogo->m_pBitmap->GetWidth();
-			INT h = m_pLogo->m_pBitmap->GetHeight();
+			CGdiPlusBitmap* pLogo = pApp->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
+			INT l = pLogo->m_pBitmap->GetWidth();
+			INT h = pLogo->m_pBitmap->GetHeight();
+
 			if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
 			{
-				g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
+				g.DrawImage(pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
 
-				if (m_pSanta)
-					g.DrawImage(m_pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-16);
+				SYSTEMTIME st;
+				GetSystemTime(&st);
+
+				if (st.wMonth==12)
+				{
+					CGdiPlusBitmap* pSanta = pApp->GetCachedResourceImage(IDB_SANTA, _T("PNG"));
+					g.DrawImage(pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-16);
+				}
 			}
 		}
 	}
@@ -73,7 +84,6 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 
 BEGIN_MESSAGE_MAP(CLoungeView, CWnd)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
@@ -84,34 +94,8 @@ BEGIN_MESSAGE_MAP(CLoungeView, CWnd)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
-INT CLoungeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	m_pBackdrop = new CGdiPlusBitmapResource(IDB_DOCKED, _T("JPG"));
-	m_pSlogan = new CGdiPlusBitmapResource(IDB_SLOGAN, _T("PNG"));
-	m_pLogo = new CGdiPlusBitmapResource(IDB_FLIGHTMAP_128, _T("PNG"));
-
-	SYSTEMTIME st;
-	GetSystemTime(&st);
-
-	if (st.wMonth==12)
-		m_pSanta = new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG"));
-
-	return 0;
-}
-
 void CLoungeView::OnDestroy()
 {
-	if (m_pBackdrop)
-		delete m_pBackdrop;
-	if (m_pSlogan)
-		delete m_pSlogan;
-	if (m_pLogo)
-		delete m_pLogo;
-	if (m_pSanta)
-		delete m_pSanta;
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
 

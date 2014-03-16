@@ -37,8 +37,8 @@ private:
 	void CheckLicenseKey();
 	void CheckInternetConnection();
 
-	CGdiPlusBitmapResource m_Logo;
-	CGdiPlusBitmapResource* m_pSanta;
+	CGdiPlusBitmap* p_Logo;
+	CGdiPlusBitmap* p_Santa;
 	CFont m_CaptionFont;
 	CFont m_VersionFont;
 	INT m_CaptionTop;

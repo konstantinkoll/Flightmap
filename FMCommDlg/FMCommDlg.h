@@ -29,6 +29,23 @@
 
 #define FMGetApp() ((FMApplication*)AfxGetApp())
 
+struct FMLicenseVersion
+{
+	UINT Major;
+	UINT Minor;
+	UINT Release;
+};
+
+struct FMLicense
+{
+	WCHAR PurchaseID[256];
+	WCHAR ProductID[256];
+	WCHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
+	WCHAR Quantity[8];
+	WCHAR RegName[256];
+	FMLicenseVersion Version;
+};
+
 void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 BOOL IsCtrlThemed();
 void DrawControlBorder(CWnd* pWnd);

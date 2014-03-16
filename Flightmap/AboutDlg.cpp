@@ -13,17 +13,16 @@
 //
 
 AboutDlg::AboutDlg(CWnd* pParentWnd)
-	: FMDialog(IDD_ABOUT, FMDS_Blue, pParentWnd)
+	: FMDialog(IDD_ABOUT, pParentWnd)
 {
 	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
 	m_UseBgImages = theApp.m_UseBgImages;
 	m_CaptionTop = 0;
 
-	ENSURE(m_Logo.Load(IDB_FLIGHTMAP_128, _T("PNG")));
-
 	SYSTEMTIME st;
 	GetSystemTime(&st);
-	m_pSanta = (st.wMonth==12) ? new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG")) : NULL;
+	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
+	p_Logo = p_App->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -139,7 +138,7 @@ BOOL AboutDlg::OnInitDialog()
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(&rectWnd);
 	ScreenToClient(&rectWnd);
-	rectWnd.left = m_pSanta ? 178 : 148;
+	rectWnd.left = p_Santa ? 178 : 148;
 	rectWnd.top = m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
@@ -156,9 +155,6 @@ BOOL AboutDlg::OnInitDialog()
 void AboutDlg::OnDestroy()
 {
 	KillTimer(1);
-
-	if (m_pSanta)
-		delete m_pSanta;
 
 	FMDialog::OnDestroy();
 }
@@ -179,18 +175,18 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(m_Logo.m_pBitmap, m_pSanta ? 39 : 9, 12, 128, 128);
-	if (m_pSanta)
-		g.DrawImage(m_pSanta->m_pBitmap, -6, 2);
+	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, 12, 128, 128);
+	if (p_Santa)
+		g.DrawImage(p_Santa->m_pBitmap, -6, 2);
 
 	CRect r(rect);
 	r.top = m_CaptionTop;
-	r.left = m_pSanta ? 178 : 148;
+	r.left = p_Santa ? 178 : 148;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
-	dc.SetTextColor(0x000000);
+	dc.SetTextColor((IsCtrlThemed() && p_App->m_UseBgImages) ? 0x000000 : 0x606060);
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(_T("Flightmap"), r, fmt);
 

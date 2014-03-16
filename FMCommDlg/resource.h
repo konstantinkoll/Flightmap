@@ -46,7 +46,7 @@
 #define IDC_EDIT1                       2048
 #define IDB_FLIGHTMAP_128               20000
 #define IDB_FLIGHTMAP_256               20001
-#define IDB_BACKDROP_BLUE               20002
+#define IDB_BACKDROP                    20002
 #define IDB_LOCATIONINDICATOR_8         20003
 #define IDB_LOCATIONINDICATOR_16        20004
 #define IDB_EARTHMAP_1024               20005

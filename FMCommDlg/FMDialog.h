@@ -4,46 +4,25 @@
 
 
 #pragma once
-#include "CGdiPlusBitmap.h"
 #include "CGroupBox.h"
-
-struct FMLicenseVersion
-{
-	UINT Major;
-	UINT Minor;
-	UINT Release;
-};
-
-struct FMLicense
-{
-	WCHAR PurchaseID[256];
-	WCHAR ProductID[256];
-	WCHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
-	WCHAR Quantity[8];
-	WCHAR RegName[256];
-	FMLicenseVersion Version;
-};
+#include "FMApplication.h"
 
 
 // FMDialog
 //
 
-#define FMDS_Blue         1
-#define FMDS_White        2
-
 class FMDialog : public CDialog
 {
 public:
-	FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd=NULL);
+	FMDialog(UINT nIDTemplate, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	void GetLayoutRect(LPRECT lpRect) const;
-	UINT GetDesign() const;
 
 protected:
+	FMApplication* p_App;
 	UINT m_nIDTemplate;
-	UINT m_Design;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
@@ -59,7 +38,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGdiPlusBitmapResource* m_pBackdrop;
 	CGroupBox m_GroupBox[4];
 	HICON hIconL;
 	HICON hIconS;

@@ -111,8 +111,6 @@ void FMErrorBox(UINT nResID, HWND hWnd)
 #define ROUNDOFF 0.00000001
 
 static BOOL UseGermanDB = (GetUserDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
-static CGdiPlusBitmapResource* MapBackground = NULL;
-static CGdiPlusBitmapResource* MapIndicator = NULL;
 
 UINT FMIATAGetCountryCount()
 {
@@ -190,18 +188,6 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 {
 	ASSERT(pAirport);
 
-	// Load resources
-	if (!MapBackground)
-	{
-		MapBackground = new CGdiPlusBitmapResource();
-		ENSURE(MapBackground->Load(IDB_EARTHMAP_2048, _T("JPG"), AfxGetResourceHandle()));
-	}
-	if (!MapIndicator)
-	{
-		MapIndicator = new CGdiPlusBitmapResource();
-		ENSURE(MapIndicator->Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), AfxGetResourceHandle()));
-	}
-
 	// Create bitmap
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
@@ -222,8 +208,11 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	INT L = MapBackground->m_pBitmap->GetWidth();
-	INT H = MapBackground->m_pBitmap->GetHeight();
+	CGdiPlusBitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP_2048, _T("JPG"));
+	CGdiPlusBitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"));
+
+	INT L = pMap->m_pBitmap->GetWidth();
+	INT H = pMap->m_pBitmap->GetHeight();
 	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
 	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
 	INT PosX = -LocX+Width/2;
@@ -237,15 +226,16 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 		{
 			PosY = Height-H;
 		}
-	if (PosX>1)
-		g.DrawImage(MapBackground->m_pBitmap, PosX-L, PosY, L, H);
-	g.DrawImage(MapBackground->m_pBitmap, PosX, PosY, L, H);
-	if (PosX<(INT)Width-L)
-		g.DrawImage(MapBackground->m_pBitmap, PosX+L, PosY, L, H);
 
-	LocX += PosX-MapIndicator->m_pBitmap->GetWidth()/2+1;
-	LocY += PosY-MapIndicator->m_pBitmap->GetHeight()/2+1;
-	g.DrawImage(MapIndicator->m_pBitmap, LocX, LocY);
+	if (PosX>1)
+		g.DrawImage(pMap->m_pBitmap, PosX-L, PosY, L, H);
+	g.DrawImage(pMap->m_pBitmap, PosX, PosY, L, H);
+	if (PosX<(INT)Width-L)
+		g.DrawImage(pMap->m_pBitmap, PosX+L, PosY, L, H);
+
+	LocX += PosX-pIndicator->m_pBitmap->GetWidth()/2+1;
+	LocY += PosY-pIndicator->m_pBitmap->GetHeight()/2+1;
+	g.DrawImage(pIndicator->m_pBitmap, LocX, LocY);
 
 	// Pfad erstellen
 	FontFamily fontFamily(FMGetApp()->GetDefaultFontFace());
@@ -261,7 +251,7 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	Rect tr;
 	TextPath.GetBounds(&tr);
 
-	INT FntX = LocX+MapIndicator->m_pBitmap->GetWidth();
+	INT FntX = LocX+pIndicator->m_pBitmap->GetWidth();
 	INT FntY = LocY-tr.Y;
 
 	if (FntY<10)

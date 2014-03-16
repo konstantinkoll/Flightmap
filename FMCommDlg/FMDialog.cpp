@@ -11,14 +11,14 @@
 // FMDialog
 //
 
-FMDialog::FMDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd)
+FMDialog::FMDialog(UINT nIDTemplate, CWnd* pParentWnd)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
-	m_Design = Design;
+
+	p_App = FMGetApp();
 	hIconS = hIconL = NULL;
 	hBackgroundBrush = NULL;
-	m_pBackdrop = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
 }
 
@@ -50,8 +50,6 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		return;
 	}
 
-	FMApplication* pApp = FMGetApp();
-
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
@@ -64,19 +62,20 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	INT Line = layout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
-	if (Themed && pApp->m_UseBgImages && (m_Design==FMDS_Blue))
+	if (Themed && p_App->m_UseBgImages)
 	{
-		INT l = m_pBackdrop->m_pBitmap->GetWidth();
-		INT h = m_pBackdrop->m_pBitmap->GetHeight();
+		CGdiPlusBitmap* pBackdrop = p_App->GetCachedResourceImage(IDB_BACKDROP, _T("PNG"));
+		INT l = pBackdrop->m_pBitmap->GetWidth();
+		INT h = pBackdrop->m_pBitmap->GetHeight();
 
 		DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
 		l = (INT)(l*f);
 		h = (INT)(h*f);
 
-		g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+		g.DrawImage(pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
 		SolidBrush brush1(Color(168, 255, 255, 255));
-		g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
+		g.FillRectangle(&brush1, 0, 0, m_BackBufferL, --Line);
 		brush1.SetColor(Color(224, 205, 250, 255));
 		g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
 		brush1.SetColor(Color(180, 183, 210, 240));
@@ -89,18 +88,10 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	else
 	{
 		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
-		if (Themed && (pApp->OSVersion!=OS_Eight))
+		if (Themed && (p_App->OSVersion!=OS_Eight))
 		{
-			if (m_Design==FMDS_Blue)
-			{
-				dc.FillSolidRect(0, Line, m_BackBufferL, 3, 0xFFFFFF);
-				Line += 3;
-			}
-
-			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF1E1DA);
-			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF4EAE3);
-			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xF9F0EC);
-			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFBF5F1);
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
 		}
 		else
 		{
@@ -123,12 +114,7 @@ void FMDialog::GetLayoutRect(LPRECT lpRect) const
 	CRect btn;
 	pBottomWnd->GetWindowRect(&btn);
 	ScreenToClient(&btn);
-	lpRect->bottom = btn.top-borders.Height()-(m_Design==FMDS_Blue ? 3 : 1);
-}
-
-UINT FMDialog::GetDesign() const
-{
-	return m_Design;
+	lpRect->bottom = btn.top-borders.Height()-2;
 }
 
 
@@ -153,23 +139,11 @@ BOOL FMDialog::OnInitDialog()
 	hIconL = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
 	SetIcon(hIconL, TRUE);
 
-	switch (m_Design)
-	{
-	case FMDS_Blue:
-		// Hintergrundbild laden
-		m_pBackdrop = new CGdiPlusBitmapResource();
-		ENSURE(m_pBackdrop->Load(IDB_BACKDROP_BLUE, _T("PNG"), AfxGetResourceHandle()));
-
-		break;
-	}
-
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void FMDialog::OnDestroy()
 {
-	if (m_pBackdrop)
-		delete m_pBackdrop;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)

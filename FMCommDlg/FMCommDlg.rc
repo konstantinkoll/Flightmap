@@ -39,7 +39,7 @@ IDB_EARTHMAP_2048       JPG                     "res\\Earthmap_2048.jpg"
 
 IDB_FLIGHTMAP_128       PNG                     "res\\Flightmap_128.png"
 IDB_FLIGHTMAP_256       PNG                     "res\\Flightmap_256.png"
-IDB_BACKDROP_BLUE       PNG                     "res\\Backdrop_Blue.png"
+IDB_BACKDROP            PNG                     "res\\Backdrop.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_NRT_REGISTERED      PNG                     "res\\NRT_Registered.png"
