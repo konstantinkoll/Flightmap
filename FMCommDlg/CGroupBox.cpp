@@ -89,7 +89,7 @@ void CGroupBox::OnPaint()
 	CRect rectBounds(rect);
 	rectBounds.top += sz.cy/2;
 
-	if (pApp->m_UseBgImages && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
+	if (Themed && pApp->m_UseBgImages && (((FMDialog*)GetParent())->GetDesign()==FMDS_Blue))
 	{
 		rectBounds.right -= 3;
 		rectBounds.bottom -= 3;
