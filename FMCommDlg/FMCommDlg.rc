@@ -125,7 +125,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,261,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,300,261,50,14,WS_GROUP
-    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt %s. %s",IDC_VERSIONINFO,
+    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,343,80
     CONTROL         "Maﬂeinheiten",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,66
     LTEXT           "Entfernungsangaben werden immer in Kilometern (km) angezeigt, und zus‰tzlich in Meilen:",IDC_STATIC,14,103,142,25
@@ -720,7 +720,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,243,261,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,300,261,50,14,WS_GROUP
-    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s. %s",IDC_VERSIONINFO,
+    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,343,80
     CONTROL         "Distance units",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,66
     LTEXT           "Distances are always displayed in kilometers (km), and additionally in miles:",IDC_STATIC,14,103,142,25

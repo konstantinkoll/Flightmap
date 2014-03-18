@@ -17,7 +17,7 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 {
 	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
 	m_UseBgImages = theApp.m_UseBgImages;
-	m_CaptionTop = 0;
+	m_CaptionTop = m_IconTop = 0;
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
@@ -101,6 +101,10 @@ BOOL AboutDlg::OnInitDialog()
 	FMDialog::OnInitDialog();
 
 	// Version
+	CRect rectWnd;
+	m_wndVersionInfo.GetWindowRect(&rectWnd);
+	ScreenToClient(&rectWnd);
+
 #ifdef _M_X64
 #define ISET _T(" (x64)")
 #else
@@ -116,30 +120,25 @@ BOOL AboutDlg::OnInitDialog()
 	m_wndVersionInfo.SetWindowText(text);
 
 	// Hintergrund
-	m_CaptionFont.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+	const INT Height = rectWnd.Height()-16;
+	const INT LineGap = Height/11;
+	const INT HeightCaption = 4*LineGap;
+	const INT HeightVersion = 2*LineGap;
+
+	m_CaptionFont.CreateFont(HeightCaption, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, _T("Letter Gothic"));
 
-	m_VersionFont.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	CDC* dc = GetDC();
-	CFont* pOldFont = dc->SelectObject(&m_CaptionFont);
-	INT HeightCaption = dc->GetTextExtent(_T("Wy")).cy+8;
-	dc->SelectObject(&m_VersionFont);
-	INT HeightVersion = dc->GetTextExtent(_T("Wy")).cy*3;
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-3*HeightVersion-Height/11)/2-4;
+	m_IconTop = rectWnd.top+(rectWnd.bottom-124)/2-8;
 
-	m_CaptionTop = (128+(FMGetApp()->OSVersion==OS_XP ? 20 : 12)-HeightCaption-HeightVersion)/2;
-
-	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(&rectWnd);
-	ScreenToClient(&rectWnd);
 	rectWnd.left = p_Santa ? 178 : 148;
-	rectWnd.top = m_CaptionTop+HeightCaption;
+	rectWnd.top = m_CaptionTop+HeightCaption+LineGap;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Lizenz
@@ -175,13 +174,13 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, 12, 128, 128);
+	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
 	if (p_Santa)
-		g.DrawImage(p_Santa->m_pBitmap, -6, 2);
+		g.DrawImage(p_Santa->m_pBitmap, -6, m_IconTop-10);
 
 	CRect r(rect);
 	r.top = m_CaptionTop;
-	r.left = p_Santa ? 178 : 148;
+	r.left = (p_Santa ? 178 : 148)-1;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
