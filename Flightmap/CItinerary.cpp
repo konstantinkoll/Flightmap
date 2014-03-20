@@ -573,10 +573,7 @@ void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr)
 		pChar = (CHAR*)pData;
 		WideCharToMultiByte(CP_ACP, 0, pStr, -1, pChar, FMAttributes[Attr].DataParameter, NULL, NULL);
 		while (*pChar)
-		{
-			*pChar = (CHAR)toupper(*pChar);
-			pChar++;
-		}
+			*(pChar++) = (CHAR)toupper(*pChar);
 		break;
 	case FMTypeUINT:
 		ScanUINT(pStr, *((UINT*)pData));
