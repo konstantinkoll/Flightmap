@@ -695,6 +695,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Flightmap_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\FMCommDlg.rc"
 				>
 			</File>
