@@ -26,6 +26,8 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
+
+	ENSURE(m_AppName.LoadString(IDR_APPLICATION));
 }
 
 void AboutDlg::DoDataExchange(CDataExchange* pDX)
@@ -134,7 +136,7 @@ BOOL AboutDlg::OnInitDialog()
 		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-3*HeightVersion-Height/11)/2-4;
+	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-3*HeightVersion-Height/11)/2-8;
 	m_IconTop = rectWnd.top+(rectWnd.bottom-124)/2-8;
 
 	rectWnd.left = p_Santa ? 178 : 148;
@@ -187,7 +189,7 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor((IsCtrlThemed() && p_App->m_UseBgImages) ? 0x000000 : 0x606060);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(_T("Flightmap"), r, fmt);
+	dc.DrawText(m_AppName, r, fmt);
 
 	dc.SelectObject(pOldFont);
 }

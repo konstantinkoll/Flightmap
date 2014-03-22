@@ -45,5 +45,6 @@ private:
 	INT m_IconTop;
 	CString m_Version;
 	CString m_Copyright;
+	CString m_AppName;
 	CWnd m_wndVersionInfo;
 };
