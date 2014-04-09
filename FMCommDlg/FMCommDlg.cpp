@@ -698,6 +698,8 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Perform check
 	CString VersionIni;
 	CString LatestVersion;
+	CString LatestMSN;
+	Check=TRUE;
 	if (Check)
 	{
 		CWaitCursor wait;
@@ -708,6 +710,7 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 		if (!VersionIni.IsEmpty())
 		{
 			LatestVersion = GetIniValue(VersionIni, _T("Version"));
+			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
 			if (!LatestVersion.IsEmpty())
 			{
 				Version CV;
@@ -716,36 +719,36 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 				ParseVersion(LatestVersion, &LV);
 
 				UpdateFound = (LV.Major>CV.Major) ||
-								((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
-								((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build));
+					((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
+					((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build));
 			}
 		}
 	}
 
 	// Result
-	CString Caption;
-	ENSURE(Caption.LoadString(IDS_UPDATE));
-
+	UpdateFound=TRUE;
 	if (UpdateFound)
 	{
-		CString Mask;
-		ENSURE(Mask.LoadString(IDS_UPDATE_AVAILABLE));
-
-		CString Text;
-		Text.Format(Mask, LatestVersion);
-		if (MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONQUESTION | MB_YESNO)==IDYES)
+		if (pParentWnd)
 		{
-			CString url;
-			ENSURE(url.LoadString(IDS_UPDATEURL));
-
-			ShellExecute(pParentWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+			FMUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
+			dlg.DoModal();
+		}
+		else
+		{
+			FMUpdateDlg* pUpdateDlg = new FMUpdateDlg(LatestVersion, LatestMSN);
+			pUpdateDlg->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
+			pUpdateDlg->ShowWindow(SW_SHOW);
 		}
 	}
 	else
 		if (Force)
 		{
+			CString Caption;
 			CString Text;
-			ENSURE(Text.LoadString(IDS_UPDATE_NOTAVAILABLE));
+			ENSURE(Caption.LoadString(IDS_UPDATE));
+			ENSURE(Text.LoadString(IDS_UPDATENOTAVAILABLE));
+
 			MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONINFORMATION | MB_OK);
 		}
 }

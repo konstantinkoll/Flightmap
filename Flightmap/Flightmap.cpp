@@ -4,9 +4,9 @@
 
 #include "stdafx.h"
 #include "AboutDlg.h"
+#include "CMainWnd.h"
 #include "Flightmap.h"
 #include "CGoogleEarthFile.h"
-#include "CMainWnd.h"
 
 
 GUID theAppID =	// {8269ADBF-A534-469d-A58D-7EBA84634B70}
@@ -214,7 +214,7 @@ BOOL CFlightmapApp::InitInstance()
 	if (!FMIsLicensed())
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
-	FMCheckForUpdate(FALSE, pFrame);
+	FMCheckForUpdate(FALSE);
 
 	m_AppInitialized = TRUE;
 

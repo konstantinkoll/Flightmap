@@ -37,6 +37,7 @@ IDB_EARTHMAP_2048       JPG                     "res\\Earthmap_2048.jpg"
 // PNG
 //
 
+IDB_FLIGHTMAP_64        PNG                     "res\\Flightmap_64.png"
 IDB_FLIGHTMAP_128       PNG                     "res\\Flightmap_128.png"
 IDB_FLIGHTMAP_256       PNG                     "res\\Flightmap_256.png"
 IDB_BACKDROP            PNG                     "res\\Backdrop.png"
@@ -443,6 +444,19 @@ BEGIN
     LTEXT           "„Filtern“ erzeugt einen neuen Flugplan, der nur die passenden Flüge in neuer Sortierreihenfolge enthält. Der ursprüngliche Flugplan wird nicht verändert.",IDC_STATIC,7,7,307,20,SS_NOPREFIX
 END
 
+IDD_UPDATE DIALOGEX 0, 0, 210, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Update verfügbar"
+CLASS "UpdateDlg"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,103,96,100,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
+    LTEXT           "Eine neue Version von Flightmap steht zum Herunterladen bereit.",IDC_STATIC,7,50,196,16
+    CONTROL         "Dieses Update ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,196,10
+    CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,90,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -563,6 +577,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 244
     END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -606,6 +628,20 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Wiederherstellen",           IDM_UPDATE_RESTORE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -633,8 +669,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_AVAILABLE    "Eine neue Version, Flightmap %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
-    IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
+    IDS_UPDATENOTAVAILABLE  "Es steht keine neue Version von Flightmap zum Herunterladen bereit."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AUTOMATIC           "Automatisch wählen"
     IDS_AIRPORT_NAME        "Name"
@@ -1037,6 +1072,19 @@ BEGIN
     LTEXT           "Filtering creates a new itinerary containing all matching flights in a new order. The source itinerary will not be modified.",IDC_STATIC,7,7,307,20,SS_NOPREFIX
 END
 
+IDD_UPDATE DIALOGEX 0, 0, 210, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Update available"
+CLASS "UpdateDlg"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Download now",IDOK,123,96,80,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
+    LTEXT           "A new version of Flightmap is available for download.",IDC_STATIC,7,50,196,16
+    CONTROL         "Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,196,10
+    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1157,6 +1205,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 244
     END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1200,6 +1256,20 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restore",                    IDM_UPDATE_RESTORE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -1227,8 +1297,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_AVAILABLE    "An update, Flightmap %s, is available.\nWould you like to download it now?"
-    IDS_UPDATE_NOTAVAILABLE "There is no update of Flightmap available right now."
+    IDS_UPDATENOTAVAILABLE  "There is no update of Flightmap available right now."
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
     IDS_AUTOMATIC           "Choose automatically"
     IDS_AIRPORT_NAME        "Name"

@@ -24,6 +24,7 @@
 #include "..\FMCommDlg\FMSelectLocationGPSDlg.h"
 #include "..\FMCommDlg\FMSelectLocationIATADlg.h"
 #include "..\FMCommDlg\FMTooltip.h"
+#include "..\FMCommDlg\FMUpdateDlg.h"
 #include "..\FMCommDlg\IATA.h"
 #include "..\FMCommDlg\License.h"
 

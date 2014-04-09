@@ -227,6 +227,12 @@ BOOL FMApplication::InitInstance()
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
+	// Dialog classes
+	WNDCLASS wc;
+	GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);
+	wc.lpszClassName = _T("UpdateDlg");
+	AfxRegisterClass(&wc);
+
 	// Rating bitmaps
 	for (UINT a=0; a<=MaxRating; a++)
 		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));

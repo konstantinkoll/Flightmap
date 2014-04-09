@@ -42,6 +42,8 @@
 #define IDC_COLOR_BLUEACCEL             728
 #define IDC_COLOR_SOLID_LEFT            730
 #define IDC_COLOR_SOLID_RIGHT           731
+#define IDC_CHECK1                      2049
+#define IDC_SYSLINK1                    2050
 #define IDB_FLIGHTMAP_64                20000
 #define IDB_FLIGHTMAP_128               20001
 #define IDB_FLIGHTMAP_256               20002
@@ -79,14 +81,13 @@
 #define IDS_XOFY_SINGULAR               20109
 #define IDS_XOFY_PLURAL                 20110
 #define IDS_UPDATE                      20111
-#define IDS_UPDATE_AVAILABLE            20112
-#define IDS_UPDATE_NOTAVAILABLE         20113
-#define IDS_CANNOTLOADLICENSE           20114
-#define IDS_AUTOMATIC                   20115
-#define IDS_AIRPORT_NAME                20116
-#define IDS_AIRPORT_COUNTRY             20117
-#define IDS_AIRPORT_CODE                20118
-#define IDS_AIRPORT_LOCATION            20119
+#define IDS_UPDATENOTAVAILABLE          20112
+#define IDS_CANNOTLOADLICENSE           20113
+#define IDS_AUTOMATIC                   20114
+#define IDS_AIRPORT_NAME                20115
+#define IDS_AIRPORT_COUNTRY             20116
+#define IDS_AIRPORT_CODE                20117
+#define IDS_AIRPORT_LOCATION            20118
 #define IDC_GROUPBOX1                   20200
 #define IDC_GROUPBOX2                   20201
 #define IDC_GROUPBOX3                   20202
@@ -192,14 +193,19 @@
 #define IDC_FILTER_YEAR                 22102
 #define IDC_ASCENDING                   22103
 #define IDC_DESCENDING                  22104
+#define IDD_UPDATE                      22200
+#define IDC_IGNOREUPDATE                22201
+#define IDC_HIDE                        22202
+#define IDM_UPDATE                      23000
+#define IDM_UPDATE_RESTORE              23001
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2012
-#define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2049
+#define _APS_NEXT_RESOURCE_VALUE        2013
+#define _APS_NEXT_COMMAND_VALUE         32773
+#define _APS_NEXT_CONTROL_VALUE         2051
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

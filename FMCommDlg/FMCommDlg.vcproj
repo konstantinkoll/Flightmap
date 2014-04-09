@@ -443,6 +443,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMUpdateDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuIcons.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -589,6 +597,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMUpdateDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IATA.h"
 				>
 			</File>
@@ -606,6 +618,10 @@
 			</File>
 			<File
 				RelativePath=".\License.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuIcons.h"
 				>
 			</File>
 			<File
@@ -815,6 +831,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\FMCommDlg.aps"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
