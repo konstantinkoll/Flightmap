@@ -202,7 +202,6 @@ void CMapWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMapWnd, CMainWindow)
 	ON_WM_CREATE()
-	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 	ON_REGISTERED_MESSAGE(theApp.m_UseBgImagesChangedMsg, OnUseBgImagesChanged)
@@ -242,15 +241,7 @@ INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndMapView.Create(this, 2))
 		return -1;
 
-	theApp.AddFrame(this);
-
 	return 0;
-}
-
-void CMapWnd::OnDestroy()
-{
-	CMainWindow::OnDestroy();
-	theApp.KillFrame(this);
 }
 
 void CMapWnd::OnSetFocus(CWnd* /*pOldWnd*/)

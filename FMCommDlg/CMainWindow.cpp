@@ -211,6 +211,8 @@ INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Active = (CWnd::GetActiveWindow()==this);
 
+	p_App->AddFrame(this);
+
 	return 0;
 }
 
@@ -241,6 +243,8 @@ void CMainWindow::OnDestroy()
 		m_pTaskbarList3->Release();
 
 	CWnd::OnDestroy();
+
+	p_App->KillFrame(this);
 }
 
 BOOL CMainWindow::OnNcActivate(BOOL bActive)

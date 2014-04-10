@@ -332,40 +332,16 @@ INT CFlightmapApp::ExitInstance()
 }
 
 
-void CFlightmapApp::AddFrame(CMainWindow* pFrame)
-{
-	m_MainFrames.AddTail(pFrame);
-	m_pMainWnd = pFrame;
-	m_pActiveWnd = NULL;
-}
-
-void CFlightmapApp::KillFrame(CMainWindow* pVictim)
-{
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		POSITION pl = p;
-		CMainWindow* pFrame = m_MainFrames.GetNext(p);
-		if (pFrame==pVictim)
-		{
-			m_MainFrames.RemoveAt(pl);
-		}
-		else
-		{
-			m_pMainWnd = pFrame;
-		}
-	}
-}
-
 void CFlightmapApp::Quit()
 {
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-		m_MainFrames.GetNext(p)->SendMessage(WM_CLOSE);
+	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
+		m_pMainFrames.GetNext(p)->SendMessage(WM_CLOSE);
 }
 
 void CFlightmapApp::Broadcast(UINT message)
 {
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-		m_MainFrames.GetNext(p)->PostMessage(message);
+	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
+		m_pMainFrames.GetNext(p)->PostMessage(message);
 }
 
 void CFlightmapApp::AddToRecentList(CString FileName)

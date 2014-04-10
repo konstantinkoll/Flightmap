@@ -90,6 +90,7 @@ public:
 	UINT m_TaskbarButtonCreated;
 	GUID m_AppID;
 	COLORREF m_CustomColors[16];
+	CList<CWnd*> m_pMainFrames;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;
@@ -116,6 +117,8 @@ public:
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
+	void AddFrame(CWnd* pFrame);
+	void KillFrame(CWnd* pVictim);
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
 	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
 	CString GetDefaultFontFace();

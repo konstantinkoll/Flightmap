@@ -68,8 +68,6 @@ public:
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
-	void AddFrame(CMainWindow* pFrame);
-	void KillFrame(CMainWindow* pVictim);
 	void Quit();
 	void Broadcast(UINT message);
 	void AddToRecentList(CString FileName);
@@ -78,7 +76,6 @@ public:
 	void OpenAirportGoogleEarth(CHAR* Code);
 	void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
 
-	CList<CMainWindow*> m_MainFrames;
 	CList<CString> m_RecentFiles;
 	CString m_PathGoogleEarth;
 

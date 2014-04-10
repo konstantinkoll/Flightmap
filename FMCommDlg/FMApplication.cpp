@@ -268,6 +268,30 @@ INT FMApplication::ExitInstance()
 	return CWinAppEx::ExitInstance();
 }
 
+void FMApplication::AddFrame(CWnd* pFrame)
+{
+	m_pMainFrames.AddTail(pFrame);
+	m_pMainWnd = pFrame;
+	m_pActiveWnd = NULL;
+}
+
+void FMApplication::KillFrame(CWnd* pVictim)
+{
+	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
+	{
+		POSITION pl = p;
+		CWnd* pFrame = m_pMainFrames.GetNext(p);
+		if (pFrame==pVictim)
+		{
+			m_pMainFrames.RemoveAt(pl);
+		}
+		else
+		{
+			m_pMainWnd = pFrame;
+		}
+	}
+}
+
 BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 {
 	if ((Level & NAG_EXPIRED) ? FMIsSharewareExpired() : !FMIsLicensed())

@@ -76,7 +76,6 @@ void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 
 BEGIN_MESSAGE_MAP(CGlobeWnd, CMainWindow)
 	ON_WM_CREATE()
-	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 	ON_MESSAGE_VOID(WM_3DSETTINGSCHANGED, On3DSettingsChanged)
@@ -105,15 +104,7 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndGlobeView.Create(this, 2);
 
-	theApp.AddFrame(this);
-
 	return 0;
-}
-
-void CGlobeWnd::OnDestroy()
-{
-	CMainWindow::OnDestroy();
-	theApp.KillFrame(this);
 }
 
 void CGlobeWnd::OnSetFocus(CWnd* /*pOldWnd*/)

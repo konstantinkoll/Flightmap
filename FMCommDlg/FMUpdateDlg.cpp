@@ -167,6 +167,18 @@ void FMUpdateDlg::ShowMenu()
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
 
+void FMUpdateDlg::EndDialog(INT_PTR nResult)
+{
+	if (m_NotificationWindow)
+	{
+		DestroyWindow();
+	}
+	else
+	{
+		FMDialog::EndDialog(nResult);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(FMUpdateDlg, FMDialog)
 	ON_WM_DESTROY()
@@ -186,6 +198,9 @@ END_MESSAGE_MAP()
 BOOL FMUpdateDlg::OnInitDialog()
 {
 	FMDialog::OnInitDialog();
+
+	if (m_NotificationWindow)
+		p_App->AddFrame(this);
 
 	// Stil
 	if (m_NotificationWindow)
@@ -248,6 +263,9 @@ void FMUpdateDlg::OnDestroy()
 	RemoveTrayIcon();
 
 	FMDialog::OnDestroy();
+
+	if (m_NotificationWindow)
+		p_App->KillFrame(this);
 }
 
 void FMUpdateDlg::OnTimer(UINT_PTR nIDEvent)
