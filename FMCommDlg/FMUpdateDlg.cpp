@@ -349,6 +349,7 @@ LRESULT FMUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)
 		OnRestore();
 		break;
 	case WM_RBUTTONUP:
+		SetForegroundWindow();
 		ShowMenu();
 		break;
 	}
