@@ -145,11 +145,16 @@ void CDialogMenuBar::AddMenuLeft(UINT nID)
 
 void CDialogMenuBar::AddMenuRight(UINT nCmdID, INT nIconID)
 {
+	CDialogCmdUI cmdUI;
+	cmdUI.m_nID = nCmdID;
+	cmdUI.DoUpdate(GetOwner(), TRUE);
+
 	MenuBarItem i;
 	ZeroMemory(&i, sizeof(i));
 	i.CmdID = nCmdID;
 	i.IconID = nIconID;
 	i.MinWidth = 16;
+	i.Enabled = cmdUI.m_Enabled;
 
 	m_Items.AddItem(i);
 }

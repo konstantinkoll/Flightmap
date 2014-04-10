@@ -123,6 +123,8 @@ void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 			caption.Insert(0, m_pItinerary->m_DisplayName);
 		}
 
+	m_pDialogMenuBar->SendMessage(WM_IDLEUPDATECMDUI);
+
 	SetWindowText(caption);
 	AdjustLayout();
 	SetFocus();
@@ -625,8 +627,6 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 3);
 	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 4);
 
-	theApp.AddFrame(this);
-
 	UpdateWindowStatus(TRUE);
 
 	return 0;
@@ -650,7 +650,6 @@ void CMainWnd::OnDestroy()
 	}
 
 	CMainWindow::OnDestroy();
-	theApp.KillFrame(this);
 }
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
