@@ -353,7 +353,7 @@ BOOL CMainWindow::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 	if (cds.AppID!=p_App->m_AppID)
 		return FALSE;
 
-	p_App->OpenCommandLine(cds.FileName[0] ? cds.FileName : NULL);
+	p_App->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
 
 	return TRUE;
 }

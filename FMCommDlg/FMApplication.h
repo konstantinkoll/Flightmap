@@ -50,7 +50,7 @@ typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR Ap
 struct CDS_Wakeup
 {
 	GUID AppID;
-	WCHAR FileName[MAX_PATH];
+	WCHAR Command[MAX_PATH];
 };
 
 struct ResourceCacheItem

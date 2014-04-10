@@ -10,7 +10,7 @@
 
 
 GUID theAppID =	// {8269ADBF-A534-469d-A58D-7EBA84634B70}
-	{ 0x8269adbf, 0xa534, 0x469d, { 0xa5, 0x8d, 0x7e, 0xba, 0x84, 0x63, 0x4b, 0x70 } };
+	{ 0x8269ADBF, 0xA534, 0x469D, { 0xA5, 0x8D, 0x7E, 0xBA, 0x84, 0x63, 0x4B, 0x70 } };
 
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
@@ -25,7 +25,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 			ZeroMemory(&cdsw, sizeof(cdsw));
 			cdsw.AppID = theAppID;
 			if (lParam)
-				wcscpy_s(cdsw.FileName, MAX_PATH, (WCHAR*)lParam);
+				wcscpy_s(cdsw.Command, MAX_PATH, (WCHAR*)lParam);
 
 			COPYDATASTRUCT cds;
 			cds.cbData = sizeof(cdsw);
