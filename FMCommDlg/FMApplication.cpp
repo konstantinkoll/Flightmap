@@ -151,7 +151,7 @@ FMApplication::FMApplication(GUID& AppID)
 	}
 
 	// Eingebettete Schrift
-	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC, AfxGetResourceHandle());
+	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
 	// Fonts
 	CString face = GetDefaultFontFace();

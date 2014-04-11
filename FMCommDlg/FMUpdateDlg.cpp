@@ -182,6 +182,7 @@ void FMUpdateDlg::EndDialog(INT_PTR nResult)
 
 BEGIN_MESSAGE_MAP(FMUpdateDlg, FMDialog)
 	ON_WM_DESTROY()
+	ON_WM_NCDESTROY()
 	ON_WM_TIMER()
 	ON_WM_NCHITTEST()
 	ON_WM_THEMECHANGED()
@@ -266,6 +267,12 @@ void FMUpdateDlg::OnDestroy()
 
 	if (m_NotificationWindow)
 		p_App->KillFrame(this);
+}
+
+void FMUpdateDlg::PostNcDestroy()
+{
+	if (m_NotificationWindow)
+		delete this;
 }
 
 void FMUpdateDlg::OnTimer(UINT_PTR nIDEvent)
