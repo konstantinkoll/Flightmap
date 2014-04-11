@@ -210,11 +210,13 @@ BOOL CFlightmapApp::InitInstance()
 		m_MapSettings.Height = 4096;
 
 	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
+	if (pFrame)
+	{
+		if (!FMIsLicensed())
+			ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
-	if (!FMIsLicensed())
-		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
-
-	FMCheckForUpdate(FALSE);
+		FMCheckForUpdate(FALSE);
+	}
 
 	m_AppInitialized = TRUE;
 
@@ -223,6 +225,13 @@ BOOL CFlightmapApp::InitInstance()
 
 CWnd* CFlightmapApp::OpenCommandLine(WCHAR* CmdLine)
 {
+	if (CmdLine)
+		if (_wcsicmp(CmdLine, L"/CHECKUPDATE")==0)
+		{
+			FMCheckForUpdate(FALSE);
+			return NULL;
+		}
+
 	CMainWnd* pFrame = new CMainWnd();
 	pFrame->Create(new CItinerary(CmdLine));
 	pFrame->ShowWindow(SW_SHOW);

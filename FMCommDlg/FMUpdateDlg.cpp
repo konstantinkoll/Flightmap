@@ -171,6 +171,9 @@ void FMUpdateDlg::EndDialog(INT_PTR nResult)
 {
 	if (m_NotificationWindow)
 	{
+		if (m_wndIgnoreUpdate.GetCheck())
+			p_App->WriteString(_T("IgnoreUpdateMSN"), m_MSN);
+
 		DestroyWindow();
 	}
 	else
@@ -266,7 +269,10 @@ void FMUpdateDlg::OnDestroy()
 	FMDialog::OnDestroy();
 
 	if (m_NotificationWindow)
+	{
+		p_App->m_pUpdateNotification = NULL;
 		p_App->KillFrame(this);
+	}
 }
 
 void FMUpdateDlg::PostNcDestroy()

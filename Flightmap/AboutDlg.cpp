@@ -39,21 +39,21 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_BGIMAGES, m_UseBgImages);
 
 	BOOL EnableAutoUpdate;
-	INT Interval;
+	INT UpdateCheckInterval;
 
 	if (pDX->m_bSaveAndValidate)
 	{
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
-		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
+		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		theApp.SetUpdateSettings(EnableAutoUpdate, Interval);
+		theApp.SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 	}
 	else
 	{
-		theApp.GetUpdateSettings(&EnableAutoUpdate, &Interval);
+		theApp.GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
-		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
+		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
 		OnEnableAutoUpdate();
 	}

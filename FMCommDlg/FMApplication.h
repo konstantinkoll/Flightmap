@@ -66,6 +66,8 @@ struct ResourceCacheItem
 
 #define TIMESTAMP CString Timestamp = _T(__DATE__); Timestamp.Append(_T(", ")); Timestamp.Append(_T(__TIME__));
 
+class FMUpdateDlg;
+
 class FMApplication : public CWinAppEx
 {
 public:
@@ -91,6 +93,7 @@ public:
 	GUID m_AppID;
 	COLORREF m_CustomColors[16];
 	CList<CWnd*> m_pMainFrames;
+	FMUpdateDlg* m_pUpdateNotification;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;

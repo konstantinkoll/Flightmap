@@ -47,6 +47,9 @@ FMApplication::FMApplication(GUID& AppID)
 	// ID
 	m_AppID = AppID;
 
+	// Update notification
+	m_pUpdateNotification = NULL;
+
 	// Version
 	OSVERSIONINFO osInfo;
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
@@ -472,13 +475,13 @@ void FMApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 	if (EnableAutoUpdate)
 		*EnableAutoUpdate = GetInt(_T("EnableAutoUpdate"), 1)!=0;
 	if (Interval)
-		*Interval = GetInt(_T("UpdateInterval"), 0);
+		*Interval = GetInt(_T("UpdateCheckInterval"), 0);
 }
 
 void FMApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
 {
 	WriteInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
-	WriteInt(_T("UpdateInterval"), Interval);
+	WriteInt(_T("UpdateCheckInterval"), Interval);
 }
 
 BOOL FMApplication::IsUpdateCheckDue()
@@ -492,9 +495,9 @@ BOOL FMApplication::IsUpdateCheckDue()
 		FILETIME ft;
 		GetSystemTimeAsFileTime(&ft);
 
-		ULARGE_INTEGER LastUpdate;
-		LastUpdate.HighPart = GetInt(_T("LastUpdateHigh"), 0);
-		LastUpdate.LowPart = GetInt(_T("LastUpdateLow"), 0);
+		ULARGE_INTEGER LastUpdateCheck;
+		LastUpdateCheck.HighPart = GetInt(_T("LastUpdateCheckHigh"), 0);
+		LastUpdateCheck.LowPart = GetInt(_T("LastUpdateCheckLow"), 0);
 
 		ULARGE_INTEGER Now;
 		Now.HighPart = ft.dwHighDateTime;
@@ -508,21 +511,21 @@ BOOL FMApplication::IsUpdateCheckDue()
 		switch (Interval)
 		{
 		case 0:
-			LastUpdate.QuadPart += DAY;
+			LastUpdateCheck.QuadPart += DAY;
 			break;
 		case 1:
-			LastUpdate.QuadPart += 7*DAY;
+			LastUpdateCheck.QuadPart += 7*DAY;
 			break;
 		case 2:
-			LastUpdate.QuadPart += 30*DAY;
+			LastUpdateCheck.QuadPart += 30*DAY;
 			break;
 		}
-		LastUpdate.QuadPart += 10*SECOND;
+		LastUpdateCheck.QuadPart += 10*SECOND;
 
-		if (Now.QuadPart>=LastUpdate.QuadPart)
+		if (Now.QuadPart>=LastUpdateCheck.QuadPart)
 		{
-			WriteInt(_T("LastUpdateHigh"), Now.HighPart);
-			WriteInt(_T("LastUpdateLow"), Now.LowPart);
+			WriteInt(_T("LastUpdateCheckHigh"), Now.HighPart);
+			WriteInt(_T("LastUpdateCheckLow"), Now.LowPart);
 
 			return TRUE;
 		}
