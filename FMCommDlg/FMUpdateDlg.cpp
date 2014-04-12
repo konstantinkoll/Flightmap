@@ -197,6 +197,8 @@ BEGIN_MESSAGE_MAP(FMUpdateDlg, FMDialog)
 	ON_BN_CLICKED(IDCANCEL, OnCancel)
 	ON_MESSAGE(WM_TRAYMENU, OnTrayMenu)
 	ON_COMMAND(IDM_UPDATE_RESTORE, OnRestore)
+	ON_REGISTERED_MESSAGE(FMGetApp()->m_WakeupMsg, OnWakeup)
+	ON_WM_COPYDATA()
 END_MESSAGE_MAP()
 
 BOOL FMUpdateDlg::OnInitDialog()
@@ -392,4 +394,23 @@ void FMUpdateDlg::OnRestore()
 {
 	RemoveTrayIcon();
 	ShowWindow(SW_SHOW);
+}
+
+LRESULT FMUpdateDlg::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	return 24878;
+}
+
+BOOL FMUpdateDlg::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
+{
+	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
+		return FALSE;
+
+	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
+	if (cds.AppID!=p_App->m_AppID)
+		return FALSE;
+
+	p_App->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+
+	return TRUE;
 }
