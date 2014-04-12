@@ -215,7 +215,7 @@ BOOL CFlightmapApp::InitInstance()
 		if (!FMIsLicensed())
 			ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
-		FMCheckForUpdate(FALSE);
+		FMCheckForUpdate();
 	}
 
 	m_AppInitialized = TRUE;
@@ -228,7 +228,7 @@ CWnd* CFlightmapApp::OpenCommandLine(WCHAR* CmdLine)
 	if (CmdLine)
 		if (_wcsicmp(CmdLine, L"/CHECKUPDATE")==0)
 		{
-			FMCheckForUpdate(FALSE);
+			FMCheckForUpdate();
 			return NULL;
 		}
 

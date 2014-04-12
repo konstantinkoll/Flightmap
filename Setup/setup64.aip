@@ -53,18 +53,15 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AIShRegAnswer" ComponentId="{8FC27830-7BFA-4909-981C-730B8EE1ACC9}" Directory_="APPDIR" Attributes="772" KeyPath="AIShRegAnswer"/>
     <ROW Component="AI_CustomARPName" ComponentId="{241DC564-3ABF-4E8D-BE6F-0A7DD86C9CAF}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{B155C791-BBE6-49AB-BD6F-011D15BB3243}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
-    <ROW Component="AI_ExePath" ComponentId="{71C49A5A-DEA2-40E2-80F9-4CAC1BD71E98}" Directory_="APPDIR" Attributes="772" KeyPath="AI_ExePath"/>
     <ROW Component="ApplicationDescription" ComponentId="{ABA543B5-5E38-4992-A3DF-E43E296D6C0E}" Directory_="APPDIR" Attributes="4" Condition="(VersionNT &gt;= 600)" KeyPath="ApplicationDescription"/>
-    <ROW Component="Flightmap" ComponentId="{F48A6540-29A2-4C81-9A35-143514631B70}" Directory_="APPDIR" Attributes="4" KeyPath="Flightmap"/>
     <ROW Component="Flightmap.exe" ComponentId="{897EB601-F468-41BD-BF1A-3A6B04B42BAE}" Directory_="APPDIR" Attributes="768" KeyPath="Flightmap.exe"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{1998089A-5245-44AB-88B1-B333A6AF15CC}" Directory_="SHORTCUTDIR" Attributes="768"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="File_Type_Associations" Feature_Parent="Flightmap" Title="File Type Associations" Description="Description" Display="3" Level="1" Directory_="APPDIR" Attributes="0" Options="13"/>
-    <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_ExePath AI_CustomARPName AI_DisableModify Flightmap.exe SHORTCUTDIR AIShRegAnswer ApplicationDescription Flightmap"/>
+    <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify Flightmap.exe SHORTCUTDIR ApplicationDescription"/>
     <ROW Feature="air" Feature_Parent="File_Type_Associations" Title=".air" Description="Description" Display="5" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
     <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title=".airx" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
     <ROW Feature="csv" Feature_Parent="File_Type_Associations" Title=".csv" Description="Description" Display="9" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="Flightmap.exe"/>
@@ -471,8 +468,8 @@
     <ROW Signature_="AI_ShRegOptionUser" Root="1" Key="Software\Caphyon\Advanced Installer\Installs\[ProductCode]" Name="AIShRegAnswer" Type="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
-    <ROW Registry="AIShRegAnswer" Root="-1" Key="Software\Caphyon\Advanced Installer\Installs\[ProductCode]" Name="AIShRegAnswer" Value="[AI_SHORTCUTSREG]" Component_="AIShRegAnswer"/>
-    <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="AI_ExePath"/>
+    <ROW Registry="AIShRegAnswer" Root="-1" Key="Software\Caphyon\Advanced Installer\Installs\[ProductCode]" Name="AIShRegAnswer" Value="[AI_SHORTCUTSREG]" Component_="ApplicationDescription"/>
+    <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="ApplicationDescription"/>
     <ROW Registry="ApplicationDescription" Root="2" Key="SOFTWARE\[ProductName]\Capabilities" Name="ApplicationDescription" Value="#%Flightmap" Component_="ApplicationDescription"/>
     <ROW Registry="ApplicationName" Root="2" Key="SOFTWARE\[ProductName]\Capabilities" Name="ApplicationName" Value="#%[ProductName]" Component_="ApplicationDescription"/>
     <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Comments" Component_="AI_CustomARPName"/>
@@ -480,7 +477,7 @@
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="Flightmap" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="2.1.8" Component_="AI_CustomARPName"/>
-    <ROW Registry="Flightmap" Root="2" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" Name="Flightmap" Value="&quot;[#Flightmap.exe]&quot; /CHECKUPDATE" Component_="Flightmap"/>
+    <ROW Registry="Flightmap" Root="2" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" Name="Flightmap" Value="&quot;[#Flightmap.exe]&quot; /CHECKUPDATE" Component_="Flightmap.exe"/>
     <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://flightmap.net/tour" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>

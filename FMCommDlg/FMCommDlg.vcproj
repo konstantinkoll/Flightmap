@@ -831,10 +831,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\FMCommDlg.aps"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
