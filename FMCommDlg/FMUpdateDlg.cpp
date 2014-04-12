@@ -167,7 +167,7 @@ void FMUpdateDlg::ShowMenu()
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
 
-void FMUpdateDlg::EndDialog(INT_PTR nResult)
+void FMUpdateDlg::EndDialog(INT nResult)
 {
 	if (m_NotificationWindow)
 	{
