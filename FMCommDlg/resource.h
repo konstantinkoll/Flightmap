@@ -3,11 +3,11 @@
 // Used by FMCommDlg.rc
 //
 #define IDR_APPLICATION                 128
-#define IDR_MAP                         150
-#define IDR_GLOBE                       151
-#define IDI_EDITFLIGHT                  152
-#define IDI_ADDROUTE                    153
-#define IDI_ATTACHMENTS                 154
+#define IDR_MAP                         129
+#define IDR_GLOBE                       130
+#define IDI_EDITFLIGHT                  131
+#define IDI_ADDROUTE                    132
+#define IDI_ATTACHMENTS                 133
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
