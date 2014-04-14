@@ -453,7 +453,7 @@ BEGIN
     DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,103,96,100,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
     LTEXT           "Eine neue Version von Flightmap steht zum Herunterladen bereit.",IDC_STATIC,7,50,196,16
-    CONTROL         "Dieses Update ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,196,10
+    CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,196,10
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,90,9
 END
 
@@ -1081,7 +1081,7 @@ BEGIN
     DEFPUSHBUTTON   "Download now",IDOK,123,96,80,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
     LTEXT           "A new version of Flightmap is available for download.",IDC_STATIC,7,50,196,16
-    CONTROL         "Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,196,10
+    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,196,10
     CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
 END
 
