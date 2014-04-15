@@ -191,10 +191,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\DestinationFolder.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\EULA_de.rtf"
 			>
 		</File>
@@ -227,15 +223,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Shortcuts.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Tools.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Wait.ico"
 			>
 		</File>
 		<File
