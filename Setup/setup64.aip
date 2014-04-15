@@ -20,7 +20,7 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://flightmap.net/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://flightmap.net/download"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
-    <ROW Property="Background" Value="Backdrop3.bmp" Type="1" MsiKey="Background"/>
+    <ROW Property="Background" Value="Backdrop2.bmp" Type="1" MsiKey="Background"/>
     <ROW Property="CTRLS" Value="2"/>
     <ROW Property="CompleteSetupIcon" Value="Install.ico" Type="1" MsiKey="CompleteSetupIcon"/>
     <ROW Property="CustomSetupIcon" Value="Install.ico" Type="1" MsiKey="CustomSetupIcon"/>
@@ -126,7 +126,6 @@
     <ROW Name="AppLogo.ico" SourcePath="AppLogo.ico"/>
     <ROW Name="Backdrop1.bmp" SourcePath="Backdrop1.bmp"/>
     <ROW Name="Backdrop2.bmp" SourcePath="Backdrop2.bmp"/>
-    <ROW Name="Backdrop3.bmp" SourcePath="Backdrop3.bmp"/>
     <ROW Name="DestinationFolder.ico" SourcePath="DestinationFolder.ico"/>
     <ROW Name="Info.ico" SourcePath="Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Install.ico"/>
