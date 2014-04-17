@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DICTIONARY type="multilanguage">
-  <ENTRY id="Control.Text.AdminWelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will create a server image of [ProductName], at a specified network location.  Click Next to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="de" value="Der [Wizard] erstellt ein Server-Image von [ProductName], in dem angegebenen Netzwerkpfad. &quot;Weiter&quot; um fortzufahren oder &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
+  <ENTRY id="AI.LaunchCondition.No9X">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsType9XDisplay] installiert werden."/>
+  </ENTRY>
+  <ENTRY id="AI.LaunchCondition.NoNT">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNTDisplay] installiert werden."/>
+  </ENTRY>
+  <ENTRY id="AI.LaunchCondition.NoNT40">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNT40Display] installiert werden."/>
+  </ENTRY>
+  <ENTRY id="AI.LaunchCondition.NoSpecificNT64">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNT64Display] installiert werden."/>
+  </ENTRY>
+  <ENTRY id="AI.LaunchCondition.NoNT64">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNT64Display] installiert werden."/>
+  </ENTRY>
+  <ENTRY id="AI.LaunchCondition.NoSpecificNT">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNTDisplay] installiert werden."/>
   </ENTRY>
   <ENTRY id="Control.Text.FileAssociationsDlg#Text">
     <STRING lang="en" value="Please select the file types you want to automatically open with [ProductName]:"/>
@@ -11,26 +25,6 @@
   <ENTRY id="Control.Text.FileAssociationsDlg#Title">
     <STRING lang="en" value="Select File Associations"/>
     <STRING lang="de" value="Dateiendungen auswählen"/>
-  </ENTRY>
-  <ENTRY id="Control.Text.MaintenanceWelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will allow you to change the way [ProductName] features are installed on your computer or even to remove [ProductName] from your computer.  Click Next to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="de" value="Mit dem [Wizard]en können Sie [ProductName] ändern, reparieren oder entfernen. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard]en zu beenden."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.PatchWelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will install the Patch for [ProductName] on your computer.  Click Next to continue or close the window to exit the Patch [Wizard]."/>
-    <STRING lang="de" value="[Wizard] wird den Patch für [ProductName] auf Ihrem Computer installieren. Klicken Sie &quot;Weiter&quot; um fortzufahren oder &quot;Abbrechen&quot; um abzubrechen."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.ResumeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will complete the installation of [ProductName] on your computer.  Click Install to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="de" value="Der [Wizard] beendet nun die Installation von [ProductName] auf Ihrem Computer. Klicken Sie &quot;Installieren&quot; um fortzufahren oder &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.VerifyReadyDlg#TextNoClose">
-    <STRING lang="en" value="Click Install to begin the installation.  If you want to review or change any of your installation settings, click Back.  Close the window to exit the wizard."/>
-    <STRING lang="de" value="Klicken Sie auf &quot;Installieren&quot; um die Installation zu starten. Wenn Sie die Installationseinstellungen überprüfen oder ändern möchten, klicken Sie auf &quot;Zurück&quot;. Um den [Wizard] zu beenden, klicken Sie auf &quot;Abbrechen&quot;."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.WelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="de" value="Der [Wizard] wird [ProductName] auf Ihrem Computer installieren. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
   </ENTRY>
   <ENTRY id="Control.Text.LicenseAgreementDlg#AgreementText">
     <STRING lang="en" value="EULA_en.rtf"/>
