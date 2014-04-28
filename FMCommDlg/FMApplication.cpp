@@ -153,6 +153,26 @@ FMApplication::FMApplication(GUID& AppID)
 		m_ShellLibLoaded = FALSE;
 	}
 
+	// Kernel
+	hModKernel = LoadLibrary(_T("KERNEL32.DLL"));
+	if (hModKernel)
+	{
+		zRegisterApplicationRestart = (PFNREGISTERAPPLICATIONRESTART)GetProcAddress(hModKernel, "RegisterApplicationRestart");
+
+		m_KernelLibLoaded = (zRegisterApplicationRestart!=NULL);
+		if (!m_KernelLibLoaded)
+		{
+			FreeLibrary(hModKernel);
+			hModKernel = NULL;
+		}
+	}
+	else
+	{
+		zRegisterApplicationRestart = NULL;
+
+		m_KernelLibLoaded = FALSE;
+	}
+
 	// Eingebettete Schrift
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
@@ -201,6 +221,8 @@ FMApplication::~FMApplication()
 		FreeLibrary(hModAero);
 	if (hModShell)
 		FreeLibrary(hModShell);
+	if (hModKernel)
+		FreeLibrary(hModKernel);
 	if (hFontLetterGothic)
 		RemoveFontMemResourceEx(hFontLetterGothic);
 }
