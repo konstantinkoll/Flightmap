@@ -208,7 +208,7 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	CGdiPlusBitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP_2048, _T("JPG"));
+	CGdiPlusBitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
 	CGdiPlusBitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"));
 
 	INT L = pMap->m_pBitmap->GetWidth();
