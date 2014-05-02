@@ -757,6 +757,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Remove.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Resolution_Tiny.ico"
 			>
 		</File>

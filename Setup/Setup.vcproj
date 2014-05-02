@@ -207,6 +207,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Remove.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\setup32.aip"
 			>
 		</File>
