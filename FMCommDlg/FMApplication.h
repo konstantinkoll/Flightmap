@@ -66,8 +66,6 @@ struct ResourceCacheItem
 // Siehe FMApplication.cpp für die Implementierung dieser Klasse
 //
 
-#define TIMESTAMP CString Timestamp = _T(__DATE__); Timestamp.Append(_T(", ")); Timestamp.Append(_T(__TIME__));
-
 class FMUpdateDlg;
 
 class FMApplication : public CWinAppEx

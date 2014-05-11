@@ -12,6 +12,21 @@
 // AboutDlg
 //
 
+#define COMPILE_HOUR       (((__TIME__[0]-'0')*10)+(__TIME__[1]-'0'))
+#define COMPILE_MINUTE     (((__TIME__[3]-'0')*10)+(__TIME__[4]-'0'))
+#define COMPILE_SECOND     (((__TIME__[6]-'0')*10)+(__TIME__[7]-'0'))
+#define COMPILE_YEAR       ((((__DATE__[7]-'0')*10+(__DATE__[8]-'0'))*10+(__DATE__[9]-'0'))*10+(__DATE__[10]-'0'))
+#define COMPILE_MONTH      ((__DATE__[2]=='n' ? (__DATE__ [1] == 'a' ? 0 : 5)\
+							: __DATE__[2]=='b' ? 1 \
+							: __DATE__[2]=='r' ? (__DATE__ [0] == 'M' ? 2 : 3) \
+							: __DATE__[2]=='y' ? 4 \
+							: __DATE__[2]=='l' ? 6 \
+							: __DATE__[2]=='g' ? 7 \
+							: __DATE__[2]=='p' ? 8 \
+							: __DATE__[2]=='t' ? 9 \
+							: __DATE__[2]=='v' ? 10 : 11)+1)
+#define COMPILE_DAY        ((__DATE__[4]==' ' ? 0 : __DATE__[4]-'0')*10+(__DATE__[5]-'0'))
+
 AboutDlg::AboutDlg(CWnd* pParentWnd)
 	: FMDialog(IDD_ABOUT, pParentWnd)
 {
@@ -20,6 +35,20 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	m_CaptionTop = m_IconTop = 0;
 
 	SYSTEMTIME st;
+	ZeroMemory(&st, sizeof(st));
+	st.wDay = COMPILE_DAY;
+	st.wMonth = COMPILE_MONTH;
+	st.wYear = COMPILE_YEAR;
+	st.wHour = COMPILE_HOUR;
+	st.wMinute = COMPILE_MINUTE;
+
+	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, m_Build, 256);
+	wcscat_s(m_Build, 256, L", ");
+
+	WCHAR tmpStr[256];
+	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT | TIME_NOSECONDS, &st, NULL, tmpStr, 256);
+	wcscat_s(m_Build, 256, tmpStr);
+
 	GetSystemTime(&st);
 	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
 	p_Logo = p_App->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
@@ -113,12 +142,10 @@ BOOL AboutDlg::OnInitDialog()
 #define ISET _T(" (x86)")
 #endif
 
-	TIMESTAMP;
-
 	CString caption;
 	m_wndVersionInfo.GetWindowText(caption);
 	CString text;
-	text.Format(caption, m_Version+ISET, Timestamp, m_Copyright);
+	text.Format(caption, m_Version+ISET, m_Build, m_Copyright);
 	m_wndVersionInfo.SetWindowText(text);
 
 	// Hintergrund

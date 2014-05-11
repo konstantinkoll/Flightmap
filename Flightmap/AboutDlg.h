@@ -46,5 +46,6 @@ private:
 	CString m_Version;
 	CString m_Copyright;
 	CString m_AppName;
+	WCHAR m_Build[256];
 	CWnd m_wndVersionInfo;
 };
