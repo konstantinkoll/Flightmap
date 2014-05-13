@@ -230,8 +230,8 @@ private:
 	void OpenAIR(CString FileName);
 	void OpenCSV(CString FileName);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
-	INT Compare(INT Eins, INT Zwei, UINT Attr, BOOL Descending);
-	void Heap(INT Wurzel, INT Anz, UINT Attr, BOOL Descending);
+	static INT Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending);
+	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
 	void SetDisplayName(CString FileName);
 

@@ -1311,13 +1311,13 @@ FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WO
 	return ft;
 }
 
-INT CItinerary::Compare(INT Eins, INT Zwei, UINT Attr, BOOL Descending)
+INT CItinerary::Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending)
 {
 	ASSERT(Attr<FMAttributeCount);
 	ASSERT(FMAttributes[Attr].Sortable);
 
-	const void* Dat1 = (BYTE*)&m_Flights.m_Items[Eins]+FMAttributes[Attr].Offset;
-	const void* Dat2 = (BYTE*)&m_Flights.m_Items[Zwei]+FMAttributes[Attr].Offset;
+	const void* Dat1 = (BYTE*)Eins+FMAttributes[Attr].Offset;
+	const void* Dat2 = (BYTE*)Zwei+FMAttributes[Attr].Offset;
 
 	// Gewünschtes Attribut vergleichen
 	INT Cmp = 0;
@@ -1398,9 +1398,9 @@ INT CItinerary::Compare(INT Eins, INT Zwei, UINT Attr, BOOL Descending)
 	return Descending ? Cmp : -Cmp;
 }
 
-void CItinerary::Heap(INT Wurzel, INT Anz, UINT Attr, BOOL Descending)
+void CItinerary::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending)
 {
-	while (Wurzel<=Anz/2-1)
+	/*while (Wurzel<=Anz/2-1)
 	{
 		INT Idx = (Wurzel+1)*2-1;
 		if (Idx+1<Anz)
@@ -1416,7 +1416,59 @@ void CItinerary::Heap(INT Wurzel, INT Anz, UINT Attr, BOOL Descending)
 		{
 			break;
 		}
+	}*/
+
+
+	AIRX_Flight f = m_Flights.m_Items[Wurzel];
+	unsigned int Parent = Wurzel;
+	unsigned int Child;
+
+	while ((Child=(Parent+1)*2)<Anz)
+	{
+		if (Compare(&m_Flights.m_Items[Child-1], &m_Flights.m_Items[Child], Attr, Descending)>0)
+			Child--;
+
+		m_Flights.m_Items[Parent] = m_Flights.m_Items[Child];
+		Parent = Child;
 	}
+
+	if (Child==Anz)
+	{
+		if (Compare(&m_Flights.m_Items[--Child], &f, Attr, Descending)>=0)
+		{
+			m_Flights.m_Items[Parent] = m_Flights.m_Items[Child];
+			m_Flights.m_Items[Child] = f;
+			return;
+		}
+
+		Child = Parent;
+	}
+	else
+	{
+		if (Parent==Wurzel)
+			return;
+
+		if (Compare(&m_Flights.m_Items[Parent], &f, Attr, Descending)>=0)
+		{
+			m_Flights.m_Items[Parent] = f;
+			return;
+		}
+
+		Child = (Parent-1)/2;
+	}
+
+	while (Child!=Wurzel)
+	{
+		Parent = (Child-1)/2;
+
+		if (Compare(&m_Flights.m_Items[Parent], &f, Attr, Descending)>=0)
+			break;
+
+		m_Flights.m_Items[Child] = m_Flights.m_Items[Parent];
+		Child = Parent;
+	}
+
+	m_Flights.m_Items[Child] = f;
 }
 
 void CItinerary::Sort(UINT Attr, BOOL Descending)
