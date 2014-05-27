@@ -209,7 +209,7 @@ void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	pPopup->AddCommand(IDM_FILE_NEW, 0, CDMB_MEDIUM);
 	pPopup->AddSubmenu(IDM_FILE_OPEN, 2, CDMB_MEDIUM, TRUE);
 	pPopup->AddSeparator(TRUE);
-	pPopup->AddCommand(IDM_FILE_QUIT, 14, CDMB_SMALL);
+	pPopup->AddCommand(IDM_FILE_QUIT, 13, CDMB_SMALL);
 
 	pPopup->Track(pos);
 }
