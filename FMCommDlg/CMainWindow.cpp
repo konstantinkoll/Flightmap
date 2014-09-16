@@ -303,9 +303,9 @@ void CMainWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 	if (GetStyle() & WS_MAXIMIZEBOX)
 	{
-		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 
+		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x,
 			m_pDialogMenuBar ? max(384, m_pDialogMenuBar->GetMinWidth()+16) : 384);
-		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 
+		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y,
 			256+GetSystemMetrics(SM_CYCAPTION));
 	}
 }
