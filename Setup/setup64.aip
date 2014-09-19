@@ -14,7 +14,6 @@
     <ROW Property="AI_ThemeStyle" Value="head" MultiBuildValue="DefaultBuild:nohead" MsiKey="AI_ThemeStyle"/>
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2"/>
-    <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]."/>
     <ROW Property="ARPCONTACT" Value="support@flightmap.net"/>
     <ROW Property="ARPHELPLINK" Value="http://flightmap.net/tour"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
@@ -34,10 +33,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{6474369F-C94E-4923-ADE6-35099A7220A1} 1031:{E6719DE9-3703-4C23-9013-00692F83F0D9} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{5ABDFA68-58B2-4657-ADD5-B296F25C45D1} 1031:{12DDDBCB-71F4-4093-BB88-1EC8C55EB669} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Flightmap" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.1.11" Type="32"/>
+    <ROW Property="ProductVersion" Value="2.1.12" Type="32"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -216,7 +215,6 @@
     <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
     <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
     <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
-    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="50" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
@@ -224,6 +222,7 @@
     <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="1" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
     <ROW Dialog_="ExitDialog" Control="LaunchProdCheckBox" Type="PushButton" X="110" Y="285" Width="95" Height="26" Attributes="3" Property="RUNAPPLICATION" Text="Run [ProductName]" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#LaunchProdCheckBox" MsiKey="ExitDialog#LaunchProdCheckBox" Options="1"/>
