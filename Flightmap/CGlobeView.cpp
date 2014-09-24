@@ -10,13 +10,13 @@
 #include "ThreeDSettingsDlg.h"
 #include <math.h>
 
-#define DISTANCE       39.0f
-#define ARROWSIZE      9
-#define ANIMLENGTH     200
-#define MOVEDELAY      10
-#define MOVEDIVIDER    8.0f
-#define SPOT           2
-#define CROSSHAIRS     3
+#define DISTANCE        39.0f
+#define ARROWSIZE       9
+#define ANIMLENGTH      200
+#define MOVEDELAY       10
+#define MOVEDIVIDER     8.0f
+#define SPOT            2
+#define CROSSHAIRS      3
 
 __forceinline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
