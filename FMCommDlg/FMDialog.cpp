@@ -88,10 +88,10 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	else
 	{
 		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
-		if (Themed && (p_App->OSVersion!=OS_Eight))
+		if (Themed)
 		{
-			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, p_App->OSVersion==OS_Eight ? 0xCCCCCC : 0xDFDFDF);
+			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, p_App->OSVersion==OS_Eight ? 0xF1F1F1 : 0xF0F0F0);
 		}
 		else
 		{

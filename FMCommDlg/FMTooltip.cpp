@@ -34,7 +34,6 @@ FMTooltip::FMTooltip()
 	: CWnd()
 {
 	m_Icon = NULL;
-	m_Bitmap = NULL;
 }
 
 BOOL FMTooltip::Create(CWnd* pWndParent)
@@ -144,9 +143,9 @@ void FMTooltip::Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, co
 	}
 
 	sz.cx += 2*(AFX_TEXT_MARGIN+3);
-	sz.cy += 2*(AFX_TEXT_MARGIN+2);
-	if (sz.cx>m_TextHeight*50)
-		sz.cx = m_TextHeight*50;
+	sz.cy += 2*(AFX_TEXT_MARGIN+2)+1;
+	if (sz.cx>m_TextHeight*40)
+		sz.cx = m_TextHeight*40;
 
 	// Position
 	CRect rect;
@@ -215,10 +214,10 @@ void FMTooltip::Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, co
 
 	CRgn rgn;
 	m_Themed = IsCtrlThemed();
-	m_Flat = m_Themed && (FMGetApp()->OSVersion==OS_Eight);
+	m_Flat = m_Themed && (FMGetApp()->OSVersion>=OS_Eight);
 	if (m_Themed && !m_Flat)
 	{
-		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 4, 4);
+		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 3, 3);
 	}
 	else
 	{
@@ -287,8 +286,6 @@ void FMTooltip::OnDestroy()
 {
 	if (m_Icon)
 		DestroyIcon(m_Icon);
-	if (m_Bitmap)
-		DeleteObject(m_Bitmap);
 
 	CWnd::OnDestroy();
 }
@@ -317,7 +314,7 @@ void FMTooltip::OnPaint()
 	rect.DeflateRect(1, 1);
 
 	// Background
-	if (m_Flat)
+	if (m_Flat || (m_Themed && (FMGetApp()->OSVersion==OS_XP)))
 	{
 		dc.FillSolidRect(rect, 0xFFFFFF);
 	}
@@ -325,7 +322,7 @@ void FMTooltip::OnPaint()
 		if (m_Themed)
 		{
 			Graphics g(dc);
-			LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xE4, 0xE5, 0xF0));
+			LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xE4, 0xE4, 0xF0));
 			g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 		}
 		else
@@ -334,36 +331,21 @@ void FMTooltip::OnPaint()
 		}
 
 	// Border
-	COLORREF clrLine = m_Themed || m_Flat ? 0x767676 : GetSysColor(COLOR_INFOTEXT);
-	COLORREF clrText = m_Flat ? 0x575757 : m_Themed ? 0x4C4C4C : GetSysColor(COLOR_INFOTEXT);
+	COLORREF clrLine = m_Themed ? 0x767676 : GetSysColor(COLOR_INFOTEXT);
+	COLORREF clrText = m_Themed ? m_Flat ? 0x575757 : 0x4C4C4C : GetSysColor(COLOR_INFOTEXT);
 
-	CPen penLine(PS_SOLID, 1, clrLine);
-	CPen* pOldPen = dc.SelectObject(&penLine);
+	dc.Draw3dRect(rectClient, clrLine, clrLine);
 
 	if (m_Themed && !m_Flat)
 	{
-		const INT nOffset = 2;
+		COLORREF clr = (clrLine>>1) | 0x808080;
+		dc.SetPixel(rectClient.left+1, rectClient.top+1, clr);
+		dc.SetPixel(rectClient.right-2, rectClient.top+1, clr);
 
-		dc.MoveTo(rectClient.left+nOffset, rectClient.top);
-		dc.LineTo(rectClient.right-nOffset-1, rectClient.top);
-
-		dc.LineTo(rectClient.right-1, rectClient.top+nOffset);
-		dc.LineTo(rectClient.right-1, rectClient.bottom-1-nOffset);
-
-		dc.LineTo(rectClient.right-nOffset-1, rectClient.bottom-1);
-		dc.LineTo(rectClient.left+nOffset, rectClient.bottom-1);
-
-		dc.LineTo(rectClient.left, rectClient.bottom-1-nOffset);
-		dc.LineTo(rectClient.left, rectClient.top+nOffset);
-
-		dc.LineTo(rectClient.left+nOffset, rectClient.top);
+		clr = ((clrLine>>1) & 0x7F7F7F) + 0x727278;
+		dc.SetPixel(rectClient.left+1, rectClient.bottom-2, clr);
+		dc.SetPixel(rectClient.right-2, rectClient.bottom-2, clr);
 	}
-	else
-	{
-		dc.Draw3dRect(rectClient, clrLine, clrLine);
-	}
-
-	dc.SelectObject(pOldPen);
 
 	// Interior
 	rect.DeflateRect(AFX_TEXT_MARGIN+2, AFX_TEXT_MARGIN+1);

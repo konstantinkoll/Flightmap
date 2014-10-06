@@ -67,7 +67,6 @@ void CGroupBox::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	Graphics g(dc);
-	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	FMApplication* pApp = FMGetApp();
@@ -80,7 +79,6 @@ void CGroupBox::OnPaint()
 
 	// Border
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
-	COLORREF clr;
 
 	CString caption;
 	GetWindowText(caption);
@@ -114,21 +112,28 @@ void CGroupBox::OnPaint()
 		pen.SetColor(Color(64, 60, 96, 112));
 		g.DrawPath(&pen, &path);
 
-		clr = 0xCC6600;
+		dc.SetTextColor(0xCC6600);
 	}
 	else
-		if (Themed && (pApp->OSVersion!=OS_Eight))
+		if (Themed)
 		{
-			rectBounds.right -= 1;
-			rectBounds.bottom -= 1;
+			rectBounds.right--;
+			rectBounds.bottom--;
 
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 2, path);
+			if (FMGetApp()->OSVersion==OS_Eight)
+			{
+				dc.Draw3dRect(rect, 0xDDDDDD, 0xDDDDDD);
+			}
+			else
+			{
+				GraphicsPath path;
+				CreateRoundRectangle(rectBounds, 2, path);
+	
+				Pen pen(Color(0xDD, 0xDD, 0xDD));
+				g.DrawPath(&pen, &path);
+			}
 
-			Pen pen(Color(204, 204, 204));
-			g.DrawPath(&pen, &path);
-
-			clr = 0xCC6600;
+			dc.SetTextColor(0xCC3300);
 		}
 		else
 		{
@@ -137,9 +142,9 @@ void CGroupBox::OnPaint()
 			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
 
 			rectBounds.OffsetRect(-1, -1);
-			dc.Draw3dRect(rectBounds, GetSysColor(Themed ? COLOR_SCROLLBAR : COLOR_3DSHADOW), GetSysColor(Themed ? COLOR_SCROLLBAR : COLOR_3DSHADOW));
+			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 
-			clr = GetSysColor(COLOR_WINDOWTEXT);
+			dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 		}
 
 	// Caption
@@ -151,7 +156,6 @@ void CGroupBox::OnPaint()
 	if (brush)
 		FillRect(dc, rectCaption, brush);
 
-	dc.SetTextColor(clr);
 	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

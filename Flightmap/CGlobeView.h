@@ -84,7 +84,7 @@ protected:
 	void Normalize();
 	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Themed);
+	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	void DrawStatusBar(INT Height);
 	void DrawScene(BOOL InternalCall=FALSE);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
