@@ -728,25 +728,25 @@ __forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* 
 	glEnd();
 
 	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], ga->Alpha*0.5f);
-	glBegin(GL_LINE_STRIP);
+	glBegin(GL_POINTS);
 	glVertex2i(x-1, y);						// Oben links
 	glVertex2i(x, y);
-	glVertex2i(x, y-2);
+	glVertex2i(x, y-1);
 	glEnd();
-	glBegin(GL_LINE_STRIP);
+	glBegin(GL_POINTS);
 	glVertex2i(x-1, y+Height-1);			// Unten links
 	glVertex2i(x, y+Height-1);
-	glVertex2i(x, y+Height+1);
+	glVertex2i(x, y+Height);
 	glEnd();
-	glBegin(GL_LINE_STRIP);
+	glBegin(GL_POINTS);
 	glVertex2i(x+Width, y);					// Oben rechts
 	glVertex2i(x+Width-1, y);
-	glVertex2i(x+Width-1, y-2);
+	glVertex2i(x+Width-1, y-1);
 	glEnd();
-	glBegin(GL_LINE_STRIP);
+	glBegin(GL_POINTS);
 	glVertex2i(x+Width, y+Height-1);		// Unten rechts
 	glVertex2i(x+Width-1, y+Height-1);
-	glVertex2i(x+Width-1, y+Height+1);
+	glVertex2i(x+Width-1, y+Height);
 	glEnd();
 
 	x += 5;
