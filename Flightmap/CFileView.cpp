@@ -124,6 +124,8 @@ AIRX_Attachment* CFileView::GetAttachment(INT idx)
 
 void CFileView::Init()
 {
+	ModifyStyle(0, WS_BORDER);
+
 	m_wndTaskbar.Create(this, IDB_TASKS, 1);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_OPEN, 1, TRUE);
@@ -206,6 +208,7 @@ void CFileView::OnNcPaint()
 void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
+
 	AdjustLayout();
 }
 

@@ -9,7 +9,7 @@
 // CTaskButton
 //
 
-#define BORDER          4
+#define BORDER     4
 
 CTaskButton::CTaskButton()
 	: CButton()
@@ -161,6 +161,7 @@ void CTaskButton::OnPaint()
 		FillRect(dc, rect, brush);
 
 	// Button
+	CRect rectText(rect);
 	if (IsCtrlThemed())
 	{
 		CFont* pOldFont = dc.SelectObject(&FMGetApp()->m_DefaultFont);
@@ -189,7 +190,7 @@ void CTaskButton::OnPaint()
 
 			if (Selected)
 			{
-				SolidBrush brush(Color(0x24, 0x50, 0x57, 0x62));
+				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
 				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
 			}
 			else
@@ -211,7 +212,6 @@ void CTaskButton::OnPaint()
 			}
 		}
 
-		CRect rectText(rect);
 		rectText.DeflateRect(BORDER+2, BORDER);
 		if (Selected)
 			rectText.OffsetRect(1, 1);
@@ -254,7 +254,6 @@ void CTaskButton::OnPaint()
 			dc.DrawFocusRect(rectFocus);
 		}
 
-		CRect rectText(rect);
 		rectText.DeflateRect(BORDER+2, BORDER);
 		if (Selected)
 			rectText.OffsetRect(1, 1);

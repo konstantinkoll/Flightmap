@@ -214,7 +214,15 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			UINT line = (rect.Height()-2)*2/5;
 
 			LinearGradientBrush brush(Point(0, line-1), Point(0, rect.bottom-1), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
-			g.FillRectangle(&brush, 1, line, rect.right-2, rect.bottom-line-1);
+
+			if (GetParent()->GetStyle() & WS_BORDER)
+			{
+				g.FillRectangle(&brush, 0, line, rect.right, rect.bottom-line-1);
+			}
+			else
+			{
+				g.FillRectangle(&brush, 1, line, rect.right-2, rect.bottom-line-1);
+			}
 		}
 		else
 		{

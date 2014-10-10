@@ -351,6 +351,7 @@
 #define IDR_ACCELERATOR_MAIN            5000
 #define IDR_ACCELERATOR_MAP             5001
 #define IDR_ACCELERATOR_GLOBE           5002
+#define IDC_LIST1                       8044
 
 // Next default values for new objects
 // 
@@ -358,7 +359,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8013
 #define _APS_NEXT_COMMAND_VALUE         32784
-#define _APS_NEXT_CONTROL_VALUE         8044
+#define _APS_NEXT_CONTROL_VALUE         8045
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

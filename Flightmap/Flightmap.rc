@@ -137,7 +137,7 @@ BEGIN
     "V",            IDM_EDIT_PASTE,         VIRTKEY, CONTROL
     VK_INSERT,      IDM_EDIT_PASTE,         VIRTKEY, SHIFT
     "F",            IDM_EDIT_FIND,          VIRTKEY, CONTROL
-    VK_F3,          IDM_EDIT_FINDREPLACEAGAIN, VIRTKEY
+    VK_F3,          IDM_EDIT_FINDREPLACEAGAIN, VIRTKEY 
     "H",            IDM_EDIT_REPLACE,       VIRTKEY, CONTROL
     "R",            IDM_EDIT_REPLACE,       VIRTKEY, CONTROL
     "A",            IDM_EDIT_SELECTALL,     VIRTKEY, CONTROL
@@ -152,7 +152,7 @@ BEGIN
     "S",            IDM_FILE_SAVE,          VIRTKEY, CONTROL
     VK_F12,         IDM_FILE_SAVE,          VIRTKEY, SHIFT
     VK_F2,          IDM_FILE_SAVE,          VIRTKEY, SHIFT, ALT
-    VK_F12,         IDM_FILE_SAVEAS,        VIRTKEY
+    VK_F12,         IDM_FILE_SAVEAS,        VIRTKEY 
 END
 
 IDR_ACCELERATOR_MAP ACCELERATORS 
@@ -166,7 +166,7 @@ BEGIN
     "S",            IDM_MAPWND_SAVEAS,      VIRTKEY, CONTROL
     VK_F12,         IDM_MAPWND_SAVEAS,      VIRTKEY, SHIFT
     VK_F2,          IDM_MAPWND_SAVEAS,      VIRTKEY, SHIFT, ALT
-    VK_F12,         IDM_MAPWND_SAVEAS,      VIRTKEY
+    VK_F12,         IDM_MAPWND_SAVEAS,      VIRTKEY 
 END
 
 IDR_ACCELERATOR_GLOBE ACCELERATORS 
@@ -177,7 +177,7 @@ BEGIN
     "S",            IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, CONTROL
     VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, SHIFT
     VK_F2,          IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, SHIFT, ALT
-    VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY
+    VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY 
 END
 
 #endif    // Neutral resources
@@ -576,7 +576,8 @@ BEGIN
     IDS_TOOLTIP_DATETIME    "Erster Flug: %s\nLetzter Flug: %s"
     IDS_FINDREPLACE         "Suchen und Ersetzen"
     IDS_ILLEGALCOLUMN_FIND  "Die gewählte Spalte kann nicht durchsucht werden!"
-    IDS_ILLEGALCOLUMN_REPLACE  "In der gewählten Spalte kann nichts ersetzt werden!"
+    IDS_ILLEGALCOLUMN_REPLACE 
+                            "In der gewählten Spalte kann nichts ersetzt werden!"
     IDS_ALLREPLACED         "Alle Begriffe wurden ersetzt."
     IDS_SEARCHTERMNOTFOUND  "Der Suchbegriff ist nicht vorhanden!"
     IDS_REPLACEQUESTION     "Soll dieser Begriff ersetzt werden?"
@@ -701,11 +702,11 @@ BEGIN
     IDM_MAP_ROUTECOLOR      "&Standardfarbe"
     IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
     IDM_MAP_LOCATIONINNERCOLOR "Far&be"
-    IDM_MAP_LOCATIONOUTERCOLOR "&Umrandung"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_MAP_LOCATIONOUTERCOLOR "&Umrandung"
     IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
     IDM_MAP_IATAINNERCOLOR  "S&chriftfarbe"
     IDM_MAP_IATAOUTERCOLOR  "&Umrandung"
@@ -1272,7 +1273,7 @@ BEGIN
     IDS_TOOLTIP_DATETIME    "First flight: %s\nLast flight: %s"
     IDS_FINDREPLACE         "Find and replace"
     IDS_ILLEGALCOLUMN_FIND  "This column is not searchable!"
-    IDS_ILLEGALCOLUMN_REPLACE  "You cannot replace items in this column!"
+    IDS_ILLEGALCOLUMN_REPLACE "You cannot replace items in this column!"
     IDS_ALLREPLACED         "All terms have been replaced."
     IDS_SEARCHTERMNOTFOUND  "The search term has not been found!"
     IDS_REPLACEQUESTION     "Do you want to replace this occurence?"
@@ -1397,11 +1398,11 @@ BEGIN
     IDM_MAP_ROUTECOLOR      "&Default color"
     IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
     IDM_MAP_LOCATIONINNERCOLOR "&Color"
-    IDM_MAP_LOCATIONOUTERCOLOR "&Border"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_MAP_LOCATIONOUTERCOLOR "&Border"
     IDM_MAP_SHOWIATACODES   "Show &IATA codes"
     IDM_MAP_IATAINNERCOLOR  "&Color"
     IDM_MAP_IATAOUTERCOLOR  "&Border"
