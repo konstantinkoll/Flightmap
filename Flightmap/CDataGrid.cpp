@@ -285,7 +285,9 @@ void CDataGrid::AdjustHeader()
 			}
 			else
 				if (HdItem.cxy<MINWIDTH)
+				{
 					m_ViewParameters.ColumnWidth[a] = theApp.m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINWIDTH;
+				}
 
 		m_wndHeader.SetItem(a, &HdItem);
 	}
@@ -2310,22 +2312,31 @@ void CDataGrid::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (pHdr->pitem->mask & HDI_ORDER)
 	{
-		// GetColumnOrderArray() enthält noch die alte Reihenfolge, daher:
-		// 1. Spalte an der alten Stelle löschen
-		for (UINT a=0; a<FMAttributeCount; a++)
-			if (m_ViewParameters.ColumnOrder[a]==pHdr->iItem)
-			{
-				for (UINT b=a; b<FMAttributeCount-1; b++)
-					m_ViewParameters.ColumnOrder[b] = m_ViewParameters.ColumnOrder[b+1];
-				break;
-			}
+		if (pHdr->pitem->iOrder==-1)
+		{
+			theApp.m_ViewParameters.ColumnWidth[pHdr->iItem] = m_ViewParameters.ColumnWidth[pHdr->iItem] = 0;
+		}
+		else
+		{
+			// GetColumnOrderArray() enthält noch die alte Reihenfolge, daher:
+			// 1. Spalte an der alten Stelle löschen
+			for (UINT a=0; a<FMAttributeCount; a++)
+				if (m_ViewParameters.ColumnOrder[a]==pHdr->iItem)
+				{
+					for (UINT b=a; b<FMAttributeCount-1; b++)
+						m_ViewParameters.ColumnOrder[b] = m_ViewParameters.ColumnOrder[b+1];
+					break;
+				}
 
-		// 2. Spalte an der neuen Stelle einfügen
-		for (INT a=FMAttributeCount-1; a>pHdr->pitem->iOrder; a--)
-			m_ViewParameters.ColumnOrder[a] = m_ViewParameters.ColumnOrder[a-1];
+			// 2. Spalte an der neuen Stelle einfügen
+			for (INT a=FMAttributeCount-1; a>pHdr->pitem->iOrder; a--)
+				m_ViewParameters.ColumnOrder[a] = m_ViewParameters.ColumnOrder[a-1];
 
-		m_ViewParameters.ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
-		memcpy_s(theApp.m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder), m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder));
+			m_ViewParameters.ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
+			memcpy_s(theApp.m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder), m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder));
+		}
+
+		AdjustHeader();
 		AdjustLayout();
 
 		*pResult = FALSE;
