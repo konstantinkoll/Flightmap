@@ -809,7 +809,7 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 	case IDM_GOOGLEEARTH_OPEN:
 		pPopup->Create(this, IDB_MENUGOOGLEEARTH_32, IDB_MENUGOOGLEEARTH_16);
 		pPopup->AddCaption(IDS_EXPORT);
-		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T(".kml"), CDMB_LARGE);
+		pPopup->AddFileType(IDM_GOOGLEEARTH_EXPORT, _T("kml"), CDMB_LARGE);
 		break;
 	case IDM_STATISTICS:
 		pPopup->Create(this, IDB_MENUSTATISTICS_32, IDB_MENUSTATISTICS_16);
