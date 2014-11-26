@@ -74,6 +74,7 @@
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LinkTimeCodeGeneration="0"
+				FixedBaseAddress="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -154,6 +155,7 @@
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LinkTimeCodeGeneration="0"
+				FixedBaseAddress="1"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -239,6 +241,7 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="0"
+				FixedBaseAddress="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -325,6 +328,7 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="0"
+				FixedBaseAddress="1"
 				TargetMachine="17"
 			/>
 			<Tool
