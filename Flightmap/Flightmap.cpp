@@ -491,13 +491,13 @@ void CFlightmapApp::OnAppAbout()
 		if (m_UseBgImages!=dlg.m_UseBgImages)
 		{
 			m_UseBgImages = dlg.m_UseBgImages;
-			SendMessage(HWND_BROADCAST, m_UseBgImagesChangedMsg, (WPARAM)m_UseBgImages, NULL);
+			PostMessage(HWND_BROADCAST, m_UseBgImagesChangedMsg, (WPARAM)m_UseBgImages, NULL);
 		}
 
 		if (m_UseStatuteMiles!=dlg.m_UseStatuteMiles)
 		{
 			m_UseStatuteMiles = dlg.m_UseStatuteMiles;
-			SendMessage(HWND_BROADCAST, m_DistanceSettingChangedMsg, (WPARAM)m_UseStatuteMiles, NULL);
+			PostMessage(HWND_BROADCAST, m_DistanceSettingChangedMsg, (WPARAM)m_UseStatuteMiles, NULL);
 		}
 	}
 }
