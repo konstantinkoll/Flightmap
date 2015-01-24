@@ -43,6 +43,8 @@ IDB_MENUGOOGLEEARTH_16  BITMAP                  "res\\MenuGoogleEarth_16.bmp"
 IDB_MENUGOOGLEEARTH_32  BITMAP                  "res\\MenuGoogleEarth_32.bmp"
 IDB_MENUSTATISTICS_16   BITMAP                  "res\\MenuStatistics_16.bmp"
 IDB_MENUSTATISTICS_32   BITMAP                  "res\\MenuStatistics_32.bmp"
+IDB_MENUACHIEVEMENTS_16 BITMAP                  "res\\MenuAchievements_16.bmp"
+IDB_MENUACHIEVEMENTS_32 BITMAP                  "res\\MenuAchievements_32.bmp"
 IDB_MENUMAPWND_16       BITMAP                  "res\\MenuMapWnd_16.bmp"
 IDB_MENUMAPWND_32       BITMAP                  "res\\MenuMapWnd_32.bmp"
 IDB_MENUMAPVIEW_16      BITMAP                  "res\\MenuMapView_16.bmp"
@@ -90,8 +92,8 @@ IDB_SLOGAN              PNG                     "res\\Slogan.png"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,17,0
- PRODUCTVERSION 2,1,17,0
+ FILEVERSION 2,2,0,0
+ PRODUCTVERSION 2,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -108,13 +110,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.17"
+            VALUE "FileVersion", "2.2.0"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.17"
+            VALUE "ProductVersion", "2.2.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -736,11 +738,13 @@ BEGIN
     IDM_STATISTICS_OPEN     "Zeigt eine statistische Auswertung\ndes Flugplans an.\nStatistik ö&ffnen"
     IDM_STATISTICS_MERGE_DIRECTIONS "&Richtung von Routen ignorieren"
     IDM_STATISTICS_MERGE_AWARDS "&Prämienflüge als normale Flüge"
+    IDM_STATISTICS_MERGE_CLASSES "&Y+, Y und Charterflüge als Y"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_STATISTICS_MERGE_CLASSES "&Y+, Y und Charterflüge als Y"
+    IDM_ACHIEVEMENTS        "&Erfolge"
+    IDM_ACHIEVEMENTS_OPEN   "Zeigt die errungenen\nErfolge an.\nErfolge ö&ffnen"
 END
 
 STRINGTABLE 
@@ -1432,11 +1436,13 @@ BEGIN
     IDM_STATISTICS_OPEN     "Open a statistic analysis\nof the itinerary.\n&Open statistics"
     IDM_STATISTICS_MERGE_DIRECTIONS "Merge route &directions"
     IDM_STATISTICS_MERGE_AWARDS "Merge &award and revenue flights"
+    IDM_STATISTICS_MERGE_CLASSES "Merge &Y+, Y and charter flights"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_STATISTICS_MERGE_CLASSES "Merge &Y+, Y and charter flights"
+    IDM_ACHIEVEMENTS        "&Achievements"
+    IDM_ACHIEVEMENTS_OPEN   "Open the achievements\nawarded to you.\n&Open achievements"
 END
 
 STRINGTABLE 

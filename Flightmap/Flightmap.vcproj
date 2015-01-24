@@ -784,6 +784,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\MenuAchievements_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenuAchievements_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\MenubarIcons.bmp"
 				>
 			</File>

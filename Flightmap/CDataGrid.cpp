@@ -1835,10 +1835,10 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		CDialogMenuPopup* pPopup = new CDialogMenuPopup();
 		pPopup->Create((CMainWindow*)GetTopLevelParent(), IDB_MENUDETAILS_32, IDB_MENUDETAILS_16);
-		pPopup->AddCommand(IDM_DETAILS_AUTOSIZEALL, 0);
+		pPopup->AddCommand(IDM_DETAILS_AUTOSIZEALL);
 		pPopup->AddCommand(IDM_DETAILS_AUTOSIZE);
 		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_DETAILS_CHOOSE, 1);
+		pPopup->AddCommand(IDM_DETAILS_CHOOSE, 0);
 
 		pPopup->Track(point);
 		return;

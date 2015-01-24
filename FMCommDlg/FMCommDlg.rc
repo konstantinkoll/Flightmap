@@ -76,6 +76,7 @@ IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDR_APPLICATION         ICON                    "res\\Flightmap.ico"
 IDR_MAP                 ICON                    "res\\Map_Small.ico"
 IDR_GLOBE               ICON                    "res\\Globe_Small.ico"
+IDR_PASSPORT            ICON                    "res\\Passport_Small.ico"
 IDI_EDITFLIGHT          ICON                    "res\\Edit_Tiny.ico"
 IDI_ADDROUTE            ICON                    "res\\Add_Tiny.ico"
 IDI_ATTACHMENTS         ICON                    "res\\FileAttachments_Tiny.ico"
@@ -131,8 +132,8 @@ BEGIN
     LTEXT           "Entfernungsangaben werden immer in Kilometern (km) angezeigt, und zusätzlich in Meilen:",IDC_STATIC,14,103,172,25
     CONTROL         "&Nautische Meilen (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,172,10
     CONTROL         "Land&meilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,172,10
-    CONTROL         "Visuelle Effekte",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,200,93,185,66
-    CONTROL         "&Hintergrundbilder benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
+    CONTROL         "Effekte",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,200,93,185,66
+    CONTROL         "&Hintergrundbilder und Töne benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
     PUSHBUTTON      "3D-&Einstellungen...",IDD_3DSETTINGS,206,120,172,14
     PUSHBUTTON      "Über „Flightmap E&xclusive“ informieren...",IDC_EXCLUSIVE,206,139,172,14
     CONTROL         "Lizenz",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,185,81
@@ -761,8 +762,8 @@ BEGIN
     LTEXT           "Distances are always displayed in kilometers (km), and additionally in miles:",IDC_STATIC,14,103,172,25
     CONTROL         "&Nautical miles (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,172,10
     CONTROL         "&Statute miles (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,172,10
-    CONTROL         "Visual effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,200,93,185,66
-    CONTROL         "Use &background images",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
+    CONTROL         "Effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,200,93,185,66
+    CONTROL         "Use &background images and sounds",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
     PUSHBUTTON      "3&D settings...",IDD_3DSETTINGS,206,120,172,14
     PUSHBUTTON      "Learn about ""Flightmap E&xclusive""...",IDC_EXCLUSIVE,206,139,172,14
     CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,185,81

@@ -755,6 +755,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Passport_Small.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Plane_Tiny.ico"
 				>
 			</File>

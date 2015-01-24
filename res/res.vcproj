@@ -348,6 +348,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Passport_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Passport_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Paste_16.png"
 				>
 			</File>
@@ -536,6 +544,10 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="AchievementStamps"
+			>
+		</Filter>
 		<File
 			RelativePath=".\3DSettings_Tiny.ico"
 			>
@@ -702,6 +714,14 @@
 		</File>
 		<File
 			RelativePath=".\NRT_Unregistered.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Passport.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Passport_Small.ico"
 			>
 		</File>
 		<File
