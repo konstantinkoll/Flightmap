@@ -4,9 +4,11 @@
 
 #include "stdafx.h"
 #include "AboutDlg.h"
+#include "CGoogleEarthFile.h"
 #include "CMainWnd.h"
 #include "Flightmap.h"
-#include "CGoogleEarthFile.h"
+
+#include "CAchievementNotification.h"
 
 
 GUID theAppID =	// {8269ADBF-A534-469d-A58D-7EBA84634B70}
@@ -223,6 +225,9 @@ BOOL CFlightmapApp::InitInstance()
 	}
 
 	m_AppInitialized = TRUE;
+
+	CAchievementNotification* pTest = new CAchievementNotification();
+	pTest->Create();
 
 	return TRUE;
 }

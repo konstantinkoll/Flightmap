@@ -196,6 +196,7 @@ BOOL FMDialog::OnEraseBkgnd(CDC* pDC)
 LRESULT FMDialog::OnThemeChanged()
 {
 	m_BackBufferL = m_BackBufferH = 0;
+
 	return TRUE;
 }
 

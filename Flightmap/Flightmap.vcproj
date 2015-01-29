@@ -412,6 +412,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CAchievementNotification.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCalendarFile.cpp"
 				>
 			</File>
@@ -579,6 +583,10 @@
 			</File>
 			<File
 				RelativePath=".\AttachmentsDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CAchievementNotification.h"
 				>
 			</File>
 			<File
