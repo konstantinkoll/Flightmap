@@ -532,7 +532,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ResolutionIcons\Computer.ico"
+				RelativePath=".\ResolutionIcons\Instagram32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionIcons\Instagram320.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionIcons\Picture.ico"
 				>
 			</File>
 			<File

@@ -22,6 +22,7 @@ const FixedResolution FixedResolutions[] =
 {
 	{ 400, 300, L"QSVGA", 0 },
 	{ 640, 480, L"VGA", 0 },
+	{ 640, 640, L"Instagram", 4 },
 	{ 720, 480, L"NTSC", 1 },
 	{ 720, 576, L"PAL", 1 },
 	{ 800, 600, L"SVGA", 0 },
