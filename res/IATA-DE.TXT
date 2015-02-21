@@ -1458,7 +1458,7 @@ CPP     Calapan, Philippinen
 CPQ     Campinas, Brasilien;4;22*51'33"S, 47*6'29"W
 CPR     Casper, USA;4;42*54'29"N, 106*27'52"W
 CPS     Cahokia, USA;4;38*34'15"N, 90*9'22"W
-CPT     Kapstadt (Capetown), Südafrika;4;33*57'53"S, 18*36'6"E
+CPT     Kapstadt, Südafrika;4;33*57'53"S, 18*36'6"E
 CPU     Cururupu, Brasilien;4;1*47'36"S, 44*50'50"W
 CPV     Campina Grande, Brasilien;4;7*16'12"S, 35*53'47"W
 CPX     Culebra, Puerto Rico;4;18*18'48"N, 65*18'16"W
@@ -2370,7 +2370,7 @@ FRB     Forbes, Australien;4;33*21'49"S, 147*56'6"E
 FRC     Franca, Brasilien;4;20*35'32"S, 47*22'59"W
 FRD     Friday Harbor, USA;4;48*31'19"N, 123*1'28"W
 FRE     Fera Island, Salomon-Inseln;4;8*6'27"S, 159*34'38"E
-FRF     Frankfurt (Rhein-Main Airforce Base), Deutschland;4;52*2'25"N, 11*12'10"E
+FRF     Oschersleben, Deutschland;5;52*2'25"N, 11*12'10"E
 FRG     Long Island, USA;4;40*43'44"N, 73*24'48"W
 FRH     French Lick, USA;4;38*30'22"N, 86*38'13"W
 FRI     Fort Riley, USA;4;39*3'10"N, 96*45'52"W
