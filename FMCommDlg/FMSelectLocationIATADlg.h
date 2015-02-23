@@ -21,21 +21,25 @@ public:
 
 	FMAirport* p_Airport;
 	UINT m_LastCountrySelected;
+	UINT m_LastSortColumn;
+	BOOL m_LastSortDirection;
 
 protected:
+	void Sort();
 	void LoadCountry(UINT country, BOOL SelectFirst=TRUE);
 	void UpdatePreview();
 
 private:
-	CMapPreviewCtrl m_Map;
+	CListCtrl m_wndList;
+	CMapPreviewCtrl m_wndMap;
 	FMAirport* m_Airports[MaxAirportsPerCountry];
 	INT m_nAirports;
 	UINT m_nIDTemplate;
 	WCHAR m_Buffer[256];
 	FMApplication* p_App;
 
-	INT Compare(INT col, INT n1, INT n2);
-	void Heap(INT col, INT wurzel, INT anz);
+	INT Compare(INT n1, INT n2);
+	void Heap(INT wurzel, INT anz);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
