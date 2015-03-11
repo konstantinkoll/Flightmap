@@ -118,8 +118,5 @@ protected:
 	afx_msg void OnStatisticsMergeAwards();
 	afx_msg void OnStatisticsMergeClasses();
 	afx_msg void OnUpdateStatisticsCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnAchievementsOpen();
-	afx_msg void OnUpdateAchievementsCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

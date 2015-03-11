@@ -8,8 +8,6 @@
 #include "CMainWnd.h"
 #include "Flightmap.h"
 
-#include "CAchievementNotification.h"
-
 
 GUID theAppID =	// {8269ADBF-A534-469d-A58D-7EBA84634B70}
 	{ 0x8269ADBF, 0xA534, 0x469D, { 0xA5, 0x8D, 0x7E, 0xBA, 0x84, 0x63, 0x4B, 0x70 } };
@@ -225,9 +223,6 @@ BOOL CFlightmapApp::InitInstance()
 	}
 
 	m_AppInitialized = TRUE;
-
-	CAchievementNotification* pTest = new CAchievementNotification();
-	pTest->Create();
 
 	return TRUE;
 }

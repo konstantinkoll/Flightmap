@@ -602,9 +602,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CMainWindow)
 	ON_COMMAND(IDM_STATISTICS_MERGE_AWARDS, OnStatisticsMergeAwards)
 	ON_COMMAND(IDM_STATISTICS_MERGE_CLASSES, OnStatisticsMergeClasses)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STATISTICS_OPEN, IDM_STATISTICS_MERGE_CLASSES, OnUpdateStatisticsCommands)
-
-	ON_COMMAND(IDM_ACHIEVEMENTS_OPEN, OnAchievementsOpen)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_ACHIEVEMENTS_OPEN, IDM_ACHIEVEMENTS_OPEN, OnUpdateAchievementsCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -623,7 +620,6 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBE);
 	m_pDialogMenuBar->AddMenuLeft(IDM_GOOGLEEARTH);
 	m_pDialogMenuBar->AddMenuLeft(IDM_STATISTICS);
-	m_pDialogMenuBar->AddMenuLeft(IDM_ACHIEVEMENTS);
 
 	m_pDialogMenuBar->AddMenuRight(IDM_DETAILS_CHOOSE, 0);
 	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 1);
@@ -822,10 +818,6 @@ LRESULT CMainWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
 		pPopup->AddCheckbox(IDM_STATISTICS_MERGE_DIRECTIONS);
 		pPopup->AddCheckbox(IDM_STATISTICS_MERGE_AWARDS);
 		pPopup->AddCheckbox(IDM_STATISTICS_MERGE_CLASSES);
-		break;
-	case IDM_ACHIEVEMENTS:
-		pPopup->Create(this, IDB_MENUACHIEVEMENTS_32, IDB_MENUACHIEVEMENTS_16);
-		pPopup->AddCommand(IDM_ACHIEVEMENTS_OPEN, 0, CDMB_LARGE);
 		break;
 	}
 
@@ -1500,16 +1492,4 @@ void CMainWnd::OnUpdateStatisticsCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
-}
-
-
-// Achievements
-
-void CMainWnd::OnAchievementsOpen()
-{
-}
-
-void CMainWnd::OnUpdateAchievementsCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(TRUE);
 }

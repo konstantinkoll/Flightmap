@@ -43,8 +43,6 @@ IDB_MENUGOOGLEEARTH_16  BITMAP                  "res\\MenuGoogleEarth_16.bmp"
 IDB_MENUGOOGLEEARTH_32  BITMAP                  "res\\MenuGoogleEarth_32.bmp"
 IDB_MENUSTATISTICS_16   BITMAP                  "res\\MenuStatistics_16.bmp"
 IDB_MENUSTATISTICS_32   BITMAP                  "res\\MenuStatistics_32.bmp"
-IDB_MENUACHIEVEMENTS_16 BITMAP                  "res\\MenuAchievements_16.bmp"
-IDB_MENUACHIEVEMENTS_32 BITMAP                  "res\\MenuAchievements_32.bmp"
 IDB_MENUMAPWND_16       BITMAP                  "res\\MenuMapWnd_16.bmp"
 IDB_MENUMAPWND_32       BITMAP                  "res\\MenuMapWnd_32.bmp"
 IDB_MENUMAPVIEW_16      BITMAP                  "res\\MenuMapView_16.bmp"
@@ -743,12 +741,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_ACHIEVEMENTS        "&Erfolge"
-    IDM_ACHIEVEMENTS_OPEN   "Zeigt die errungenen\nErfolge an.\nErfolge ö&ffnen"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_MAPWND              "&Karte"
     IDM_MAPWND_COPY         "&Kopieren"
     IDM_MAPWND_SAVEAS       "Speichern &unter"
@@ -1437,12 +1429,6 @@ BEGIN
     IDM_STATISTICS_MERGE_DIRECTIONS "Merge route &directions"
     IDM_STATISTICS_MERGE_AWARDS "Merge &award and revenue flights"
     IDM_STATISTICS_MERGE_CLASSES "Merge &Y+, Y and charter flights"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_ACHIEVEMENTS        "&Achievements"
-    IDM_ACHIEVEMENTS_OPEN   "Open the achievements\nawarded to you.\n&Open achievements"
 END
 
 STRINGTABLE 

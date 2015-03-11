@@ -412,10 +412,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CAchievementNotification.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CCalendarFile.cpp"
 				>
 			</File>
@@ -583,10 +579,6 @@
 			</File>
 			<File
 				RelativePath=".\AttachmentsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CAchievementNotification.h"
 				>
 			</File>
 			<File
@@ -789,14 +781,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Gray_8192.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuAchievements_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuAchievements_32.bmp"
 				>
 			</File>
 			<File
