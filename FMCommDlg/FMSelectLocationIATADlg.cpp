@@ -114,9 +114,23 @@ void FMSelectLocationIATADlg::Sort()
 
 		pHeaderCtrl->SetItem(a, &item);
 	}
+
+	INT sel = 0;
+	if (p_Airport)
+	{
+		for (INT a=0; a<m_nAirports; a++)
+			if (m_Airports[a]==p_Airport)
+			{
+				sel = a;
+				break;
+			}
+	}
+	m_wndList.SetItemState(sel, LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_wndList.SetItemState(sel, LVIS_SELECTED, LVIS_SELECTED);
+	m_wndList.EnsureVisible(sel, FALSE);
 }
 
-void FMSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
+void FMSelectLocationIATADlg::LoadCountry(UINT country)
 {
 	m_wndList.SetRedraw(FALSE);
 	m_wndList.SetItemCount(0);
@@ -132,20 +146,6 @@ void FMSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 
 	m_wndList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
 	m_wndList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-
-	INT sel = 0;
-	if ((!SelectFirst) && (p_Airport))
-	{
-		for (INT a=0; a<m_nAirports; a++)
-			if (m_Airports[a]==p_Airport)
-			{
-				sel = a;
-				break;
-			}
-	}
-	m_wndList.SetItemState(sel, LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	m_wndList.SetItemState(sel, LVIS_SELECTED, LVIS_SELECTED);
-	m_wndList.EnsureVisible(sel, FALSE);
 
 	m_wndList.SetRedraw(TRUE);
 	m_wndList.Invalidate();
@@ -218,7 +218,7 @@ BOOL FMSelectLocationIATADlg::OnInitDialog()
 	UINT country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
 	tmpStr = FMIATAGetCountry(country)->Name;
 	c->SelectString(-1, tmpStr);
-	LoadCountry(country, FALSE);
+	LoadCountry(country);
 
 	return TRUE;
 }
@@ -298,7 +298,7 @@ void FMSelectLocationIATADlg::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
 void FMSelectLocationIATADlg::OnSelectCountry()
 {
 	m_LastCountrySelected = ((CComboBox*)GetDlgItem(IDC_COUNTRY))->GetCurSel();
-	LoadCountry(m_LastCountrySelected, TRUE);
+	LoadCountry(m_LastCountrySelected);
 }
 
 void FMSelectLocationIATADlg::OnReportError(NMHDR* /*pNMHDR*/, LRESULT* pResult)
