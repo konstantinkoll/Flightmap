@@ -28,11 +28,14 @@ protected:
 	CTaskbar m_wndTaskbar;
 	CTooltipList m_wndTooltipList;
 	CTooltipHeader m_wndHeader;
+	UINT m_LastSortColumn;
+	BOOL m_LastSortDirection;
 
 	void Reload();
 	AIRX_Attachment* GetAttachment(INT idx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -45,6 +48,7 @@ protected:
 	afx_msg void OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg void OnAdd();
 	afx_msg void OnOpen();
@@ -55,5 +59,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	UINT* m_Sorting;
+	UINT m_Count;
+
 	void Init();
+	INT Compare(INT n1, INT n2);
+	void Heap(INT wurzel, INT anz);
+	void Sort();
 };

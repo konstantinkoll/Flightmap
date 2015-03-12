@@ -38,6 +38,9 @@ CFileView::CFileView()
 	p_Itinerary = NULL;
 	p_Flight = NULL;
 	p_App = FMGetApp();
+	m_Sorting = NULL;
+	m_LastSortColumn = m_Count = 0;
+	m_LastSortDirection = FALSE;
 }
 
 void CFileView::PreSubclassWindow()
@@ -74,52 +77,47 @@ void CFileView::SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFli
 	Reload();
 
 	for (UINT a=0; a<4; a++)
-		m_wndTooltipList.SetColumnWidth(a, m_wndTooltipList.GetItemCount()==0 ? 130 : a<3 ? LVSCW_AUTOSIZE_USEHEADER : LVSCW_AUTOSIZE);
+		m_wndTooltipList.SetColumnWidth(a, m_Count==0 ? 130 : a<3 ? LVSCW_AUTOSIZE_USEHEADER : LVSCW_AUTOSIZE);
 }
 
 void CFileView::Reload()
 {
-	m_wndTooltipList.SetItemCount(p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount);
+	m_Count = p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount;
+	m_wndTooltipList.SetItemCount(m_Count);
 
-	if (m_wndTooltipList.GetNextItem(-1, LVIS_FOCUSED)==-1)
-		m_wndTooltipList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+	if (m_Sorting)
+		delete[] m_Sorting;
+
+	m_Sorting = new UINT[m_Count];
+	for (UINT a=0; a<m_Count; a++)
+		m_Sorting[a] = a;
+
+	Sort();
 
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 
 	// Status
 	if (p_Status)
 	{
-		UINT FileCount = 0;
 		INT64 FileSize = 0;
-
-		if (p_Flight)
-		{
-			FileCount = p_Flight->AttachmentCount;
-			for (UINT a=0; a<FileCount; a++)
-				FileSize += p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[a]].Size;
-		}
-		else
-		{
-			FileCount = p_Itinerary->m_Attachments.m_ItemCount;
-			for (UINT a=0; a<FileCount; a++)
-				FileSize += p_Itinerary->m_Attachments.m_Items[a].Size;
-		}
+		for (UINT a=0; a<m_Count; a++)
+			FileSize += GetAttachment(a)->Size;
 
 		CString tmpMask;
-		ENSURE(tmpMask.LoadString(FileCount==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL));
+		ENSURE(tmpMask.LoadString(m_Count==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL));
 
 		WCHAR tmpBuf[256];
 		StrFormatByteSize(FileSize, tmpBuf, 256);
 
 		CString tmpStr;
-		tmpStr.Format(tmpMask, FileCount, tmpBuf);
+		tmpStr.Format(tmpMask, m_Count, tmpBuf);
 		p_Status->SetWindowText(tmpStr);
 	}
 }
 
 AIRX_Attachment* CFileView::GetAttachment(INT idx)
 {
-	return idx==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[idx]] : &p_Itinerary->m_Attachments.m_Items[idx];
+	return idx==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[m_Sorting[idx]]] : &p_Itinerary->m_Attachments.m_Items[m_Sorting[idx]];
 }
 
 void CFileView::Init()
@@ -167,9 +165,93 @@ void CFileView::Init()
 	AdjustLayout();
 }
 
+INT CFileView::Compare(INT n1, INT n2)
+{
+	INT res = 0;
+
+	AIRX_Attachment* pFirst = GetAttachment(n1);
+	AIRX_Attachment* pSecond = GetAttachment(n2);
+
+	switch (m_LastSortColumn)
+	{
+	case 0:
+		res = wcscmp(pFirst->Name, pSecond->Name);
+		break;
+	case 1:
+		res = CompareFileTime(&pFirst->Created, &pSecond->Created);
+		break;
+	case 2:
+		res = CompareFileTime(&pFirst->Modified, &pSecond->Modified);
+		break;
+	case 3:
+		res = pFirst->Size-pSecond->Size;
+		break;
+	}
+
+	if (m_LastSortDirection)
+		res = -res;
+
+	return res;
+}
+
+void CFileView::Heap(INT wurzel, INT anz)
+{
+	while (wurzel<=anz/2-1)
+	{
+		INT idx = (wurzel+1)*2-1;
+		if (idx+1<anz)
+			if (Compare(idx, idx+1)<0)
+				idx++;
+		if (Compare(wurzel, idx)<0)
+		{
+			std::swap(m_Sorting[wurzel], m_Sorting[idx]);
+			wurzel = idx;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+void CFileView::Sort()
+{
+	if (m_Count>1)
+	{
+		for (INT a=m_Count/2-1; a>=0; a--)
+			Heap(a, m_Count);
+		for (INT a=m_Count-1; a>0; )
+		{
+			std::swap(m_Sorting[0], m_Sorting[a]);
+			Heap(0, a--);
+		}
+	}
+
+	CHeaderCtrl* pHeaderCtrl = m_wndTooltipList.GetHeaderCtrl();
+
+	HDITEM item;
+	ZeroMemory(&item, sizeof(item));
+	item.mask = HDI_FORMAT;
+
+	for (INT a=0; a<4; a++)
+	{
+		pHeaderCtrl->GetItem(a, &item);
+
+		item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+		if (a==(INT)m_LastSortColumn)
+			item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+
+		pHeaderCtrl->SetItem(a, &item);
+	}
+
+	if (m_wndTooltipList.GetNextItem(-1, LVIS_FOCUSED)==-1)
+		m_wndTooltipList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+}
+
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
@@ -181,6 +263,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_NOTIFY(LVN_BEGINLABELEDIT, 2, OnBeginLabelEdit)
 	ON_NOTIFY(LVN_ENDLABELEDIT, 2, OnEndLabelEdit)
 	ON_NOTIFY(REQUEST_TOOLTIP_DATA, 2, OnRequestTooltipData)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
 
 	ON_COMMAND(IDM_FILEVIEW_ADD, OnAdd)
 	ON_COMMAND(IDM_FILEVIEW_OPEN, OnOpen)
@@ -198,6 +281,14 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	Init();
 
 	return 0;
+}
+
+void CFileView::OnDestroy()
+{
+	if (m_Sorting)
+		delete[] m_Sorting;
+
+	CWnd::OnDestroy();
 }
 
 void CFileView::OnNcPaint()
@@ -486,6 +577,27 @@ UseIcon:
 	*pResult = 0;
 }
 
+void CFileView::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
+	INT col = pLV->iItem;
+
+	if (col!=(INT)m_LastSortColumn)
+	{
+		m_LastSortColumn = col;
+		m_LastSortDirection = FALSE;
+	}
+	else
+	{
+		m_LastSortDirection = !m_LastSortDirection;
+	}
+
+	Sort();
+
+	m_wndTooltipList.Invalidate();
+
+	*pResult = 0;
+}
 
 void CFileView::OnAdd()
 {
@@ -624,7 +736,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 			b = (p_Flight->AttachmentCount<AIRX_MaxAttachmentCount);
 		break;
 	default:
-		if (m_wndTooltipList.GetItemCount())
+		if (m_Count)
 			b = (GetSelectedFile()!=-1);
 	}
 
