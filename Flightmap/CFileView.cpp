@@ -82,8 +82,10 @@ void CFileView::SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFli
 
 void CFileView::Reload()
 {
+	m_wndTooltipList.SetRedraw(FALSE);
+	m_wndTooltipList.SetItemCount(0);
+
 	m_Count = p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount;
-	m_wndTooltipList.SetItemCount(m_Count);
 
 	if (m_Sorting)
 		delete[] m_Sorting;
@@ -93,6 +95,14 @@ void CFileView::Reload()
 		m_Sorting[a] = a;
 
 	Sort();
+
+	m_wndTooltipList.SetItemCount(m_Count);
+
+	if (m_wndTooltipList.GetNextItem(-1, LVIS_FOCUSED)==-1)
+		m_wndTooltipList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+
+	m_wndTooltipList.SetRedraw(TRUE);
+	m_wndTooltipList.Invalidate();
 
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 
@@ -228,24 +238,23 @@ void CFileView::Sort()
 	}
 
 	CHeaderCtrl* pHeaderCtrl = m_wndTooltipList.GetHeaderCtrl();
-
-	HDITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.mask = HDI_FORMAT;
-
-	for (INT a=0; a<4; a++)
+	if (pHeaderCtrl)
 	{
-		pHeaderCtrl->GetItem(a, &item);
+		HDITEM item;
+		ZeroMemory(&item, sizeof(item));
+		item.mask = HDI_FORMAT;
 
-		item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
-		if (a==(INT)m_LastSortColumn)
-			item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+		for (INT a=0; a<4; a++)
+		{
+			pHeaderCtrl->GetItem(a, &item);
 
-		pHeaderCtrl->SetItem(a, &item);
+			item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+			if (a==(INT)m_LastSortColumn)
+				item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+
+			pHeaderCtrl->SetItem(a, &item);
+		}
 	}
-
-	if (m_wndTooltipList.GetNextItem(-1, LVIS_FOCUSED)==-1)
-		m_wndTooltipList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 }
 
 
@@ -707,7 +716,7 @@ void CFileView::OnDelete()
 
 		if (MessageBox(message, GetAttachment(idx)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
-			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[idx] : idx, p_Flight);
+			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_Sorting[idx]] : m_Sorting[idx], p_Flight);
 			Reload();
 		}
 	}

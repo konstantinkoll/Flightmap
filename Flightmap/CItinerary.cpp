@@ -761,7 +761,7 @@ CItinerary::CItinerary(CString FileName)
 	else
 	{
 		HKEY hKey;
-		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 		{
 			DWORD Length = 256;
 			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);

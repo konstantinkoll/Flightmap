@@ -581,20 +581,22 @@ void StatisticsDlg::OnSortLists(NMHDR* pNMHDR, LRESULT* pResult)
 	sp.pList->SortItemsEx(SortFunc, (DWORD_PTR)&sp);
 
 	CHeaderCtrl* pHeaderCtrl = sp.pList->GetHeaderCtrl();
-
-	HDITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.mask = HDI_FORMAT;
-
-	for (INT a=0; a<pHeaderCtrl->GetItemCount(); a++)
+	if (pHeaderCtrl)
 	{
-		pHeaderCtrl->GetItem(a, &item);
+		HDITEM item;
+		ZeroMemory(&item, sizeof(item));
+		item.mask = HDI_FORMAT;
 
-		item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
-		if (a==(INT)sp.Column)
-			item.fmt |= sp.ConvertToNumber ? HDF_SORTDOWN : HDF_SORTUP;
+		for (INT a=0; a<pHeaderCtrl->GetItemCount(); a++)
+		{
+			pHeaderCtrl->GetItem(a, &item);
 
-		pHeaderCtrl->SetItem(a, &item);
+			item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+			if (a==(INT)sp.Column)
+				item.fmt |= sp.ConvertToNumber ? HDF_SORTDOWN : HDF_SORTUP;
+
+			pHeaderCtrl->SetItem(a, &item);
+		}
 	}
 
 	*pResult = 0;

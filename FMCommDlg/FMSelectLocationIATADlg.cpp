@@ -99,20 +99,22 @@ void FMSelectLocationIATADlg::Sort()
 	}
 
 	CHeaderCtrl* pHeaderCtrl = m_wndList.GetHeaderCtrl();
-
-	HDITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.mask = HDI_FORMAT;
-
-	for (INT a=0; a<2; a++)
+	if (pHeaderCtrl)
 	{
-		pHeaderCtrl->GetItem(a, &item);
+		HDITEM item;
+		ZeroMemory(&item, sizeof(item));
+		item.mask = HDI_FORMAT;
 
-		item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
-		if (a==(INT)m_LastSortColumn)
-			item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+		for (INT a=0; a<2; a++)
+		{
+			pHeaderCtrl->GetItem(a, &item);
 
-		pHeaderCtrl->SetItem(a, &item);
+			item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+			if (a==(INT)m_LastSortColumn)
+				item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+
+			pHeaderCtrl->SetItem(a, &item);
+		}
 	}
 
 	INT sel = 0;

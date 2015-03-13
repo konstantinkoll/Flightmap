@@ -369,10 +369,10 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 
 LRESULT CTooltipHeader::OnLayout(WPARAM wParam, LPARAM lParam)
 {
-	INT res = CHeaderCtrl::DefWindowProc(HDM_LAYOUT, wParam, lParam);
+	LRESULT res = CHeaderCtrl::DefWindowProc(HDM_LAYOUT, wParam, lParam);
 
 	LPHDLAYOUT pHL = (LPHDLAYOUT)lParam;
-	if (pHL->pwpos->cy)
+	if ((pHL->pwpos->cy) && (FMGetApp()->OSVersion==OS_XP))
 		pHL->pwpos->cy += 4;
 
 	pHL->prc->top = pHL->pwpos->cy;
