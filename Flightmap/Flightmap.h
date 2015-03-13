@@ -74,10 +74,12 @@ public:
 	void AddRecentList(CDialogMenuPopup* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
+	void OpenAirportLiquidFolders(CHAR* Code);
 	void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
 
 	CList<CString> m_RecentFiles;
 	CString m_PathGoogleEarth;
+	CString m_PathLiquidFolders;
 
 	HBITMAP m_FlagIcons16[2];
 	CImageListTransparent m_FlagIcons32;

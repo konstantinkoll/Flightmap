@@ -1093,8 +1093,9 @@ BEGIN_MESSAGE_MAP(CGlobeView, CWnd)
 	ON_COMMAND(IDM_GLOBEVIEW_CROSSHAIRS, OnCrosshairs)
 	ON_COMMAND(IDM_GLOBEVIEW_3DSETTINGS, On3DSettings)
 	ON_COMMAND(IDM_GLOBEITEM_OPENGOOGLEEARTH, OnOpenGoogleEarth)
+	ON_COMMAND(IDM_GLOBEITEM_OPENLIQUIDFOLDERS, OnOpenLiquidFolders)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEVIEW_SAVEAS, IDM_GLOBEVIEW_3DSETTINGS, OnUpdateCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEITEM_OPENGOOGLEEARTH, IDM_GLOBEITEM_OPENGOOGLEEARTH, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEITEM_OPENGOOGLEEARTH, IDM_GLOBEITEM_OPENLIQUIDFOLDERS, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1479,6 +1480,7 @@ void CGlobeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	{
 		pPopup->Create(this, IDB_MENUGLOBEITEM_32, IDB_MENUGLOBEITEM_16);
 		pPopup->AddCommand(IDM_GLOBEITEM_OPENGOOGLEEARTH, 0, CDMB_LARGE);
+		pPopup->AddCommand(IDM_GLOBEITEM_OPENLIQUIDFOLDERS, 1, CDMB_LARGE);
 	}
 	else
 	{
@@ -1645,6 +1647,12 @@ void CGlobeView::OnOpenGoogleEarth()
 		theApp.OpenAirportGoogleEarth(m_Airports.m_Items[m_FocusItem].pAirport);
 }
 
+void CGlobeView::OnOpenLiquidFolders()
+{
+	if ((m_FocusItem!=-1) && (m_IsSelected))
+		theApp.OpenAirportLiquidFolders(m_Airports.m_Items[m_FocusItem].pAirport->Code);
+}
+
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = TRUE;
@@ -1667,6 +1675,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_GLOBEITEM_OPENGOOGLEEARTH:
 		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());
+		break;
+	case IDM_GLOBEITEM_OPENLIQUIDFOLDERS:
+		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathLiquidFolders.IsEmpty());
 		break;
 	case IDM_GLOBEVIEW_COLORS:
 		pCmdUI->SetCheck(m_UseColors);

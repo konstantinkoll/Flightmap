@@ -127,6 +127,7 @@ protected:
 	afx_msg void OnCrosshairs();
 	afx_msg void On3DSettings();
 	afx_msg void OnOpenGoogleEarth();
+	afx_msg void OnOpenLiquidFolders();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

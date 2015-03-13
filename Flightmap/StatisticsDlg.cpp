@@ -564,7 +564,7 @@ void StatisticsDlg::OnSortLists(NMHDR* pNMHDR, LRESULT* pResult)
 	NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
 
 	SortParameters sp;
-	sp.pList = (CListCtrl*)CWnd::FromHandle(pLV->hdr.hwndFrom)->GetParent();
+	sp.pList = (CListCtrl*)CListCtrl::FromHandle(pLV->hdr.hwndFrom)->GetParent();
 	sp.Column = pLV->iItem;
 	sp.ConvertToNumber = (sp.Column==0) || ((sp.Column==1) && (sp.pList==&m_wndListCarrier));
 

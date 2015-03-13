@@ -811,7 +811,9 @@ END
 STRINGTABLE 
 BEGIN
     IDM_GLOBEITEM_OPENGOOGLEEARTH 
-                            "Öffnet den Ort\nin Google Earth.\nIn Google Earth ö&ffnen"
+                            "Öffnet den Ort\nin Google Earth.\nIn &Google Earth öffnen"
+    IDM_GLOBEITEM_OPENLIQUIDFOLDERS 
+                            "Öffnet den Ort in liquidFOLDERS\nund zeigt alle getaggten Dateien.\nIn &liquidFOLDERS öffnen"
 END
 
 STRINGTABLE 
@@ -1503,7 +1505,9 @@ END
 STRINGTABLE 
 BEGIN
     IDM_GLOBEITEM_OPENGOOGLEEARTH 
-                            "Open the location\nin Google Earth.\n&Open in Google Earth"
+                            "Open the location\nin Google Earth.\nOpen in &Google Earth"
+    IDM_GLOBEITEM_OPENLIQUIDFOLDERS 
+                            "Open the location in liquidFOLDERS\nand browse all tagged files.\nOpen in &liquidFOLDERS"
 END
 
 STRINGTABLE 

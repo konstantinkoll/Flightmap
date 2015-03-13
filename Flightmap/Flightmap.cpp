@@ -87,11 +87,24 @@ BOOL CFlightmapApp::InitInstance()
 	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
-		CHAR lszValue[255];
-		DWORD dwSize = 255;
+		WCHAR lszValue[256];
+		DWORD dwSize = sizeof(lszValue);
 
 		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
 			m_PathGoogleEarth = lszValue;
+
+		RegCloseKey(hKey);
+	}
+
+	// Pfad zu liquidFOLDERS
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\liquidFOLDERS"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+	{
+		DWORD dwType = REG_SZ;
+		WCHAR lszValue[256];
+		DWORD dwSize = sizeof(lszValue);
+
+		if (RegQueryValueEx(hKey, _T("StoreManager"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
+			m_PathLiquidFolders = lszValue;
 
 		RegCloseKey(hKey);
 	}
@@ -425,6 +438,14 @@ void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
 	FMAirport* pAirport = NULL;
 	if (FMIATAGetAirportByCode(Code, &pAirport))
 		OpenAirportGoogleEarth(pAirport);
+}
+
+void CFlightmapApp::OpenAirportLiquidFolders(CHAR* Code)
+{
+	WCHAR Parameter[4];
+	MultiByteToWideChar(CP_ACP, 0, Code, -1, Parameter, 4);
+
+	ShellExecute(GetForegroundWindow(), _T("open"), m_PathLiquidFolders, Parameter, NULL, SW_SHOW);
 }
 
 
