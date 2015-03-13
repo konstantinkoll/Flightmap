@@ -69,6 +69,16 @@ __forceinline void Finish(CListCtrl& wndList, INT Count)
 	for (INT a=0; a<Count; a++)
 		wndList.SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
 
+	CHeaderCtrl* pHeaderCtrl = wndList.GetHeaderCtrl();
+
+	HDITEM item;
+	ZeroMemory(&item, sizeof(item));
+	item.mask = HDI_FORMAT;
+
+	pHeaderCtrl->GetItem(0, &item);
+	item.fmt |= HDF_SORTDOWN;
+	pHeaderCtrl->SetItem(0, &item);
+
 	wndList.SetRedraw(TRUE);
 	wndList.Invalidate();
 }
@@ -569,6 +579,23 @@ void StatisticsDlg::OnSortLists(NMHDR* pNMHDR, LRESULT* pResult)
 	sp.ConvertToNumber = (sp.Column==0) || ((sp.Column==1) && (sp.pList==&m_wndListCarrier));
 
 	sp.pList->SortItemsEx(SortFunc, (DWORD_PTR)&sp);
+
+	CHeaderCtrl* pHeaderCtrl = sp.pList->GetHeaderCtrl();
+
+	HDITEM item;
+	ZeroMemory(&item, sizeof(item));
+	item.mask = HDI_FORMAT;
+
+	for (INT a=0; a<pHeaderCtrl->GetItemCount(); a++)
+	{
+		pHeaderCtrl->GetItem(a, &item);
+
+		item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+		if (a==(INT)sp.Column)
+			item.fmt |= sp.ConvertToNumber ? HDF_SORTDOWN : HDF_SORTUP;
+
+		pHeaderCtrl->SetItem(a, &item);
+	}
 
 	*pResult = 0;
 }

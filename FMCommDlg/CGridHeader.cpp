@@ -11,6 +11,7 @@
 
 BEGIN_MESSAGE_MAP(CGridHeader, CTooltipHeader)
 	ON_WM_PAINT()
+	ON_MESSAGE(HDM_LAYOUT, OnLayout)
 END_MESSAGE_MAP()
 
 void CGridHeader::OnPaint()
@@ -125,4 +126,9 @@ void CGridHeader::OnPaint()
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
+}
+
+LRESULT CGridHeader::OnLayout(WPARAM wParam, LPARAM lParam)
+{
+	return CHeaderCtrl::DefWindowProc(HDM_LAYOUT, wParam, lParam);
 }
