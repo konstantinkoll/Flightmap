@@ -2450,9 +2450,10 @@ CDialogMenuResolution::CDialogMenuResolution(CDialogMenuPopup* pParentPopup, UIN
 
 void CDialogMenuResolution::Execute()
 {
-	p_ParentPopup->GetOwner()->PostMessage(WM_CLOSEPOPUP);
+	CWnd* pOwner = p_ParentPopup->GetOwner();
+	pOwner->PostMessage(WM_CLOSEPOPUP);
 
-	FMResolutionDlg dlg(p_Width, p_Height, p_ParentPopup->GetOwner());
+	FMResolutionDlg dlg(p_Width, p_Height, pOwner);
 	dlg.DoModal();
 }
 

@@ -34,7 +34,7 @@ protected:
 	void UpdateWindowStatus(BOOL AllowLoungeView=FALSE);
 	void Open(CString FileName);
 	BOOL CloseFile(BOOL AllowLoungeView=FALSE);
-	CKitchen* GetKitchen(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	CKitchen* GetKitchen(BOOL Limit, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportExcel(CString FileName);

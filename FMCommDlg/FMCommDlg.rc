@@ -42,8 +42,6 @@ IDB_FLIGHTMAP_256       PNG                     "res\\Flightmap_256.png"
 IDB_BACKDROP            PNG                     "res\\Backdrop.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
-IDB_NRT_REGISTERED      PNG                     "res\\NRT_Registered.png"
-IDB_NRT_UNREGISTERED    PNG                     "res\\NRT_Unregistered.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -133,7 +131,7 @@ BEGIN
     CONTROL         "&Nautische Meilen (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,172,10
     CONTROL         "Land&meilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,172,10
     CONTROL         "Effekte",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,200,93,185,66
-    CONTROL         "&Hintergrundbilder und Töne benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
+    CONTROL         "&Hintergrundbilder benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
     PUSHBUTTON      "3D-&Einstellungen...",IDD_3DSETTINGS,206,120,172,14
     PUSHBUTTON      "Über „Flightmap E&xclusive“ informieren...",IDC_EXCLUSIVE,206,139,172,14
     CONTROL         "Lizenz",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,185,81
@@ -226,25 +224,21 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,293,207,50,14,WS_GROUP
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 349, 231
+IDD_REGISTER DIALOGEX 0, 0, 360, 116
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Unregistrierte Version"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,7,210,50,14
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,210,100,14
-    DEFPUSHBUTTON   "Fortsetzen",IDOK,292,210,50,14
-    LTEXT           "Dieses ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile!",IDC_TEXTROW1,7,7,335,8
-    LTEXT           "- Die von Flightmap erzeugten Karten haben keine magentafarbenen Balken mehr:",IDC_TEXTROW2,7,19,335,8
-    CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
-    CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
-    CTEXT           "Shareware-Version",IDC_CAPTION1,11,149,128,8
-    CTEXT           "Vollversion",IDC_CAPTION2,169,149,128,8
-    LTEXT           "- Der Dateiexport in die Formate .csv, .ics oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_TEXTROW3,7,160,335,8
-    LTEXT           "- Auf Ausdrucken und PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“",IDC_TEXTROW4,7,169,335,8
-    LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_TEXTROW5,7,178,335,8
-    LTEXT           "- Und zuletzt ermöglichen Sie uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_TEXTROW6,7,187,335,8
-    CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
+    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,7,96,50,14
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,96,100,14
+    DEFPUSHBUTTON   "Fortsetzen",IDOK,303,96,50,14
+    LTEXT           "Dies ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile:",IDC_STATIC,7,7,346,8
+    LTEXT           "- Die von Flightmap erzeugten Karten haben eine Auflösung bis zu 32 Megapixel",IDC_STATIC,7,22,346,8
+    LTEXT           "- Der Dateiexport in die Formate .csv, .ics, .kml oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_STATIC,7,32,346,8
+    LTEXT           "- Statistiken sind nicht mehr auf 10 Flüge begrenzt",IDC_STATIC,7,42,346,8
+    LTEXT           "- Auf Ausdrucken und in PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“",IDC_STATIC,7,52,346,8
+    LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_STATIC,7,62,346,8
+    LTEXT           "- Und zuletzt ermöglichen Sie es uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_STATIC,7,72,346,8
 END
 
 IDD_3DSETTINGS DIALOGEX 0, 0, 178, 118
@@ -298,21 +292,21 @@ BEGIN
     EDITTEXT        IDC_COLOR_HUE,282,130,23,12,WS_GROUP
 END
 
-IDD_RESOLUTION DIALOGEX 0, 0, 316, 316
+IDD_RESOLUTION DIALOGEX 0, 0, 500, 268
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Auflösung"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,14,18,288,207
+    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,14,18,472,160
     CONTROL         "Benutzer&definierte Auflösung",IDC_USERDEFINEDRES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,230,288,10
-    EDITTEXT        IDC_WIDTH,51,245,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    EDITTEXT        IDC_HEIGHT,51,266,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    DEFPUSHBUTTON   "OK",IDOK,201,295,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,259,295,50,14
-    GROUPBOX        "Kartenauflösung",IDC_STATIC,7,7,302,282
-    LTEXT           "Breite:",IDC_STATIC,14,248,35,8
-    LTEXT           "Höhe:",IDC_STATIC,14,269,35,8
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,184,481,10
+    EDITTEXT        IDC_WIDTH,51,199,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_HEIGHT,51,220,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    DEFPUSHBUTTON   "OK",IDOK,385,247,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,443,247,50,14
+    GROUPBOX        "Kartenauflösung",IDC_STATIC,7,7,486,234
+    LTEXT           "Breite:",IDC_STATIC,14,202,35,8
+    LTEXT           "Höhe:",IDC_STATIC,14,223,35,8
 END
 
 IDD_PROPERTIES DIALOGEX 0, 0, 365, 129
@@ -509,9 +503,9 @@ BEGIN
     IDD_REGISTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 342
+        RIGHTMARGIN, 353
         TOPMARGIN, 7
-        BOTTOMMARGIN, 224
+        BOTTOMMARGIN, 110
     END
 
     IDD_3DSETTINGS, DIALOG
@@ -533,9 +527,9 @@ BEGIN
     IDD_RESOLUTION, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 309
+        RIGHTMARGIN, 493
         TOPMARGIN, 7
-        BOTTOMMARGIN, 309
+        BOTTOMMARGIN, 261
     END
 
     IDD_PROPERTIES, DIALOG
@@ -763,7 +757,7 @@ BEGIN
     CONTROL         "&Nautical miles (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,172,10
     CONTROL         "&Statute miles (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,172,10
     CONTROL         "Effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,200,93,185,66
-    CONTROL         "Use &background images and sounds",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
+    CONTROL         "Use &background images",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,206,103,172,10
     PUSHBUTTON      "3&D settings...",IDD_3DSETTINGS,206,120,172,14
     PUSHBUTTON      "Learn about ""Flightmap E&xclusive""...",IDC_EXCLUSIVE,206,139,172,14
     CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,185,81
@@ -856,25 +850,21 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,293,207,50,14,WS_GROUP
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 327, 231
+IDD_REGISTER DIALOGEX 0, 0, 360, 116
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Unregistered version"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&Purchase",IDC_PURCHASE,7,210,50,14
-    PUSHBUTTON      "&Enter license key...",IDC_ENTERLICENSEKEY,64,210,80,14
-    DEFPUSHBUTTON   "Continue",IDOK,270,210,50,14
-    LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits!",IDC_TEXTROW1,7,7,313,8
-    LTEXT           "- Most importantly, maps created by Flightmap won't be defaced by magenta bars any more:",IDC_TEXTROW2,7,19,313,8
-    CONTROL         "",IDC_NRT_UNREGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,11,30,128,118
-    CONTROL         "",IDC_NRT_REGISTERED,"CPictureCtrl",WS_BORDER | WS_GROUP,169,30,128,118
-    CTEXT           "Shareware version",IDC_CAPTION1,11,149,128,8
-    CTEXT           "Full version",IDC_CAPTION2,169,149,128,8
-    LTEXT           "- Saving as .csv, .ics or .txt file will export the whole itinerary, not just the first 10 flights",IDC_TEXTROW3,7,160,313,8
-    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_TEXTROW4,7,169,313,8
-    LTEXT           "- This nag screen will be gone",IDC_TEXTROW5,7,178,313,8
-    LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_TEXTROW6,7,187,313,8
-    CTEXT           "è",IDC_REGARROW,144,30,20,118,SS_CENTERIMAGE
+    PUSHBUTTON      "&Purchase",IDC_PURCHASE,7,96,50,14
+    PUSHBUTTON      "&Enter license key...",IDC_ENTERLICENSEKEY,64,96,100,14
+    DEFPUSHBUTTON   "Continue",IDOK,303,96,50,14
+    LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits:",IDC_STATIC,7,7,346,8
+    LTEXT           "- Maps created by Flightmap can have a resolution of up to 32 megapixel",IDC_STATIC,7,22,346,8
+    LTEXT           "- Saving as .csv, .ics, .kml oder .txt is not limited to the first 10 flights",IDC_STATIC,7,32,346,8
+    LTEXT           "- Statistics aren't limited to 10 flights",IDC_STATIC,7,42,346,8
+    LTEXT           "- You won't see the text ""Unregistered version"" on your printed itineraries and PDFs",IDC_STATIC,7,52,346,8
+    LTEXT           "- This nag screen will be gone",IDC_STATIC,7,62,346,8
+    LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_STATIC,7,72,346,8
 END
 
 IDD_3DSETTINGS DIALOGEX 0, 0, 178, 118
@@ -928,20 +918,20 @@ BEGIN
     EDITTEXT        IDC_COLOR_HUE,282,130,23,12,WS_GROUP
 END
 
-IDD_RESOLUTION DIALOGEX 0, 0, 316, 316
+IDD_RESOLUTION DIALOGEX 0, 0, 500, 268
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Resolution"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,14,18,288,207
-    CONTROL         "User &defined resolution",IDC_USERDEFINEDRES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,230,288,10
-    EDITTEXT        IDC_WIDTH,51,245,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    EDITTEXT        IDC_HEIGHT,51,266,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    DEFPUSHBUTTON   "OK",IDOK,201,295,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,259,295,50,14
-    GROUPBOX        "Map resolution",IDC_STATIC,7,7,302,282
-    LTEXT           "Width:",IDC_STATIC,14,248,35,8
-    LTEXT           "Height:",IDC_STATIC,14,269,35,8
+    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,14,18,472,160
+    CONTROL         "User &defined resolution",IDC_USERDEFINEDRES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,184,481,10
+    EDITTEXT        IDC_WIDTH,51,199,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_HEIGHT,51,220,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    DEFPUSHBUTTON   "OK",IDOK,385,247,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,443,247,50,14
+    GROUPBOX        "Map resolution",IDC_STATIC,7,7,486,234
+    LTEXT           "Width:",IDC_STATIC,14,202,35,8
+    LTEXT           "Height:",IDC_STATIC,14,223,35,8
 END
 
 IDD_PROPERTIES DIALOGEX 0, 0, 355, 129
@@ -1138,9 +1128,9 @@ BEGIN
     IDD_REGISTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 320
+        RIGHTMARGIN, 353
         TOPMARGIN, 7
-        BOTTOMMARGIN, 224
+        BOTTOMMARGIN, 110
     END
 
     IDD_3DSETTINGS, DIALOG
@@ -1162,9 +1152,9 @@ BEGIN
     IDD_RESOLUTION, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 309
+        RIGHTMARGIN, 493
         TOPMARGIN, 7
-        BOTTOMMARGIN, 309
+        BOTTOMMARGIN, 261
     END
 
     IDD_PROPERTIES, DIALOG

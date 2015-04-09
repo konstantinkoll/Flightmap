@@ -8,7 +8,6 @@
 #include "..\FMCommDlg\CMainWindow.h"
 #include "..\FMCommDlg\CMapSelectionCtrl.h"
 #include "..\FMCommDlg\CMapPreviewCtrl.h"
-#include "..\FMCommDlg\CPictureCtrl.h"
 #include "..\FMCommDlg\CRatingCtrl.h"
 #include "..\FMCommDlg\CTaskBar.h"
 #include "..\FMCommDlg\CTaskButton.h"

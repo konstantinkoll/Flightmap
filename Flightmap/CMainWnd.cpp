@@ -168,7 +168,7 @@ BOOL CMainWnd::CloseFile(BOOL AllowLoungeView)
 	return TRUE;
 }
 
-CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
+CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro)
 {
 	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_Metadata.Title[0]!=L'\0' ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName : _T(""), MergeMetro);
 
@@ -177,7 +177,11 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 		if (m_CurrentMainView==DataGrid)
 			Selected &= ((CDataGrid*)m_pWndMainView)->HasSelection();
 
-		for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
+		UINT Count = m_pItinerary->m_Flights.m_ItemCount;
+		if (!FMIsLicensed() && Limit)
+			Count = min(Count, 10);
+
+		for (UINT a=0; a<Count; a++)
 		{
 			if (Selected && (m_CurrentMainView==DataGrid))
 				if (!((CDataGrid*)m_pWndMainView)->IsSelected(a))
@@ -196,7 +200,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro)
 CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro)
 {
 	CMapFactory f(&theApp.m_MapSettings);
-	return f.RenderMap(GetKitchen(Selected, MergeMetro));
+	return f.RenderMap(GetKitchen(FALSE, Selected, MergeMetro));
 }
 
 void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
@@ -256,6 +260,8 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors
 {
 	CGoogleEarthFile f;
 
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
 	if (!f.Open(FileName, m_pItinerary ? m_pItinerary->m_DisplayName : NULL))
 	{
 		FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
@@ -264,7 +270,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors
 	else
 	{
 		BOOL Res = FALSE;
-		CKitchen* pKitchen = GetKitchen(Selected, MergeMetro);
+		CKitchen* pKitchen = GetKitchen(TRUE, Selected, MergeMetro);
 
 		try
 		{
@@ -1092,7 +1098,7 @@ void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::OnMapOpen()
 {
-	theApp.ShowNagScreen(NAG_FORCE, this);
+	theApp.ShowNagScreen(NAG_EXPIRED, this);
 
 	CWaitCursor csr;
 
@@ -1333,7 +1339,7 @@ void CMainWnd::OnGlobeOpen()
 	CGlobeWnd* pFrame = new CGlobeWnd();
 
 	pFrame->Create();
-	pFrame->SetFlights(GetKitchen(TRUE, theApp.m_GlobeMergeMetro));
+	pFrame->SetFlights(GetKitchen(TRUE, TRUE, theApp.m_GlobeMergeMetro));
 	pFrame->ShowWindow(SW_SHOW);
 }
 
@@ -1370,8 +1376,6 @@ void CMainWnd::OnGoogleEarthOpen()
 	TCHAR Pathname[MAX_PATH];
 	if (!GetTempPath(MAX_PATH, Pathname))
 		return;
-
-	theApp.ShowNagScreen(NAG_FORCE, this);
 
 	CString szTempName;
 	srand(rand());
@@ -1437,6 +1441,8 @@ void CMainWnd::OnGoogleEarthExport()
 {
 	ASSERT(m_pItinerary);
 
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_KML, _T(".kml"), TRUE);
 
@@ -1451,6 +1457,8 @@ void CMainWnd::OnGoogleEarthExport()
 void CMainWnd::OnStatisticsOpen()
 {
 	ASSERT(m_pItinerary);
+
+	theApp.ShowNagScreen(NAG_COUNTER, this);
 
 	StatisticsDlg dlg(m_pItinerary, this);
 	dlg.DoModal();

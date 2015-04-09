@@ -379,10 +379,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CPictureCtrl.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CRatingCtrl.cpp"
 				>
 			</File>
@@ -526,10 +522,6 @@
 			</File>
 			<File
 				RelativePath=".\CMapSelectionCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPictureCtrl.h"
 				>
 			</File>
 			<File
@@ -744,14 +736,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Map_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\NRT_Registered.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\NRT_Unregistered.png"
 				>
 			</File>
 			<File

@@ -157,7 +157,11 @@ void StatisticsDlg::UpdateStatistics()
 	UCHAR FilterRating = m_wndFilterRating.GetRating();
 
 	// Calculate
-	for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+	UINT Count = p_Itinerary->m_Flights.m_ItemCount;
+	if (!FMIsLicensed())
+		Count = min(Count, 10);
+
+	for (UINT a=0; a<Count; a++)
 	{
 		const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[a];
 

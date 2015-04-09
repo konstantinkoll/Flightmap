@@ -69,6 +69,12 @@ void FMResolutionDlg::DoDataExchange(CDataExchange* pDX)
 
 			m_wndHeight.GetWindowText(tmpStr);
 			*p_Height = _wtoi(tmpStr);
+
+			if (!FMIsLicensed())
+			{
+				*p_Width = min(*p_Width, 640);
+				*p_Height = min(*p_Height, 640);
+			}
 		}
 		else
 		{
@@ -138,7 +144,8 @@ BOOL FMResolutionDlg::OnInitDialog()
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS | LVIF_STATE;
 	lvi.puColumns = puColumns;
 
-	for (UINT a=0; a<sizeof(FixedResolutions)/sizeof(FixedResolution); a++)
+	UINT Count = FMIsLicensed() ? sizeof(FixedResolutions)/sizeof(FixedResolution) : 3;
+	for (UINT a=0; a<Count; a++)
 	{
 		CString tmpStr;
 		tmpStr.Format(_T("%u×%u"), FixedResolutions[a].Width, FixedResolutions[a].Height);
@@ -193,4 +200,7 @@ void FMResolutionDlg::OnUserDefinedRes()
 	m_wndResolutionList.EnableWindow(!UserDefined);
 	m_wndWidth.EnableWindow(UserDefined);
 	m_wndHeight.EnableWindow(UserDefined);
+
+	if (UserDefined)
+		m_wndWidth.SetFocus();
 }

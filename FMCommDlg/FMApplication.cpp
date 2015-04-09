@@ -320,7 +320,7 @@ void FMApplication::KillFrame(CWnd* pVictim)
 BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 {
 	if ((Level & NAG_EXPIRED) ? FMIsSharewareExpired() : !FMIsLicensed())
-		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
+		if ((Level & NAG_FORCE) || (++m_NagCounter)>=5)
 		{
 			FMRegisterDlg dlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow());
 			dlg.DoModal();
