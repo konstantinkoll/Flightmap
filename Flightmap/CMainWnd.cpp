@@ -1336,10 +1336,15 @@ void CMainWnd::OnMapExportTIFF()
 
 void CMainWnd::OnGlobeOpen()
 {
+	ASSERT(m_pItinerary);
+
 	CGlobeWnd* pFrame = new CGlobeWnd();
 
+	CKitchen* pKitchen = GetKitchen(TRUE, TRUE, theApp.m_GlobeMergeMetro);
+	pKitchen->m_DisplayName = m_pItinerary->m_DisplayName;
+
 	pFrame->Create();
-	pFrame->SetFlights(GetKitchen(TRUE, TRUE, theApp.m_GlobeMergeMetro));
+	pFrame->SetFlights(pKitchen);
 	pFrame->ShowWindow(SW_SHOW);
 }
 
