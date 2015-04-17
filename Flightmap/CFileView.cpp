@@ -88,7 +88,7 @@ void CFileView::Reload()
 	m_Count = p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount;
 
 	if (m_Sorting)
-		delete[] m_Sorting;
+		delete m_Sorting;
 
 	m_Sorting = new UINT[m_Count];
 	for (UINT a=0; a<m_Count; a++)
@@ -295,7 +295,7 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CFileView::OnDestroy()
 {
 	if (m_Sorting)
-		delete[] m_Sorting;
+		delete m_Sorting;
 
 	CWnd::OnDestroy();
 }

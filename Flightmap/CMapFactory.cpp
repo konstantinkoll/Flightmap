@@ -622,7 +622,7 @@ SkipNote:
 			pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
 		}
 
-		delete[] RouteLabel;
+		delete RouteLabel;
 	}
 
 	// Clean up GDI
@@ -653,13 +653,13 @@ SkipNote:
 	if (DeleteKitchen)
 		delete pKitchen;
 
-	delete[] AirportData;
+	delete AirportData;
 	if (RouteData)
 	{
 		for (UINT a=0; a<RouteCount; a++)
 			free(RouteData[a]);
 
-		delete[] RouteData;
+		delete RouteData;
 	}
 
 	return pBitmap;
