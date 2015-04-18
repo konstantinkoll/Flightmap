@@ -1736,7 +1736,7 @@ CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdI
 
 CDialogMenuGallery::~CDialogMenuGallery()
 {
-	delete m_Captions;
+	delete[] m_Captions;
 }
 
 void CDialogMenuGallery::Execute()

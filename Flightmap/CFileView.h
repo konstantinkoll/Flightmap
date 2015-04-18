@@ -59,7 +59,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	UINT* m_Sorting;
+	UINT* m_pSortArray;
 	UINT m_Count;
 
 	void Init();

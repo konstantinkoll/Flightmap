@@ -38,7 +38,7 @@ CFileView::CFileView()
 	p_Itinerary = NULL;
 	p_Flight = NULL;
 	p_App = FMGetApp();
-	m_Sorting = NULL;
+	m_pSortArray = NULL;
 	m_LastSortColumn = m_Count = 0;
 	m_LastSortDirection = FALSE;
 }
@@ -87,12 +87,12 @@ void CFileView::Reload()
 
 	m_Count = p_Flight ? p_Flight->AttachmentCount : p_Itinerary->m_Attachments.m_ItemCount;
 
-	if (m_Sorting)
-		delete m_Sorting;
+	if (m_pSortArray)
+		delete[] m_pSortArray;
 
-	m_Sorting = new UINT[m_Count];
+	m_pSortArray = new UINT[m_Count];
 	for (UINT a=0; a<m_Count; a++)
-		m_Sorting[a] = a;
+		m_pSortArray[a] = a;
 
 	Sort();
 
@@ -127,7 +127,7 @@ void CFileView::Reload()
 
 AIRX_Attachment* CFileView::GetAttachment(INT idx)
 {
-	return idx==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[m_Sorting[idx]]] : &p_Itinerary->m_Attachments.m_Items[m_Sorting[idx]];
+	return idx==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[m_pSortArray[idx]]] : &p_Itinerary->m_Attachments.m_Items[m_pSortArray[idx]];
 }
 
 void CFileView::Init()
@@ -214,7 +214,7 @@ void CFileView::Heap(INT wurzel, INT anz)
 				idx++;
 		if (Compare(wurzel, idx)<0)
 		{
-			std::swap(m_Sorting[wurzel], m_Sorting[idx]);
+			std::swap(m_pSortArray[wurzel], m_pSortArray[idx]);
 			wurzel = idx;
 		}
 		else
@@ -232,7 +232,7 @@ void CFileView::Sort()
 			Heap(a, m_Count);
 		for (INT a=m_Count-1; a>0; )
 		{
-			std::swap(m_Sorting[0], m_Sorting[a]);
+			std::swap(m_pSortArray[0], m_pSortArray[a]);
 			Heap(0, a--);
 		}
 	}
@@ -294,8 +294,8 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CFileView::OnDestroy()
 {
-	if (m_Sorting)
-		delete m_Sorting;
+	if (m_pSortArray)
+		delete[] m_pSortArray;
 
 	CWnd::OnDestroy();
 }
@@ -716,7 +716,7 @@ void CFileView::OnDelete()
 
 		if (MessageBox(message, GetAttachment(idx)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
-			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_Sorting[idx]] : m_Sorting[idx], p_Flight);
+			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_pSortArray[idx]] : m_pSortArray[idx], p_Flight);
 			Reload();
 		}
 	}

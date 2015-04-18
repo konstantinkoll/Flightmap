@@ -622,7 +622,7 @@ SkipNote:
 			pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
 		}
 
-		delete RouteLabel;
+		delete[] RouteLabel;
 	}
 
 	// Clean up GDI
