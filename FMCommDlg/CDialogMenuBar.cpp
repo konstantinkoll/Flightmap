@@ -46,11 +46,16 @@ CDialogMenuBar::CDialogMenuBar()
 	m_pPopup = NULL;
 }
 
-BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
+BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID)
 {
-	m_Icons.SetImageSize(CSize(16, 16));
-	if (ResID)
-		m_Icons.Load(ResID);
+	LOGFONT lf;
+	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
+
+	m_IconSize = abs(lf.lfHeight)>=26 ? 32 : 16;
+
+	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
+	if (LargeResID)
+		m_Icons.Load(m_IconSize==16 ? SmallResID : LargeResID);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -153,7 +158,7 @@ void CDialogMenuBar::AddMenuRight(UINT nCmdID, INT nIconID)
 	ZeroMemory(&i, sizeof(i));
 	i.CmdID = nCmdID;
 	i.IconID = nIconID;
-	i.MinWidth = 16;
+	i.MinWidth = m_IconSize;
 	i.Enabled = cmdUI.m_Enabled;
 
 	m_Items.AddItem(i);
@@ -302,13 +307,13 @@ void CDialogMenuBar::SetTheme()
 	if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
 	{
 		m_MenuLogFont = m_NormalLogFont = ncm.lfMenuFont;
-		m_MenuHeight = max(2*BORDERBAR+16, ncm.iMenuHeight);
+		m_MenuHeight = max(2*BORDERBAR+m_IconSize, ncm.iMenuHeight);
 	}
 	else
 	{
 		GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(m_MenuLogFont), &m_MenuLogFont);
 		m_NormalLogFont = m_MenuLogFont;
-		m_MenuHeight = 2*BORDERBAR+max(16, abs(m_MenuLogFont.lfHeight));
+		m_MenuHeight = 2*BORDERBAR+max(m_IconSize, abs(m_MenuLogFont.lfHeight));
 	}
 
 	m_MenuFont.DeleteObject();
@@ -478,7 +483,7 @@ void CDialogMenuBar::OnPaint()
 			{
 				CAfxDrawState ds;
 				m_Icons.PrepareDrawImage(ds);
-				m_Icons.Draw(&dc, rectItem.left+(rectItem.Width()-16)/2, rectItem.top+(rectItem.Height()-16)/2, m_Items.m_Items[a].IconID);
+				m_Icons.Draw(&dc, rectItem.left+(rectItem.Width()-m_IconSize)/2, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID);
 				m_Icons.EndDrawImage(ds);
 			}
 			else
@@ -1938,6 +1943,15 @@ BOOL CDialogMenuGallery::OnKeyDown(UINT nChar)
 CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdID, INT IconID, UINT PreferredSize, BOOL Submenu, BOOL Split, BOOL CloseOnExecute)
 	: CDialogMenuItem(pParentPopup)
 {
+	if (PreferredSize==CDMB_SMALL)
+	{
+		LOGFONT lf;
+		FMGetApp()->m_DefaultFont.GetLogFont(&lf);
+
+		if (abs(lf.lfHeight)>=26)
+			PreferredSize = CDMB_MEDIUM;
+	}
+
 	m_CmdID = CmdID;
 	m_IconID = IconID;
 	m_IconSize.cx = m_IconSize.cy = (IconID==-1) ? 0 : (PreferredSize==CDMB_SMALL) ? 16 : 32;
@@ -1945,6 +1959,7 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_Submenu = Submenu;
 	m_Split = Split && Submenu;
 	m_Enabled = m_HoverOverCommand = FALSE;
+	m_AutoFlow = TRUE;
 	m_CloseOnExecute = CloseOnExecute;
 	m_pSubmenu = NULL;
 
@@ -2046,7 +2061,8 @@ INT CDialogMenuCommand::GetMinWidth()
 	pDC->SelectObject(pOldFont);
 	p_ParentPopup->ReleaseDC(pDC);
 
-	m_Hint.Replace('\n', ' ');
+	if (m_AutoFlow)
+		m_Hint.Replace('\n', ' ');
 
 	return GetInnerBorder()+MARGIN+p_ParentPopup->GetGutter()+max(rectCaption.Width(), l)+(m_Submenu ? ARROWWIDTH+2*GetInnerBorder() : 0);
 }
@@ -2157,7 +2173,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL /*Themed*/)
 {
-	CMFCToolBarImages* pIcons = (m_PreferredSize==CDMB_SMALL) ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons;
+	CMFCToolBarImages* pIcons = (m_IconSize.cx==16) ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons;
 
 	CAfxDrawState ds;
 	pIcons->PrepareDrawImage(ds);
@@ -2253,6 +2269,9 @@ BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
 CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT CmdID, CString FileType, UINT PreferredSize, BOOL RetainCaption)
 	: CDialogMenuCommand(pParentPopup, CmdID, -1, PreferredSize)
 {
+	LOGFONT lf;
+	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
+
 	p_Icons = (PreferredSize==CDMB_SMALL) ? &FMGetApp()->m_SystemImageListSmall : &FMGetApp()->m_SystemImageListLarge;
 
 	INT cx = GetSystemMetrics(SM_CXSMICON);
@@ -2283,7 +2302,7 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 
 void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL /*Themed*/)
 {
-	CImageList* pIcons = (m_PreferredSize==CDMB_SMALL) ? &FMGetApp()->m_SystemImageListSmall : &FMGetApp()->m_SystemImageListLarge;
+	CImageList* pIcons = (m_IconSize.cx<32) ? &FMGetApp()->m_SystemImageListSmall : &FMGetApp()->m_SystemImageListLarge;
 	pIcons->DrawEx(pDC, m_IconID, pt, m_IconSize, CLR_NONE, CLR_NONE, ILD_NORMAL);
 }
 
@@ -2296,6 +2315,7 @@ CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CSt
 {
 	// Filename
 	m_CmdID = CmdID;
+	m_AutoFlow = FALSE;
 
 	m_Caption = Path;
 	INT pos = Path.ReverseFind(L'\\');
@@ -2324,7 +2344,7 @@ CDialogMenuFile::CDialogMenuFile(CDialogMenuPopup* pParentPopup, UINT CmdID, CSt
 				m_Hint = tmpStr;
 				m_Hint.Append(_T(", "));
 
-				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &stLocal, NULL, tmpStr, 256);
+				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &stLocal, NULL, tmpStr, 256);
 				m_Hint.Append(tmpStr);
 				m_Hint.Append(_T("\n"));
 			}

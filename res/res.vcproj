@@ -396,6 +396,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Rename_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Rename_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Replace_16.png"
 				>
 			</File>

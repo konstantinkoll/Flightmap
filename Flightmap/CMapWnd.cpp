@@ -228,7 +228,7 @@ INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	hAccelerator = LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR_MAP));
 
 	m_pDialogMenuBar = new CDialogMenuBar();
-	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS, 1);
+	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS_32, IDB_MENUBARICONS_16, 1);
 
 	m_pDialogMenuBar->AddMenuLeft(IDM_MAPWND);
 	m_pDialogMenuBar->AddMenuLeft(IDM_MAPVIEW);

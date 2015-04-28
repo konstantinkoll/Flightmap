@@ -389,8 +389,8 @@ void CFlightmapApp::AddRecentList(CDialogMenuPopup* pPopup)
 		pPopup->AddCaption(IDS_RECENTFILES);
 
 		UINT a=0;
-		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)
-			pPopup->AddFile(IDM_FILE_RECENT+a, m_RecentFiles.GetNext(p));
+		for (POSITION p=m_RecentFiles.GetHeadPosition(); p; a++)
+			pPopup->AddFile(IDM_FILE_RECENT+a, m_RecentFiles.GetNext(p), m_RecentFiles.GetCount()<=5 ? CDMB_LARGE : CDMB_SMALL);
 	}
 }
 

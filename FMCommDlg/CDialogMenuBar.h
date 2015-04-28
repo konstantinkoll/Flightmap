@@ -60,7 +60,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID);
 	UINT GetPreferredHeight();
 	INT GetMinWidth();
 	void AddMenuLeft(UINT nID);
@@ -76,6 +76,7 @@ protected:
 	BOOL m_Hover;
 	BOOL m_UseDropdown;
 	CMFCToolBarImages m_Icons;
+	INT m_IconSize;
 	LOGFONT m_MenuLogFont;
 	LOGFONT m_NormalLogFont;
 	LOGFONT m_CaptionLogFont;
@@ -341,6 +342,7 @@ protected:
 	BOOL m_Submenu;
 	BOOL m_Split;
 	BOOL m_Enabled;
+	BOOL m_AutoFlow;
 	BOOL m_CloseOnExecute;
 	CString m_Caption;
 	CString m_Hint;

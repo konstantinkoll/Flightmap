@@ -19,11 +19,14 @@ CTaskbar::CTaskbar()
 	m_BackBufferL = m_BackBufferH = 0;
 }
 
-BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
+BOOL CTaskbar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID)
 {
-	m_Icons.SetImageSize(CSize(16, 16));
-	if (ResID)
-		m_Icons.Load(ResID);
+	LOGFONT lf;
+	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
+
+	m_IconSize = abs(lf.lfHeight)>=26 ? 32 : 16;
+	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
+	m_Icons.Load(m_IconSize==32 ? LargeResID : SmallResID);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -41,12 +44,9 @@ BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 UINT CTaskbar::GetPreferredHeight()
 {
 	LOGFONT lf;
-	UINT h = 4*BORDER+(IsCtrlThemed() ? 4 : 3);
-
 	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
-	h += abs(lf.lfHeight);
 
-	return h;
+	return 4*BORDER+abs(lf.lfHeight)+(IsCtrlThemed() ? 4 : 3);
 }
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL SupressCaption)
@@ -70,7 +70,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	}
 
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(AddRight || SupressCaption ? _T("") : Caption, Caption, Hint, &m_Icons,
+	btn->Create(AddRight || SupressCaption ? _T("") : Caption, Caption, Hint, &m_Icons, m_IconSize,
 		ForceIcon || AddRight || SupressCaption || (FMGetApp()->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 	btn->EnableWindow(FALSE);
@@ -209,10 +209,9 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			dc.FillSolidRect(0, 0, rect.Width(), rect.Height()-1, 0xFFFFFF);
 			dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, 0x97908B);
 
+			const UINT line = (rect.Height()-2)*2/5;
+
 			Graphics g(dc);
-
-			UINT line = (rect.Height()-2)*2/5;
-
 			LinearGradientBrush brush(Point(0, line-1), Point(0, rect.bottom-1), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
 
 			if (GetParent()->GetStyle() & WS_BORDER)

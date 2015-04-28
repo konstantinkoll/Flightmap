@@ -134,7 +134,7 @@ void CFileView::Init()
 {
 	ModifyStyle(0, WS_BORDER);
 
-	m_wndTaskbar.Create(this, IDB_TASKS, 1);
+	m_wndTaskbar.Create(this, IDB_TASKS_32, IDB_TASKS_16, 1);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_OPEN, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_SAVEAS, 2, TRUE);

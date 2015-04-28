@@ -784,7 +784,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenubarIcons.bmp"
+				RelativePath=".\res\MenubarIcons_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\MenubarIcons_32.bmp"
 				>
 			</File>
 			<File
@@ -900,7 +904,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Tasks.bmp"
+				RelativePath=".\res\Tasks_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Tasks_32.bmp"
 				>
 			</File>
 		</Filter>

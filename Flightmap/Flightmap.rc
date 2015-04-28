@@ -30,7 +30,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 IDB_BACKGROUNDS         BITMAP                  "res\\Backgrounds.bmp"
-IDB_MENUBARICONS        BITMAP                  "res\\MenubarIcons.bmp"
+IDB_MENUBARICONS_16     BITMAP                  "res\\MenubarIcons_16.bmp"
+IDB_MENUBARICONS_32     BITMAP                  "res\\MenubarIcons_32.bmp"
 IDB_MENUFILE_16         BITMAP                  "res\\MenuFile_16.bmp"
 IDB_MENUFILE_32         BITMAP                  "res\\MenuFile_32.bmp"
 IDB_MENUEDIT_16         BITMAP                  "res\\MenuEdit_16.bmp"
@@ -58,7 +59,8 @@ IDB_MENUDETAILS_32      BITMAP                  "res\\MenuDetails_32.bmp"
 IDB_FLAGS_16            BITMAP                  "res\\Flags_16.bmp"
 IDB_FLAGS_16i           BITMAP                  "res\\Flags_16i.bmp"
 IDB_FLAGS_32            BITMAP                  "res\\Flags_32.bmp"
-IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
+IDB_TASKS_16            BITMAP                  "res\\Tasks_16.bmp"
+IDB_TASKS_32            BITMAP                  "res\\Tasks_32.bmp"
 IDB_SEATICONS           BITMAP                  "res\\SeatIcons.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
