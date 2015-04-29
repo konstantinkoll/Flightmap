@@ -51,7 +51,7 @@ BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, 
 	LOGFONT lf;
 	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
 
-	m_IconSize = abs(lf.lfHeight)>=26 ? 32 : 16;
+	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
 
 	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
 	if (LargeResID)
@@ -1948,7 +1948,7 @@ CDialogMenuCommand::CDialogMenuCommand(CDialogMenuPopup* pParentPopup, UINT CmdI
 		LOGFONT lf;
 		FMGetApp()->m_DefaultFont.GetLogFont(&lf);
 
-		if (abs(lf.lfHeight)>=26)
+		if (abs(lf.lfHeight)>=24)
 			PreferredSize = CDMB_MEDIUM;
 	}
 
