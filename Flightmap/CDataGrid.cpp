@@ -1470,7 +1470,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 								CString cpt;
 								ENSURE(cpt.LoadString(IDS_COLUMN0+Attr));
 
-								m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), cpt, msg);
+								m_TooltipCtrl.Track(point, NULL, NULL, NULL, cpt, msg);
 							}
 							break;
 						}
@@ -1486,7 +1486,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 							dc.SelectObject(pOldFont);
 
 							if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-2*MARGIN-1) || (FMAttributes[Attr].Type==FMTypeColor))
-								m_TooltipCtrl.Track(point, NULL, NULL, CSize(0, 0), _T(""), tmpStr);
+								m_TooltipCtrl.Track(point, NULL, NULL, NULL, _T(""), tmpStr);
 						}
 					}
 				}

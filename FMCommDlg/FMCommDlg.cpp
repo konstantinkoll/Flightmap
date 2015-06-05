@@ -50,11 +50,8 @@ void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 BOOL IsCtrlThemed()
 {
 	FMApplication* pApp = FMGetApp();
-	if (pApp)
-		if (pApp->m_ThemeLibLoaded)
-			return pApp->zIsAppThemed();
 
-	return FALSE;
+	return pApp->m_ThemeLibLoaded ? pApp->zIsAppThemed() : FALSE;
 }
 
 void DrawControlBorder(CWnd* pWnd)
