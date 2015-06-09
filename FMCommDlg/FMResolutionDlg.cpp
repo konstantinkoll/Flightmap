@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include "Resource.h"
 
 
 // FMResolutionDlg
@@ -89,7 +88,6 @@ void FMResolutionDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(FMResolutionDlg, CDialog)
-	ON_WM_DESTROY()
 	ON_NOTIFY(NM_DBLCLK, IDC_RESLIST, OnDoubleClick)
 	ON_BN_CLICKED(IDC_USERDEFINEDRES, OnUserDefinedRes)
 END_MESSAGE_MAP()
@@ -100,10 +98,9 @@ BOOL FMResolutionDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	hIconS = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_RESOLUTION), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
-	SetIcon(hIconS, FALSE);
-	hIconL = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_RESOLUTION), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
-	SetIcon(hIconL, TRUE);
+	HICON hIcon = FMGetApp()->LoadDialogIcon(IDD_RESOLUTION);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Eingabe
 	CString tmpStr;
@@ -176,16 +173,6 @@ BOOL FMResolutionDlg::OnInitDialog()
 	OnUserDefinedRes();
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
-}
-
-void FMResolutionDlg::OnDestroy()
-{
-	if (hIconL)
-		DestroyIcon(hIconL);
-	if (hIconS)
-		DestroyIcon(hIconS);
-
-	CDialog::OnDestroy();
 }
 
 void FMResolutionDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)

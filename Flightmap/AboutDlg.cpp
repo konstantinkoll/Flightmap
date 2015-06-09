@@ -4,8 +4,8 @@
 
 #include "stdafx.h"
 #include "AboutDlg.h"
-#include "ThreeDSettingsDlg.h"
 #include "Flightmap.h"
+#include "ThreeDSettingsDlg.h"
 #include <wininet.h>
 
 
@@ -50,8 +50,8 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	wcscat_s(m_Build, 256, tmpStr);
 
 	GetSystemTime(&st);
-	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
-	p_Logo = p_App->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
+	p_Santa = (st.wMonth==12) ? FMGetApp()->GetCachedResourceImage(IDB_SANTA, _T("PNG")) : NULL;
+	p_Logo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -142,10 +142,10 @@ BOOL AboutDlg::OnInitDialog()
 #define ISET _T(" (x86)")
 #endif
 
-	CString caption;
-	m_wndVersionInfo.GetWindowText(caption);
+	CString Caption;
+	m_wndVersionInfo.GetWindowText(Caption);
 	CString text;
-	text.Format(caption, m_Version+ISET, m_Build, m_Copyright);
+	text.Format(Caption, m_Version+ISET, m_Build, m_Copyright);
 	m_wndVersionInfo.SetWindowText(text);
 
 	// Hintergrund
@@ -160,7 +160,7 @@ BOOL AboutDlg::OnInitDialog()
 
 	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
 	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-LineGap-3*HeightVersion)/2-8;
@@ -214,7 +214,7 @@ void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
-	dc.SetTextColor((IsCtrlThemed() && p_App->m_UseBgImages) ? 0x000000 : 0x606060);
+	dc.SetTextColor((IsCtrlThemed() && FMGetApp()->m_UseBgImages) ? 0x000000 : 0x606060);
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(m_AppName, r, fmt);
 
@@ -229,10 +229,9 @@ void AboutDlg::On3DSettings()
 
 void AboutDlg::OnExclusive()
 {
-	CString url;
-	ENSURE(url.LoadString(IDS_EXCLUSIVEURL));
+	CString URL((LPCSTR)IDS_EXCLUSIVEURL);
 
-	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
 void AboutDlg::OnEnableAutoUpdate()
@@ -251,10 +250,9 @@ void AboutDlg::OnUpdateNow()
 
 void AboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	CString url;
-	ENSURE(url.LoadString(IDS_ABOUTURL));
+	CString URL((LPCSTR)IDS_ABOUTURL);
 
-	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 
 	*pResult = 0;
 }

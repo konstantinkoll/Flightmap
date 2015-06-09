@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // AddRouteDlg
@@ -21,14 +20,14 @@ public:
 	AIRX_Flight m_FlightTemplate;
 
 protected:
+	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+	DECLARE_MESSAGE_MAP()
+
 	CItinerary* p_Itinerary;
 	CMFCMaskedEdit m_wndRoute;
 	CComboBox m_wndCarrier;
 	CMFCMaskedEdit m_wndComment;
 	CMFCMaskedEdit m_wndEtixCode;
 	CRatingCtrl m_wndRating;
-
-	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
-	DECLARE_MESSAGE_MAP()
 };

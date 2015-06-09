@@ -43,24 +43,6 @@ public:
 	UINT GetCurrentRow();
 
 protected:
-	CItinerary* p_Itinerary;
-	CMFCMaskedEdit* p_Edit;
-	BOOL m_EditAllowCursor;
-	CGridHeader m_wndHeader;
-	ViewParameters m_ViewParameters;
-	FMTooltip m_TooltipCtrl;
-	UINT m_HeaderHeight;
-	UINT m_RowHeight;
-	CPoint m_FocusItem;
-	CPoint m_HotItem;
-	INT m_HotSubitem;
-	BOOL m_Hover;
-	INT m_HeaderItemClicked;
-	BOOL m_IgnoreHeaderItemChange;
-	INT m_SelectionAnchor;
-	WORD m_wDay;
-	FindReplaceSettings m_FindReplaceSettings;
-
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	void AdjustLayout();
@@ -101,7 +83,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 
@@ -131,15 +113,33 @@ protected:
 	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
-private:
-	INT m_HScrollMax;
-	INT m_VScrollMax;
-	INT m_HScrollPos;
-	INT m_VScrollPos;
+	CItinerary* p_Itinerary;
+	CMFCMaskedEdit* p_Edit;
+	BOOL m_EditAllowCursor;
+	CGridHeader m_wndHeader;
+	ViewParameters m_ViewParameters;
+	FMTooltip m_TooltipCtrl;
+	UINT m_HeaderHeight;
+	UINT m_RowHeight;
+	CPoint m_FocusItem;
+	CPoint m_HotItem;
+	INT m_HotSubitem;
+	BOOL m_Hover;
+	INT m_HeaderItemClicked;
+	BOOL m_IgnoreHeaderItemChange;
+	INT m_SelectionAnchor;
+	WORD m_wDay;
+	FindReplaceSettings m_FindReplaceSettings;
 
+private:
 	void DoCopy(BOOL Cut);
 	void DoDelete();
 	void AutosizeColumn(UINT Attr);
 	void FinishEdit(WCHAR* pStr, CPoint item);
 	void DestroyEdit(BOOL Accept=FALSE);
+
+	INT m_HScrollMax;
+	INT m_VScrollMax;
+	INT m_HScrollPos;
+	INT m_VScrollPos;
 };

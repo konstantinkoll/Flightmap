@@ -30,12 +30,11 @@ CMapView::~CMapView()
 
 BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL, rect, pParentWnd, nID);
 }
 
 void CMapView::SetBitmap(CBitmap* pBitmap)
@@ -362,9 +361,9 @@ void CMapView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-BOOL CMapView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CMapView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(FMGetApp()->LoadStandardCursor(IDC_ARROW));
 	return TRUE;
 }
 

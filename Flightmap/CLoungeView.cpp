@@ -20,22 +20,19 @@ CLoungeView::CLoungeView()
 
 BOOL CLoungeView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
 }
 
 void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
-	FMApplication* pApp = FMGetApp();
-
 	BOOL Themed = IsCtrlThemed();
 	if (Themed && theApp.m_UseBgImages)
 	{
-		CGdiPlusBitmap* pBackdrop = pApp->GetCachedResourceImage(IDB_DOCKED, _T("JPG"));
+		CGdiPlusBitmap* pBackdrop = FMGetApp()->GetCachedResourceImage(IDB_DOCKED, _T("JPG"));
 		INT l = pBackdrop->m_pBitmap->GetWidth();
 		INT h = pBackdrop->m_pBitmap->GetHeight();
 
@@ -45,7 +42,7 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		g.DrawImage(pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
 
-		CGdiPlusBitmap* pSlogan = pApp->GetCachedResourceImage(IDB_SLOGAN, _T("PNG"));
+		CGdiPlusBitmap* pSlogan = FMGetApp()->GetCachedResourceImage(IDB_SLOGAN, _T("PNG"));
 		l = pSlogan->m_pBitmap->GetWidth();
 		h = pSlogan->m_pBitmap->GetHeight();
 		if ((rect.Width()>=520) && (rect.Height()>=150))
@@ -61,7 +58,7 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		if (Themed)
 		{
-			CGdiPlusBitmap* pLogo = pApp->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
+			CGdiPlusBitmap* pLogo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
 			INT l = pLogo->m_pBitmap->GetWidth();
 			INT h = pLogo->m_pBitmap->GetHeight();
 
@@ -74,7 +71,7 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 				if (st.wMonth==12)
 				{
-					CGdiPlusBitmap* pSanta = pApp->GetCachedResourceImage(IDB_SANTA, _T("PNG"));
+					CGdiPlusBitmap* pSanta = FMGetApp()->GetCachedResourceImage(IDB_SANTA, _T("PNG"));
 					g.DrawImage(pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-16);
 				}
 			}

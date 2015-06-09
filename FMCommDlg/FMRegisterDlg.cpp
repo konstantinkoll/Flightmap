@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include "Resource.h"
 
 
 // FMRegisterDlg
@@ -26,7 +25,7 @@ void FMRegisterDlg::OnPurchase()
 	CCmdUI cmd;
 	cmd.m_nID = ID_APP_PURCHASE;
 
-	p_App->OnCmdMsg(ID_APP_PURCHASE, CN_COMMAND, &cmd, NULL);
+	FMGetApp()->OnCmdMsg(ID_APP_PURCHASE, CN_COMMAND, &cmd, NULL);
 }
 
 void FMRegisterDlg::OnEnterLicenseKey()

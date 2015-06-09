@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // StatisticsDlg
@@ -20,6 +19,15 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
+	void UpdateStatistics();
+
+	afx_msg BOOL OnInitDialog();
+	afx_msg void OnPostUpdateStatistics();
+	afx_msg void OnUpdateStatistics();
+	afx_msg void OnSelectIATA();
+	afx_msg void OnSortLists(NMHDR* pNMHDR, LRESULT* pResult);
+	DECLARE_MESSAGE_MAP()
+
 	CItinerary* p_Itinerary;
 	CImageListTransparent m_SeatIcons;
 	CMFCMaskedEdit m_wndFilterAirport;
@@ -31,13 +39,4 @@ protected:
 	CListCtrl m_wndListAirport;
 	CListCtrl m_wndListCarrier;
 	CListCtrl m_wndListEquipment;
-
-	void UpdateStatistics();
-
-	afx_msg BOOL OnInitDialog();
-	afx_msg void OnPostUpdateStatistics();
-	afx_msg void OnUpdateStatistics();
-	afx_msg void OnSelectIATA();
-	afx_msg void OnSortLists(NMHDR* pNMHDR, LRESULT* pResult);
-	DECLARE_MESSAGE_MAP()
 };

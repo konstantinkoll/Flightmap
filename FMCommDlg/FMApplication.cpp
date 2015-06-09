@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "afxwinappex.h"
 #include "FMCommDlg.h"
 #include <commoncontrols.h>
 #include <io.h>
@@ -173,36 +172,6 @@ FMApplication::FMApplication(GUID& AppID)
 		m_KernelLibLoaded = FALSE;
 	}
 
-	// Eingebettete Schrift
-	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
-
-	// Fonts
-	CString face = GetDefaultFontFace();
-
-	INT sz = 8;
-	LOGFONT lf;
-	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
-		sz = abs(lf.lfHeight);
-
-	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_BoldFont.CreateFont(-sz, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_SmallFont.CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		_T("MSShellDlg"));
-	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_CaptionFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-
 	// System image lists
 	IImageList* il;
 	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&il)))
@@ -262,6 +231,37 @@ BOOL FMApplication::InitInstance()
 	for (UINT a=0; a<=MaxRating; a++)
 		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
 
+	// Eingebettete Schrift
+	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
+
+	// Fonts
+	CString face = GetDefaultFontFace();
+
+	INT sz = 8;
+	LOGFONT lf;
+	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
+		sz = abs(lf.lfHeight);
+
+	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_BoldFont.CreateFont(-sz, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_SmallFont.CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		_T("MSShellDlg"));
+	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_CaptionFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+
+	// Registry
 	SetRegistryKey(_T(""));
 
 	// Zähler zurücksetzen
@@ -337,7 +337,7 @@ BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, CString Capt
 {
 	ASSERT(pColor);
 
-	FMColorDlg dlg(*pColor, CC_RGBINIT, pParentWnd, Caption);
+	FMColorDlg dlg(pParentWnd, *pColor, CC_RGBINIT, Caption);
 	if (dlg.DoModal()==IDOK)
 	{
 		*pColor = dlg.m_cc.rgbResult;
@@ -364,31 +364,36 @@ void FMApplication::SendMail(CString Subject)
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
-CGdiPlusBitmap* FMApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType, HMODULE hInst)
+CGdiPlusBitmap* FMApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType)
 {
 	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
 	{
 		ResourceCacheItem item = m_ResourceCache.GetNext(p);
 
-		if (item.nResID==nID)
+		if (item.nID==nID)
 			return item.pImage;
 	}
 
 	ResourceCacheItem item;
-	item.pImage = new CGdiPlusBitmapResource(nID, pType, hInst);
-	item.nResID = nID;
+	item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
+	item.nID = nID;
 
 	m_ResourceCache.AddTail(item);
 	return item.pImage;
 }
 
-HANDLE FMApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
+HICON FMApplication::LoadDialogIcon(UINT nID)
 {
-	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(nID), L"TTF");
+	return (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, 16, 16, LR_SHARED);
+}
+
+HANDLE FMApplication::LoadFontFromResource(UINT nID)
+{
+	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), L"TTF");
 	if (!hResource)
 		return NULL;
 
-	HGLOBAL hMemory = LoadResource(hInst, hResource);
+	HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
 	if (!hMemory)
 		return NULL;
 
@@ -396,15 +401,15 @@ HANDLE FMApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
 	if (!pResourceData)
 		return NULL;
 
-	DWORD Size = SizeofResource(hInst, hResource);
+	DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
 	if (!Size)
 		return NULL;
 
 	DWORD nFonts;
-	HANDLE res = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+	HANDLE Result = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
 
 	UnlockResource(hMemory);
-	return res;
+	return Result;
 }
 
 
@@ -416,10 +421,9 @@ void FMApplication::OnAppSupport()
 
 void FMApplication::OnAppPurchase()
 {
-	CString url;
-	ENSURE(url.LoadString(IDS_PURCHASEURL));
+	CString URL((LPCSTR)IDS_PURCHASEURL);
 
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
 void FMApplication::OnAppEnterLicenseKey()
@@ -469,18 +473,17 @@ HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID
 
 	CImage img;
 	img.Attach(*pBitmap);
-	HRESULT res = img.Save(Filename, guidFileType);
+	HRESULT Result = img.Save(Filename, guidFileType);
 
 	if (!DeleteBitmap)
 		img.Detach();
 
-	return res;
+	return Result;
 }
 
 void FMApplication::AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last)
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(nID));
+	CString tmpStr((LPCSTR)nID);
 
 	Extensions += tmpStr;
 	Extensions += _T(" (*.");

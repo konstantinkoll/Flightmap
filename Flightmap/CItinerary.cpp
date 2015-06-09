@@ -2,7 +2,6 @@
 // CItinerary.cpp: Implementierung der Klasse CItinerary
 //
 
-#pragma once
 #include "stdafx.h"
 #include "CItinerary.h"
 #include "Flightmap.h"
@@ -179,14 +178,8 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
 {
 	if (IncludeDatabase)
-	{
-		for (UINT a=0; a<AllianceStarCount; a++)
-			pComboBox->AddString(AllianceStar[a]);
-		for (UINT a=0; a<AllianceSkyTeamCount; a++)
-			pComboBox->AddString(AllianceSkyTeam[a]);
-		for (UINT a=0; a<AllianceOneWorldCount; a++)
-			pComboBox->AddString(AllianceOneWorld[a]);
-	}
+		for (UINT a=0; a<CARRIERCOUNT; a++)
+			pComboBox->AddString(Carriers[a]);
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
@@ -198,7 +191,7 @@ void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL Inclu
 void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
 {
 	if (IncludeDatabase)
-		for (UINT a=0; a<EquipmentCount; a++)
+		for (UINT a=0; a<EQUIPMENTCOUNT; a++)
 			pComboBox->AddString(Equipment[a]);
 
 	if (pItinerary)
@@ -291,10 +284,7 @@ CString ExportLocation(AIRX_Flight& Flight, UINT AttrBase)
 
 void MilesToString(CString &str, LONG AwardMiles, LONG StatusMiles)
 {
-	CString mask;
-	ENSURE(mask.LoadString(IDS_MILES));
-
-	str.Format(mask, AwardMiles, StatusMiles);
+	str.Format(IDS_MILES, AwardMiles, StatusMiles);
 }
 
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
@@ -641,7 +631,7 @@ BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimite
 
 __forceinline UINT ReadUTF7Length(CFile& f)
 {
-	UINT Res = 0;
+	UINT Result = 0;
 	UINT Shift = 0;
 	BYTE b;
 
@@ -650,12 +640,12 @@ __forceinline UINT ReadUTF7Length(CFile& f)
 		if (f.Read(&b, 1)!=1)
 			return 0;
 
-		Res |= (b & 0x7F) << Shift;
+		Result |= (b & 0x7F) << Shift;
 		Shift += 7;
 	}
 	while (b & 0x80);
 
-	return Res;
+	return Result;
 }
 
 CString ReadUTF7String(CFile& f)
@@ -804,8 +794,7 @@ CItinerary::CItinerary(CItinerary* pItinerary)
 	{
 		SetDisplayName(pItinerary->m_FileName);
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_FILTEREDITINERARY));
+		CString tmpStr((LPCSTR)IDS_FILTEREDITINERARY);
 		m_DisplayName += tmpStr;
 	}
 	else
@@ -1051,8 +1040,8 @@ void CItinerary::OpenCSV(CString FileName)
 
 		try
 		{
-			CString caption;
-			if (f.ReadString(caption))
+			CString Caption;
+			if (f.ReadString(Caption))
 			{
 				CMap<CString, LPCTSTR, INT, INT&> map;
 				map[L"FROM"] = 0;
@@ -1122,7 +1111,7 @@ void CItinerary::OpenCSV(CString FileName)
 				INT Pos = 0;
 				UINT Column = 0;
 				CString resToken;
-				while (Tokenize(caption, resToken, Pos, Separator) && (Column<100))
+				while (Tokenize(Caption, resToken, Pos, Separator) && (Column<100))
 				{
 					resToken.MakeUpper();
 
@@ -1661,7 +1650,7 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 	if (!Attachment.pData)
 		return FALSE;
 
-	BOOL Res = FALSE;
+	BOOL Result = FALSE;
 
 	// Read file
 	CFile f;
@@ -1677,7 +1666,7 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 			if (m_Attachments.AddItem(Attachment))
 			{
 				Flight.Attachments[Flight.AttachmentCount++] = m_Attachments.m_ItemCount-1;
-				Res = m_IsModified = TRUE;
+				Result = m_IsModified = TRUE;
 			}
 		}
 		catch(CFileException ex)
@@ -1691,10 +1680,10 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
 	}
 
-	if (!Res && (Attachment.pData))
+	if (!Result && (Attachment.pData))
 		free(Attachment.pData);
 
-	return Res;
+	return Result;
 }
 
 UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Idx)

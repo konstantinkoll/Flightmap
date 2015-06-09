@@ -5,7 +5,6 @@
 #pragma once
 #include "CDataGrid.h"
 #include "FMCommDlg.h"
-#include "Flightmap.h"
 
 
 // ChooseDetailsDlg
@@ -19,9 +18,6 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	CListCtrl m_ShowAttributes;
-	ViewParameters* p_ViewParameters;
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnMoveUp();
@@ -29,6 +25,9 @@ protected:
 	afx_msg void OnCheckAll();
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
+
+	CListCtrl m_ShowAttributes;
+	ViewParameters* p_ViewParameters;
 
 private:
 	void AddAttribute(UINT attr);

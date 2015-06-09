@@ -8,6 +8,8 @@
 #include "Resource.h"
 
 
+#define PI     3.14159265358979323846
+
 // AIRX format
 //
 
@@ -218,8 +220,8 @@ public:
 	void DeleteAttachments(AIRX_Flight* pFlight=NULL);
 
 	AIRX_Metadata m_Metadata;
-	DynArray<AIRX_Flight> m_Flights;
-	DynArray<AIRX_Attachment> m_Attachments;
+	FMDynArray<AIRX_Flight> m_Flights;
+	FMDynArray<AIRX_Attachment> m_Attachments;
 
 	BOOL m_IsModified;
 	CString m_FileName;

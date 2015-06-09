@@ -3,10 +3,10 @@
 //
 
 #include "stdafx.h"
+#include "Flightmap.h"
 #include "CGlobeView.h"
 #include "CGlobeWnd.h"
 #include "CGoogleEarthFile.h"
-#include "Resource.h"
 #include "ThreeDSettingsDlg.h"
 #include <math.h>
 
@@ -177,7 +177,7 @@ CGlobeView::~CGlobeView()
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 
@@ -304,7 +304,7 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
-	INT res = -1;
+	INT Result = -1;
 	GLfloat Alpha = 0.0f;
 
 	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
@@ -314,12 +314,12 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 		if ((ga->Alpha>0.75f) || ((ga->Alpha>0.1f) && (ga->Alpha>Alpha-0.05f)))
 			if (PtInRect(&ga->Rect, point))
 			{
-				res = a;
+				Result = a;
 				Alpha = ga->Alpha;
 			}
 	}
 
-	return res;
+	return Result;
 }
 
 void CGlobeView::InvalidateItem(INT idx)
@@ -986,26 +986,26 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		return FALSE;
 	m_LockUpdate = TRUE;
 
-	BOOL res = Redraw;
+	BOOL Result = Redraw;
 	Normalize();
 
 	// Zoom
 	if (m_GlobeCurrent.Zoom<=m_GlobeTarget.Zoom-5)
 	{
-		res = TRUE;
+		Result = TRUE;
 		m_GlobeCurrent.Zoom += 5;
 		m_HotItem = -1;
 	}
 	else
 		if (m_GlobeCurrent.Zoom>=m_GlobeTarget.Zoom+5)
 		{
-			res = TRUE;
+			Result = TRUE;
 			m_GlobeCurrent.Zoom -= 5;
 			m_HotItem = -1;
 		}
 		else
 		{
-			res |= (m_GlobeCurrent.Zoom!=m_GlobeTarget.Zoom);
+			Result |= (m_GlobeCurrent.Zoom!=m_GlobeTarget.Zoom);
 			m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom;
 		}
 
@@ -1027,7 +1027,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 			m_GlobeCurrent.Zoom = (INT)(m_GlobeTarget.Zoom*(1.0f-f)+(m_GlobeTarget.Zoom+Dist)*f);
 		}
 
-		res = TRUE;
+		Result = TRUE;
 		m_AnimCounter--;
 	}
 	else
@@ -1035,12 +1035,12 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		if (m_Momentum!=0.0f)
 			m_GlobeTarget.Longitude += m_Momentum;
 
-		res |= (m_GlobeCurrent.Latitude!=m_GlobeTarget.Latitude) || (m_GlobeCurrent.Longitude!=m_GlobeTarget.Longitude);
+		Result |= (m_GlobeCurrent.Latitude!=m_GlobeTarget.Latitude) || (m_GlobeCurrent.Longitude!=m_GlobeTarget.Longitude);
 		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude;
 		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude;
 	}
 
-	if (res)
+	if (Result)
 	{
 		DrawScene(TRUE);
 		UpdateCursor();
@@ -1050,7 +1050,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		m_LockUpdate = FALSE;
 	}
 
-	return res;
+	return Result;
 }
 
 
@@ -1215,7 +1215,7 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 	Invalidate();
 }
 
-BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	SetCursor(hCursor);
 	return TRUE;

@@ -3,8 +3,8 @@
 //
 
 #include "stdafx.h"
-#include "CItinerary.h"
 #include "FilterDlg.h"
+#include "Flightmap.h"
 
 
 // FilterDlg
@@ -67,9 +67,9 @@ BOOL FilterDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_FILTER);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDD_FILTER);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Filter
 	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);
@@ -87,8 +87,7 @@ BOOL FilterDlg::OnInitDialog()
 	for (UINT a=0; a<FMAttributeCount; a++)
 		if (FMAttributes[a].Sortable)
 		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(FMAttributes[a].nNameID));
+			CString tmpStr((LPCSTR)FMAttributes[a].nNameID);
 
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = tmpStr.GetBuffer();

@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "FMCommDlg.h"
 #include "CMapPreviewCtrl.h"
+#include "IATA.h"
 
 
 // FMSelectLocationIATADlg
@@ -15,7 +15,7 @@
 class FMSelectLocationIATADlg : public CDialog
 {
 public:
-	FMSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport=NULL);
+	FMSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd=NULL, CHAR* Airport=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -30,14 +30,6 @@ protected:
 	void UpdatePreview();
 
 private:
-	CListCtrl m_wndList;
-	CMapPreviewCtrl m_wndMap;
-	FMAirport* m_Airports[MaxAirportsPerCountry];
-	INT m_nAirports;
-	UINT m_nIDTemplate;
-	WCHAR m_Buffer[256];
-	FMApplication* p_App;
-
 	INT Compare(INT n1, INT n2);
 	void Heap(INT wurzel, INT anz);
 
@@ -50,4 +42,11 @@ private:
 	afx_msg void OnSelectCountry();
 	afx_msg void OnReportError(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+	CListCtrl m_wndList;
+	CMapPreviewCtrl m_wndMap;
+	FMAirport* m_Airports[MaxAirportsPerCountry];
+	INT m_nAirports;
+	UINT m_nIDTemplate;
+	WCHAR m_Buffer[256];
 };

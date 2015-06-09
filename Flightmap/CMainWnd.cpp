@@ -18,7 +18,7 @@
 #include "InspectDlg.h"
 #include "PropertiesDlg.h"
 #include "StatisticsDlg.h"
-#include <Winspool.h>
+#include <winspool.h>
 
 
 // CMainWnd
@@ -27,7 +27,6 @@
 CMainWnd::CMainWnd()
 	: CMainWindow()
 {
-	m_hIcon = NULL;
 	m_pWndMainView = NULL;
 	m_pItinerary = NULL;
 	m_CurrentMainView = 0;
@@ -35,8 +34,6 @@ CMainWnd::CMainWnd()
 
 CMainWnd::~CMainWnd()
 {
-	if (m_hIcon)
-		DestroyIcon(m_hIcon);
 	if (m_pItinerary)
 		delete m_pItinerary;
 }
@@ -45,14 +42,11 @@ BOOL CMainWnd::Create(CItinerary* pItinerary)
 {
 	m_pItinerary = pItinerary;
 
-	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString Caption((LPCSTR)IDR_APPLICATION);
 
-	CString caption;
-	ENSURE(caption.LoadString(IDR_APPLICATION));
-
-	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, _T("Main"));
+	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Main"));
 }
 
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -84,8 +78,8 @@ void CMainWnd::AdjustLayout()
 void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 {
 	BOOL Change = (m_pWndMainView==NULL) ||
-		((m_CurrentMainView==LoungeView) && (m_pItinerary!=NULL)) ||
-		((m_CurrentMainView==DataGrid) && (m_pItinerary==NULL) && AllowLoungeView);
+		((m_CurrentMainView==LOUNGEVIEW) && (m_pItinerary!=NULL)) ||
+		((m_CurrentMainView==DATAGRID) && (m_pItinerary==NULL) && AllowLoungeView);
 
 	if (Change)
 	{
@@ -100,32 +94,31 @@ void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 			m_pWndMainView = new CLoungeView();
 			((CLoungeView*)m_pWndMainView)->Create(this, 2);
 
-			m_CurrentMainView = LoungeView;
+			m_CurrentMainView = LOUNGEVIEW;
 		}
 		else
 		{
 			m_pWndMainView = new CDataGrid();
 			((CDataGrid*)m_pWndMainView)->Create(this, 2);
 
-			m_CurrentMainView = DataGrid;
+			m_CurrentMainView = DATAGRID;
 		}
 	}
 
-	if (m_CurrentMainView==DataGrid)
+	if (m_CurrentMainView==DATAGRID)
 		((CDataGrid*)m_pWndMainView)->SetItinerary(m_pItinerary, m_pItinerary ? m_pItinerary->m_Metadata.CurrentRow : 0);
 
-	CString caption;
-	ENSURE(caption.LoadString(IDR_APPLICATION));
+	CString Caption((LPCSTR)IDR_APPLICATION);
 	if (m_pItinerary)
 		if (!m_pItinerary->m_DisplayName.IsEmpty())
 		{
-			caption.Insert(0, _T(" - "));
-			caption.Insert(0, m_pItinerary->m_DisplayName);
+			Caption.Insert(0, _T(" - "));
+			Caption.Insert(0, m_pItinerary->m_DisplayName);
 		}
 
 	m_pDialogMenuBar->SendMessage(WM_IDLEUPDATECMDUI);
 
-	SetWindowText(caption);
+	SetWindowText(Caption);
 	AdjustLayout();
 	SetFocus();
 }
@@ -145,8 +138,7 @@ BOOL CMainWnd::CloseFile(BOOL AllowLoungeView)
 	{
 		if (m_pItinerary->m_IsModified)
 		{
-			CString msg;
-			ENSURE(msg.LoadString(IDS_NOTSAVED));
+			CString msg((LPCSTR)IDS_NOTSAVED);
 
 			switch (MessageBox(msg, m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONWARNING))
 			{
@@ -174,7 +166,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro)
 
 	if (m_pItinerary)
 	{
-		if (m_CurrentMainView==DataGrid)
+		if (m_CurrentMainView==DATAGRID)
 			Selected &= ((CDataGrid*)m_pWndMainView)->HasSelection();
 
 		UINT Count = m_pItinerary->m_Flights.m_ItemCount;
@@ -183,7 +175,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro)
 
 		for (UINT a=0; a<Count; a++)
 		{
-			if (Selected && (m_CurrentMainView==DataGrid))
+			if (Selected && (m_CurrentMainView==DATAGRID))
 				if (!((CDataGrid*)m_pWndMainView)->IsSelected(a))
 					continue;
 
@@ -269,7 +261,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors
 	}
 	else
 	{
-		BOOL Res = FALSE;
+		BOOL Result = FALSE;
 		CKitchen* pKitchen = GetKitchen(TRUE, Selected, MergeMetro);
 
 		try
@@ -285,7 +277,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors
 			}
 
 			f.Close();
-			Res = TRUE;
+			Result = TRUE;
 		}
 		catch(CFileException ex)
 		{
@@ -294,7 +286,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors
 		}
 
 		delete pKitchen;
-		return Res;
+		return Result;
 	}
 }
 
@@ -385,7 +377,7 @@ void CMainWnd::SaveAs(DWORD FilterIndex)
 		CString Ext = dlg.GetFileExt().MakeLower();
 		if (Ext==_T("airx"))
 		{
-			if (m_CurrentMainView==DataGrid)
+			if (m_CurrentMainView==DATAGRID)
 				m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
 
 			m_pItinerary->SaveAIRX(dlg.GetPathName());
@@ -475,7 +467,7 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 
 			for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
 			{
-				if ((pdex.Flags & PD_SELECTION) && (m_CurrentMainView==DataGrid))
+				if ((pdex.Flags & PD_SELECTION) && (m_CurrentMainView==DATAGRID))
 					if (!((CDataGrid*)m_pWndMainView)->IsSelected(a))
 						continue;
 
@@ -944,7 +936,7 @@ void CMainWnd::OnFileSave()
 	}
 	else
 	{
-		if (m_CurrentMainView==DataGrid)
+		if (m_CurrentMainView==DATAGRID)
 			m_pItinerary->m_Metadata.CurrentRow = ((CDataGrid*)m_pWndMainView)->GetCurrentRow();
 
 		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
@@ -992,7 +984,7 @@ void CMainWnd::OnFilePrint()
 	ASSERT(m_pItinerary);
 
 	DWORD Flags = PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC;
-	if (m_CurrentMainView==DataGrid)
+	if (m_CurrentMainView==DATAGRID)
 		if (((CDataGrid*)m_pWndMainView)->HasSelection())
 			Flags &= ~PD_NOSELECTION;
 
@@ -1036,7 +1028,7 @@ void CMainWnd::OnFileInspect()
 
 	InspectDlg dlg(m_pItinerary, this);
 	if (dlg.DoModal()==IDOK)
-		if (m_CurrentMainView==DataGrid)
+		if (m_CurrentMainView==DATAGRID)
 			m_pWndMainView->Invalidate();
 }
 
@@ -1046,7 +1038,7 @@ void CMainWnd::OnFileAttachments()
 
 	AttachmentsDlg dlg(m_pItinerary, this);
 	if (dlg.DoModal()==IDOK)
-		if (m_CurrentMainView==DataGrid)
+		if (m_CurrentMainView==DATAGRID)
 			m_pWndMainView->Invalidate();
 }
 

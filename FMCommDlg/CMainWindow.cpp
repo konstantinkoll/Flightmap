@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include "CMainWindow.h"
 #include <shlobj.h>
 
 
@@ -16,7 +15,6 @@ const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 
 CMainWindow::CMainWindow()
 	: CWnd()
 {
-	p_App = FMGetApp();
 	p_PopupWindow = NULL;
 	hAccelerator = NULL;
 	m_pDialogMenuBar = NULL;
@@ -37,7 +35,7 @@ BOOL CMainWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindo
 		return FALSE;
 
 	ZeroMemory(&m_WindowPlacement, sizeof(m_WindowPlacement));
-	p_App->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &m_WindowPlacement, sizeof(m_WindowPlacement));
+	FMGetApp()->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &m_WindowPlacement, sizeof(m_WindowPlacement));
 
 	if (m_WindowPlacement.length==sizeof(m_WindowPlacement))
 	{
@@ -119,7 +117,7 @@ BOOL CMainWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO
 	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return p_App->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return FMGetApp()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainWindow::ToggleFullScreen()
@@ -211,7 +209,7 @@ INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Active = (CWnd::GetActiveWindow()==this);
 
-	p_App->AddFrame(this);
+	FMGetApp()->AddFrame(this);
 
 	return 0;
 }
@@ -225,7 +223,7 @@ void CMainWindow::OnClose()
 			goto Skip;
 	}
 
-	p_App->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&m_WindowPlacement, sizeof(m_WindowPlacement));
+	FMGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&m_WindowPlacement, sizeof(m_WindowPlacement));
 
 Skip:
 	CWnd::OnClose();
@@ -244,7 +242,7 @@ void CMainWindow::OnDestroy()
 
 	CWnd::OnDestroy();
 
-	p_App->KillFrame(this);
+	FMGetApp()->KillFrame(this);
 }
 
 BOOL CMainWindow::OnNcActivate(BOOL bActive)
@@ -329,7 +327,7 @@ void CMainWindow::OnClosePopup()
 
 LRESULT CMainWindow::OnTaskbarButtonCreated(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (p_App->OSVersion>=OS_Seven)
+	if (FMGetApp()->OSVersion>=OS_Seven)
 	{
 		if (m_pTaskbarList3)
 		{
@@ -354,10 +352,10 @@ BOOL CMainWindow::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 		return FALSE;
 
 	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
-	if (cds.AppID!=p_App->m_AppID)
+	if (cds.AppID!=FMGetApp()->m_AppID)
 		return FALSE;
 
-	p_App->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+	FMGetApp()->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
 
 	return TRUE;
 }

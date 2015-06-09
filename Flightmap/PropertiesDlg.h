@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // PropertiesDlg

@@ -1473,7 +1473,7 @@ BEGIN
     IDM_FILE_SAVEAS_ICS     "Export the itinerary to Microsoft\nOutlook and other applications.\n&Calendar items"
     IDM_FILE_SAVEAS_CSV     "Export the itinerary to Microsoft\nExcel and other applications.\nComma Separated &Values"
     IDM_FILE_SAVEAS_TXT     "Export the itinerary as\nplain text file.\n&Text document"
-    IDM_FILE_SAVEAS_OTHER   "Open the ""Save as"" dialog box to\nselect from all possible file types.\n&Other formats"
+    IDM_FILE_SAVEAS_OTHER   "Open the “Save as” dialog box to\nselect from all possible file types.\n&Other formats"
     IDM_FILE_PRINT          "Select a printer, number of copies, and\nother printing options before printing.\n&Print"
     IDM_FILE_PRINT_QUICK    "Send the itinerary directly to the default\nprinter without making changes.\n&Quick print"
     IDM_FILE_PREPARE        "Pr&epare"

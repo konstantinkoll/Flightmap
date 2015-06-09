@@ -2,9 +2,8 @@
 // FMSelectLocationGPSDlg.cpp: Implementierung der Klasse FMSelectLocationGPSDlg
 //
 
-#include "StdAfx.h"
-#include "FMSelectLocationGPSDlg.h"
-#include "Resource.h"
+#include "stdafx.h"
+#include "FMCommDlg.h"
 
 
 DOUBLE StringToCoord(CString str)
@@ -13,31 +12,31 @@ DOUBLE StringToCoord(CString str)
 	INT Min;
 	INT Sec;
 	WCHAR Ch;
-	DOUBLE Res = 0.0;
+	DOUBLE Result = 0.0;
 
 	INT Scanned = swscanf_s(str.GetBuffer(), L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
 
 	if (Scanned>=1)
-		Res += Deg;
+		Result += Deg;
 	if (Scanned>=2)
-		Res += abs(Min)/60.0;
+		Result += abs(Min)/60.0;
 	if (Scanned>=3)
-		Res += abs(Sec)/3600.0;
+		Result += abs(Sec)/3600.0;
 	if (Scanned>=4)
 		if ((Ch==L'N') || (Ch==L'W'))
-			Res = -Res;
+			Result = -Result;
 
-	if ((Res<-180.0) || (Res>180.0))
-		Res = 0.0;
+	if ((Result<-180.0) || (Result>180.0))
+		Result = 0.0;
 
-	return Res;
+	return Result;
 }
 
 
 // FMSelectLocationGPSDlg
 //
 
-FMSelectLocationGPSDlg::FMSelectLocationGPSDlg(CWnd* pParentWnd, const FMGeoCoordinates Location)
+FMSelectLocationGPSDlg::FMSelectLocationGPSDlg(const FMGeoCoordinates Location, CWnd* pParentWnd)
 	: CDialog(IDD_SELECTGPS, pParentWnd)
 {
 	m_Location = Location;
@@ -75,7 +74,7 @@ BOOL FMSelectLocationGPSDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDD_SELECTGPS));
+	HICON hIcon = FMGetApp()->LoadDialogIcon(IDD_SELECTGPS);
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 

@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "FMCommDlg.h"
 #include "CGlobeView.h"
 #include "CKitchen.h"
+#include "FMCommDlg.h"
 
 
 // CGlobeWnd
@@ -14,9 +14,6 @@
 class CGlobeWnd : public CMainWindow
 {
 public:
-	CGlobeWnd();
-	virtual ~CGlobeWnd();
-
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
@@ -24,7 +21,6 @@ public:
 	void SetFlights(CKitchen* pKitchen);
 
 protected:
-	HICON m_hIcon;
 	CGlobeView m_wndGlobeView;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CTooltipList.h"
+#include "FMCommDlg.h"
 
 
 // CTooltipList

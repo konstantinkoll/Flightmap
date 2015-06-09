@@ -116,10 +116,10 @@ BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
 	if (!Size)
 		return FALSE;
 
-	BOOL res = CGdiPlusBitmapMemory::Load(pResourceData, Size);
+	BOOL Result = CGdiPlusBitmapMemory::Load(pResourceData, Size);
 
 	UnlockResource(hMemory);
-	return res;
+	return Result;
 }
 
 BOOL CGdiPlusBitmapResource::Load(UINT id, LPCTSTR pType, HMODULE hInst)

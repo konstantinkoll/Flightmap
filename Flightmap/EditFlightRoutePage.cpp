@@ -135,7 +135,7 @@ void EditFlightRoutePage::OnToSelect()
 
 void EditFlightRoutePage::OnWaypoint()
 {
-	FMSelectLocationGPSDlg dlg(this, p_Flight->Waypoint);
+	FMSelectLocationGPSDlg dlg(p_Flight->Waypoint, this);
 	if (dlg.DoModal()==IDOK)
 	{
 		p_Flight->Waypoint = dlg.m_Location;

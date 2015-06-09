@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "FMApplication.h"
 #include "CDialogMenuBar.h"
+#include "FMApplication.h"
 #include "ITaskbarList3.h"
 
 
@@ -36,15 +36,6 @@ public:
 	void SetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal);
 
 protected:
-	FMApplication* p_App;
-	CWnd* p_PopupWindow;
-	CDialogMenuBar* m_pDialogMenuBar;
-	ITaskbarList3* m_pTaskbarList3;
-	CString m_PlacementPrefix;
-	WINDOWPLACEMENT m_WindowPlacement;
-	BOOL m_Active;
-	HACCEL hAccelerator;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
@@ -59,4 +50,12 @@ protected:
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	DECLARE_MESSAGE_MAP()
+
+	CWnd* p_PopupWindow;
+	CDialogMenuBar* m_pDialogMenuBar;
+	ITaskbarList3* m_pTaskbarList3;
+	CString m_PlacementPrefix;
+	WINDOWPLACEMENT m_WindowPlacement;
+	BOOL m_Active;
+	HACCEL hAccelerator;
 };

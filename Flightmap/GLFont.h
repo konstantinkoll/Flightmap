@@ -27,12 +27,6 @@ protected:
 	UINT RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight);
 
 private:
-	GLfloat TexCoords[256-32][4];
-	UINT m_Spacing;
-	UINT m_LineHeight;
-	UINT m_TexSize;
-	UINT m_TexID;
-
 	enum PaintResult
 	{
 		Fail,
@@ -40,4 +34,10 @@ private:
 		Success
 	};
 	PaintResult PaintAlphabet(HDC hDC, BOOL bMeasureOnly=FALSE);
+
+	GLfloat TexCoords[256-32][4];
+	UINT m_Spacing;
+	UINT m_LineHeight;
+	UINT m_TexSize;
+	UINT m_TexID;
 };

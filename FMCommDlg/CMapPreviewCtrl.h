@@ -18,12 +18,12 @@ public:
 	void Update(FMAirport* pAirport);
 
 protected:
-	FMAirport* p_Airport;
-	FMGeoCoordinates m_Location;
-	HBITMAP hMap;
-
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
+
+	FMAirport* p_Airport;
+	FMGeoCoordinates m_Location;
+	HBITMAP hMap;
 };

@@ -2,7 +2,6 @@
 // CGoogleEarthFile.cpp: Implementierung der Klasse CGoogleEarthFile
 //
 
-#pragma once
 #include "stdafx.h"
 #include "CGoogleEarthFile.h"
 #include <io.h>
@@ -143,8 +142,7 @@ void CGoogleEarthFile::WriteAttribute(UINT ResID, CString Value)
 {
 	if (!Value.IsEmpty())
 	{
-		CString Name;
-		ENSURE(Name.LoadString(ResID));
+		CString Name((LPCSTR)ResID);
 
 		WriteString(_T("&lt;b&gt;"));
 		WriteString(Name);

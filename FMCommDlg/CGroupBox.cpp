@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include "resource.h"
 
 
 // CGroupBox
@@ -19,7 +18,7 @@ CGroupBox::CGroupBox()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CGroupBox";
@@ -69,7 +68,6 @@ void CGroupBox::OnPaint()
 	Graphics g(dc);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	FMApplication* pApp = FMGetApp();
 	BOOL Themed = IsCtrlThemed();
 
 	// Background
@@ -80,14 +78,14 @@ void CGroupBox::OnPaint()
 	// Border
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
 
-	CString caption;
-	GetWindowText(caption);
-	CSize sz = dc.GetTextExtent(caption);
+	CString Caption;
+	GetWindowText(Caption);
+	CSize sz = dc.GetTextExtent(Caption);
 
 	CRect rectBounds(rect);
 	rectBounds.top += sz.cy/2;
 
-	if (Themed && pApp->m_UseBgImages)
+	if (Themed && FMGetApp()->m_UseBgImages)
 	{
 		rectBounds.right -= 3;
 		rectBounds.bottom -= 3;
@@ -156,7 +154,7 @@ void CGroupBox::OnPaint()
 	if (brush)
 		FillRect(dc, rectCaption, brush);
 
-	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
+	dc.DrawText(Caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);

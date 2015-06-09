@@ -2,7 +2,6 @@
 // CCalendarFile.cpp: Implementierung der Klasse CCalendarFile
 //
 
-#pragma once
 #include "stdafx.h"
 #include "CCalendarFile.h"
 #include <io.h>

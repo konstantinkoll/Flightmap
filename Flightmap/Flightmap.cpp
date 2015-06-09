@@ -103,7 +103,7 @@ BOOL CFlightmapApp::InitInstance()
 		WCHAR lszValue[256];
 		DWORD dwSize = sizeof(lszValue);
 
-		if (RegQueryValueEx(hKey, _T("StoreManager"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
 			m_PathLiquidFolders = lszValue;
 
 		RegCloseKey(hKey);
@@ -364,10 +364,10 @@ void CFlightmapApp::Quit()
 		m_pMainFrames.GetNext(p)->SendMessage(WM_CLOSE);
 }
 
-void CFlightmapApp::Broadcast(UINT message)
+void CFlightmapApp::Broadcast(UINT Message)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
-		m_pMainFrames.GetNext(p)->PostMessage(message);
+		m_pMainFrames.GetNext(p)->PostMessage(Message);
 }
 
 void CFlightmapApp::AddToRecentList(CString FileName)
@@ -476,9 +476,6 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	CString Subtitle;
 	if (FMIsLicensed())
 	{
-		CString Mask;
-		ENSURE(Mask.LoadString(IDS_PRINTED_REGISTERED));
-
 		SYSTEMTIME st;
 		GetLocalTime(&st);
 
@@ -487,7 +484,7 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 		GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, Date, 256);
 		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, Time, 256);
 
-		Subtitle.Format(Mask, Date, Time);
+		Subtitle.Format(IDS_PRINTED_REGISTERED, Date, Time);
 	}
 	else
 	{

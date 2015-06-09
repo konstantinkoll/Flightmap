@@ -7,6 +7,7 @@
 #include "EditFlightAttachmentsPage.h"
 #include "EditFlightRoutePage.h"
 #include "EditFlightOtherPage.h"
+#include "Flightmap.h"
 
 
 // EditFlightDlg
@@ -31,8 +32,8 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParentWnd, CItinerary*
 	m_pPages[2] = new EditFlightAttachmentsPage(&m_Flight, pItinerary);
 
 	// Seiten hinzufügen
-	const UINT nIDTemplates[EditFlightPages] = { IDD_EDITFLIGHT_ROUTE, IDD_EDITFLIGHT_OTHER, IDD_EDITFLIGHT_ATTACHMENTS };
-	for (UINT a=0; a<EditFlightPages; a++)
+	const UINT nIDTemplates[] = { IDD_EDITFLIGHT_ROUTE, IDD_EDITFLIGHT_OTHER, IDD_EDITFLIGHT_ATTACHMENTS };
+	for (UINT a=0; a<EDITFLIGHTPAGES; a++)
 	{
 		m_pPages[a]->Construct(nIDTemplates[a]);
 		AddPage(m_pPages[a]);
@@ -60,16 +61,16 @@ BOOL EditFlightDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDI_EDITFLIGHT);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDI_EDITFLIGHT);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void EditFlightDlg::OnDestroy()
 {
-	for (UINT a=0; a<EditFlightPages; a++)
+	for (UINT a=0; a<EDITFLIGHTPAGES; a++)
 	{
 		m_pPages[a]->DestroyWindow();
 		delete m_pPages[a];

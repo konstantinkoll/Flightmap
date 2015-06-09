@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include "Resource.h"
 
 
 // CMapSelectionCtrl
@@ -19,7 +18,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CMapSelectionCtrl";

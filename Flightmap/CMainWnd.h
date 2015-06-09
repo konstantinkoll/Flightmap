@@ -11,8 +11,8 @@
 // CMainWnd
 //
 
-#define LoungeView     1
-#define DataGrid       2
+#define LOUNGEVIEW     1
+#define DATAGRID       2
 
 class CMainWnd : public CMainWindow
 {
@@ -26,11 +26,6 @@ public:
 	BOOL Create(CItinerary* pItinerary);
 
 protected:
-	HICON m_hIcon;
-	CWnd* m_pWndMainView;
-	UINT m_CurrentMainView;
-	CItinerary* m_pItinerary;
-
 	void UpdateWindowStatus(BOOL AllowLoungeView=FALSE);
 	void Open(CString FileName);
 	BOOL CloseFile(BOOL AllowLoungeView=FALSE);
@@ -119,4 +114,10 @@ protected:
 	afx_msg void OnStatisticsMergeClasses();
 	afx_msg void OnUpdateStatisticsCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	CItinerary* m_pItinerary;
+
+private:
+	CWnd* m_pWndMainView;
+	UINT m_CurrentMainView;
 };

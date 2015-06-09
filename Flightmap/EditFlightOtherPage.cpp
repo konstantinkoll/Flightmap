@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "EditFlightOtherPage.h"
+#include "Flightmap.h"
 
 
 // EditFlightOtherPage

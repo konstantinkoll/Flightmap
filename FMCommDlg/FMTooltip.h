@@ -27,6 +27,11 @@ public:
 protected:
 	void Hide();
 
+	afx_msg void OnDestroy();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
+	DECLARE_MESSAGE_MAP()
+
 	BOOL m_Themed;
 	BOOL m_Flat;
 	HICON m_Icon;
@@ -36,9 +41,4 @@ protected:
 	CString m_strText;
 	INT m_TextHeight;
 	BOOL m_DrawBorder;
-
-	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	DECLARE_MESSAGE_MAP()
 };

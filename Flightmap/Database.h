@@ -1,26 +1,54 @@
 
-// StarAlliance
+// Carriers
 //
 
-#define AllianceStarCount     27
+#define CARRIERCOUNT     58
 
-static const WCHAR AllianceStar[AllianceStarCount][64] = {
+static const WCHAR Carriers[CARRIERCOUNT][30] = {
 	L"Adria Airways",
 	L"Aegean Airlines",
+	L"Aeroflot",
+	L"Aerolíneas Argentinas",
+	L"Aeroméxico",
+	L"Air Berlin",
 	L"Air Canada",
 	L"Air China",
+	L"Air Europa",
+	L"Air France",
 	L"Air New Zealand",
+	L"Alitalia",
+	L"American Airlines",
 	L"ANA",
 	L"Asiana Airlines",
 	L"Austrian Airlines",
 	L"Avianca",
+	L"British Airways",
 	L"Brussels Airlines",
+	L"Cathay Pacific",
+	L"China Airlines",
+	L"China Eastern Airlines",
+	L"China Southern Airlines",
+	L"Czech Airlines",
 	L"Copa Airlines",
 	L"Croatia Airlines",
+	L"Delta Air Lines",
 	L"EgyptAir",
 	L"Ethiopian Airlines",
+	L"Finnair",
+	L"Garuda Indonesia",
+	L"Iberia",
+	L"Japan Airlines",
+	L"Kenya Airways",
+	L"KLM",
+	L"Korean Air",
+	L"LAN",
 	L"LOT Polish Airlines",
 	L"Lufthansa",
+	L"Middle East Airlines",
+	L"Quantas",
+	L"Royal Jordanian",
+	L"S7 Airlines",
+	L"Saudi Arabian Airlines",
 	L"Scandinavian Airlines (SAS)",
 	L"Shenzhen Airlines",
 	L"Singapore Airlines",
@@ -29,69 +57,21 @@ static const WCHAR AllianceStar[AllianceStarCount][64] = {
 	L"TACA Airlines",
 	L"TAM Airlines",
 	L"TAP Portugal",
+	L"TAROM",
 	L"Thai Airways",
 	L"Turkish Airlines",
-	L"United Airlines"
-};
-
-
-// SkyTeam
-//
-
-#define AllianceSkyTeamCount     20
-
-static const WCHAR AllianceSkyTeam[AllianceSkyTeamCount][64] = {
-	L"Aeroflot",
-	L"Aerolíneas Argentinas",
-	L"Aeroméxico",
-	L"Air Europa",
-	L"Air France",
-	L"Alitalia",
-	L"China Airlines",
-	L"China Eastern Airlines",
-	L"China Southern Airlines",
-	L"Czech Airlines",
-	L"Delta Air Lines",
-	L"Garuda Indonesia",
-	L"Kenya Airways",
-	L"KLM",
-	L"Korean Air",
-	L"Middle East Airlines",
-	L"Saudi Arabian Airlines",
-	L"TAROM",
+	L"United Airlines",
 	L"Vietnam Airlines",
 	L"Xiamen Airlines"
-};
-
-
-// OneWorld
-//
-
-#define AllianceOneWorldCount     13
-
-static const WCHAR AllianceOneWorld[AllianceOneWorldCount][64] = {
-	L"Air Berlin",
-	L"American Airlines",
-	L"British Airways",
-	L"Cathay Pacific",
-	L"Finnair",
-	L"Iberia",
-	L"Japan Airlines",
-	L"Kingfisher Airlines",
-	L"LAN",
-	L"Malaysia Airlines",
-	L"Quantas",
-	L"Royal Jordanian",
-	L"S7 Airlines"
 };
 
 
 // Equipment
 //
 
-#define EquipmentCount     32
+#define EQUIPMENTCOUNT     32
 
-static const WCHAR Equipment[EquipmentCount][32] = {
+static const WCHAR Equipment[EQUIPMENTCOUNT][20] = {
 	L"Airbus A300",
 	L"Airbus A310",
 	L"Airbus A318",

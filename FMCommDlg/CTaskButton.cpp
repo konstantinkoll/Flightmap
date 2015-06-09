@@ -17,7 +17,7 @@ CTaskButton::CTaskButton()
 	m_Hover = FALSE;
 }
 
-BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID, CWnd* pParentWnd, UINT nID)
+BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID)
 {
 	m_Caption = Caption;
 	m_TooltipHeader = TooltipHeader;
@@ -29,7 +29,7 @@ BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString Tooltip
 
 	CRect rect;
 	rect.SetRectEmpty();
-	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
+	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)

@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // EditFlightOtherPage
@@ -18,6 +17,10 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
+	afx_msg BOOL OnInitDialog();
+	afx_msg void OnChooseColor();
+	DECLARE_MESSAGE_MAP()
+
 	AIRX_Flight* p_Flight;
 	CItinerary* p_Itinerary;
 	CComboBox m_wndCarrier;
@@ -33,8 +36,4 @@ protected:
 	CMFCMaskedEdit m_wndUpgradeVoucher;
 	CMFCMaskedEdit m_wndSeat;
 	CRatingCtrl m_wndRating;
-
-	afx_msg BOOL OnInitDialog();
-	afx_msg void OnChooseColor();
-	DECLARE_MESSAGE_MAP()
 };

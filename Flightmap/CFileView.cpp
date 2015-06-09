@@ -9,8 +9,8 @@
 // CFileView
 //
 
-#define GetSelectedFile() m_wndTooltipList.GetNextItem(-1, LVIS_SELECTED)
-#define GetSelectedAttachment() GetAttachment(GetSelectedFile())
+#define GetSelectedFile()           m_wndTooltipList.GetNextItem(-1, LVIS_SELECTED)
+#define GetSelectedAttachment()     GetAttachment(GetSelectedFile())
 
 CFileView::CFileView()
 	: CWnd()
@@ -21,7 +21,7 @@ CFileView::CFileView()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CFileView";
@@ -37,7 +37,6 @@ CFileView::CFileView()
 	p_Status = NULL;
 	p_Itinerary = NULL;
 	p_Flight = NULL;
-	p_App = FMGetApp();
 	m_pSortArray = NULL;
 	m_LastSortColumn = m_Count = 0;
 	m_LastSortDirection = FALSE;
@@ -113,14 +112,11 @@ void CFileView::Reload()
 		for (UINT a=0; a<m_Count; a++)
 			FileSize += GetAttachment(a)->Size;
 
-		CString tmpMask;
-		ENSURE(tmpMask.LoadString(m_Count==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL));
-
 		WCHAR tmpBuf[256];
 		StrFormatByteSize(FileSize, tmpBuf, 256);
 
 		CString tmpStr;
-		tmpStr.Format(tmpMask, m_Count, tmpBuf);
+		tmpStr.Format(m_Count==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL, m_Count, tmpBuf);
 		p_Status->SetWindowText(tmpStr);
 	}
 }
@@ -146,21 +142,20 @@ void CFileView::Init()
 	rect.SetRectEmpty();
 	m_wndTooltipList.Create(dwStyle, rect, this, 2);
 
-	m_wndTooltipList.SetImageList(&p_App->m_SystemImageListSmall, LVSIL_SMALL);
-	m_wndTooltipList.SetImageList(&p_App->m_SystemImageListLarge, LVSIL_NORMAL);
+	m_wndTooltipList.SetImageList(&FMGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
+	m_wndTooltipList.SetImageList(&FMGetApp()->m_SystemImageListLarge, LVSIL_NORMAL);
 
 	for (UINT a=0; a<4; a++)
 	{
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_SUBITEM_NAME+a));
+		CString tmpStr((LPCSTR)IDS_SUBITEM_NAME+a);
 
 		m_wndTooltipList.AddColumn(a, tmpStr, a);
 	}
 
 	IMAGEINFO ii;
-	p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
+	FMGetApp()->m_SystemImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
+	CFont* pOldFont = dc->SelectObject(&FMGetApp()->m_DefaultFont);
 	m_wndTooltipList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
@@ -177,7 +172,7 @@ void CFileView::Init()
 
 INT CFileView::Compare(INT n1, INT n2)
 {
-	INT res = 0;
+	INT Result = 0;
 
 	AIRX_Attachment* pFirst = GetAttachment(n1);
 	AIRX_Attachment* pSecond = GetAttachment(n2);
@@ -185,23 +180,23 @@ INT CFileView::Compare(INT n1, INT n2)
 	switch (m_LastSortColumn)
 	{
 	case 0:
-		res = wcscmp(pFirst->Name, pSecond->Name);
+		Result = wcscmp(pFirst->Name, pSecond->Name);
 		break;
 	case 1:
-		res = CompareFileTime(&pFirst->Created, &pSecond->Created);
+		Result = CompareFileTime(&pFirst->Created, &pSecond->Created);
 		break;
 	case 2:
-		res = CompareFileTime(&pFirst->Modified, &pSecond->Modified);
+		Result = CompareFileTime(&pFirst->Modified, &pSecond->Modified);
 		break;
 	case 3:
-		res = pFirst->Size-pSecond->Size;
+		Result = pFirst->Size-pSecond->Size;
 		break;
 	}
 
 	if (m_LastSortDirection)
-		res = -res;
+		Result = -Result;
 
-	return res;
+	return Result;
 }
 
 void CFileView::Heap(INT wurzel, INT anz)
@@ -521,11 +516,9 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 				goto UseIcon;
 
 			// Resolution
-			CString tmpMask;
 			CString tmpStr;
-			ENSURE(tmpMask.LoadString(IDS_RESOLUTION));
+			tmpStr.Format(IDS_RESOLUTION, l, h);
 
-			tmpStr.Format(tmpMask, l, h);
 			wcscat_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), tmpStr);
 
 			// Scaling
@@ -572,9 +565,9 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 UseIcon:
 			// Icon
 			IMAGEINFO ii;
-			p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
+			FMGetApp()->m_SystemImageListLarge.GetImageInfo(0, &ii);
 
-			pTooltipData->hIcon = p_App->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
+			pTooltipData->hIcon = FMGetApp()->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
 			pTooltipData->cx = ii.rcImage.right-ii.rcImage.left;
 			pTooltipData->cy = ii.rcImage.bottom-ii.rcImage.top;
 		}
@@ -711,10 +704,9 @@ void CFileView::OnDelete()
 	INT idx = GetSelectedFile();
 	if (idx!=-1)
 	{
-		CString message;
-		ENSURE(message.LoadString(IDS_DELETE_FILE));
+		CString Message((LPCSTR)IDS_DELETE_FILE);
 
-		if (MessageBox(message, GetAttachment(idx)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
+		if (MessageBox(Message, GetAttachment(idx)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
 			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_pSortArray[idx]] : m_pSortArray[idx], p_Flight);
 			Reload();

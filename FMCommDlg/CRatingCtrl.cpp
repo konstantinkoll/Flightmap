@@ -28,7 +28,7 @@ CRatingCtrl::CRatingCtrl()
 	wndcls.lpfnWndProc = ::DefWindowProc;
 	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
 	wndcls.hbrBackground = NULL;
 	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CRatingCtrl";
@@ -181,7 +181,7 @@ void CRatingCtrl::OnLButtonDown(UINT /*Flags*/, CPoint point)
 	SetFocus();
 }
 
-BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	CPoint point;
 	GetCursorPos(&point);

@@ -38,7 +38,6 @@ void CDialogCmdUI::SetCheck(INT nCheck)
 CDialogMenuBar::CDialogMenuBar()
 	: CWnd()
 {
-	p_App = FMGetApp();
 	hTheme = NULL;
 	m_SelectedItem = m_HoverItem = -1;
 	m_LastMove.x = m_LastMove.y = -1;
@@ -57,7 +56,7 @@ BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, 
 	if (LargeResID)
 		m_Icons.Load(m_IconSize==16 ? SmallResID : LargeResID);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
@@ -120,7 +119,7 @@ UINT CDialogMenuBar::GetPreferredHeight()
 
 INT CDialogMenuBar::GetMinWidth()
 {
-	INT Spacer = (p_App->OSVersion==OS_XP) ? 10 : 6;
+	INT Spacer = (FMGetApp()->OSVersion==OS_XP) ? 10 : 6;
 	INT MinWidth = 0;
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		MinWidth += m_Items.m_Items[a].MinWidth+Spacer;
@@ -256,7 +255,7 @@ void CDialogMenuBar::AdjustLayout()
 	GetClientRect(rect);
 
 	INT Left = 0;
-	INT Spacer = (p_App->OSVersion==OS_XP) ? 10 : 6;
+	INT Spacer = (FMGetApp()->OSVersion==OS_XP) ? 10 : 6;
 	BOOL OnLeftSide = TRUE;
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 	{
@@ -293,12 +292,12 @@ BOOL CDialogMenuBar::HasFocus()
 void CDialogMenuBar::SetTheme()
 {
 	// Themes
-	if (p_App->m_ThemeLibLoaded)
+	if (FMGetApp()->m_ThemeLibLoaded)
 	{
 		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
+			FMGetApp()->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_MENU);
+		hTheme = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_MENU);
 	}
 
 	// Default font
@@ -321,7 +320,7 @@ void CDialogMenuBar::SetTheme()
 
 	// Special fonts
 	m_NormalLogFont.lfHeight = -max(abs(m_NormalLogFont.lfHeight), 11);
-	wcscpy_s(m_NormalLogFont.lfFaceName, 32, p_App->GetDefaultFontFace());
+	wcscpy_s(m_NormalLogFont.lfFaceName, 32, FMGetApp()->GetDefaultFontFace());
 	m_NormalFont.DeleteObject();
 	m_NormalFont.CreateFontIndirect(&m_NormalLogFont);
 
@@ -370,7 +369,7 @@ INT CDialogMenuBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CDialogMenuBar::OnDestroy()
 {
 	if (hTheme)
-		p_App->zCloseThemeData(hTheme);
+		FMGetApp()->zCloseThemeData(hTheme);
 
 	CWnd::OnDestroy();
 }
@@ -428,7 +427,7 @@ void CDialogMenuBar::OnPaint()
 	// Background
 	if (hTheme)
 	{
-		p_App->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CMainWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
+		FMGetApp()->zDrawThemeBackground(hTheme, dc, MENU_BARBACKGROUND, ((CMainWindow*)GetParent())->m_Active ? MB_ACTIVE : MB_INACTIVE, rect, rect);
 	}
 	else
 	{
@@ -463,7 +462,7 @@ void CDialogMenuBar::OnPaint()
 			if (Item==(INT)a)
 				if (hTheme)
 				{
-					p_App->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, Focused ? MBI_PUSHED : MBI_HOT, rectItem, rectItem);
+					FMGetApp()->zDrawThemeBackground(hTheme, dc, MENU_BARITEM, Focused ? MBI_PUSHED : MBI_HOT, rectItem, rectItem);
 				}
 				else
 					if (Themed)
@@ -488,7 +487,7 @@ void CDialogMenuBar::OnPaint()
 			}
 			else
 			{
-				if (p_App->OSVersion==OS_XP)
+				if (FMGetApp()->OSVersion==OS_XP)
 					rectItem.bottom -= 2;
 
 				dc.SetTextColor(clrText);
@@ -771,8 +770,6 @@ void CDialogMenuBar::OnKillFocus(CWnd* /*pKillWnd*/)
 CDialogMenuPopup::CDialogMenuPopup()
 	: CWnd()
 {
-	p_App = FMGetApp();
-
 	m_Gutter = m_BlueAreaStart = m_FirstRowOffset = 0;
 	m_Width = m_Height = 2*BORDERPOPUP;
 	m_LargeIconsID = m_SmallIconsID = 0;
@@ -804,8 +801,8 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 	if (bDropShadow)
 		nClassStyle |= CS_DROPSHADOW;
 
-	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
-	BOOL res = CWnd::CreateEx(WS_EX_TOPMOST, className, _T(""), WS_BORDER | WS_POPUP, 0, 0, 0, 0, pParentWnd->GetSafeHwnd(), NULL);
+	CString className = AfxRegisterWndClass(nClassStyle, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	BOOL Result = CWnd::CreateEx(WS_EX_TOPMOST, className, _T(""), WS_BORDER | WS_POPUP, 0, 0, 0, 0, pParentWnd->GetSafeHwnd(), NULL);
 
 	if (pParentWnd)
 	{
@@ -814,7 +811,7 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 		SetOwner(pTopLevelParent);
 	}
 
-	return res;
+	return Result;
 }
 
 BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
@@ -968,7 +965,7 @@ void CDialogMenuPopup::GetCheckSize(CSize& sz)
 	if (hThemeButton)
 	{
 		CDC* dc = GetDC();
-		p_App->zGetThemePartSize(hThemeButton, *dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &sz);
+		FMGetApp()->zGetThemePartSize(hThemeButton, *dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &sz);
 		ReleaseDC(dc);
 	}
 	else
@@ -1083,7 +1080,7 @@ void CDialogMenuPopup::Track(CRect rect, BOOL Down)
 	ScreenToClient(&m_LastMove);
 
 	SetCapture();
-	SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
+	SetCursor(FMGetApp()->LoadStandardCursor(IDC_ARROW));
 }
 
 void CDialogMenuPopup::Track(CPoint point)
@@ -1107,7 +1104,7 @@ void CDialogMenuPopup::TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard)
 	if (!pPopup)
 	{
 		SetCapture();
-		SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
+		SetCursor(FMGetApp()->LoadStandardCursor(IDC_ARROW));
 	}
 }
 
@@ -1156,7 +1153,7 @@ __forceinline CFont* CDialogMenuPopup::SelectCaptionFont(CDC* pDC)
 
 void CDialogMenuPopup::DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed)
 {
-	if (Themed && (p_App->OSVersion!=OS_Eight))
+	if (Themed && (FMGetApp()->OSVersion!=OS_Eight))
 	{
 		Graphics g(dc);
 
@@ -1176,7 +1173,7 @@ void CDialogMenuPopup::DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enable
 {
 	if (hThemeList)
 	{
-		p_App->zDrawThemeBackground(hThemeList, *pDC, LVP_LISTITEM, !Enabled ? LISS_SELECTEDNOTFOCUS : Focused ? LISS_HOTSELECTED : LISS_HOT, rect, rect);
+		FMGetApp()->zDrawThemeBackground(hThemeList, *pDC, LVP_LISTITEM, !Enabled ? LISS_SELECTEDNOTFOCUS : Focused ? LISS_HOTSELECTED : LISS_HOT, rect, rect);
 	}
 	else
 	{
@@ -1192,7 +1189,7 @@ void CDialogMenuPopup::DrawButton(CDC* pDC, LPRECT rect, BOOL Radio, BOOL Checke
 		if (Checked)
 			uiStyle += 4;
 
-		p_App->zDrawThemeBackground(hThemeButton, *pDC, Radio ? BP_RADIOBUTTON : BP_CHECKBOX, uiStyle, rect, rect);
+		FMGetApp()->zDrawThemeBackground(hThemeButton, *pDC, Radio ? BP_RADIOBUTTON : BP_CHECKBOX, uiStyle, rect, rect);
 	}
 	else
 	{
@@ -1231,15 +1228,15 @@ INT CDialogMenuPopup::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	if (p_App->m_ThemeLibLoaded)
+	if (FMGetApp()->m_ThemeLibLoaded)
 	{
-		if (p_App->OSVersion>=OS_Vista)
+		if (FMGetApp()->OSVersion>=OS_Vista)
 		{
-			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+			FMGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+			hThemeList = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
 
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		hThemeButton = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 	}
 
 	return 0;
@@ -1248,9 +1245,9 @@ INT CDialogMenuPopup::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CDialogMenuPopup::OnDestroy()
 {
 	if (hThemeList)
-		p_App->zCloseThemeData(hThemeList);
+		FMGetApp()->zCloseThemeData(hThemeList);
 	if (hThemeButton)
-		p_App->zCloseThemeData(hThemeButton);
+		FMGetApp()->zCloseThemeData(hThemeButton);
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		delete m_Items.m_Items[a].pItem;
@@ -1300,7 +1297,7 @@ void CDialogMenuPopup::OnPaint()
 	if (m_BlueAreaStart)
 	{
 		DrawBevelRect(dc, rect.left, rect.top, rect.Width(), m_BlueAreaStart, Themed);
-		dc.FillSolidRect(rect.left, m_BlueAreaStart, rect.Width(), rect.bottom, Themed && (p_App->OSVersion!=OS_Eight) ? 0xFBF5F1 : GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(rect.left, m_BlueAreaStart, rect.Width(), rect.bottom, Themed && (FMGetApp()->OSVersion!=OS_Eight) ? 0xFBF5F1 : GetSysColor(COLOR_3DFACE));
 	}
 	else
 	{
@@ -1315,7 +1312,7 @@ void CDialogMenuPopup::OnPaint()
 		if (IntersectRect(&rectIntersect, &m_Items.m_Items[a].Rect, rectUpdate))
 		{
 			BOOL Selected = (m_SelectedItem==(INT)a) && (m_Items.m_Items[a].Selectable);
-			dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? p_App->OSVersion!=OS_Eight ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT) : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+			dc.SetTextColor(!m_Items.m_Items[a].Enabled ? GetSysColor(COLOR_3DSHADOW) : hThemeList ? FMGetApp()->OSVersion!=OS_Eight ? 0x6E1500 : GetSysColor(COLOR_MENUTEXT) : Selected ? GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
 
 			m_Items.m_Items[a].pItem->OnPaint(&dc, &m_Items.m_Items[a].Rect, m_SelectedItem==(INT)a, hThemeList ? 2 : Themed ? 1 : 0);
 		}
@@ -1327,16 +1324,16 @@ void CDialogMenuPopup::OnPaint()
 
 LRESULT CDialogMenuPopup::OnThemeChanged()
 {
-	if (p_App->m_ThemeLibLoaded)
+	if (FMGetApp()->m_ThemeLibLoaded)
 	{
 		if (hThemeList)
-			p_App->zCloseThemeData(hThemeList);
+			FMGetApp()->zCloseThemeData(hThemeList);
 		if (hThemeButton)
-			p_App->zCloseThemeData(hThemeButton);
+			FMGetApp()->zCloseThemeData(hThemeButton);
 
-		if (p_App->OSVersion>=OS_Vista)
-			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (FMGetApp()->OSVersion>=OS_Vista)
+			hThemeList = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hThemeButton = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 	}
 
 	return TRUE;
@@ -1535,7 +1532,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		else
 		{
-			p_App->PlayStandardSound();
+			FMGetApp()->PlayStandardSound();
 		}
 
 		return;
@@ -1601,9 +1598,9 @@ void CDialogMenuPopup::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
 {
 }
 
-INT CDialogMenuPopup::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
+INT CDialogMenuPopup::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT Message)
 {
-	return p_SubMenu ? MA_NOACTIVATE : CWnd::OnMouseActivate(pDesktopWnd, nHitTest, message);
+	return p_SubMenu ? MA_NOACTIVATE : CWnd::OnMouseActivate(pDesktopWnd, nHitTest, Message);
 }
 
 void CDialogMenuPopup::OnActivateApp(BOOL bActive, DWORD dwThreadID)

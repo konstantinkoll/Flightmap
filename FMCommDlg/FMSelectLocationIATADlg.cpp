@@ -2,10 +2,8 @@
 // FMSelectLocationIATADlg.cpp: Implementierung der Klasse FMSelectLocationIATA
 //
 
-#pragma once
-#include "StdAfx.h"
-#include "FMSelectLocationIATADlg.h"
-#include "Resource.h"
+#include "stdafx.h"
+#include "FMCommDlg.h"
 
 
 // FMSelectLocationIATADlg
@@ -16,10 +14,9 @@ FMSelectLocationIATADlg::FMSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParent
 {
 	m_nIDTemplate = nIDTemplate;
 
-	p_App = FMGetApp();
-	m_LastCountrySelected = p_App->GetInt(_T("IATALastCountrySelected"), 0);
-	m_LastSortColumn = p_App->GetInt(_T("IATALastSortColumn"), 0);
-	m_LastSortDirection = p_App->GetInt(_T("IATALastSortDirection"), FALSE);
+	m_LastCountrySelected = FMGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
+	m_LastSortColumn = FMGetApp()->GetInt(_T("IATALastSortColumn"), 0);
+	m_LastSortDirection = FMGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
 
 	if (Airport)
 	{
@@ -39,30 +36,30 @@ void FMSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		p_App->WriteInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
-		p_App->WriteInt(_T("IATALastSortColumn"), m_LastSortColumn);
-		p_App->WriteInt(_T("IATALastSortDirection"), m_LastSortDirection);
+		FMGetApp()->WriteInt(_T("IATALastCountrySelected"), m_LastCountrySelected);
+		FMGetApp()->WriteInt(_T("IATALastSortColumn"), m_LastSortColumn);
+		FMGetApp()->WriteInt(_T("IATALastSortDirection"), m_LastSortDirection);
 	}
 }
 
 INT FMSelectLocationIATADlg::Compare(INT n1, INT n2)
 {
-	INT res = 0;
+	INT Result = 0;
 
 	switch (m_LastSortColumn)
 	{
 	case 0:
-		res = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
+		Result = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
 		break;
 	case 1:
-		res = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
+		Result = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
 		break;
 	}
 
 	if (m_LastSortDirection)
-		res = -res;
+		Result = -Result;
 
-	return res;
+	return Result;
 }
 
 void FMSelectLocationIATADlg::Heap(INT wurzel, INT anz)
@@ -184,7 +181,7 @@ BOOL FMSelectLocationIATADlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(m_nIDTemplate));
+	HICON hIcon = FMGetApp()->LoadDialogIcon(m_nIDTemplate);
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
@@ -316,7 +313,7 @@ void FMSelectLocationIATADlg::OnReportError(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		Subject += _T(": ")+Code+_T(" (")+Name+_T(", ")+Country+_T(")");
 	}
 
-	p_App->SendMail(Subject);
+	FMGetApp()->SendMail(Subject);
 
 	*pResult = 0;
 }

@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#include "Flightmap.h"
-#include "FMCommDlg.h"
 #include "CItinerary.h"
 
 
@@ -16,7 +14,7 @@ class CCalendarFile : public CStdioFile
 public:
 	CCalendarFile();
 
-	BOOL Open(LPCTSTR lpszFileName, LPCTSTR CpszComment=NULL, LPCTSTR lpszDescription=NULL);
+	BOOL Open(LPCTSTR lpszFileName, LPCTSTR lpszComment=NULL, LPCTSTR lpszDescription=NULL);
 	void WriteRoute(AIRX_Flight& Flight);
 	void Close();
 

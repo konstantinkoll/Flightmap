@@ -4,9 +4,9 @@
 
 #pragma once
 #include "CKitchen.h"
-#include "Flightmap.h"
-#include "GLTexture.h"
+#include "FMCommDlg.h"
 #include "GLFont.h"
+#include "GLTexture.h"
 
 
 // Item data
@@ -60,8 +60,8 @@ protected:
 	BOOL m_UseColors;
 	BOOL m_Clamp;
 
-	DynArray<GlobeAirport> m_Airports;
-	DynArray<FlightSegments*> m_Routes;
+	FMDynArray<GlobeAirport> m_Airports;
+	FMDynArray<FlightSegments*> m_Routes;
 
 	CClientDC* m_pDC;
 	HGLRC hRC;
@@ -95,7 +95,7 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnMouseLeave();

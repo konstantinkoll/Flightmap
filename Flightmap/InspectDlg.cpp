@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "AttachmentsDlg.h"
+#include "Flightmap.h"
 #include "InspectDlg.h"
 #include "PropertiesDlg.h"
 
@@ -30,8 +31,7 @@ void InspectDlg::Update()
 	GetDlgItem(IDC_METADATA_SHOW)->EnableWindow(bEnable);
 	GetDlgItem(IDC_METADATA_DELETE)->EnableWindow(bEnable);
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(bEnable ? IDS_INSPECT_METADATA_PRESENT : IDS_INSPECT_METADATA_NONE));
+	CString tmpStr((LPCSTR)(bEnable ? IDS_INSPECT_METADATA_PRESENT : IDS_INSPECT_METADATA_NONE));
 	GetDlgItem(IDC_METADATA_STATUS)->SetWindowText(tmpStr);
 
 	// Attachments
@@ -46,13 +46,10 @@ void InspectDlg::Update()
 		for (UINT a=0; a<p_Itinerary->m_Attachments.m_ItemCount; a++)
 			FileSize += p_Itinerary->m_Attachments.m_Items[a].Size;
 
-		CString tmpMask;
-		ENSURE(tmpMask.LoadString(p_Itinerary->m_Attachments.m_ItemCount==1 ? IDS_INSPECT_ATTACHMENTS_SINGULAR : IDS_INSPECT_ATTACHMENTS_PLURAL));
-
 		WCHAR tmpBuf[256];
 		StrFormatByteSize(FileSize, tmpBuf, 256);
 
-		tmpStr.Format(tmpMask, p_Itinerary->m_Attachments.m_ItemCount, tmpBuf);
+		tmpStr.Format(p_Itinerary->m_Attachments.m_ItemCount==1 ? IDS_INSPECT_ATTACHMENTS_SINGULAR : IDS_INSPECT_ATTACHMENTS_PLURAL, p_Itinerary->m_Attachments.m_ItemCount, tmpBuf);
 	}
 	else
 	{
@@ -75,9 +72,9 @@ BOOL InspectDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_INSPECT);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDD_INSPECT);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	Update();
 
@@ -114,12 +111,10 @@ void InspectDlg::OnDeleteAttachments()
 {
 	ASSERT(p_Itinerary);
 
-	CString caption;
-	CString message;
-	ENSURE(caption.LoadString(IDS_DELETE_CAPTION));
-	ENSURE(message.LoadString(IDS_DELETE_ALL));
+	CString Caption((LPCSTR)IDS_DELETE_CAPTION);
+	CString Message((LPCSTR)IDS_DELETE_ALL);
 
-	if (MessageBox(message, caption, MB_YESNO | MB_ICONWARNING)==IDYES)
+	if (MessageBox(Message, Caption, MB_YESNO | MB_ICONWARNING)==IDYES)
 	{
 		p_Itinerary->DeleteAttachments();
 		Update();

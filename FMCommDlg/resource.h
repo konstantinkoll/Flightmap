@@ -118,7 +118,7 @@
 #define IDD_JUMPTOIATA                  21120
 #define IDD_SELECTGPS                   21130
 #define IDC_RESET                       21131
-#define IDD_ENTERLICENSEKEY             21200
+#define IDD_LICENSE             21200
 #define IDC_LOADLICENSE                 21201
 #define IDC_LICENSEKEY                  21202
 #define IDD_REGISTER                    21300

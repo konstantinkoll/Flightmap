@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "FMApplication.h"
 
 
 // CExplorerList
@@ -21,12 +20,6 @@ public:
 	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 
 protected:
-	FMApplication* p_App;
-	HTHEME hTheme;
-	UINT m_ItemMenuID;
-	BOOL m_HighlightFirst;
-	UINT m_BackgroundMenuID;
-
 	virtual void Init();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -35,4 +28,9 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
+
+	HTHEME hTheme;
+	UINT m_ItemMenuID;
+	BOOL m_HighlightFirst;
+	UINT m_BackgroundMenuID;
 };

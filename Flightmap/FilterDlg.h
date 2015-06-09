@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // FilterDlg
@@ -34,6 +33,10 @@ public:
 	FlightFilter m_Filter;
 
 protected:
+	afx_msg BOOL OnInitDialog();
+	afx_msg void OnSelectIATA();
+	DECLARE_MESSAGE_MAP()
+
 	CItinerary* p_Itinerary;
 	CImageListTransparent m_SeatIcons;
 	CMFCMaskedEdit m_wndFilterAirport;
@@ -43,8 +46,4 @@ protected:
 	CComboBox m_wndFilterMonth;
 	CListCtrl m_wndSortAttributes;
 	CButton m_wndAscending;
-
-	afx_msg BOOL OnInitDialog();
-	afx_msg void OnSelectIATA();
-	DECLARE_MESSAGE_MAP()
 };

@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
-#include "CExplorerList.h"
 
 
 // CExplorerList
@@ -13,7 +12,6 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	p_App = FMGetApp();
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
@@ -31,10 +29,10 @@ void CExplorerList::Init()
 {
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((FMGetApp()->m_ThemeLibLoaded) && (FMGetApp()->OSVersion>=OS_Vista))
 	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		FMGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+		hTheme = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	LOGFONT lf;
@@ -43,12 +41,12 @@ void CExplorerList::Init()
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = (p_App->OSVersion==OS_XP) ? 2 : 3;
+	tvi.cLines = (FMGetApp()->OSVersion==OS_XP) ? 2 : 3;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 15*abs(lf.lfHeight);
 
-	if ((p_App->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
+	if ((FMGetApp()->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
 	{
 		tvi.dwMask |= LVTVIM_LABELMARGIN;
 		tvi.rcLabelMargin.top = 0;
@@ -68,7 +66,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.iGroupId = ID;
 	lvg.pszHeader = Name.GetBuffer();
-	if (p_App->OSVersion>=OS_Vista)
+	if (FMGetApp()->OSVersion>=OS_Vista)
 	{
 		if (!Hint.IsEmpty())
 		{
@@ -129,19 +127,19 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CExplorerList::OnDestroy()
 {
 	if (hTheme)
-		p_App->zCloseThemeData(hTheme);
+		FMGetApp()->zCloseThemeData(hTheme);
 
 	CListCtrl::OnDestroy();
 }
 
 LRESULT CExplorerList::OnThemeChanged()
 {
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	if ((FMGetApp()->m_ThemeLibLoaded) && (FMGetApp()->OSVersion>=OS_Vista))
 	{
 		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
+			FMGetApp()->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hTheme = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	return TRUE;

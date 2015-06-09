@@ -17,6 +17,9 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
+	afx_msg BOOL OnInitDialog();
+	DECLARE_MESSAGE_MAP()
+
 	FindReplaceSettings* p_FindReplaceSettings;
 	BOOL m_AllowColumnOnly;
 	CComboBox m_wndSearchTerm;
@@ -25,7 +28,4 @@ protected:
 	CButton m_wndMatchEntireCell;
 	CButton m_wndMatchColumnOnly;
 	CButton m_wndReplaceAll;
-
-	afx_msg BOOL OnInitDialog();
-	DECLARE_MESSAGE_MAP()
 };

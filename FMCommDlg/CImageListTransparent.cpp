@@ -8,11 +8,6 @@
 
 // CImageListTransparent
 
-CImageListTransparent::CImageListTransparent()
-	: CImageList()
-{
-}
-
 void CImageListTransparent::Create(UINT ID, INT cx, INT cy)
 {
 	CBitmap bmp;

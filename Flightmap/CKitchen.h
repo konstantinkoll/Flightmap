@@ -3,11 +3,8 @@
 //
 
 #pragma once
-#include "Flightmap.h"
-#include "FMCommDlg.h"
 #include "CItinerary.h"
 #include <hash_map>
-#include <math.h>
 
 
 // CKitchen

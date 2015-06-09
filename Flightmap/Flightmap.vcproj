@@ -289,8 +289,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Flightmap wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -386,8 +385,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Flightmap wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot;"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>

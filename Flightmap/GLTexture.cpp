@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "GLTexture.h"
-#include "resource.h"
+#include "Resource.h"
 
 
 // GLTexture

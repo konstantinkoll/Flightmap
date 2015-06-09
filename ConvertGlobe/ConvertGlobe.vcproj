@@ -240,7 +240,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="0"
+				LinkTimeCodeGeneration="1"
 				FixedBaseAddress="1"
 				TargetMachine="1"
 			/>
@@ -327,7 +327,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="0"
+				LinkTimeCodeGeneration="1"
 				FixedBaseAddress="1"
 				TargetMachine="17"
 			/>

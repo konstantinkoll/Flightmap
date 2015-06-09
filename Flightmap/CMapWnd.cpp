@@ -6,7 +6,7 @@
 #include "CLoungeView.h"
 #include "CMapWnd.h"
 #include "Flightmap.h"
-#include <Winspool.h>
+#include <winspool.h>
 
 
 // CMapWnd
@@ -15,28 +15,22 @@
 CMapWnd::CMapWnd()
 	: CMainWindow()
 {
-	m_hIcon = NULL;
 	m_pBitmap = NULL;
 }
 
 CMapWnd::~CMapWnd()
 {
-	if (m_hIcon)
-		DestroyIcon(m_hIcon);
 	if (m_pBitmap)
 		delete m_pBitmap;
 }
 
 BOOL CMapWnd::Create()
 {
-	m_hIcon = theApp.LoadIcon(IDR_MAP);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_MAP));
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString Caption((LPCSTR)IDR_MAP);
 
-	CString caption;
-	ENSURE(caption.LoadString(IDR_MAP));
-
-	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, _T("Map"));
+	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Map"));
 }
 
 void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title)
@@ -46,16 +40,15 @@ void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title)
 
 	m_Title = Title;
 
-	CString caption;
-	ENSURE(caption.LoadString(IDR_MAP));
+	CString Caption((LPCSTR)IDR_MAP);
 
 	if (!DisplayName.IsEmpty())
 	{
-		caption.Insert(0, _T(" - "));
-		caption.Insert(0, DisplayName);
+		Caption.Insert(0, _T(" - "));
+		Caption.Insert(0, DisplayName);
 	}
 
-	SetWindowText(caption);
+	SetWindowText(Caption);
 	m_wndMapView.SetBitmap(m_pBitmap=pBitmap);
 }
 

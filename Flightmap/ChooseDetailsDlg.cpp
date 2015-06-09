@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "ChooseDetailsDlg.h"
-#include <algorithm>
+#include "Flightmap.h"
 
 
 // ChooseDetailsDlg
@@ -51,8 +51,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 void ChooseDetailsDlg::AddAttribute(UINT attr)
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(FMAttributes[attr].nNameID));
+	CString tmpStr((LPCSTR)FMAttributes[attr].nNameID);
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
@@ -112,9 +111,9 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_CHOOSEDETAILS);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDD_CHOOSEDETAILS);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Kontrollelemente einstellen
 	const UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS | LVS_EX_CHECKBOXES;

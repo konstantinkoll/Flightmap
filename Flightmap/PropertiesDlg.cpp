@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "Flightmap.h"
 #include "PropertiesDlg.h"
 
 
@@ -38,16 +39,16 @@ BOOL PropertiesDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_PROPERTIES);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDD_PROPERTIES);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Titel
-	CString mask;
-	CString caption;
-	GetWindowText(mask);
-	caption.Format(mask, p_Itinerary->m_DisplayName);
-	SetWindowText(caption);
+	CString Mask;
+	CString Caption;
+	GetWindowText(Mask);
+	Caption.Format(Mask, p_Itinerary->m_DisplayName);
+	SetWindowText(Caption);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

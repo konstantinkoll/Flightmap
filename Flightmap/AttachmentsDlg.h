@@ -5,7 +5,6 @@
 #pragma once
 #include "CFileView.h"
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // AttachmentsDlg
@@ -19,9 +18,9 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	CItinerary* p_Itinerary;
-	CFileView m_wndFileView;
-
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
+
+	CItinerary* p_Itinerary;
+	CFileView m_wndFileView;
 };

@@ -4,12 +4,11 @@
 
 #pragma once
 #include "CDataGrid.h"
+#include "CFileView.h"
 #include "CItinerary.h"
 #include "Database.h"
 #include "FMCommDlg.h"
 #include "resource.h"
-
-#define PI     3.14159265358979323846
 
 
 // Globe textures
@@ -69,7 +68,7 @@ public:
 	virtual INT ExitInstance();
 
 	void Quit();
-	void Broadcast(UINT message);
+	void Broadcast(UINT Message);
 	void AddToRecentList(CString FileName);
 	void AddRecentList(CDialogMenuPopup* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
@@ -135,10 +134,10 @@ public:
 	BOOL m_MergeClasses;
 
 protected:
-	BOOL m_AppInitialized;
-
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+
+	BOOL m_AppInitialized;
 };
 
 extern CFlightmapApp theApp;

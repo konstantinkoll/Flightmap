@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "Flightmap.h"
 #include "ThreeDSettingsDlg.h"
 
 
@@ -40,13 +41,12 @@ BOOL ThreeDSettingsDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_3DSETTINGS);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDD_3DSETTINGS);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Texturgröße
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_AUTOMATIC));
+	CString tmpStr((LPCSTR)IDS_AUTOMATIC);
 	m_wndTextureSize.AddString(tmpStr);
 	m_wndTextureSize.AddString(_T("1024×1024"));
 	m_wndTextureSize.AddString(_T("2048×2048"));

@@ -49,9 +49,7 @@ void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 
 BOOL IsCtrlThemed()
 {
-	FMApplication* pApp = FMGetApp();
-
-	return pApp->m_ThemeLibLoaded ? pApp->zIsAppThemed() : FALSE;
+	return FMGetApp()->m_ThemeLibLoaded ? FMGetApp()->zIsAppThemed() : FALSE;
 }
 
 void DrawControlBorder(CWnd* pWnd)
@@ -65,19 +63,18 @@ void DrawControlBorder(CWnd* pWnd)
 
 	CWindowDC dc(pWnd);
 
-	FMApplication* pApp = FMGetApp();
-	if (pApp->m_ThemeLibLoaded)
-		if (pApp->zIsAppThemed())
+	if (FMGetApp()->m_ThemeLibLoaded)
+		if (FMGetApp()->zIsAppThemed())
 		{
-			HTHEME hTheme = pApp->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
+			HTHEME hTheme = FMGetApp()->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
 			if (hTheme)
 			{
 				CRect rectClient(rect);
 				rectClient.DeflateRect(2, 2);
 				dc.ExcludeClipRect(rectClient);
 
-				pApp->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
-				pApp->zCloseThemeData(hTheme);
+				FMGetApp()->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
+				FMGetApp()->zCloseThemeData(hTheme);
 
 				return;
 			}
@@ -88,14 +85,12 @@ void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-void FMErrorBox(UINT nResID, HWND hWnd)
+void FMErrorBox(UINT nID, HWND hWnd)
 {
-	CString caption;
-	CString message;
-	ENSURE(caption.LoadString(IDS_ERROR));
-	ENSURE(message.LoadString(nResID));
+	CString Caption((LPCSTR)IDS_ERROR);
+	CString Message((LPCSTR)nID);
 
-	MessageBox(hWnd, message, caption, MB_OK | MB_ICONERROR);
+	MessageBox(hWnd, Message, Caption, MB_OK | MB_ICONERROR);
 }
 
 
@@ -164,11 +159,11 @@ BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
 		INT Mid = (First+Last)/2;
 
 		*pBuffer = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
-		INT Res = strcmp((*pBuffer)->Code, Code);
-		if (Res==0)
+		INT Result = strcmp((*pBuffer)->Code, Code);
+		if (Result==0)
 			return TRUE;
 
-		if (Res<0)
+		if (Result<0)
 		{
 			First = Mid+1;
 		}
@@ -409,7 +404,7 @@ void ParseInput(string& tmpStr, FMLicense* License)
 
 BOOL ReadCodedLicense(string& Message)
 {
-	BOOL res = FALSE;
+	BOOL Result = FALSE;
 
 	HKEY k;
 	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Flightmap", &k)==ERROR_SUCCESS)
@@ -419,13 +414,13 @@ BOOL ReadCodedLicense(string& Message)
 		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
 		{
 			Message = tmpStr;
-			res = TRUE;
+			Result = TRUE;
 		}
 
 		RegCloseKey(k);
 	}
 
-	return res;
+	return Result;
 }
 
 BOOL GetLicense(FMLicense* License)
@@ -487,7 +482,7 @@ BOOL FMIsSharewareExpired()
 	{
 		ExpireRead = TRUE;
 
-		BOOL res = FALSE;
+		BOOL Result = FALSE;
 
 		HKEY k;
 		if (RegOpenKey(HKEY_CURRENT_USER, _T("Software\\Flightmap"), &k)==ERROR_SUCCESS)
@@ -497,10 +492,10 @@ BOOL FMIsSharewareExpired()
 			{
 				sz = sizeof(DWORD);
 				if (RegQueryValueEx(k, _T("Envelope"), 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
-					res = TRUE;
+					Result = TRUE;
 			}
 
-			if (!res)
+			if (!Result)
 			{
 				GetSystemTimeAsFileTime(&ExpireBuffer);
 				RegSetValueEx(k, _T("Seed"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
@@ -685,8 +680,6 @@ __forceinline INT ParseVersion(CString ver, Version* v)
 
 void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 {
-	FMApplication* pApp = FMGetApp();
-
 	// Obtain current version from instance version resource
 	CString CurrentVersion;
 	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
@@ -694,11 +687,11 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Check due?
 	BOOL Check = Force;
 	if (!Check)
-		Check = pApp->IsUpdateCheckDue();
+		Check = FMGetApp()->IsUpdateCheckDue();
 
 	// Perform check
-	CString LatestVersion = pApp->GetString(_T("LatestUpdateVersion"));
-	CString LatestMSN = pApp->GetString(_T("LatestUpdateMSN"));
+	CString LatestVersion = FMGetApp()->GetString(_T("LatestUpdateVersion"));
+	CString LatestMSN = FMGetApp()->GetString(_T("LatestUpdateMSN"));
 
 	if (Check)
 	{
@@ -710,8 +703,8 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			LatestVersion = GetIniValue(VersionIni, _T("Version"));
 			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
 
-			pApp->WriteString(_T("LatestUpdateVersion"), LatestVersion);
-			pApp->WriteString(_T("LatestUpdateMSN"), LatestMSN);
+			FMGetApp()->WriteString(_T("LatestUpdateVersion"), LatestVersion);
+			FMGetApp()->WriteString(_T("LatestUpdateMSN"), LatestMSN);
 		}
 	}
 
@@ -724,7 +717,7 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 		ParseVersion(CurrentVersion, &CV);
 		ParseVersion(LatestVersion, &LV);
 
-		CString IgnoreMSN = pApp->GetString(_T("IgnoreUpdateMSN"));
+		CString IgnoreMSN = FMGetApp()->GetString(_T("IgnoreUpdateMSN"));
 
 		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) &&
 			((LV.Major>CV.Major) ||
@@ -737,31 +730,29 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	{
 		if (pParentWnd)
 		{
-			if (pApp->m_pUpdateNotification)
-				pApp->m_pUpdateNotification->DestroyWindow();
+			if (FMGetApp()->m_pUpdateNotification)
+				FMGetApp()->m_pUpdateNotification->DestroyWindow();
 
 			FMUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
 			dlg.DoModal();
 		}
 		else
-			if (pApp->m_pUpdateNotification)
+			if (FMGetApp()->m_pUpdateNotification)
 			{
-				pApp->m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
+				FMGetApp()->m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
 			}
 			else
 			{
-				pApp->m_pUpdateNotification = new FMUpdateDlg(LatestVersion, LatestMSN);
-				pApp->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
-				pApp->m_pUpdateNotification->ShowWindow(SW_SHOW);
+				FMGetApp()->m_pUpdateNotification = new FMUpdateDlg(LatestVersion, LatestMSN);
+				FMGetApp()->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
+				FMGetApp()->m_pUpdateNotification->ShowWindow(SW_SHOW);
 			}
 	}
 	else
 		if (Force)
 		{
-			CString Caption;
-			CString Text;
-			ENSURE(Caption.LoadString(IDS_UPDATE));
-			ENSURE(Text.LoadString(IDS_UPDATENOTAVAILABLE));
+			CString Caption((LPCSTR)IDS_UPDATE);
+			CString Text((LPCSTR)IDS_UPDATENOTAVAILABLE);
 
 			MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONINFORMATION | MB_OK);
 		}

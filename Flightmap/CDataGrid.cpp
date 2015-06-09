@@ -8,10 +8,9 @@
 #include "ChooseDetailsDlg.h"
 #include "CMainWnd.h"
 #include "EditFlightDlg.h"
-#include "FindReplaceDlg.h"
 #include "FilterDlg.h"
+#include "FindReplaceDlg.h"
 #include "Flightmap.h"
-#include "Resource.h"
 
 
 // CDataGrid
@@ -52,7 +51,7 @@ CDataGrid::~CDataGrid()
 
 BOOL CDataGrid::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL;
 	CRect rect;
@@ -884,7 +883,7 @@ void CDataGrid::DestroyEdit(BOOL Accept)
 
 void CDataGrid::FindReplace(INT iSelectPage)
 {
-	FindReplaceDlg dlg(this, iSelectPage, m_ViewParameters.ColumnOrder[m_FocusItem.x]);
+	FindReplaceDlg dlg(iSelectPage, m_ViewParameters.ColumnOrder[m_FocusItem.x], this);
 	if (dlg.DoModal()==IDOK)
 	{
 		theApp.m_FindReplaceSettings = m_FindReplaceSettings = dlg.m_FindReplaceSettings;
@@ -989,8 +988,7 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	for (UINT a=0; a<FMAttributeCount; a++)
 	{
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(FMAttributes[a].nNameID));
+		CString tmpStr((LPCSTR)FMAttributes[a].nNameID);
 
 		HDITEM HdItem;
 		HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
@@ -1351,18 +1349,17 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 					case FMTypeFlags:
 						if (m_HotSubitem!=-1)
 						{
-							CString caption;
-							CString message;
-							ENSURE(message.LoadString(IDS_ATTACHMENTS+m_HotSubitem));
+							CString Caption;
+							CString Message((LPCSTR)IDS_ATTACHMENTS+m_HotSubitem);
 
-							INT pos = message.Find(L'\n');
+							INT pos = Message.Find(L'\n');
 							if (pos!=-1)
 							{
-								caption = message.Left(pos);
-								message = message.Mid(pos+1);
+								Caption = Message.Left(pos);
+								Message = Message.Mid(pos+1);
 							}
 
-							m_TooltipCtrl.Track(point, theApp.m_FlagIcons32.ExtractIcon(m_HotSubitem), NULL, CSize(32, 32), caption, message);
+							m_TooltipCtrl.Track(point, theApp.m_FlagIcons32.ExtractIcon(m_HotSubitem), NULL, CSize(32, 32), Caption, Message);
 						}
 					case FMTypeColor:
 						break;
@@ -1434,7 +1431,6 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 							if (Count)
 							{
 								CString msg;
-								CString mask;
 								WCHAR tmpMin[256];
 								WCHAR tmpMax[256];
 								WCHAR tmpAvg[256];
@@ -1442,33 +1438,28 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 								switch (FMAttributes[Attr].Type)
 								{
 								case FMTypeUINT:
-									ENSURE(mask.LoadString(IDS_TOOLTIP_UINT));
-									msg.Format(mask, UMin, UMax, (DOUBLE)USum/(DOUBLE)Count);
+									msg.Format(IDS_TOOLTIP_UINT, UMin, UMax, (DOUBLE)USum/(DOUBLE)Count);
 									break;
 								case FMTypeTime:
 									TimeToString(tmpMin, 256, UMin);
 									TimeToString(tmpMax, 256, UMax);
 									TimeToString(tmpAvg, 256, (UINT)((DOUBLE)USum/(DOUBLE)Count));
-									ENSURE(mask.LoadString(IDS_TOOLTIP_TIME));
-									msg.Format(mask, tmpMin, tmpMax, tmpAvg);
+									msg.Format(IDS_TOOLTIP_TIME, tmpMin, tmpMax, tmpAvg);
 									break;
 								case FMTypeDistance:
 									DistanceToString(tmpMin, 256, DMin);
 									DistanceToString(tmpMax, 256, DMax);
 									DistanceToString(tmpAvg, 256, DSum/(DOUBLE)Count);
-									ENSURE(mask.LoadString(IDS_TOOLTIP_DISTANCE));
-									msg.Format(mask, tmpMin, tmpMax, tmpAvg);
+									msg.Format(IDS_TOOLTIP_DISTANCE, tmpMin, tmpMax, tmpAvg);
 									break;
 								case FMTypeDateTime:
 									DateTimeToString(tmpMin, 256, FMin);
 									DateTimeToString(tmpMax, 256, FMax);
-									ENSURE(mask.LoadString(IDS_TOOLTIP_DATETIME));
-									msg.Format(mask, tmpMin, tmpMax);
+									msg.Format(IDS_TOOLTIP_DATETIME, tmpMin, tmpMax);
 									break;
 								}
 
-								CString cpt;
-								ENSURE(cpt.LoadString(IDS_COLUMN0+Attr));
+								CString cpt((LPCSTR)IDS_COLUMN0+Attr);
 
 								m_TooltipCtrl.Track(point, NULL, NULL, NULL, cpt, msg);
 							}
@@ -1859,7 +1850,7 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 	pPopup->Track(point);
 }
 
-BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
 
@@ -2041,12 +2032,10 @@ void CDataGrid::OnFindReplaceAgain()
 	if (!m_FindReplaceSettings.FirstAction && (m_FindReplaceSettings.Flags & FRS_MATCHCOLUMNONLY))
 		if (!ColumnValid(m_ViewParameters.ColumnOrder[m_FocusItem.x]))
 		{
-			CString caption;
-			CString message;
-			ENSURE(caption.LoadString(IDS_FINDREPLACE));
-			ENSURE(message.LoadString(m_FindReplaceSettings.DoReplace ? IDS_ILLEGALCOLUMN_REPLACE : IDS_ILLEGALCOLUMN_FIND));
+			CString Caption((LPCSTR)IDS_FINDREPLACE);
+			CString Message((LPCSTR)(m_FindReplaceSettings.DoReplace ? IDS_ILLEGALCOLUMN_REPLACE : IDS_ILLEGALCOLUMN_FIND));
 
-			MessageBox(message, caption, MB_ICONERROR | MB_OK);
+			MessageBox(Message, Caption, MB_ICONERROR | MB_OK);
 
 			return;
 		}
@@ -2078,12 +2067,10 @@ Again:
 
 			if (StartOver)
 			{
-				CString caption;
-				CString message;
-				ENSURE(caption.LoadString(IDS_FINDREPLACE));
-				ENSURE(message.LoadString((m_FindReplaceSettings.DoReplace && Replaced) ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND));
+				CString Caption((LPCSTR)IDS_FINDREPLACE);
+				CString Message((LPCSTR)((m_FindReplaceSettings.DoReplace && Replaced) ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND));
 
-				MessageBox(message, caption, (m_FindReplaceSettings.DoReplace && Replaced) ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
+				MessageBox(Message, Caption, (m_FindReplaceSettings.DoReplace && Replaced) ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
 
 				return;
 			}
@@ -2116,12 +2103,10 @@ FoundPosition:
 		{
 			SetFocusItem(item, FALSE);
 
-			CString caption;
-			CString message;
-			ENSURE(caption.LoadString(IDS_FINDREPLACE));
-			ENSURE(message.LoadString(IDS_REPLACEQUESTION));
+			CString Caption((LPCSTR)IDS_FINDREPLACE);
+			CString Message((LPCSTR)IDS_REPLACEQUESTION);
 
-			switch (MessageBox(message, caption, MB_ICONQUESTION | MB_YESNOCANCEL))
+			switch (MessageBox(Message, Caption, MB_ICONQUESTION | MB_YESNOCANCEL))
 			{
 			case IDNO:
 				goto Again;

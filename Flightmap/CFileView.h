@@ -22,7 +22,6 @@ public:
 
 protected:
 	CWnd* p_Status;
-	FMApplication* p_App;
 	CItinerary* p_Itinerary;
 	AIRX_Flight* p_Flight;
 	CTaskbar m_wndTaskbar;

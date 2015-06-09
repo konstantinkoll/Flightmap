@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "Flightmap.h"
 
 
 // ThreeDSettingsDlg
@@ -12,7 +11,7 @@
 class ThreeDSettingsDlg : public CDialog
 {
 public:
-	ThreeDSettingsDlg(CWnd* pParentWnd);
+	ThreeDSettingsDlg(CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

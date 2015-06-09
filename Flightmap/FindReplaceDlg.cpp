@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "FindReplaceDlg.h"
+#include "Flightmap.h"
 
 
 // FindReplaceDlg
@@ -11,7 +12,7 @@
 
 static UINT LastPageSelected = 0;
 
-FindReplaceDlg::FindReplaceDlg(CWnd* pParentWnd, INT iSelectPage, UINT Attr)
+FindReplaceDlg::FindReplaceDlg(INT iSelectPage, UINT Attr, CWnd* pParentWnd)
 	: CPropertySheet(IDS_FINDREPLACE, pParentWnd, iSelectPage)
 {
 	m_FindReplaceSettings = theApp.m_FindReplaceSettings;

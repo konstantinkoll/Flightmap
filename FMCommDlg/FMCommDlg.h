@@ -1,31 +1,32 @@
+
 #pragma once
-#include "..\FMCommDlg\CDialogMenuBar.h"
-#include "..\FMCommDlg\CExplorerList.h"
-#include "..\FMCommDlg\CGdiPlusBitmap.h"
-#include "..\FMCommDlg\CGridHeader.h"
-#include "..\FMCommDlg\CGroupBox.h"
-#include "..\FMCommDlg\CImageListTransparent.h"
-#include "..\FMCommDlg\CMainWindow.h"
-#include "..\FMCommDlg\CMapSelectionCtrl.h"
-#include "..\FMCommDlg\CMapPreviewCtrl.h"
-#include "..\FMCommDlg\CRatingCtrl.h"
-#include "..\FMCommDlg\CTaskBar.h"
-#include "..\FMCommDlg\CTaskButton.h"
-#include "..\FMCommDlg\CTooltipHeader.h"
-#include "..\FMCommDlg\CTooltipList.h"
-#include "..\FMCommDlg\DynArray.h"
-#include "..\FMCommDlg\FMApplication.h"
-#include "..\FMCommDlg\FMColorDlg.h"
-#include "..\FMCommDlg\FMDialog.h"
-#include "..\FMCommDlg\FMLicenseDlg.h"
-#include "..\FMCommDlg\FMRegisterDlg.h"
-#include "..\FMCommDlg\FMResolutionDlg.h"
-#include "..\FMCommDlg\FMSelectLocationGPSDlg.h"
-#include "..\FMCommDlg\FMSelectLocationIATADlg.h"
-#include "..\FMCommDlg\FMTooltip.h"
-#include "..\FMCommDlg\FMUpdateDlg.h"
-#include "..\FMCommDlg\IATA.h"
-#include "..\FMCommDlg\License.h"
+#include "CDialogMenuBar.h"
+#include "CExplorerList.h"
+#include "CGdiPlusBitmap.h"
+#include "CGridHeader.h"
+#include "CGroupBox.h"
+#include "CImageListTransparent.h"
+#include "CMainWindow.h"
+#include "CMapSelectionCtrl.h"
+#include "CMapPreviewCtrl.h"
+#include "CRatingCtrl.h"
+#include "CTaskBar.h"
+#include "CTaskButton.h"
+#include "CTooltipHeader.h"
+#include "CTooltipList.h"
+#include "FMDynArray.h"
+#include "FMApplication.h"
+#include "FMColorDlg.h"
+#include "FMDialog.h"
+#include "FMLicenseDlg.h"
+#include "FMRegisterDlg.h"
+#include "FMResolutionDlg.h"
+#include "FMSelectLocationGPSDlg.h"
+#include "FMSelectLocationIATADlg.h"
+#include "FMTooltip.h"
+#include "FMUpdateDlg.h"
+#include "IATA.h"
+#include "License.h"
 
 #define FMGetApp() ((FMApplication*)AfxGetApp())
 
@@ -49,7 +50,7 @@ struct FMLicense
 void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 BOOL IsCtrlThemed();
 void DrawControlBorder(CWnd* pWnd);
-void FMErrorBox(UINT nResID, HWND hWnd=NULL);
+void FMErrorBox(UINT nID, HWND hWnd=NULL);
 
 
 // IATA database

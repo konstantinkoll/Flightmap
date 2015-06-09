@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // InspectDlg
@@ -16,8 +15,6 @@ public:
 	InspectDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
 protected:
-	CItinerary* p_Itinerary;
-
 	void Update();
 
 	afx_msg BOOL OnInitDialog();
@@ -26,4 +23,6 @@ protected:
 	afx_msg void OnShowAttachments();
 	afx_msg void OnDeleteAttachments();
 	DECLARE_MESSAGE_MAP()
+
+	CItinerary* p_Itinerary;
 };

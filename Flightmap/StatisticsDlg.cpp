@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "Flightmap.h"
 #include "StatisticsDlg.h"
 
 
@@ -43,8 +44,7 @@ __forceinline void Prepare(CListCtrl& wndList)
 
 void AddColumn(CListCtrl& wndList, INT ID, UINT ResID, BOOL Right=FALSE)
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(ResID));
+	CString tmpStr((LPCSTR)ResID);
 
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
@@ -283,10 +283,8 @@ void StatisticsDlg::UpdateStatistics()
 	}
 
 	// Display
-	CString MaskFlightsSingular;
-	CString MaskFlightsPlural;
-	ENSURE(MaskFlightsSingular.LoadString(IDS_FLIGHTS_SINGULAR));
-	ENSURE(MaskFlightsPlural.LoadString(IDS_FLIGHTS_PLURAL));
+	CString MaskFlightsSingular((LPCSTR)IDS_FLIGHTS_SINGULAR);
+	CString MaskFlightsPlural((LPCSTR)IDS_FLIGHTS_PLURAL);
 
 	tmpStr.Format(FlightCount==1 ? MaskFlightsSingular : MaskFlightsPlural, FlightCount);
 	GetDlgItem(IDC_FLIGHTCOUNT)->SetWindowText(tmpStr);
@@ -486,9 +484,9 @@ BOOL StatisticsDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_STATISTICS);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDD_STATISTICS);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Filter
 	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);

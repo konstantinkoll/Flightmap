@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "FMCommDlg.h"
 #include "CKitchen.h"
 #include "CMapView.h"
+#include "FMCommDlg.h"
 
 
 // CMapWnd
@@ -24,10 +24,6 @@ public:
 	void SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title);
 
 protected:
-	HICON m_hIcon;
-	CBitmap* m_pBitmap;
-	CMapView m_wndMapView;
-
 	void ExportMap(CString Filename, GUID guidFileType);
 	void ExportMap(DWORD FilterIndex=3);
 	void Print(PRINTDLGEX pdex);
@@ -50,6 +46,9 @@ protected:
 	afx_msg void OnMapExportTIFF();
 	afx_msg void OnUpdateMapExportCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	CBitmap* m_pBitmap;
+	CMapView m_wndMapView;
 
 private:
 	CString m_Title;

@@ -50,7 +50,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="$(SolutionDir)\cryptlib"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;FMCommDlg_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -127,7 +127,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="$(SolutionDir)\cryptlib"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;FMCommDlg_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -207,7 +207,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\cryptlib"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT;FMCommDlg_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="2"
@@ -288,7 +288,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\cryptlib"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT;FMCommDlg_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="2"
@@ -443,10 +443,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MenuIcons.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -545,10 +541,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DynArray.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FMApplication.h"
 				>
 			</File>
@@ -562,6 +554,10 @@
 			</File>
 			<File
 				RelativePath=".\FMDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMDynArray.h"
 				>
 			</File>
 			<File
@@ -610,10 +606,6 @@
 			</File>
 			<File
 				RelativePath=".\License.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuIcons.h"
 				>
 			</File>
 			<File

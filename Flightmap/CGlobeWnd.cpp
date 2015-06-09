@@ -3,36 +3,21 @@
 //
 
 #include "stdafx.h"
-#include "CLoungeView.h"
 #include "CGlobeWnd.h"
+#include "CLoungeView.h"
 #include "Flightmap.h"
 
 
 // CGlobeWnd
 //
 
-CGlobeWnd::CGlobeWnd()
-	: CMainWindow()
-{
-	m_hIcon = NULL;
-}
-
-CGlobeWnd::~CGlobeWnd()
-{
-	if (m_hIcon)
-		DestroyIcon(m_hIcon);
-}
-
 BOOL CGlobeWnd::Create()
 {
-	m_hIcon = theApp.LoadIcon(IDR_GLOBE);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_GLOBE));
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString Caption((LPCSTR)IDR_GLOBE);
 
-	CString caption;
-	ENSURE(caption.LoadString(IDR_GLOBE));
-
-	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, _T("Globe"));
+	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Globe"));
 }
 
 BOOL CGlobeWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -59,17 +44,16 @@ void CGlobeWnd::AdjustLayout()
 
 void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 {
-	CString caption;
-	ENSURE(caption.LoadString(IDR_GLOBE));
+	CString Caption((LPCSTR)IDR_GLOBE);
 
 	if (pKitchen)
 		if (!pKitchen->m_DisplayName.IsEmpty())
 		{
-			caption.Insert(0, _T(" - "));
-			caption.Insert(0, pKitchen->m_DisplayName);
+			Caption.Insert(0, _T(" - "));
+			Caption.Insert(0, pKitchen->m_DisplayName);
 		}
 
-	SetWindowText(caption);
+	SetWindowText(Caption);
 	m_wndGlobeView.SetFlights(pKitchen);
 }
 

@@ -2,7 +2,6 @@
 // CExcelFile.cpp: Implementierung der Klasse CExcelFile
 //
 
-#pragma once
 #include "stdafx.h"
 #include "CExcelFile.h"
 

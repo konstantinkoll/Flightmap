@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "FMCommDlg.h"
 #include "CMapSelectionCtrl.h"
+#include "IATA.h"
 
 
 // FMSelectLocationGPSDlg
@@ -13,7 +13,7 @@
 class FMSelectLocationGPSDlg : public CDialog
 {
 public:
-	FMSelectLocationGPSDlg(CWnd* pParentWnd, const FMGeoCoordinates Location);
+	FMSelectLocationGPSDlg(const FMGeoCoordinates Location, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

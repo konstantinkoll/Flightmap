@@ -3,9 +3,8 @@
 //
 
 #pragma once
-#include "FMApplication.h"
 #include "CMainWindow.h"
-#include "DynArray.h"
+#include "FMDynArray.h"
 
 #define WM_MENULEFT            WM_USER+5
 #define WM_MENURIGHT           WM_USER+6
@@ -69,21 +68,6 @@ public:
 	BOOL HasFocus();
 
 protected:
-	FMApplication* p_App;
-	DynArray<MenuBarItem> m_Items;
-	INT m_SelectedItem;
-	INT m_HoverItem;
-	BOOL m_Hover;
-	BOOL m_UseDropdown;
-	CMFCToolBarImages m_Icons;
-	INT m_IconSize;
-	LOGFONT m_MenuLogFont;
-	LOGFONT m_NormalLogFont;
-	LOGFONT m_CaptionLogFont;
-	CFont m_MenuFont;
-	CFont m_NormalFont;
-	CFont m_CaptionFont;
-
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
 	void SelectItem(INT idx, BOOL Keyboard);
@@ -114,6 +98,20 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pKillWnd);
 	DECLARE_MESSAGE_MAP()
+
+	FMDynArray<MenuBarItem> m_Items;
+	INT m_SelectedItem;
+	INT m_HoverItem;
+	BOOL m_Hover;
+	BOOL m_UseDropdown;
+	CMFCToolBarImages m_Icons;
+	INT m_IconSize;
+	LOGFONT m_MenuLogFont;
+	LOGFONT m_NormalLogFont;
+	LOGFONT m_CaptionLogFont;
+	CFont m_MenuFont;
+	CFont m_NormalFont;
+	CFont m_CaptionFont;
 
 private:
 	HTHEME hTheme;
@@ -173,24 +171,6 @@ public:
 	void DrawButton(CDC* pDC, LPRECT rect, BOOL Radio, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed);
 
 protected:
-	FMApplication* p_App;
-	DynArray<MenuPopupItem> m_Items;
-	UINT m_LargeIconsID;
-	UINT m_SmallIconsID;
-	INT m_Gutter;
-	INT m_Width;
-	INT m_Height;
-	INT m_BlueAreaStart;
-	INT m_FirstRowOffset;
-	INT m_SelectedItem;
-	INT m_LastSelectedItem;
-	BOOL m_Hover;
-	BOOL m_Keyboard;
-	CMFCToolBarImages m_LargeIcons;
-	CMFCToolBarImages m_SmallIcons;
-	CDialogMenuPopup* p_SubMenu;
-	CWnd* p_ParentMenu;
-
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
@@ -215,9 +195,26 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
-	afx_msg INT OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
+	afx_msg INT OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	DECLARE_MESSAGE_MAP()
+
+	FMDynArray<MenuPopupItem> m_Items;
+	UINT m_LargeIconsID;
+	UINT m_SmallIconsID;
+	INT m_Gutter;
+	INT m_Width;
+	INT m_Height;
+	INT m_BlueAreaStart;
+	INT m_FirstRowOffset;
+	INT m_SelectedItem;
+	INT m_LastSelectedItem;
+	BOOL m_Hover;
+	BOOL m_Keyboard;
+	CMFCToolBarImages m_LargeIcons;
+	CMFCToolBarImages m_SmallIcons;
+	CDialogMenuPopup* p_SubMenu;
+	CWnd* p_ParentMenu;
 
 private:
 	HTHEME hThemeList;
@@ -285,6 +282,8 @@ public:
 	virtual BOOL OnKeyDown(UINT nChar);
 
 protected:
+	virtual void Execute();
+
 	CMFCToolBarImages m_Icons;
 	UINT m_CmdID;
 	UINT m_ItemCount;
@@ -301,8 +300,6 @@ protected:
 	UINT m_ItemWidth;
 	CString* m_Captions;
 	COLORREF m_DefaultColor;
-
-	virtual void Execute();
 };
 
 
@@ -334,6 +331,10 @@ public:
 	virtual BOOL OnKeyDown(UINT nChar);
 
 protected:
+	virtual void Execute();
+
+	INT GetInnerBorder();
+
 	UINT m_CmdID;
 	INT m_IconID;
 	INT m_Width;
@@ -346,10 +347,6 @@ protected:
 	BOOL m_CloseOnExecute;
 	CString m_Caption;
 	CString m_Hint;
-
-	virtual void Execute();
-
-	INT GetInnerBorder();
 
 private:
 	BOOL PtOnSubmenuArrow(CPoint point);
@@ -419,9 +416,9 @@ public:
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL Themed);
 
 protected:
-	COLORREF* p_Color;
-
 	virtual void Execute();
+
+	COLORREF* p_Color;
 };
 
 

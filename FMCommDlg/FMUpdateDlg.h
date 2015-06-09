@@ -19,12 +19,6 @@ public:
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
-	void UpdateFrame(BOOL bMove=FALSE);
-	BOOL AddTrayIcon();
-	BOOL RemoveTrayIcon();
-	void ShowMenu();
-	void EndDialog(INT nResult);
-
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void PostNcDestroy();
@@ -42,6 +36,12 @@ protected:
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	DECLARE_MESSAGE_MAP()
+
+	void UpdateFrame(BOOL bMove=FALSE);
+	BOOL AddTrayIcon();
+	BOOL RemoveTrayIcon();
+	void ShowMenu();
+	void EndDialog(INT nResult);
 
 private:
 	void UpdateDownloadButton();

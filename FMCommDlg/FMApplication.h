@@ -57,7 +57,7 @@ struct CDS_Wakeup
 struct ResourceCacheItem
 {
 	CGdiPlusBitmapResource* pImage;
-	UINT nResID;
+	UINT nID;
 };
 
 
@@ -72,6 +72,30 @@ class FMApplication : public CWinAppEx
 public:
 	FMApplication(GUID& AppID);
 	virtual ~FMApplication();
+
+	virtual BOOL InitInstance();
+	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
+	virtual INT ExitInstance();
+
+	void AddFrame(CWnd* pFrame);
+	void KillFrame(CWnd* pVictim);
+	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
+	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
+	CString GetDefaultFontFace();
+	void SendMail(CString Subject=_T(""));
+	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA);
+	static HICON LoadDialogIcon(UINT nID);
+	static HANDLE LoadFontFromResource(UINT nID);
+	static void PlayStandardSound();
+	static void PlayNavigateSound();
+	static void PlayWarningSound();
+	static void PlayTrashSound();
+	static HRESULT SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
+	static void AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last=FALSE);
+	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
+	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
+	BOOL IsUpdateCheckDue();
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
@@ -118,38 +142,15 @@ public:
 	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
 	BOOL m_KernelLibLoaded;
 
-	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
-	virtual INT ExitInstance();
-
-	void AddFrame(CWnd* pFrame);
-	void KillFrame(CWnd* pVictim);
-	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
-	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
-	CString GetDefaultFontFace();
-	void SendMail(CString Subject=_T(""));
-	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
-	static HANDLE LoadFontFromResource(UINT nID, HMODULE hInst=NULL);
-	static void PlayStandardSound();
-	static void PlayNavigateSound();
-	static void PlayWarningSound();
-	static void PlayTrashSound();
-	static HRESULT SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
-	static void AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last=FALSE);
-	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
-	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
-	BOOL IsUpdateCheckDue();
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-
 protected:
-	CList<ResourceCacheItem> m_ResourceCache;
-	UINT m_NagCounter;
-
 	afx_msg void OnAppPurchase();
 	afx_msg void OnAppEnterLicenseKey();
 	afx_msg void OnAppSupport();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	CList<ResourceCacheItem> m_ResourceCache;
+	UINT m_NagCounter;
 
 private:
 	ULONG_PTR m_gdiplusToken;

@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "AddRouteDlg.h"
+#include "Flightmap.h"
 
 
 // AddRouteDlg
@@ -58,13 +59,12 @@ BOOL AddRouteDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDI_ADDROUTE);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
+	HICON hIcon = theApp.LoadDialogIcon(IDI_ADDROUTE);
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
 
 	// Route
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_CUEBANNER_ROUTE));
+	CString tmpStr((LPCSTR)IDS_CUEBANNER_ROUTE);
 	m_wndRoute.SetCueBanner(tmpStr);
 
 	// Carrier

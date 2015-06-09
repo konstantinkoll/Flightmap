@@ -5,7 +5,6 @@
 #pragma once
 #include "CFileView.h"
 #include "CItinerary.h"
-#include "Flightmap.h"
 
 
 // EditFlightAttachmentsPage
@@ -19,10 +18,10 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
+	afx_msg BOOL OnInitDialog();
+	DECLARE_MESSAGE_MAP()
+
 	AIRX_Flight* p_Flight;
 	CFileView m_wndFileView;
 	CItinerary* p_Itinerary;
-
-	afx_msg BOOL OnInitDialog();
-	DECLARE_MESSAGE_MAP()
 };

@@ -2,7 +2,6 @@
 // CMapFactory.cpp: Implementierung der Klasse CMapFactory
 //
 
-#pragma once
 #include "stdafx.h"
 #include "CMapFactory.h"
 #include "Flightmap.h"
@@ -15,8 +14,8 @@ void AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
 
 	if (MaxLines>1)
 	{
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(nID));
+		CString tmpStr((LPCSTR)nID);
+
 		Buf.Append(tmpStr);
 		Buf.Append(_T(": "));
 	}

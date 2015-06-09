@@ -2,7 +2,6 @@
 // CKitchen.cpp: Implementierung der Klasse CKitchen
 //
 
-#pragma once
 #include "stdafx.h"
 #include "CKitchen.h"
 #include <math.h>

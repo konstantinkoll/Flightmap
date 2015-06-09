@@ -5,7 +5,6 @@
 
 #pragma once
 #include "CGroupBox.h"
-#include "FMApplication.h"
 
 
 // FMDialog
@@ -21,9 +20,6 @@ public:
 	void GetLayoutRect(LPRECT lpRect) const;
 
 protected:
-	FMApplication* p_App;
-	UINT m_nIDTemplate;
-
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
 	CWnd* GetBottomWnd() const;
@@ -37,10 +33,10 @@ protected:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 
+	UINT m_nIDTemplate;
+
 private:
 	CGroupBox m_GroupBox[4];
-	HICON hIconL;
-	HICON hIconS;
 	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
