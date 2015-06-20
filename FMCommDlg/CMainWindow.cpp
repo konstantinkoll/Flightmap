@@ -61,7 +61,9 @@ BOOL CMainWindow::PreTranslateMessage(MSG* pMsg)
 					m_pDialogMenuBar->SetFocus();
 					return TRUE;
 				}
+
 		break;
+
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:

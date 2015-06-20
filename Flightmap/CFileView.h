@@ -31,7 +31,7 @@ protected:
 	BOOL m_LastSortDirection;
 
 	void Reload();
-	AIRX_Attachment* GetAttachment(INT idx);
+	AIRX_Attachment* GetAttachment(INT Index);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -63,6 +63,6 @@ private:
 
 	void Init();
 	INT Compare(INT n1, INT n2);
-	void Heap(INT wurzel, INT anz);
+	void Heap(INT Wurzel, INT Anzahl);
 	void Sort();
 };

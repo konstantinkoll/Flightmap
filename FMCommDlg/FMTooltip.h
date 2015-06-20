@@ -19,7 +19,7 @@ public:
 	virtual BOOL Create(CWnd* pWndParent);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	void Track(CPoint point, HICON hIcon, HBITMAP hBitmap, CSize Size, const CString& strCaption, CString strText, BOOL DrawBorder=FALSE);
+	void Track(CPoint point, HICON hIcon, HBITMAP hBitmap, const CString& strCaption, CString strText, BOOL DrawBorder=FALSE);
 	void Track(CPoint point, FMAirport* pAirport, CString strText);
 	void Track(CPoint point, CHAR* Code, CString strText);
 	void Deactivate();

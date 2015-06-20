@@ -12,9 +12,9 @@
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
-                                            HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
+                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
                                             AlphaBlend(dc, rect.left+(rect.Width()-w)/2, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF); \
-                                            SelectObject(hdcMem, hbmOld); \
+                                            SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
 
 static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
@@ -105,9 +105,9 @@ void CRatingCtrl::OnPaint()
 	CDC dc;
 	dc.CreateCompatibleDC(&pDC);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_WINDOW));
 
@@ -136,11 +136,13 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	case 0xBB:
 		Rating++;
 		break;
+
 	case 0x25:
 	case 0x6D:
 	case 0xBD:
 		Rating--;
 		break;
+
 	case '0':
 	case '1':
 	case '2':
@@ -149,6 +151,7 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	case '5':
 		Rating = (nChar-'0')*2;
 		break;
+
 	default:
 		return;
 	}

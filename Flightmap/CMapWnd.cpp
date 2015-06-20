@@ -20,8 +20,7 @@ CMapWnd::CMapWnd()
 
 CMapWnd::~CMapWnd()
 {
-	if (m_pBitmap)
-		delete m_pBitmap;
+	delete m_pBitmap;
 }
 
 BOOL CMapWnd::Create()
@@ -35,8 +34,7 @@ BOOL CMapWnd::Create()
 
 void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title)
 {
-	if (m_pBitmap)
-		delete m_pBitmap;
+	delete m_pBitmap;
 
 	m_Title = Title;
 
@@ -312,9 +310,9 @@ void CMapWnd::OnMapWndCopy()
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(pDC, sz.cx, sz.cy);
-	CBitmap* pOldBitmap1 = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(pDC, sz.cx, sz.cy);
+	CBitmap* pOldBitmap1 = dc.SelectObject(&MemBitmap);
 
 	CDC dcMap;
 	dcMap.CreateCompatibleDC(pDC);
@@ -330,7 +328,7 @@ void CMapWnd::OnMapWndCopy()
 	if (OpenClipboard())
 	{
 		EmptyClipboard();
-		SetClipboardData(CF_BITMAP, buffer.Detach());
+		SetClipboardData(CF_BITMAP, MemBitmap.Detach());
 
 		CloseClipboard();
 	}

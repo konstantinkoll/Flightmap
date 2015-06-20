@@ -106,6 +106,7 @@ BOOL CDialogMenuBar::PreTranslateMessage(MSG* pMsg)
 				return TRUE;
 			}
 		}
+
 		break;
 	}
 
@@ -178,23 +179,23 @@ INT CDialogMenuBar::ItemAtPosition(CPoint point)
 	return -1;
 }
 
-void CDialogMenuBar::InvalidateItem(INT idx)
+void CDialogMenuBar::InvalidateItem(INT Index)
 {
-	if (idx!=-1)
+	if (Index!=-1)
 	{
 		CRect rect;
 		GetClientRect(rect);
 
-		rect.left = m_Items.m_Items[idx].Left;
-		rect.right = m_Items.m_Items[idx].Right;
+		rect.left = m_Items.m_Items[Index].Left;
+		rect.right = m_Items.m_Items[Index].Right;
 
 		InvalidateRect(&rect);
 	}
 }
 
-void CDialogMenuBar::SelectItem(INT idx, BOOL Keyboard)
+void CDialogMenuBar::SelectItem(INT Index, BOOL Keyboard)
 {
-	if (idx!=m_SelectedItem)
+	if (Index!=m_SelectedItem)
 	{
 		if (m_pPopup)
 		{
@@ -206,12 +207,12 @@ void CDialogMenuBar::SelectItem(INT idx, BOOL Keyboard)
 		}
 
 		InvalidateItem(m_SelectedItem);
-		m_SelectedItem = idx;
+		m_SelectedItem = Index;
 		InvalidateItem(m_SelectedItem);
 
-		if (m_UseDropdown && (idx!=-1))
+		if (m_UseDropdown && (Index!=-1))
 		{
-			m_pPopup = (CDialogMenuPopup*)GetOwner()->SendMessage(WM_REQUESTSUBMENU, m_Items.m_Items[idx].PopupID);
+			m_pPopup = (CDialogMenuPopup*)GetOwner()->SendMessage(WM_REQUESTSUBMENU, m_Items.m_Items[Index].PopupID);
 
 			if (m_pPopup)
 			{
@@ -220,8 +221,8 @@ void CDialogMenuBar::SelectItem(INT idx, BOOL Keyboard)
 				CRect rect;
 				GetClientRect(rect);
 
-				rect.left = m_Items.m_Items[idx].Left;
-				rect.right = m_Items.m_Items[idx].Right;
+				rect.left = m_Items.m_Items[Index].Left;
+				rect.right = m_Items.m_Items[Index].Right;
 
 				ClientToScreen(rect);
 				m_pPopup->Track(rect);
@@ -234,10 +235,10 @@ void CDialogMenuBar::SelectItem(INT idx, BOOL Keyboard)
 	}
 }
 
-void CDialogMenuBar::ExecuteItem(INT idx)
+void CDialogMenuBar::ExecuteItem(INT Index)
 {
-	if (idx!=-1)
-		if (m_Items.m_Items[idx].CmdID)
+	if (Index!=-1)
+		if (m_Items.m_Items[Index].CmdID)
 		{
 			m_SelectedItem = m_HoverItem = -1;
 			m_UseDropdown = FALSE;
@@ -245,7 +246,7 @@ void CDialogMenuBar::ExecuteItem(INT idx)
 			Invalidate();
 
 			GetOwner()->PostMessage(WM_CLOSEPOPUP);
-			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[idx].CmdID);
+			GetOwner()->PostMessage(WM_COMMAND, m_Items.m_Items[Index].CmdID);
 		}
 }
 
@@ -420,9 +421,9 @@ void CDialogMenuBar::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
 	if (hTheme)
@@ -532,34 +533,34 @@ LRESULT CDialogMenuBar::OnPtInRect(WPARAM wParam, LPARAM lParam)
 
 void CDialogMenuBar::OnMenuLeft()
 {
-	INT idx = m_SelectedItem;
+	INT Index = m_SelectedItem;
 	for (UINT a=0; a<m_Items.m_ItemCount-1; a++)
 	{
-		idx--;
-		if (idx<0)
-			idx = m_Items.m_ItemCount-1;
+		Index--;
+		if (Index<0)
+			Index = m_Items.m_ItemCount-1;
 
-		if (m_Items.m_Items[idx].Enabled)
+		if (m_Items.m_Items[Index].Enabled)
 			break;
 	}
 
-	SelectItem(idx, TRUE);
+	SelectItem(Index, TRUE);
 }
 
 void CDialogMenuBar::OnMenuRight()
 {
-	INT idx = m_SelectedItem;
+	INT Index = m_SelectedItem;
 	for (UINT a=0; a<m_Items.m_ItemCount-1; a++)
 	{
-		idx++;
-		if (idx>=(INT)m_Items.m_ItemCount)
-			idx = 0;
+		Index++;
+		if (Index>=(INT)m_Items.m_ItemCount)
+			Index = 0;
 
-		if (m_Items.m_Items[idx].Enabled)
+		if (m_Items.m_Items[Index].Enabled)
 			break;
 	}
 
-	SelectItem(idx, TRUE);
+	SelectItem(Index, TRUE);
 }
 
 void CDialogMenuBar::OnMouseMove(UINT nFlags, CPoint point)
@@ -643,7 +644,9 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					SelectItem(a, TRUE);
 					break;
 				}
+
 			return;
+
 		case VK_END:
 			for (INT a=(INT)m_Items.m_ItemCount; a>=0; a--)
 				if (m_Items.m_Items[a].Enabled)
@@ -651,7 +654,9 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					SelectItem(a, TRUE);
 					break;
 				}
+
 			return;
+
 		case VK_UP:
 		case VK_DOWN:
 			if (!m_UseDropdown && (m_SelectedItem!=-1))
@@ -662,15 +667,19 @@ void CDialogMenuBar::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				m_UseDropdown = TRUE;
 				SelectItem(Item, TRUE);
 			}
+
 			return;
+
 		case VK_LEFT:
 		case VK_RIGHT:
 			SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
 			return;
+
 		case VK_RETURN:
 		case VK_EXECUTE:
 			ExecuteItem(m_SelectedItem);
 			return;
+
 		case VK_ESCAPE:
 			GetOwner()->SetFocus();
 			return;
@@ -683,17 +692,17 @@ void CDialogMenuBar::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (((nChar>='A') && (nChar<='Z')) || ((nChar>='0') && (nChar<='9')))
 	{
-		INT idx = m_SelectedItem;
+		INT Index = m_SelectedItem;
 		INT Cnt = 0;
 		INT Item = -1;
 
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
-			if (++idx>=(INT)m_Items.m_ItemCount)
-				idx = 0;
-			if (nChar==m_Items.m_Items[idx].Accelerator)
+			if (++Index>=(INT)m_Items.m_ItemCount)
+				Index = 0;
+			if (nChar==m_Items.m_Items[Index].Accelerator)
 				if ((Cnt++)==0)
-					Item = idx;
+					Item = Index;
 		}
 
 		if (Cnt>=1)
@@ -826,14 +835,18 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 			GetOwner()->PostMessage(WM_CLOSEPOPUP);
 			return TRUE;
 		}
+
 		break;
+
 	case WM_SYSKEYDOWN:
 		if ((pMsg->wParam==VK_F4) && (GetParent()))
 		{
 			GetOwner()->PostMessage(WM_CLOSE);
 			return TRUE;
 		}
+
 		break;
+
 	case WM_MOUSEMOVE:
 	case WM_MOUSEHOVER:
 	case WM_LBUTTONDOWN:
@@ -870,6 +883,7 @@ BOOL CDialogMenuPopup::PreTranslateMessage(MSG* pMsg)
 				return TRUE;
 			}
 		}
+
 		break;
 	}
 
@@ -984,23 +998,23 @@ INT CDialogMenuPopup::ItemAtPosition(CPoint point)
 	return -1;
 }
 
-void CDialogMenuPopup::InvalidateItem(INT idx)
+void CDialogMenuPopup::InvalidateItem(INT Index)
 {
-	if (idx!=-1)
-		InvalidateRect(&m_Items.m_Items[idx].Rect);
+	if (Index!=-1)
+		InvalidateRect(&m_Items.m_Items[Index].Rect);
 }
 
-void CDialogMenuPopup::SelectItem(INT idx, BOOL FromTop)
+void CDialogMenuPopup::SelectItem(INT Index, BOOL FromTop)
 {
-	if (idx!=m_SelectedItem)
+	if (Index!=m_SelectedItem)
 	{
 		InvalidateItem(m_LastSelectedItem);
 
-		m_SelectedItem = idx;
-		if (idx!=-1)
+		m_SelectedItem = Index;
+		if (Index!=-1)
 		{
-			m_Items.m_Items[idx].pItem->OnSelect(m_Keyboard, FromTop);
-			m_LastSelectedItem = idx;
+			m_Items.m_Items[Index].pItem->OnSelect(m_Keyboard, FromTop);
+			m_LastSelectedItem = Index;
 		}
 
 		InvalidateItem(m_SelectedItem);
@@ -1287,9 +1301,9 @@ void CDialogMenuPopup::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// Background
 	BOOL Themed = IsCtrlThemed();
@@ -1499,11 +1513,11 @@ void CDialogMenuPopup::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	INT idx = m_SelectedItem;
-	if (idx!=-1)
-		if (m_Items.m_Items[idx].pItem->OnKeyDown(nChar))
+	INT Index = m_SelectedItem;
+	if (Index!=-1)
+		if (m_Items.m_Items[Index].pItem->OnKeyDown(nChar))
 		{
-			InvalidateItem(idx);
+			InvalidateItem(Index);
 			return;
 		}
 
@@ -1514,11 +1528,11 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
-			if (++idx>=(INT)m_Items.m_ItemCount)
-				idx = 0;
-			if ((m_Items.m_Items[idx].Selectable) && (nChar==m_Items.m_Items[idx].Accelerator))
+			if (++Index>=(INT)m_Items.m_ItemCount)
+				Index = 0;
+			if ((m_Items.m_Items[Index].Selectable) && (nChar==m_Items.m_Items[Index].Accelerator))
 				if ((Cnt++)==0)
-					Item = idx;
+					Item = Index;
 		}
 
 		if (Cnt>=1)
@@ -1548,7 +1562,9 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					m_Keyboard = TRUE;
 					break;
 				}
+
 			return;
+
 		case VK_END:
 			for (INT a=(INT)m_Items.m_ItemCount-1; a>=0; a--)
 				if (m_Items.m_Items[a].Selectable)
@@ -1557,37 +1573,46 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					m_Keyboard = TRUE;
 					break;
 				}
+
 			return;
+
 		case VK_UP:
 			for (UINT a=0; a<m_Items.m_ItemCount; a++)
 			{
-				if (--idx<0)
-					idx = m_Items.m_ItemCount-1;
-				if (m_Items.m_Items[idx].Selectable)
+				if (--Index<0)
+					Index = m_Items.m_ItemCount-1;
+
+				if (m_Items.m_Items[Index].Selectable)
 				{
-					SelectItem(idx, FALSE);
+					SelectItem(Index, FALSE);
 					m_Keyboard = TRUE;
 					break;
 				}
 			}
+
 			return;
+
 		case VK_DOWN:
 			for (UINT a=0; a<m_Items.m_ItemCount; a++)
 			{
-				if (++idx>=(INT)m_Items.m_ItemCount)
-					idx = 0;
-				if (m_Items.m_Items[idx].Selectable)
+				if (++Index>=(INT)m_Items.m_ItemCount)
+					Index = 0;
+
+				if (m_Items.m_Items[Index].Selectable)
 				{
-					SelectItem(idx, TRUE);
+					SelectItem(Index, TRUE);
 					m_Keyboard = TRUE;
 					break;
 				}
 			}
+
 			return;
+
 		case VK_LEFT:
 		case VK_RIGHT:
 			if (p_ParentMenu)
 				p_ParentMenu->SendMessage(nChar==VK_LEFT ? WM_MENULEFT : WM_MENURIGHT);
+
 			return;
 		}
 
@@ -1896,35 +1921,45 @@ BOOL CDialogMenuGallery::OnKeyDown(UINT nChar)
 			Execute();
 			return TRUE;
 		}
+
 		break;
+
 	case VK_UP:
 		if (Row>0)
 		{
 			m_HoverItem = (Row-1)*m_Columns+Col;
 			return TRUE;
 		}
+
 		break;
+
 	case VK_DOWN:
 		if (Row<((INT)m_Rows)-1)
 		{
 			m_HoverItem = (Row+1)*m_Columns+Col;
 			return TRUE;
 		}
+
 		break;
+
 	case VK_LEFT:
 		if (Col>0)
 		{
 			m_HoverItem = Row*m_Columns+Col-1;
 			return TRUE;
 		}
+
 		break;
+
 	case VK_RIGHT:
 		if (Col<((INT)m_Columns)-1)
 		{
 			m_HoverItem = Row*m_Columns+Col+1;
 			return TRUE;
 		}
+
 		break;
+
 	}
 
 	return FALSE;
@@ -2250,9 +2285,12 @@ BOOL CDialogMenuCommand::OnKeyDown(UINT nChar)
 			Execute();
 			return TRUE;
 		}
+
 		break;
+
 	case VK_RIGHT:
 		m_HoverOverCommand = FALSE;
+
 		return m_Submenu ? TrackSubmenu(TRUE) : FALSE;
 	}
 

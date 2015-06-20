@@ -10,6 +10,7 @@
 #include "ThreeDSettingsDlg.h"
 #include <math.h>
 
+
 #define DISTANCE        39.0f
 #define ARROWSIZE       9
 #define ANIMLENGTH      200
@@ -322,18 +323,18 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	return Result;
 }
 
-void CGlobeView::InvalidateItem(INT idx)
+void CGlobeView::InvalidateItem(INT Index)
 {
-	if ((idx>=0) && (idx<(INT)m_Airports.m_ItemCount))
-		InvalidateRect(&m_Airports.m_Items[idx].Rect);
+	if ((Index>=0) && (Index<(INT)m_Airports.m_ItemCount))
+		InvalidateRect(&m_Airports.m_Items[Index].Rect);
 }
 
-void CGlobeView::SelectItem(INT idx, BOOL Select)
+void CGlobeView::SelectItem(INT Index, BOOL Select)
 {
-	if ((idx!=m_FocusItem) || (Select!=m_IsSelected))
+	if ((Index!=m_FocusItem) || (Select!=m_IsSelected))
 	{
 		InvalidateItem(m_FocusItem);
-		m_FocusItem = idx;
+		m_FocusItem = Index;
 		m_IsSelected = Select;
 		InvalidateItem(m_FocusItem);
 	}
@@ -488,8 +489,8 @@ Smaller:
 
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_pTextureGlobe)
-			delete m_pTextureGlobe;
+		delete m_pTextureGlobe;
+
 		m_pTextureGlobe = new GLTextureBlueMarble(Tex);
 		m_CurrentGlobeTexture = Tex;
 
@@ -1157,16 +1158,16 @@ void CGlobeView::OnDestroy()
 	{
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_pTextureGlobe)
-			delete m_pTextureGlobe;
-		if (m_pTextureIcons)
-			delete m_pTextureIcons;
+		delete m_pTextureGlobe;
+		delete m_pTextureIcons;
+
 		if (m_GlobeModel!=-1)
 			glDeleteLists(m_GlobeModel, 1);
 
 		wglMakeCurrent(NULL, NULL);
 		if (hRC)
 			wglDeleteContext(hRC);
+
 		delete m_pDC;
 	}
 
@@ -1267,7 +1268,7 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	}
 }
 
-BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
 	if (zDelta<0)
 	{
@@ -1316,8 +1317,8 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT idx = ItemAtPosition(point);
-	if (idx==-1)
+	INT Index = ItemAtPosition(point);
+	if (Index==-1)
 	{
 		if (CursorOnGlobe(point))
 		{
@@ -1340,7 +1341,7 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		SelectItem(idx, (nFlags & MK_CONTROL) && (m_FocusItem==idx) && m_IsSelected ? !m_IsSelected : TRUE);
+		SelectItem(Index, (nFlags & MK_CONTROL) && (m_FocusItem==Index) && m_IsSelected ? !m_IsSelected : TRUE);
 	}
 }
 
@@ -1357,8 +1358,8 @@ void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	}
 	else
 	{
-		INT idx = ItemAtPosition(point);
-		if (idx!=-1)
+		INT Index = ItemAtPosition(point);
+		if (Index!=-1)
 		{
 			if (GetFocus()!=this)
 				SetFocus();
@@ -1372,10 +1373,10 @@ void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CGlobeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	INT idx = ItemAtPosition(point);
-	if (idx!=-1)
+	INT Index = ItemAtPosition(point);
+	if (Index!=-1)
 	{
-		SelectItem(idx, TRUE);
+		SelectItem(Index, TRUE);
 	}
 	else
 	{
@@ -1386,11 +1387,11 @@ void CGlobeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CGlobeView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	INT idx = ItemAtPosition(point);
-	if ((idx!=-1) && (GetFocus()!=this))
+	INT Index = ItemAtPosition(point);
+	if ((Index!=-1) && (GetFocus()!=this))
 		SetFocus();
 
-	SelectItem(idx, idx!=-1);
+	SelectItem(Index, Index!=-1);
 
 	GetParent()->UpdateWindow();
 	CWnd::OnRButtonUp(nFlags, point);

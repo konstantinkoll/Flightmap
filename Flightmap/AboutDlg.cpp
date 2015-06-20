@@ -90,20 +90,15 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 
 void AboutDlg::CheckLicenseKey()
 {
-	FMLicense l;
-
-	if (FMIsLicensed(&l))
+	FMLicense License;
+	if (FMIsLicensed(&License))
 		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
 
-	// Lizenzinformationen
-	GetDlgItem(IDC_NAME)->SetWindowText(l.RegName);
-	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(l.PurchaseDate);
-	GetDlgItem(IDC_ID)->SetWindowText(l.PurchaseID);
-	GetDlgItem(IDC_PRODUCT)->SetWindowText(l.ProductID);
-
-	GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_QUANTITY)->SetWindowText(l.Quantity);
+	SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
+	SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
+	SetWindowTextA(GetDlgItem(IDC_PURCHASEID)->GetSafeHwnd(), License.PurchaseID);
+	SetWindowTextA(GetDlgItem(IDC_PRODUCT)->GetSafeHwnd(), License.ProductID);
+	SetWindowTextA(GetDlgItem(IDC_QUANTITY)->GetSafeHwnd(), License.Quantity);
 }
 
 void AboutDlg::CheckInternetConnection()

@@ -23,33 +23,51 @@
 #pragma warning(pop)
 
 using namespace CryptoPP;
-using namespace std;
 
 
-void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
+void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path)
 {
-	path.Reset();
+	Path.Reset();
 
 	INT l = rect.left;
 	INT t = rect.top;
 	INT w = rect.Width();
 	INT h = rect.Height();
-	INT d = rad<<1;
+	INT d = Radius<<1;
 
-	path.AddArc(l, t, d, d, 180, 90);
-	path.AddLine(l+rad, t, l+w-rad, t);
-	path.AddArc(l+w-d, t, d, d, 270, 90);
-	path.AddLine(l+w, t+rad, l+w, t+h-rad);
-	path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
-	path.AddLine(l+w-rad, t+h, l+rad, t+h);
-	path.AddArc(l, t+h-d, d, d, 90, 90);
-	path.AddLine(l, t+h-rad, l, t+rad);
-	path.CloseFigure();
+	Path.AddArc(l, t, d, d, 180, 90);
+	Path.AddLine(l+Radius, t, l+w-Radius, t);
+	Path.AddArc(l+w-d, t, d, d, 270, 90);
+	Path.AddLine(l+w, t+Radius, l+w, t+h-Radius);
+	Path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
+	Path.AddLine(l+w-Radius, t+h, l+Radius, t+h);
+	Path.AddArc(l, t+h-d, d, d, 90, 90);
+	Path.AddLine(l, t+h-Radius, l, t+Radius);
+	Path.CloseFigure();
 }
 
 BOOL IsCtrlThemed()
 {
 	return FMGetApp()->m_ThemeLibLoaded ? FMGetApp()->zIsAppThemed() : FALSE;
+}
+
+HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
+{
+	BITMAPINFO DIB;
+	ZeroMemory(&DIB, sizeof(DIB));
+
+	DIB.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	DIB.bmiHeader.biWidth = Width;
+	DIB.bmiHeader.biHeight = -Height;
+	DIB.bmiHeader.biPlanes = 1;
+	DIB.bmiHeader.biBitCount = 32;
+	DIB.bmiHeader.biCompression = BI_RGB;
+
+	HDC hDC = GetDC(NULL);
+	HBITMAP hBitmap = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
+	ReleaseDC(NULL, hDC);
+
+	return hBitmap;
 }
 
 void DrawControlBorder(CWnd* pWnd)
@@ -114,41 +132,40 @@ UINT FMIATAGetAirportCount()
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-FMCountry* FMIATAGetCountry(UINT ID)
+FMCountry* FMIATAGetCountry(UINT CountryID)
 {
-	return UseGermanDB ? &Countries_DE[ID] : &Countries_EN[ID];
+	return UseGermanDB ? &Countries_DE[CountryID] : &Countries_EN[CountryID];
 }
 
-INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer)
+INT FMIATAGetNextAirport(INT Last, FMAirport** ppAirport)
 {
 	if (Last>=(INT)FMIATAGetAirportCount()-1)
 		return -1;
 
-	*pBuffer = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+	*ppAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+
 	return Last;
 }
 
-INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer)
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport)
 {
-	INT Count = (INT)FMIATAGetAirportCount();
+	UINT Count = FMIATAGetAirportCount();
 
 	do
 	{
-		if (Last>=Count-1)
+		if (Last>=(INT)Count-1)
 			return -1;
 
-		*pBuffer = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+		*ppAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 	}
-	while ((*pBuffer)->CountryID!=CountryID);
+	while ((*ppAirport)->CountryID!=CountryID);
 
 	return Last;
 }
 
-BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
+BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** ppAirport)
 {
 	if (!Code)
-		return FALSE;
-	if (*Code=='\0')
 		return FALSE;
 
 	INT First = 0;
@@ -158,8 +175,9 @@ BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer)
 	{
 		INT Mid = (First+Last)/2;
 
-		*pBuffer = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
-		INT Result = strcmp((*pBuffer)->Code, Code);
+		*ppAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
+
+		INT Result = strcmp((*ppAirport)->Code, Code);
 		if (Result==0)
 			return TRUE;
 
@@ -274,12 +292,14 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 __forceinline DOUBLE GetMinutes(DOUBLE c)
 {
 	c = fabs(c)+ROUNDOFF;
+
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
 __forceinline DOUBLE GetSeconds(DOUBLE c)
 {
 	c = fabs(c)*60.0+ROUNDOFF;
+
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
@@ -338,112 +358,101 @@ void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL Fi
 static BOOL LicenseRead = FALSE;
 static BOOL ExpireRead = FALSE;
 static FMLicense LicenseBuffer = { 0 };
-static FILETIME ExpireBuffer = { 0, 0 };
+static FILETIME ExpireBuffer = { 0 };
 
-void ParseVersion(string& tmpStr, FMLicenseVersion* Version)
+#define BUFSIZE    4096
+
+void ParseInput(CHAR* pStr, FMLicense* pLicense)
 {
-	CHAR Point;
+	ASSERT(pLicense);
 
-	stringstream ss(tmpStr);
-	ss >> Version->Major;
-	ss >> Point;
-	ss >> Version->Minor;
-	ss >> Point;
-	ss >> Version->Release;
-}
+	ZeroMemory(pLicense, sizeof(FMLicense));
 
-void ParseInput(string& tmpStr, FMLicense* License)
-{
-	ZeroMemory(License, sizeof(FMLicense));
-
-	stringstream ss(tmpStr);
-	string line;
-
-	while (!ss.eof())
+	while (*pStr)
 	{
-		getline(ss, line);
-		std::string::size_type delimiterPos = line.find_first_of("=");
+		CHAR* Ptr = strstr(pStr, "\n");
+		*Ptr = '\0';
 
-		if (std::string::npos!=delimiterPos)
+		CHAR* Trenner = strchr(pStr, '=');
+		if (Trenner)
 		{
-			std::string name = line.substr(0, delimiterPos);
-			std::string value = line.substr(delimiterPos+1);
+			*(Trenner++) = '\0';
 
-			if (name==LICENSE_ID)
+			if (strcmp(pStr, LICENSE_ID)==0)
 			{
-				MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->PurchaseID, 256);
+				strcpy_s(pLicense->PurchaseID, 256, Trenner);
 			}
 			else
-				if (name==LICENSE_PRODUCT)
+				if (strcmp(pStr, LICENSE_PRODUCT)==0)
 				{
-					MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->ProductID, 256);
+					strcpy_s(pLicense->ProductID, 256, Trenner);
 				}
 				else
-					if (name==LICENSE_DATE)
+					if (strcmp(pStr, LICENSE_DATE)==0)
 					{
-						MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->PurchaseDate, 16);
+						strcpy_s(pLicense->PurchaseDate, 256, Trenner);
 					}
 					else
-						if (name==LICENSE_QUANTITY)
+						if (strcmp(pStr, LICENSE_QUANTITY)==0)
 						{
-							MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->Quantity, 8);
+							strcpy_s(pLicense->Quantity, 256, Trenner);
 						}
 						else
-							if (name==LICENSE_NAME)
+							if (strcmp(pStr, LICENSE_NAME)==0)
 							{
-								MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, License->RegName, 256);
+								strcpy_s(pLicense->RegName, 256, Trenner);
 							}
 							else
-								if (name==LICENSE_VERSION)
+								if (strcmp(pStr, LICENSE_VERSION)==0)
 								{
-									ParseVersion(value, &License->Version);
+									sscanf_s(Trenner, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
 								}
 		}
+
+		pStr = Ptr+1;
 	}
 }
 
-BOOL ReadCodedLicense(string& Message)
+__forceinline BOOL ReadCodedLicense(CHAR* pStr, SIZE_T cCount)
 {
 	BOOL Result = FALSE;
 
-	HKEY k;
-	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Flightmap", &k)==ERROR_SUCCESS)
+	HKEY hKey;
+	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Flightmap", &hKey)==ERROR_SUCCESS)
 	{
-		CHAR tmpStr[4096];
-		DWORD sz = sizeof(tmpStr);
-		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
-		{
-			Message = tmpStr;
-			Result = TRUE;
-		}
+		DWORD dwSize = cCount;
+		Result = (RegQueryValueExA(hKey, "License", 0, NULL, (BYTE*)pStr, &dwSize)==ERROR_SUCCESS);
 
-		RegCloseKey(k);
+		RegCloseKey(hKey);
 	}
 
 	return Result;
 }
 
-BOOL GetLicense(FMLicense* License)
+BOOL GetLicense(FMLicense* pLicense)
 {
-	string Message;
-	string Recovered;
+	ASSERT(pLicense);
 
-	if (!ReadCodedLicense(Message))
+	CHAR Message[BUFSIZE];
+	if (!ReadCodedLicense(Message, sizeof(Message)))
 		return FALSE;
 
 	// Setup
 	Integer n("677085883040394331688570333377767695119671712512083434059528353754560033694591049061201209797395551894503819202786118921144167773531480249549334860535587729188461269633368144074142410191991825789317089507732335118005174575981046999650747204904573316311747574418394100647266984314883856762401810850517725369369312442712786949893638812875664428840233397180906478896311138092374550604342908484026901612764076340393090750130869987901928694525115652071061067946427802582682353995030622395549260092920885717079018306793778696931528069177410572722700379823625160283051668274004965875876083908201130177783610610417898321219849233028817122323965938052450525299474409115105471423275517732060548499857454724731949257103279342856512067188778813745346304689332770001576020711940974480383875829689815572555429459919998181453447896952351950105505906202024278770099672075754601074409510918531448288487849102192484100291069098446047492850214953085906226731086863049147460384108831179220519130075352506339330781986225289808262743848011070853033928165863801245010514393309413470116317612433324938050068689790531474030013439742900179443199754755961937530375097971295589285864719559221786871735111334987792944096096937793086861538051306485745703623856809.");
 	Integer e("17.");
 
+	CHAR Recovered[BUFSIZE];
+	ZeroMemory(Recovered, sizeof(Recovered));
+
 	// Verify and recover
 	RSASS<PSSR, SHA256>::Verifier Verifier(n, e);
 
 	try
 	{
-		StringSource(Message, true,
+		StringSource(Message, TRUE,
 			new Base64Decoder(
 				new SignatureVerificationFilter(Verifier,
-					new StringSink(Recovered),
+					new ArraySink((BYTE*)Recovered, BUFSIZE-1),
 					SignatureVerificationFilter::THROW_EXCEPTION | SignatureVerificationFilter::PUT_MESSAGE)));
 	}
 	catch(CryptoPP::Exception /*&e*/)
@@ -451,7 +460,8 @@ BOOL GetLicense(FMLicense* License)
 		return FALSE;
 	}
 
-	ParseInput(Recovered, License);
+	ParseInput(Recovered, pLicense);
+
 	return TRUE;
 }
 
@@ -469,7 +479,7 @@ BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
 	if (License)
 		*License = LicenseBuffer;
 
-	return (wcsncmp(LicenseBuffer.ProductID, _T("Flightmap"), 9)==0) && (LicenseBuffer.Version.Major>=0);
+	return strncmp(LicenseBuffer.ProductID, "Flightmap", 9)==0;
 }
 
 BOOL FMIsSharewareExpired()
@@ -577,24 +587,15 @@ CString GetLatestVersion(CString CurrentVersion)
 {
 	CString VersionIni;
 
-	// Variant
-#ifdef _M_X64
-#define ISET _T(" (x64")
-#else
-#define ISET _T(" (x86")
-#endif
-
-	CurrentVersion += ISET;
-
 	// Licensed?
 	if (FMIsLicensed())
 	{
-		CurrentVersion += _T("; licensed");
+		CurrentVersion += _T(" (licensed");
 	}
 	else
 		if (FMIsSharewareExpired())
 		{
-			CurrentVersion += _T("; expired");
+			CurrentVersion += _T(" (expired");
 		}
 
 	CurrentVersion += _T(")");
@@ -651,31 +652,27 @@ CString GetIniValue(CString Ini, CString Name)
 {
 	while (!Ini.IsEmpty())
 	{
-		INT pos = Ini.Find(L"\n");
-		if (pos==-1)
-			pos = Ini.GetLength()+1;
+		INT Pos = Ini.Find(L"\n");
+		if (Pos==-1)
+			Pos = Ini.GetLength()+1;
 
-		CString Line = Ini.Mid(0, pos-1);
-		Ini.Delete(0, pos+1);
+		CString Line = Ini.Mid(0, Pos-1);
+		Ini.Delete(0, Pos+1);
 
-		pos = Line.Find(L"=");
-		if (pos!=-1)
-			if (Line.Mid(0, pos)==Name)
-				return Line.Mid(pos+1, Line.GetLength()-pos);
+		Pos = Line.Find(L"=");
+		if (Pos!=-1)
+			if (Line.Mid(0, Pos)==Name)
+				return Line.Mid(Pos+1, Line.GetLength()-Pos);
 	}
 
 	return _T("");
 }
 
-struct Version
+void ParseVersion(CString tmpStr, FMVersion* pVersion)
 {
-	UINT Major, Minor, Build;
-};
+	ASSERT(pVersion);
 
-__forceinline INT ParseVersion(CString ver, Version* v)
-{
-	ZeroMemory(v, sizeof(Version));
-	return swscanf_s(ver, L"%u.%u.%u", &v->Major, &v->Minor, &v->Build);
+	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
 }
 
 void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
@@ -712,9 +709,10 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	BOOL UpdateAvailable = FALSE;
 	if (!LatestVersion.IsEmpty())
 	{
-		Version CV;
-		Version LV;
+		FMVersion CV = { 0 };
 		ParseVersion(CurrentVersion, &CV);
+
+		FMVersion LV = { 0 };
 		ParseVersion(LatestVersion, &LV);
 
 		CString IgnoreMSN = FMGetApp()->GetString(_T("IgnoreUpdateMSN"));

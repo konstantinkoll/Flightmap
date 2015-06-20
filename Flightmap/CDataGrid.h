@@ -39,7 +39,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
 	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE);
-	BOOL IsSelected(UINT Idx);
+	BOOL IsSelected(UINT Index);
 	UINT GetCurrentRow();
 
 protected:
@@ -47,17 +47,17 @@ protected:
 
 	void AdjustLayout();
 	void AdjustHeader();
-	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint item=CPoint(-1, -1));
-	void EditFlight(CPoint item=CPoint(-1, -1), INT iSelectPage=-1);
-	void EnsureVisible(CPoint item=CPoint(-1, -1));
+	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint Item=CPoint(-1, -1));
+	void EditFlight(CPoint Item=CPoint(-1, -1), INT iSelectPage=-1);
+	void EnsureVisible(CPoint Item=CPoint(-1, -1));
 	void ResetScrollbars();
 	void AdjustScrollbars();
-	BOOL HitTest(CPoint point, CPoint* item, INT* subitem=NULL);
+	BOOL HitTest(CPoint point, CPoint* Item, INT* pSubitem=NULL);
 	void InvalidateItem(CPoint Item);
 	void InvalidateItem(UINT Row, UINT Attr);
 	void InvalidateRow(UINT Row);
 	void SetFocusItem(CPoint FocusItem, BOOL ShiftSelect);
-	void SelectItem(UINT Idx, BOOL Select=TRUE, BOOL InternalCall=FALSE);
+	void SelectItem(UINT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
 	void FindReplace(INT iSelectPage);
 
@@ -73,8 +73,8 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
+	afx_msg void OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -135,7 +135,7 @@ private:
 	void DoCopy(BOOL Cut);
 	void DoDelete();
 	void AutosizeColumn(UINT Attr);
-	void FinishEdit(WCHAR* pStr, CPoint item);
+	void FinishEdit(WCHAR* pStr, CPoint Item);
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	INT m_HScrollMax;

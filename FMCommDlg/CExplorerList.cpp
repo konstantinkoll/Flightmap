@@ -44,16 +44,20 @@ void CExplorerList::Init()
 	tvi.cLines = (FMGetApp()->OSVersion==OS_XP) ? 2 : 3;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 15*abs(lf.lfHeight);
+	tvi.sizeTile.cx = 20*abs(lf.lfHeight);
 
+	// Hack: CListCtrl formatiert unter Windows XP die Textzeilen falsch, wenn LVS_OWNERDATA gesetzt ist
 	if ((FMGetApp()->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
 	{
 		tvi.dwMask |= LVTVIM_LABELMARGIN;
-		tvi.rcLabelMargin.top = 0;
 		tvi.rcLabelMargin.bottom = 16;
 	}
 
 	SetTileViewInfo(&tvi);
+
+	IMAGEINFO ii;
+	FMGetApp()->m_SystemImageListExtraLarge.GetImageInfo(0, &ii);
+	SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+2*abs(lf.lfHeight)+4);
 }
 
 void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsible)
@@ -194,16 +198,12 @@ void CExplorerList::OnContextMenu(CWnd* pWnd, CPoint pos)
 
 void CExplorerList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	switch(nChar)
+	if ((nChar==VK_F2) && (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 	{
-	case VK_F2:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-		{
-			EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
-			return;
-		}
-		break;
+		EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
 	}
-
-	CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	else
+	{
+		CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
 }

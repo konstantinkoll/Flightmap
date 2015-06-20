@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CLoungeView.h"
 #include "Flightmap.h"
-#include "Resource.h"
 
 
 // CLoungeView

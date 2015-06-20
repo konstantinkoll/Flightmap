@@ -373,8 +373,10 @@ void FMUpdateDlg::OnCancel()
 		EndDialog(IDCANCEL);
 	}
 	else
+	{
 		if (AddTrayIcon())
 			ShowWindow(SW_HIDE);
+	}
 }
 
 LRESULT FMUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)
@@ -385,6 +387,7 @@ LRESULT FMUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)
 	case WM_LBUTTONDBLCLK:
 		OnRestore();
 		break;
+
 	case WM_RBUTTONUP:
 		SetForegroundWindow();
 		ShowMenu();

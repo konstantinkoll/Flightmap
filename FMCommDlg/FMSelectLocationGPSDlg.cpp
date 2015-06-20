@@ -6,7 +6,7 @@
 #include "FMCommDlg.h"
 
 
-DOUBLE StringToCoord(CString str)
+DOUBLE StringToCoord(CString Str)
 {
 	INT Deg;
 	INT Min;
@@ -14,7 +14,7 @@ DOUBLE StringToCoord(CString str)
 	WCHAR Ch;
 	DOUBLE Result = 0.0;
 
-	INT Scanned = swscanf_s(str.GetBuffer(), L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
+	INT Scanned = swscanf_s(Str.GetBuffer(), L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
 
 	if (Scanned>=1)
 		Result += Deg;

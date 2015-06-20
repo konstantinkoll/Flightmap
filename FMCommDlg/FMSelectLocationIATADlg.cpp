@@ -6,6 +6,14 @@
 #include "FMCommDlg.h"
 
 
+__forceinline void Swap(FMAirport*& Eins, FMAirport*& Zwei)
+{
+	FMAirport* Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}
+
+
 // FMSelectLocationIATADlg
 //
 
@@ -51,6 +59,7 @@ INT FMSelectLocationIATADlg::Compare(INT n1, INT n2)
 	case 0:
 		Result = strcmp(m_Airports[n1]->Code, m_Airports[n2]->Code);
 		break;
+
 	case 1:
 		Result = strcmp(m_Airports[n1]->Name, m_Airports[n2]->Name);
 		break;
@@ -62,18 +71,18 @@ INT FMSelectLocationIATADlg::Compare(INT n1, INT n2)
 	return Result;
 }
 
-void FMSelectLocationIATADlg::Heap(INT wurzel, INT anz)
+void FMSelectLocationIATADlg::Heap(INT Wurzel, INT Anz)
 {
-	while (wurzel<=anz/2-1)
+	while (Wurzel<=Anz/2-1)
 	{
-		INT idx = (wurzel+1)*2-1;
-		if (idx+1<anz)
-			if (Compare(idx, idx+1)<0)
-				idx++;
-		if (Compare(wurzel, idx)<0)
+		INT Index = (Wurzel+1)*2-1;
+		if (Index+1<Anz)
+			if (Compare(Index, Index+1)<0)
+				Index++;
+		if (Compare(Wurzel, Index)<0)
 		{
-			std::swap(m_Airports[wurzel], m_Airports[idx]);
-			wurzel = idx;
+			Swap(m_Airports[Wurzel], m_Airports[Index]);
+			Wurzel = Index;
 		}
 		else
 		{
@@ -88,29 +97,29 @@ void FMSelectLocationIATADlg::Sort()
 	{
 		for (INT a=m_nAirports/2-1; a>=0; a--)
 			Heap(a, m_nAirports);
-		for (INT a=m_nAirports-1; a>0; )
+		for (INT a=m_nAirports-1; a>0; a--)
 		{
-			std::swap(m_Airports[0], m_Airports[a]);
-			Heap(0, a--);
+			Swap(m_Airports[0], m_Airports[a]);
+			Heap(0, a);
 		}
 	}
 
 	CHeaderCtrl* pHeaderCtrl = m_wndList.GetHeaderCtrl();
 	if (pHeaderCtrl)
 	{
-		HDITEM item;
-		ZeroMemory(&item, sizeof(item));
-		item.mask = HDI_FORMAT;
+		HDITEM Item;
+		ZeroMemory(&Item, sizeof(Item));
+		Item.mask = HDI_FORMAT;
 
 		for (INT a=0; a<2; a++)
 		{
-			pHeaderCtrl->GetItem(a, &item);
+			pHeaderCtrl->GetItem(a, &Item);
 
-			item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+			Item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
 			if (a==(INT)m_LastSortColumn)
-				item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+				Item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
 
-			pHeaderCtrl->SetItem(a, &item);
+			pHeaderCtrl->SetItem(a, &Item);
 		}
 	}
 
@@ -136,9 +145,9 @@ void FMSelectLocationIATADlg::LoadCountry(UINT country)
 
 	m_nAirports = 0;
 
-	INT idx = FMIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
-	while ((idx!=-1) && (m_nAirports<MaxAirportsPerCountry))
-		idx = FMIATAGetNextAirportByCountry(country, idx, &m_Airports[++m_nAirports]);
+	INT Index = FMIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
+	while ((Index!=-1) && (m_nAirports<MaxAirportsPerCountry))
+		Index = FMIATAGetNextAirportByCountry(country, Index, &m_Airports[++m_nAirports]);
 
 	m_wndList.SetItemCount(m_nAirports);
 	Sort();
@@ -154,9 +163,9 @@ void FMSelectLocationIATADlg::LoadCountry(UINT country)
 
 void FMSelectLocationIATADlg::UpdatePreview()
 {
-	INT idx = m_wndList.GetNextItem(-1, LVIS_SELECTED);
+	INT Index = m_wndList.GetNextItem(-1, LVIS_SELECTED);
 
-	p_Airport = m_Airports[idx];
+	p_Airport = m_Airports[Index];
 	m_wndMap.Update(p_Airport);
 
 	CString tmpStr;
@@ -234,9 +243,9 @@ void FMSelectLocationIATADlg::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 		if (CDDS_ITEMPREPAINT==pLVCD->nmcd.dwDrawStage)
 		{
-			INT idx = (INT)pLVCD->nmcd.dwItemSpec;
+			INT Index = (INT)pLVCD->nmcd.dwItemSpec;
 
-			if (strcmp(m_Airports[idx]->Code, m_Airports[idx]->MetroCode)==0)
+			if (strcmp(m_Airports[Index]->Code, m_Airports[Index]->MetroCode)==0)
 				pLVCD->clrText = 0xFF0000;
 		}
 }
@@ -246,11 +255,11 @@ void FMSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	INT idx = pItem->iItem;
+	INT Index = pItem->iItem;
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[idx]->Code[0] : &m_Airports[idx]->Name[0];
+		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[Index]->Code[0] : &m_Airports[Index]->Name[0];
 		MultiByteToWideChar(CP_ACP, 0, src, -1, m_Buffer, 256);
 		pItem->pszText = (LPWSTR)m_Buffer;
 	}
@@ -304,12 +313,12 @@ void FMSelectLocationIATADlg::OnReportError(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	CString Subject = _T("IATA database error");
 
-	INT idx = m_wndList.GetNextItem(-1, LVIS_SELECTED);
-	if (idx!=-1)
+	INT Index = m_wndList.GetNextItem(-1, LVIS_SELECTED);
+	if (Index!=-1)
 	{
-		CString Code(m_Airports[idx]->Code);
-		CString Name(m_Airports[idx]->Name);
-		CString Country(&FMIATAGetCountry(m_Airports[idx]->CountryID)->Name[0]);
+		CString Code(m_Airports[Index]->Code);
+		CString Name(m_Airports[Index]->Name);
+		CString Country(&FMIATAGetCountry(m_Airports[Index]->CountryID)->Name[0]);
 		Subject += _T(": ")+Code+_T(" (")+Name+_T(", ")+Country+_T(")");
 	}
 

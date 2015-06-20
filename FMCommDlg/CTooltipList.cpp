@@ -114,7 +114,7 @@ void CTooltipList::OnMouseHover(UINT nFlags, CPoint point)
 				if (tag.Show)
 				{
 					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, tag.hIcon, tag.hBitmap, CSize(tag.cx, tag.cy), GetItemText(m_TooltipItem, 0), tag.Text);
+					m_TooltipCtrl.Track(point, tag.hIcon, tag.hBitmap, GetItemText(m_TooltipItem, 0), tag.Text);
 				}
 			}
 	}

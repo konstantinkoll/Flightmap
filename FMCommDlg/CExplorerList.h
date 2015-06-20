@@ -30,6 +30,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	HTHEME hTheme;
+
+private:
 	UINT m_ItemMenuID;
 	BOOL m_HighlightFirst;
 	UINT m_BackgroundMenuID;

@@ -5,7 +5,7 @@
 #pragma once
 #include "FMCommDlg.h"
 #include "rapidxml.hpp"
-#include "Resource.h"
+#include "resource.h"
 
 
 #define PI     3.14159265358979323846
@@ -198,11 +198,11 @@ public:
 	void SaveAIRX(CString FileName);
 
 	static CString Flight2Text(AIRX_Flight& Flight);
-	CString Flight2Text(UINT Idx);
+	CString Flight2Text(UINT Index);
 
 	void Sort(UINT Attr, BOOL Ascending);
 	AIRX_Attachment* GetGPSPath(AIRX_Flight& Flight);
-	AIRX_Attachment* GetGPSPath(UINT Idx);
+	AIRX_Attachment* GetGPSPath(UINT Index);
 
 	void AddFlight();
 	void AddFlight(CItinerary* pItinerary, UINT Row);
@@ -211,12 +211,12 @@ public:
 	void DeleteSelectedFlights();
 
 	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
-	UINT AddAttachment(CItinerary* pItinerary, UINT Idx);
-	CGdiPlusBitmap* DecodePictureAttachment(UINT Idx);
+	UINT AddAttachment(CItinerary* pItinerary, UINT Index);
+	CGdiPlusBitmap* DecodePictureAttachment(UINT Index);
 	static CGdiPlusBitmap* DecodePictureAttachment(AIRX_Attachment& Attachment);
 	static CGPXFile* DecodeGPXAttachment(AIRX_Attachment& Attachment);
 	static void ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force=FALSE);
-	void DeleteAttachment(UINT Idx, AIRX_Flight* pFlight=NULL);
+	void DeleteAttachment(UINT Index, AIRX_Flight* pFlight=NULL);
 	void DeleteAttachments(AIRX_Flight* pFlight=NULL);
 
 	AIRX_Metadata m_Metadata;
@@ -233,7 +233,7 @@ private:
 	void OpenCSV(CString FileName);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	static INT Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending);
-	void Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending);
+	void Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
 	void SetDisplayName(CString FileName);
 

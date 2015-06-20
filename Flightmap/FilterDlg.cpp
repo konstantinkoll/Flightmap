@@ -49,8 +49,8 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 		if (swscanf_s(tmpStr.GetBuffer(), L"%u", &m_Filter.DepartureYear)!=1)
 			m_Filter.DepartureYear = 0;
 
-		INT Idx = m_wndSortAttributes.GetNextItem(-1, LVIS_SELECTED);
-		m_Filter.SortBy = (Idx==-1) ? -1 : (INT)m_wndSortAttributes.GetItemData(Idx);
+		INT Index = m_wndSortAttributes.GetNextItem(-1, LVIS_SELECTED);
+		m_Filter.SortBy = (Index==-1) ? -1 : (INT)m_wndSortAttributes.GetItemData(Index);
 
 		m_Filter.Descending = m_wndAscending.GetCheck()>0;
 	}

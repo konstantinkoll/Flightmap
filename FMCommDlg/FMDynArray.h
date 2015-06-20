@@ -5,8 +5,6 @@
 #define DYN_FIRSTALLOC          1024
 #define DYN_SUBSEQUENTALLOC     1024
 
-#define DYN_MEMORYALIGNMENT     8
-
 
 template <typename T>
 class FMDynArray
@@ -15,27 +13,27 @@ public:
 	FMDynArray();
 	~FMDynArray();
 
-	bool AddItem(T i);
-	bool InsertEmpty(unsigned int Pos, unsigned int Count=1, bool ZeroOut=true);
-	bool InsertItems(unsigned int Pos, T* pData, unsigned int Count=1);
-	void DeleteItems(unsigned int Pos, unsigned int Count=1);
+	BOOL AddItem(T i);
+	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
+	BOOL InsertItems(UINT Pos, T* pData, UINT Count=1);
+	void DeleteItems(UINT Pos, UINT Count=1);
 
 	T* m_Items;
-	unsigned int m_ItemCount;
+	UINT m_ItemCount;
 
 protected:
-	unsigned int m_Allocated;
+	UINT m_Allocated;
 };
 
 
 #define INITFMDYNARRAY() \
 	if (!m_Items) \
 	{ \
-		m_Items = (T*)_aligned_malloc(DYN_FIRSTALLOC*sizeof(T), DYN_MEMORYALIGNMENT); \
+		m_Items = (T*)malloc(DYN_FIRSTALLOC*sizeof(T)); \
 		if (!m_Items) \
-			return false; \
+			return FALSE; \
 		m_Allocated = DYN_FIRSTALLOC; \
-	} \
+	}
 
 
 template <typename T>
@@ -49,76 +47,80 @@ template <typename T>
 FMDynArray<T>::~FMDynArray()
 {
 	if (m_Items)
-		_aligned_free(m_Items);
+		free(m_Items);
 }
 
 template <typename T>
-bool FMDynArray<T>::AddItem(T i)
+BOOL FMDynArray<T>::AddItem(T i)
 {
 	INITFMDYNARRAY()
 
 	if (m_ItemCount==m_Allocated)
 	{
-		m_Items = (T*)_aligned_realloc(m_Items, (m_Allocated+DYN_SUBSEQUENTALLOC)*sizeof(T), DYN_MEMORYALIGNMENT);
+		m_Items = (T*)realloc(m_Items, (m_Allocated+DYN_SUBSEQUENTALLOC)*sizeof(T));
 		if (!m_Items)
-			return false;
+			return FALSE;
 
 		m_Allocated += DYN_SUBSEQUENTALLOC;
 	}
 
 	m_Items[m_ItemCount++] = i;
-	return true;
+
+	return TRUE;
 }
 
 template <typename T>
-bool FMDynArray<T>::InsertEmpty(unsigned int Pos, unsigned int Count=1, bool ZeroOut=true)
+BOOL FMDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 {
 	if (!Count)
-		return true;
+		return TRUE;
+
 	if (Pos>m_ItemCount+1)
-		return false;
+		return FALSE;
 
 	INITFMDYNARRAY()
 
 	if (m_ItemCount<m_Allocated+Count)
 	{
-		const unsigned int Add = (Count+DYN_SUBSEQUENTALLOC-1) & ~(DYN_SUBSEQUENTALLOC-1);
-		m_Items = static_cast<T*>(_aligned_realloc(m_Items, (m_Allocated+Add)*sizeof(T), DYN_MEMORYALIGNMENT));
+		const UINT Add = (Count+DYN_SUBSEQUENTALLOC-1) & ~(DYN_SUBSEQUENTALLOC-1);
+		m_Items = (T*)realloc(m_Items, (m_Allocated+Add)*sizeof(T));
 		if (!m_Items)
-			return false;
+			return FALSE;
 
 		m_Allocated += Add;
 	}
 
-	for (int a=((int)(m_ItemCount))-1; a>=(int)Pos; a--)
+	for (INT a=((INT)(m_ItemCount))-1; a>=(INT)Pos; a--)
 		m_Items[a+Count] = m_Items[a];
 
 	if (ZeroOut)
 		ZeroMemory(&m_Items[Pos], Count*sizeof(T));
 
 	m_ItemCount += Count;
-	return true;
+
+	return TRUE;
 }
 
 template <typename T>
-bool FMDynArray<T>::InsertItems(unsigned int Pos, T* pData, unsigned int Count=1)
+BOOL FMDynArray<T>::InsertItems(UINT Pos, T* pData, UINT Count=1)
 {
 	assert(pData);
 
-	if (!InsertEmpty(Pos, Count, false))
-		return false;
+	if (!InsertEmpty(Pos, Count, FALSE))
+		return FALSE;
 
 	memcpy_s(m_Items[Pos], sizeof(T)*Count, pData, sizeof(T)*Count);
-	return true;
+
+	return TRUE;
 }
 
 template <typename T>
-void FMDynArray<T>::DeleteItems(unsigned int Pos, unsigned int Count=1)
+void FMDynArray<T>::DeleteItems(UINT Pos, UINT Count=1)
 {
 	if (!Count)
 		return;
 
-	for (unsigned int a=Pos; a<m_ItemCount-Count; a++)
+	for (UINT a=Pos; a<m_ItemCount-Count; a++)
 		m_Items[a] = m_Items[a+Count];
 
 	m_ItemCount -= Count;

@@ -25,11 +25,8 @@ CGdiPlusBitmap::~CGdiPlusBitmap()
 
 void CGdiPlusBitmap::Empty()
 {
-	if (m_pBitmap)
-	{
-		delete m_pBitmap;
-		m_pBitmap = NULL;
-	}
+	delete m_pBitmap;
+	m_pBitmap = NULL;
 }
 
 BOOL CGdiPlusBitmap::Load(LPCWSTR pFile)
@@ -65,11 +62,14 @@ BOOL CGdiPlusBitmapMemory::Load(LPVOID pMemory, DWORD Size)
 	pStream->Release();
 
 	if (m_pBitmap)
+	{
 		if (m_pBitmap->GetLastStatus()==Gdiplus::Ok)
 			return TRUE;
 
-	delete m_pBitmap;
-	m_pBitmap = NULL;
+		delete m_pBitmap;
+		m_pBitmap = NULL;
+	}
+
 	return FALSE;
 }
 
@@ -86,14 +86,14 @@ CGdiPlusBitmapResource::CGdiPlusBitmapResource(LPCTSTR pName, LPCTSTR pType, HMO
 	Load(pName, pType, hInst);
 }
 
-CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT id, LPCTSTR pType, HMODULE hInst)
+CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT nID, LPCTSTR pType, HMODULE hInst)
 {
-	Load(id, pType, hInst);
+	Load(nID, pType, hInst);
 }
 
-CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT id, UINT type, HMODULE hInst)
+CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT nID, UINT Type, HMODULE hInst)
 {
-	Load(id, type, hInst);
+	Load(nID, Type, hInst);
 }
 
 BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
@@ -122,12 +122,12 @@ BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
 	return Result;
 }
 
-BOOL CGdiPlusBitmapResource::Load(UINT id, LPCTSTR pType, HMODULE hInst)
+BOOL CGdiPlusBitmapResource::Load(UINT nID, LPCTSTR pType, HMODULE hInst)
 {
-	return Load(MAKEINTRESOURCE(id), pType, hInst);
+	return Load(MAKEINTRESOURCE(nID), pType, hInst);
 }
 
-BOOL CGdiPlusBitmapResource::Load(UINT id, UINT type, HMODULE hInst)
+BOOL CGdiPlusBitmapResource::Load(UINT nID, UINT Type, HMODULE hInst)
 {
-	return Load(MAKEINTRESOURCE(id), MAKEINTRESOURCE(type), hInst);
+	return Load(MAKEINTRESOURCE(nID), MAKEINTRESOURCE(Type), hInst);
 }

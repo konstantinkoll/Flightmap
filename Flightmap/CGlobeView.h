@@ -76,8 +76,8 @@ protected:
 	GLFont m_Fonts[2];
 
 	INT ItemAtPosition(CPoint point);
-	void InvalidateItem(INT idx);
-	void SelectItem(INT idx, BOOL Select);
+	void InvalidateItem(INT Index);
+	void SelectItem(INT Index, BOOL Select);
 	void PrepareModel();
 	void PrepareRoutes();
 	void PrepareTexture();
@@ -97,7 +97,7 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

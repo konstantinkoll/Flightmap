@@ -30,25 +30,26 @@
 
 #define FMGetApp() ((FMApplication*)AfxGetApp())
 
-struct FMLicenseVersion
+struct FMVersion
 {
 	UINT Major;
 	UINT Minor;
-	UINT Release;
+	UINT Build;
 };
 
 struct FMLicense
 {
-	WCHAR PurchaseID[256];
-	WCHAR ProductID[256];
-	WCHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
-	WCHAR Quantity[8];
-	WCHAR RegName[256];
-	FMLicenseVersion Version;
+	CHAR PurchaseID[256];
+	CHAR ProductID[256];
+	CHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
+	CHAR Quantity[8];
+	CHAR RegName[256];
+	FMVersion Version;
 };
 
-void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
+void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path);
 BOOL IsCtrlThemed();
+HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
 void FMErrorBox(UINT nID, HWND hWnd=NULL);
 
@@ -58,9 +59,9 @@ void FMErrorBox(UINT nID, HWND hWnd=NULL);
 UINT FMIATAGetCountryCount();
 UINT FMIATAGetAirportCount();
 FMCountry* FMIATAGetCountry(UINT ID);
-INT FMIATAGetNextAirport(INT Last, FMAirport** pBuffer);
-INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** pBuffer);
-BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** pBuffer);
+INT FMIATAGetNextAirport(INT Last, FMAirport** ppAirport);
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport);
+BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** ppAirport);
 HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height);
 void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero);
 void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero);

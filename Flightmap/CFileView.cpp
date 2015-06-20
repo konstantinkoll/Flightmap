@@ -6,6 +6,14 @@
 #include "CFileView.h"
 
 
+__forceinline void Swap(UINT& Eins, UINT& Zwei)
+{
+	UINT Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}
+
+
 // CFileView
 //
 
@@ -121,9 +129,9 @@ void CFileView::Reload()
 	}
 }
 
-AIRX_Attachment* CFileView::GetAttachment(INT idx)
+AIRX_Attachment* CFileView::GetAttachment(INT Index)
 {
-	return idx==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[m_pSortArray[idx]]] : &p_Itinerary->m_Attachments.m_Items[m_pSortArray[idx]];
+	return Index==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[m_pSortArray[Index]]] : &p_Itinerary->m_Attachments.m_Items[m_pSortArray[Index]];
 }
 
 void CFileView::Init()
@@ -151,14 +159,6 @@ void CFileView::Init()
 
 		m_wndTooltipList.AddColumn(a, tmpStr, a);
 	}
-
-	IMAGEINFO ii;
-	FMGetApp()->m_SystemImageListLarge.GetImageInfo(0, &ii);
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&FMGetApp()->m_DefaultFont);
-	m_wndTooltipList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
 
 	m_wndTooltipList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
 	m_wndTooltipList.SetFocus();
@@ -199,18 +199,19 @@ INT CFileView::Compare(INT n1, INT n2)
 	return Result;
 }
 
-void CFileView::Heap(INT wurzel, INT anz)
+void CFileView::Heap(INT Wurzel, INT Anzahl)
 {
-	while (wurzel<=anz/2-1)
+	while (Wurzel<=Anzahl/2-1)
 	{
-		INT idx = (wurzel+1)*2-1;
-		if (idx+1<anz)
-			if (Compare(idx, idx+1)<0)
-				idx++;
-		if (Compare(wurzel, idx)<0)
+		INT Index = (Wurzel+1)*2-1;
+		if (Index+1<Anzahl)
+			if (Compare(Index, Index+1)<0)
+				Index++;
+
+		if (Compare(Wurzel, Index)<0)
 		{
-			std::swap(m_pSortArray[wurzel], m_pSortArray[idx]);
-			wurzel = idx;
+			Swap(m_pSortArray[Wurzel], m_pSortArray[Index]);
+			Wurzel = Index;
 		}
 		else
 		{
@@ -225,29 +226,30 @@ void CFileView::Sort()
 	{
 		for (INT a=m_Count/2-1; a>=0; a--)
 			Heap(a, m_Count);
-		for (INT a=m_Count-1; a>0; )
+
+		for (INT a=m_Count-1; a>0; a--)
 		{
-			std::swap(m_pSortArray[0], m_pSortArray[a]);
-			Heap(0, a--);
+			Swap(m_pSortArray[0], m_pSortArray[a]);
+			Heap(0, a);
 		}
 	}
 
 	CHeaderCtrl* pHeaderCtrl = m_wndTooltipList.GetHeaderCtrl();
 	if (pHeaderCtrl)
 	{
-		HDITEM item;
-		ZeroMemory(&item, sizeof(item));
-		item.mask = HDI_FORMAT;
+		HDITEM Item;
+		ZeroMemory(&Item, sizeof(Item));
+		Item.mask = HDI_FORMAT;
 
 		for (INT a=0; a<4; a++)
 		{
-			pHeaderCtrl->GetItem(a, &item);
+			pHeaderCtrl->GetItem(a, &Item);
 
-			item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+			Item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
 			if (a==(INT)m_LastSortColumn)
-				item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
+				Item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
 
-			pHeaderCtrl->SetItem(a, &item);
+			pHeaderCtrl->SetItem(a, &Item);
 		}
 	}
 }
@@ -617,8 +619,8 @@ void CFileView::OnAdd()
 
 void CFileView::OnOpen()
 {
-	INT idx = GetSelectedFile();
-	if (idx!=-1)
+	INT Index = GetSelectedFile();
+	if (Index!=-1)
 	{
 		AIRX_Attachment* pAttachment = GetSelectedAttachment();
 		if (!pAttachment)
@@ -665,10 +667,10 @@ void CFileView::OnOpen()
 
 void CFileView::OnSaveAs()
 {
-	INT idx = GetSelectedFile();
-	if (idx!=-1)
+	INT Index = GetSelectedFile();
+	if (Index!=-1)
 	{
-		AIRX_Attachment* pAttachment = GetAttachment(idx);
+		AIRX_Attachment* pAttachment = GetAttachment(Index);
 		if (!pAttachment)
 			return;
 
@@ -701,14 +703,14 @@ void CFileView::OnSaveAs()
 
 void CFileView::OnDelete()
 {
-	INT idx = GetSelectedFile();
-	if (idx!=-1)
+	INT Index = GetSelectedFile();
+	if (Index!=-1)
 	{
 		CString Message((LPCSTR)IDS_DELETE_FILE);
 
-		if (MessageBox(Message, GetAttachment(idx)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
+		if (MessageBox(Message, GetAttachment(Index)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
-			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_pSortArray[idx]] : m_pSortArray[idx], p_Flight);
+			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_pSortArray[Index]] : m_pSortArray[Index], p_Flight);
 			Reload();
 		}
 	}
@@ -716,13 +718,13 @@ void CFileView::OnDelete()
 
 void CFileView::OnRename()
 {
-	INT idx = GetSelectedFile();
-	if (idx!=-1)
+	INT Index = GetSelectedFile();
+	if (Index!=-1)
 	{
 		if (GetFocus()!=&m_wndTooltipList)
 			m_wndTooltipList.SetFocus();
 
-		m_wndTooltipList.EditLabel(idx);
+		m_wndTooltipList.EditLabel(Index);
 	}
 }
 

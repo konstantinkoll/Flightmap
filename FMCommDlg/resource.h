@@ -94,9 +94,9 @@
 #define IDC_STATUTEMILES                21003
 #define IDC_BGIMAGES                    21004
 #define IDC_EXCLUSIVE                   21005
-#define IDC_NAME                        21006
+#define IDC_REGNAME                     21006
 #define IDC_PURCHASEDATE                21007
-#define IDC_ID                          21008
+#define IDC_PURCHASEID                  21008
 #define IDC_PRODUCT                     21009
 #define IDC_QUANTITYTITLE               21010
 #define IDC_QUANTITY                    21011

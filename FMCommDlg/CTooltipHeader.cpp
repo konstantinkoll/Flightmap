@@ -101,9 +101,9 @@ void CTooltipHeader::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	BOOL Themed = IsCtrlThemed();
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
@@ -208,16 +208,10 @@ void CTooltipHeader::OnPaint()
 					}
 					else
 					{
-						COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-						COLORREF c2 = GetSysColor(COLOR_3DFACE);
-						COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-						COLORREF c4 = 0x000000;
-
-						if (m_PressedItem==a)
-						{
-							std::swap(c1, c4);
-							std::swap(c2, c3);
-						}
+						COLORREF c1 = (m_PressedItem==a) ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+						COLORREF c2 = (m_PressedItem==a) ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+						COLORREF c3 = (m_PressedItem==a) ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+						COLORREF c4 = (m_PressedItem==a) ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 						dc.Draw3dRect(rectItem, c1, c4);
 						rectItem.DeflateRect(1, 1);
@@ -238,9 +232,11 @@ void CTooltipHeader::OnPaint()
 					case HDF_LEFT:
 						nFormat |= DT_LEFT;
 						break;
+
 					case HDF_CENTER:
 						nFormat |= DT_CENTER;
 						break;
+
 					case HDF_RIGHT:
 						nFormat |= DT_RIGHT;
 						break;
@@ -278,9 +274,9 @@ void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	HDHITTESTINFO htt;
 	htt.pt = point;
-	INT idx = HitTest(&htt);
-	m_PressedItem = (htt.flags==HHT_ONHEADER) ? idx : -1;
-	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? idx : -1;
+	INT Index = HitTest(&htt);
+	m_PressedItem = (htt.flags==HHT_ONHEADER) ? Index : -1;
+	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? Index : -1;
 
 	CHeaderCtrl::OnLButtonDown(nFlags, point);
 	Invalidate();
@@ -349,7 +345,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 					if (TooltipTextBuffer[0]!=L'\0')
 					{
 						ClientToScreen(&point);
-						m_TooltipCtrl.Track(point, NULL, NULL, NULL, _T(""), TooltipTextBuffer);
+						m_TooltipCtrl.Track(point, NULL, NULL, _T(""), TooltipTextBuffer);
 					}
 			}
 	}

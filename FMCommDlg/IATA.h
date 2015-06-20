@@ -2,16 +2,18 @@
 
 #pragma once
 
-struct FMCountry
-{
-	UINT ID;
-	CHAR Name[31];
-};
-
 struct FMGeoCoordinates
 {
 	DOUBLE Latitude;
 	DOUBLE Longitude;
+};
+
+#pragma pack(push,1)
+
+struct FMCountry
+{
+	UINT ID;
+	CHAR Name[31];
 };
 
 struct FMAirport
@@ -22,3 +24,5 @@ struct FMAirport
 	CHAR Name[44];
 	FMGeoCoordinates Location;
 };
+
+#pragma pack(pop)

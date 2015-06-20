@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CMapFactory.h"
 #include "Flightmap.h"
+#include <math.h>
 
 
 void AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
@@ -674,10 +675,10 @@ CBitmap* CMapFactory::CreateBitmap(INT Width, INT Height)
 	dib.bmiHeader.biBitCount = 24;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP hBmp = CreateDIBSection(GetWindowDC(GetDesktopWindow()), &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hBitmap = CreateDIBSection(GetWindowDC(GetDesktopWindow()), &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 
 	CBitmap* pBitmap = new CBitmap();
-	pBitmap->Attach(hBmp);
+	pBitmap->Attach(hBitmap);
 	pBitmap->SetBitmapDimension(Width, Height);
 
 	return pBitmap;

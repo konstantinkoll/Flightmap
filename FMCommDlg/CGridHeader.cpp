@@ -25,9 +25,9 @@ void CGridHeader::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	BOOL Themed = IsCtrlThemed();
 	BOOL Flat = (FMGetApp()->OSVersion==OS_XP) || (FMGetApp()->OSVersion==OS_Eight);
@@ -75,16 +75,10 @@ void CGridHeader::OnPaint()
 				}
 				else
 				{
-					COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-					COLORREF c2 = GetSysColor(COLOR_3DFACE);
-					COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-					COLORREF c4 = 0x000000;
-
-					if (m_PressedItem==a)
-					{
-						std::swap(c1, c4);
-						std::swap(c2, c3);
-					}
+					COLORREF c1 = (m_PressedItem==a) ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+					COLORREF c2 = (m_PressedItem==a) ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+					COLORREF c3 = (m_PressedItem==a) ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+					COLORREF c4 = (m_PressedItem==a) ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 					dc.Draw3dRect(rectItem, c1, c4);
 					rectItem.DeflateRect(1, 1);
@@ -100,9 +94,11 @@ void CGridHeader::OnPaint()
 				case HDF_LEFT:
 					nFormat |= DT_LEFT;
 					break;
+
 				case HDF_CENTER:
 					nFormat |= DT_CENTER;
 					break;
+
 				case HDF_RIGHT:
 					nFormat |= DT_RIGHT;
 					break;

@@ -30,6 +30,6 @@ protected:
 	ViewParameters* p_ViewParameters;
 
 private:
-	void AddAttribute(UINT attr);
+	void AddAttribute(UINT Attr);
 	void SwapItems(INT FocusItem, INT NewPos);
 };

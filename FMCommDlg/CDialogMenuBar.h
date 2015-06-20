@@ -69,9 +69,9 @@ public:
 
 protected:
 	INT ItemAtPosition(CPoint point);
-	void InvalidateItem(INT idx);
-	void SelectItem(INT idx, BOOL Keyboard);
-	void ExecuteItem(INT idx);
+	void InvalidateItem(INT Index);
+	void SelectItem(INT Index, BOOL Keyboard);
+	void ExecuteItem(INT Index);
 	void SetTheme();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -173,8 +173,8 @@ public:
 protected:
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
 	INT ItemAtPosition(CPoint point);
-	void InvalidateItem(INT idx);
-	void SelectItem(INT idx, BOOL FromTop=FALSE);
+	void InvalidateItem(INT Index);
+	void SelectItem(INT Index, BOOL FromTop=FALSE);
 	void TrackSubmenu(CDialogMenuPopup* pPopup, BOOL Keyboard);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

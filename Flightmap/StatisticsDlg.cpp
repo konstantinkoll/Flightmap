@@ -71,13 +71,13 @@ __forceinline void Finish(CListCtrl& wndList, INT Count)
 
 	CHeaderCtrl* pHeaderCtrl = wndList.GetHeaderCtrl();
 
-	HDITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.mask = HDI_FORMAT;
+	HDITEM Item;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = HDI_FORMAT;
 
-	pHeaderCtrl->GetItem(0, &item);
-	item.fmt |= HDF_SORTDOWN;
-	pHeaderCtrl->SetItem(0, &item);
+	pHeaderCtrl->GetItem(0, &Item);
+	Item.fmt |= HDF_SORTDOWN;
+	pHeaderCtrl->SetItem(0, &Item);
 
 	wndList.SetRedraw(TRUE);
 	wndList.Invalidate();
@@ -316,11 +316,11 @@ void StatisticsDlg::UpdateStatistics()
 
 	UINT Columns1[1] = { 1 };
 	UINT Columns2[2] = { 1, 2 };
-	LVITEM item;
-	ZeroMemory(&item, sizeof(item));
-	item.mask = LVIF_TEXT | LVIF_GROUPID | LVIF_IMAGE | LVIF_COLUMNS;
-	item.cColumns = 2;
-	item.puColumns = Columns2;
+	LVITEM Item;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = LVIF_TEXT | LVIF_GROUPID | LVIF_IMAGE | LVIF_COLUMNS;
+	Item.cColumns = 2;
+	Item.puColumns = Columns2;
 
 	for (UINT a=0; a<10; a++)
 #ifndef _DEBUG
@@ -329,17 +329,17 @@ void StatisticsDlg::UpdateStatistics()
 		{
 			ENSURE(tmpStr.LoadString(IDS_CLASS_F+a%6));
 
-			item.pszText = tmpStr.GetBuffer();
-			item.iGroupId = a<5 ? 0 : 1;
-			item.iImage = a%6;
+			Item.pszText = tmpStr.GetBuffer();
+			Item.iGroupId = a<5 ? 0 : 1;
+			Item.iImage = a%6;
 
-			INT idx = m_wndListClass.InsertItem(&item);
+			INT Index = m_wndListClass.InsertItem(&Item);
 
 			tmpStr.Format(FlightsByClass[a]==1 ? MaskFlightsSingular : MaskFlightsPlural, FlightsByClass[a]);
-			m_wndListClass.SetItemText(idx, 1, tmpStr);
+			m_wndListClass.SetItemText(Index, 1, tmpStr);
 
 			DistanceToString(tmpBuf, 256, DistanceNMByClass[a]);
-			m_wndListClass.SetItemText(idx, 2, tmpBuf);
+			m_wndListClass.SetItemText(Index, 2, tmpBuf);
 		}
 
 	m_wndListClass.SetRedraw(TRUE);
@@ -348,10 +348,10 @@ void StatisticsDlg::UpdateStatistics()
 	// Routes
 	Start(m_wndListRoute);
 
-	ZeroMemory(&item, sizeof(item));
-	item.mask = LVIF_TEXT | LVIF_COLUMNS;
-	item.cColumns = 2;
-	item.puColumns = Columns2;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = LVIF_TEXT | LVIF_COLUMNS;
+	Item.cColumns = 2;
+	Item.puColumns = Columns2;
 
 	CFlightsRoute::CPair* pPair1 = Route.PGetFirstAssoc();
 	while (pPair1)
@@ -365,24 +365,24 @@ void StatisticsDlg::UpdateStatistics()
 		strncat_s(Rt, 8, &Key[3], 3);
 
 		tmpStr.Format(_T("%5d"), pPair1->value);
-		item.pszText = tmpStr.GetBuffer();
+		Item.pszText = tmpStr.GetBuffer();
 
-		INT idx = m_wndListRoute.InsertItem(&item);
+		INT Index = m_wndListRoute.InsertItem(&Item);
 
 		tmpStr = Rt;
-		m_wndListRoute.SetItemText(idx, 1, tmpStr);
+		m_wndListRoute.SetItemText(Index, 1, tmpStr);
 
-		m_wndListRoute.SetItemData(idx, idx);
+		m_wndListRoute.SetItemData(Index, Index);
 		pPair1 = Route.PGetNextAssoc(pPair1);
 	}
 
 	// Airports
 	Start(m_wndListAirport);
 
-	ZeroMemory(&item, sizeof(item));
-	item.mask = LVIF_TEXT | LVIF_COLUMNS;
-	item.cColumns = 2;
-	item.puColumns = Columns2;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = LVIF_TEXT | LVIF_COLUMNS;
+	Item.cColumns = 2;
+	Item.puColumns = Columns2;
 
 	CFlightsAirport::CPair* pPair2 = Airport.PGetFirstAssoc();
 	while (pPair2)
@@ -394,18 +394,18 @@ void StatisticsDlg::UpdateStatistics()
 		if (FMIATAGetAirportByCode(Code, &pAirport))
 		{
 			tmpStr.Format(_T("%5d"), pPair2->value);
-			item.pszText = tmpStr.GetBuffer();
+			Item.pszText = tmpStr.GetBuffer();
 
-			INT idx = m_wndListAirport.InsertItem(&item);
+			INT Index = m_wndListAirport.InsertItem(&Item);
 
 			tmpStr = pAirport->Code;
-			m_wndListAirport.SetItemText(idx, 1, tmpStr);
+			m_wndListAirport.SetItemText(Index, 1, tmpStr);
 
 			tmpStr = pAirport->Name;
 			tmpStr += _T(", ");
 			tmpStr += FMIATAGetCountry(pAirport->CountryID)->Name;
-			m_wndListAirport.SetItemText(idx, 2, tmpStr);
-			m_wndListAirport.SetItemData(idx, idx);
+			m_wndListAirport.SetItemText(Index, 2, tmpStr);
+			m_wndListAirport.SetItemData(Index, Index);
 		}
 
 		pPair2 = Airport.PGetNextAssoc(pPair2);
@@ -414,47 +414,47 @@ void StatisticsDlg::UpdateStatistics()
 	// Carrier
 	Start(m_wndListCarrier);
 
-	ZeroMemory(&item, sizeof(item));
-	item.mask = LVIF_TEXT | LVIF_COLUMNS;
-	item.cColumns = 2;
-	item.puColumns = Columns2;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = LVIF_TEXT | LVIF_COLUMNS;
+	Item.cColumns = 2;
+	Item.puColumns = Columns2;
 
 	CFlightsCarrier::CPair* pPair3 = Carrier.PGetFirstAssoc();
 	while (pPair3)
 	{
 		tmpStr.Format(_T("%5d"), pPair3->value.FlightCount);
-		item.pszText = tmpStr.GetBuffer();
+		Item.pszText = tmpStr.GetBuffer();
 
-		INT idx = m_wndListCarrier.InsertItem(&item);
+		INT Index = m_wndListCarrier.InsertItem(&Item);
 
 		DistanceToString(tmpBuf, 256, pPair3->value.DistanceNM);
-		m_wndListCarrier.SetItemText(idx, 1, tmpBuf);
+		m_wndListCarrier.SetItemText(Index, 1, tmpBuf);
 
 		tmpStr = pPair3->key;
-		m_wndListCarrier.SetItemText(idx, 2, tmpStr);
+		m_wndListCarrier.SetItemText(Index, 2, tmpStr);
 
-		m_wndListCarrier.SetItemData(idx, idx);
+		m_wndListCarrier.SetItemData(Index, Index);
 		pPair3 = Carrier.PGetNextAssoc(pPair3);
 	}
 
 	// Equipment
 	Start(m_wndListEquipment);
 
-	ZeroMemory(&item, sizeof(item));
-	item.mask = LVIF_TEXT | LVIF_COLUMNS;
-	item.cColumns = 1;
-	item.puColumns = Columns1;
+	ZeroMemory(&Item, sizeof(Item));
+	Item.mask = LVIF_TEXT | LVIF_COLUMNS;
+	Item.cColumns = 1;
+	Item.puColumns = Columns1;
 
 	CFlightsEquipment::CPair* pPair4 = Equipment.PGetFirstAssoc();
 	while (pPair4)
 	{
 		tmpStr.Format(_T("%5d"), pPair4->value);
-		item.pszText = tmpStr.GetBuffer();
+		Item.pszText = tmpStr.GetBuffer();
 
-		INT idx = m_wndListEquipment.InsertItem(&item);
-		m_wndListEquipment.SetItemText(idx, 1, pPair4->key);
+		INT Index = m_wndListEquipment.InsertItem(&Item);
+		m_wndListEquipment.SetItemText(Index, 1, pPair4->key);
 
-		m_wndListCarrier.SetItemData(idx, idx);
+		m_wndListCarrier.SetItemData(Index, Index);
 		pPair4 = Equipment.PGetNextAssoc(pPair4);
 	}
 
@@ -585,19 +585,19 @@ void StatisticsDlg::OnSortLists(NMHDR* pNMHDR, LRESULT* pResult)
 	CHeaderCtrl* pHeaderCtrl = sp.pList->GetHeaderCtrl();
 	if (pHeaderCtrl)
 	{
-		HDITEM item;
-		ZeroMemory(&item, sizeof(item));
-		item.mask = HDI_FORMAT;
+		HDITEM Item;
+		ZeroMemory(&Item, sizeof(Item));
+		Item.mask = HDI_FORMAT;
 
 		for (INT a=0; a<pHeaderCtrl->GetItemCount(); a++)
 		{
-			pHeaderCtrl->GetItem(a, &item);
+			pHeaderCtrl->GetItem(a, &Item);
 
-			item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+			Item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
 			if (a==(INT)sp.Column)
-				item.fmt |= sp.ConvertToNumber ? HDF_SORTDOWN : HDF_SORTUP;
+				Item.fmt |= sp.ConvertToNumber ? HDF_SORTDOWN : HDF_SORTUP;
 
-			pHeaderCtrl->SetItem(a, &item);
+			pHeaderCtrl->SetItem(a, &Item);
 		}
 	}
 

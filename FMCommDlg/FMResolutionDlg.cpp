@@ -77,11 +77,11 @@ void FMResolutionDlg::DoDataExchange(CDataExchange* pDX)
 		}
 		else
 		{
-			INT idx = m_wndResolutionList.GetNextItem(-1, LVIS_SELECTED);
-			if (idx!=-1)
+			INT Index = m_wndResolutionList.GetNextItem(-1, LVIS_SELECTED);
+			if (Index!=-1)
 			{
-				*p_Width = FixedResolutions[idx].Width;
-				*p_Height = FixedResolutions[idx].Height;
+				*p_Width = FixedResolutions[Index].Width;
+				*p_Height = FixedResolutions[Index].Height;
 			}
 		}
 }
@@ -161,9 +161,9 @@ BOOL FMResolutionDlg::OnInitDialog()
 			lvi.state = 0;
 		}
 		lvi.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
-		INT idx = m_wndResolutionList.InsertItem(&lvi);
+		INT Index = m_wndResolutionList.InsertItem(&lvi);
 
-		m_wndResolutionList.SetItemText(idx, 1, FixedResolutions[a].Hint);
+		m_wndResolutionList.SetItemText(Index, 1, FixedResolutions[a].Hint);
 	}
 
 	m_wndResolutionList.SetView(LV_VIEW_TILE);

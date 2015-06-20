@@ -368,18 +368,18 @@ CGdiPlusBitmap* FMApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType)
 {
 	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
 	{
-		ResourceCacheItem item = m_ResourceCache.GetNext(p);
+		ResourceCacheItem Item = m_ResourceCache.GetNext(p);
 
-		if (item.nID==nID)
-			return item.pImage;
+		if (Item.nID==nID)
+			return Item.pImage;
 	}
 
-	ResourceCacheItem item;
-	item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
-	item.nID = nID;
+	ResourceCacheItem Item;
+	Item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
+	Item.nID = nID;
 
-	m_ResourceCache.AddTail(item);
-	return item.pImage;
+	m_ResourceCache.AddTail(Item);
+	return Item.pImage;
 }
 
 HICON FMApplication::LoadDialogIcon(UINT nID)
@@ -440,6 +440,7 @@ void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_ENTERLICENSEKEY:
 		pCmdUI->Enable(!FMIsLicensed());
 		break;
+
 	default:
 		pCmdUI->Enable(TRUE);
 	}
@@ -538,9 +539,11 @@ BOOL FMApplication::IsUpdateCheckDue()
 		case 0:
 			LastUpdateCheck.QuadPart += DAY;
 			break;
+
 		case 1:
 			LastUpdateCheck.QuadPart += 7*DAY;
 			break;
+
 		case 2:
 			LastUpdateCheck.QuadPart += 30*DAY;
 			break;

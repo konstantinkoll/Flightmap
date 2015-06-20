@@ -34,8 +34,7 @@ CMainWnd::CMainWnd()
 
 CMainWnd::~CMainWnd()
 {
-	if (m_pItinerary)
-		delete m_pItinerary;
+	delete m_pItinerary;
 }
 
 BOOL CMainWnd::Create(CItinerary* pItinerary)

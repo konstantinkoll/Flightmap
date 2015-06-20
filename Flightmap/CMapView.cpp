@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CMapView.h"
 #include "Flightmap.h"
-#include "Resource.h"
 
 
 // CMapView
@@ -182,9 +181,9 @@ void CMapView::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	BOOL Themed = IsCtrlThemed();
 	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
@@ -367,7 +366,7 @@ BOOL CMapView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 	return TRUE;
 }
 
-BOOL CMapView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+BOOL CMapView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
 	if (zDelta<0)
 	{

@@ -125,9 +125,9 @@ void CTaskButton::OnPaint()
 	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
 	BOOL Focused = (GetState() & 8);
@@ -192,18 +192,12 @@ void CTaskButton::OnPaint()
 	}
 	else
 	{
-		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-		COLORREF c2 = GetSysColor(COLOR_3DFACE);
-		COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-		COLORREF c4 = 0x000000;
-
 		if ((Selected) || (m_Hover))
 		{
-			if (Selected)
-			{
-				std::swap(c1, c4);
-				std::swap(c2, c3);
-			}
+			COLORREF c1 = Selected ? 0x000000 : GetSysColor(COLOR_3DHIGHLIGHT);
+			COLORREF c2 = Selected ? GetSysColor(COLOR_3DSHADOW) : GetSysColor(COLOR_3DFACE);
+			COLORREF c3 = Selected ? GetSysColor(COLOR_3DFACE) : GetSysColor(COLOR_3DSHADOW);
+			COLORREF c4 = Selected ? GetSysColor(COLOR_3DHIGHLIGHT) : 0x000000;
 
 			CRect rectBorder(rect);
 			dc.Draw3dRect(rectBorder, c1, c4);
@@ -234,7 +228,7 @@ void CTaskButton::OnPaint()
 		CAfxDrawState ds;
 		p_Icons->PrepareDrawImage(ds);
 
-		CPoint pt(rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 1 : 0));
+		CPoint pt(rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1));
 		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
 
 		if (m_OverlayID!=-1)
@@ -287,7 +281,7 @@ void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 		{
 			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, NULL, NULL, NULL, m_TooltipHint.IsEmpty() ? _T("") : m_TooltipHeader, m_TooltipHint.IsEmpty() ? m_TooltipHeader : m_TooltipHint);
+			m_TooltipCtrl.Track(point, NULL, NULL, m_TooltipHint.IsEmpty() ? _T("") : m_TooltipHeader, m_TooltipHint.IsEmpty() ? m_TooltipHeader : m_TooltipHint);
 		}
 		else
 		{

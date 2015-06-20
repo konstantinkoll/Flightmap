@@ -136,11 +136,11 @@ BEGIN
     PUSHBUTTON      "Über „Flightmap E&xclusive“ informieren...",IDC_EXCLUSIVE,206,139,172,14
     CONTROL         "Lizenz",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,185,81
     LTEXT           "Name:",IDC_STATIC,15,174,169,8
-    LTEXT           "X",IDC_NAME,15,184,169,8
+    LTEXT           "X",IDC_REGNAME,15,184,169,8
     LTEXT           "Kaufdatum:",IDC_STATIC,15,197,112,8
     LTEXT           "X",IDC_PURCHASEDATE,15,207,112,8
     LTEXT           "ID:",IDC_STATIC,134,197,50,8
-    LTEXT           "X",IDC_ID,134,207,50,8
+    LTEXT           "X",IDC_PURCHASEID,134,207,50,8
     LTEXT           "Produkt:",IDC_STATIC,15,222,112,8
     LTEXT           "X",IDC_PRODUCT,15,232,169,8
     LTEXT           "Menge:",IDC_QUANTITYTITLE,134,222,50,8
@@ -761,11 +761,11 @@ BEGIN
     PUSHBUTTON      "Learn about “Flightmap E&xclusive”...",IDC_EXCLUSIVE,206,139,172,14
     CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,185,81
     LTEXT           "Name:",IDC_STATIC,15,174,169,8
-    LTEXT           "X",IDC_NAME,15,184,169,8
+    LTEXT           "X",IDC_REGNAME,15,184,169,8
     LTEXT           "Purchase date:",IDC_STATIC,15,197,112,8
     LTEXT           "X",IDC_PURCHASEDATE,15,207,112,8
     LTEXT           "ID:",IDC_STATIC,134,197,50,8
-    LTEXT           "X",IDC_ID,134,207,50,8
+    LTEXT           "X",IDC_PURCHASEID,134,207,50,8
     LTEXT           "Product:",IDC_STATIC,15,222,112,8
     LTEXT           "X",IDC_PRODUCT,15,232,169,8
     LTEXT           "Quantity:",IDC_QUANTITYTITLE,134,222,50,8

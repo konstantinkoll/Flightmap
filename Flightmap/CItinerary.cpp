@@ -15,13 +15,20 @@ void ResetFlight(AIRX_Flight& Flight)
 	Flight.Color = (COLORREF)-1;
 }
 
-void RemoveAttachment(UINT Idx, AIRX_Flight* pFlight)
+__forceinline void Swap(AIRX_Flight& Eins, AIRX_Flight& Zwei)
+{
+	AIRX_Flight Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}
+
+void RemoveAttachment(UINT Index, AIRX_Flight* pFlight)
 {
 	ASSERT(pFlight);
 
 	UINT No = 0;
 	while (No<pFlight->AttachmentCount)
-		if (pFlight->Attachments[No]==Idx)
+		if (pFlight->Attachments[No]==Index)
 		{
 			pFlight->AttachmentCount--;
 
@@ -31,7 +38,7 @@ void RemoveAttachment(UINT Idx, AIRX_Flight* pFlight)
 		}
 		else
 		{
-			if (pFlight->Attachments[No]>Idx)
+			if (pFlight->Attachments[No]>Index)
 				pFlight->Attachments[No]--;
 
 			No++;
@@ -282,9 +289,9 @@ CString ExportLocation(AIRX_Flight& Flight, UINT AttrBase)
 // ToString
 //
 
-void MilesToString(CString &str, LONG AwardMiles, LONG StatusMiles)
+void MilesToString(CString &Str, LONG AwardMiles, LONG StatusMiles)
 {
-	str.Format(IDS_MILES, AwardMiles, StatusMiles);
+	Str.Format(IDS_MILES, AwardMiles, StatusMiles);
 }
 
 void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
@@ -417,12 +424,12 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 // FromString
 //
 
-__forceinline void ScanUINT(LPCWSTR str, UINT& num)
+__forceinline void ScanUINT(LPCWSTR Str, UINT& num)
 {
-	swscanf_s(str, L"%u", &num);
+	swscanf_s(Str, L"%u", &num);
 }
 
-void ScanDateTime(LPCWSTR str, FILETIME& ft)
+void ScanDateTime(LPCWSTR Str, FILETIME& ft)
 {
 	UINT Year;
 	UINT Month;
@@ -431,7 +438,7 @@ void ScanDateTime(LPCWSTR str, FILETIME& ft)
 	UINT Minute;
 	SYSTEMTIME st;
 
-	INT c = swscanf_s(str, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
+	INT c = swscanf_s(Str, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
 	if (c>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
@@ -450,7 +457,7 @@ void ScanDateTime(LPCWSTR str, FILETIME& ft)
 		return;
 	}
 
-	c = swscanf_s(str, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
+	c = swscanf_s(Str, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
 	if (c>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
@@ -469,7 +476,7 @@ void ScanDateTime(LPCWSTR str, FILETIME& ft)
 		return;
 	}
 
-	c = swscanf_s(str, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
+	c = swscanf_s(Str, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
 	if (c>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
@@ -491,12 +498,12 @@ void ScanDateTime(LPCWSTR str, FILETIME& ft)
 	ft.dwHighDateTime = ft.dwLowDateTime = 0;
 }
 
-void ScanTime(LPCWSTR str, UINT& time)
+void ScanTime(LPCWSTR Str, UINT& time)
 {
 	UINT Hour;
 	UINT Minute;
 
-	INT c = swscanf_s(str, L"%u:%u", &Hour, &Minute);
+	INT c = swscanf_s(Str, L"%u:%u", &Hour, &Minute);
 	if (c>=1)
 	{
 		time = Hour*60;
@@ -510,9 +517,9 @@ void ScanTime(LPCWSTR str, UINT& time)
 	time = 0;
 }
 
-void ScanColor(LPCWSTR str, COLORREF& col)
+void ScanColor(LPCWSTR Str, COLORREF& col)
 {
-	if (swscanf_s(str, L"%06X", &col)==1)
+	if (swscanf_s(Str, L"%06X", &col)==1)
 		if (col!=(COLORREF)-1)
 		{
 			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
@@ -739,6 +746,7 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 CItinerary::CItinerary(CString FileName)
 {
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
+
 	m_IsModified = m_IsOpen = FALSE;
 	ENSURE(m_DisplayName.LoadString(IDS_EMPTYITINERARY));
 
@@ -746,15 +754,15 @@ CItinerary::CItinerary(CString FileName)
 	FMLicense License;
 	if (FMIsLicensed(&License))
 	{
-		wcscpy_s(m_Metadata.Author, 256, License.RegName);
+		MultiByteToWideChar(CP_ACP, 0, License.RegName, -1, m_Metadata.Author, 256);
 	}
 	else
 	{
 		HKEY hKey;
 		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 		{
-			DWORD Length = 256;
-			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &Length);
+			DWORD dwSize = 256;
+			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &dwSize);
 
 			RegCloseKey(hKey);
 		}
@@ -765,12 +773,14 @@ CItinerary::CItinerary(CString FileName)
 	{
 		CString Ext = FileName;
 		Ext.MakeLower();
-		INT pos = Ext.ReverseFind(L'\\');
-		if (pos!=-1)
-			Ext.Delete(0, pos+1);
-		pos = Ext.ReverseFind(L'.');
-		if (pos!=-1)
-			Ext.Delete(0, pos+1);
+
+		INT Pos = Ext.ReverseFind(L'\\');
+		if (Pos!=-1)
+			Ext.Delete(0, Pos+1);
+
+		Pos = Ext.ReverseFind(L'.');
+		if (Pos!=-1)
+			Ext.Delete(0, Pos+1);
 
 		if (Ext==_T("airx"))
 			OpenAIRX(FileName);
@@ -1276,11 +1286,11 @@ CString CItinerary::Flight2Text(AIRX_Flight& Flight)
 	return tmpStr;
 }
 
-CString CItinerary::Flight2Text(UINT Idx)
+CString CItinerary::Flight2Text(UINT Index)
 {
-	ASSERT(Idx<m_Flights.m_ItemCount);
+	ASSERT(Index<m_Flights.m_ItemCount);
 
-	return Flight2Text(m_Flights.m_Items[Idx]);
+	return Flight2Text(m_Flights.m_Items[Index]);
 }
 
 FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute)
@@ -1387,19 +1397,19 @@ INT CItinerary::Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, c
 	return Descending ? Cmp : -Cmp;
 }
 
-void CItinerary::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL Descending)
+void CItinerary::Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending)
 {
-	/*while (Wurzel<=Anz/2-1)
+	/*while (Wurzel<=Anzahl/2-1)
 	{
-		INT Idx = (Wurzel+1)*2-1;
-		if (Idx+1<Anz)
-			if (Compare(Idx, Idx+1, Attr, Descending)<0)
-				Idx++;
+		INT Index = (Wurzel+1)*2-1;
+		if (Index+1<Anzahl)
+			if (Compare(Index, Index+1, Attr, Descending)<0)
+				Index++;
 
-		if (Compare(Wurzel, Idx, Attr, Descending)<0)
+		if (Compare(Wurzel, Index, Attr, Descending)<0)
 		{
-			std::swap(m_Flights.m_Items[Wurzel], m_Flights.m_Items[Idx]);
-			Wurzel = Idx;
+			std::swap(m_Flights.m_Items[Wurzel], m_Flights.m_Items[Index]);
+			Wurzel = Index;
 		}
 		else
 		{
@@ -1412,7 +1422,7 @@ void CItinerary::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL D
 	unsigned int Parent = Wurzel;
 	unsigned int Child;
 
-	while ((Child=(Parent+1)*2)<Anz)
+	while ((Child=(Parent+1)*2)<Anzahl)
 	{
 		if (Compare(&m_Flights.m_Items[Child-1], &m_Flights.m_Items[Child], Attr, Descending)>0)
 			Child--;
@@ -1421,7 +1431,7 @@ void CItinerary::Heap(UINT Wurzel, const UINT Anz, const UINT Attr, const BOOL D
 		Parent = Child;
 	}
 
-	if (Child==Anz)
+	if (Child==Anzahl)
 	{
 		if (Compare(&m_Flights.m_Items[--Child], &f, Attr, Descending)>=0)
 		{
@@ -1468,7 +1478,7 @@ void CItinerary::Sort(UINT Attr, BOOL Descending)
 			Heap(a, m_Flights.m_ItemCount, Attr, Descending);
 		for (INT a=m_Flights.m_ItemCount-1; a>0; a--)
 		{
-			std::swap(m_Flights.m_Items[0], m_Flights.m_Items[a]);
+			Swap(m_Flights.m_Items[0], m_Flights.m_Items[a]);
 			Heap(0, a, Attr, Descending);
 		}
 	}
@@ -1520,9 +1530,9 @@ void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
 
 	for (UINT a=0; a<pItinerary->m_Flights.m_Items[Row].AttachmentCount; a++)
 	{
-		UINT Idx = AddAttachment(pItinerary, pItinerary->m_Flights.m_Items[Row].Attachments[a]);
-		if (Idx!=(UINT)-1)
-			Flight.Attachments[Flight.AttachmentCount++] = Idx;
+		UINT Index = AddAttachment(pItinerary, pItinerary->m_Flights.m_Items[Row].Attachments[a]);
+		if (Index!=(UINT)-1)
+			Flight.Attachments[Flight.AttachmentCount++] = Index;
 	}
 
 	m_Flights.AddItem(Flight);
@@ -1686,27 +1696,27 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 	return Result;
 }
 
-UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Idx)
+UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Index)
 {
 	ASSERT(pItinerary);
-	ASSERT(Idx<pItinerary->m_Attachments.m_ItemCount);
+	ASSERT(Index<pItinerary->m_Attachments.m_ItemCount);
 
-	AIRX_Attachment Attachment = pItinerary->m_Attachments.m_Items[Idx];
+	AIRX_Attachment Attachment = pItinerary->m_Attachments.m_Items[Index];
 
 	Attachment.pData = malloc(Attachment.Size+AttachmentEndBuffer);
 	if (!Attachment.pData)
 		return (UINT)-1;
 
-	memcpy_s(Attachment.pData, Attachment.Size, pItinerary->m_Attachments.m_Items[Idx].pData, Attachment.Size);
+	memcpy_s(Attachment.pData, Attachment.Size, pItinerary->m_Attachments.m_Items[Index].pData, Attachment.Size);
 
 	return m_Attachments.AddItem(Attachment) ? m_Attachments.m_ItemCount-1 : (UINT)-1;
 }
 
-CGdiPlusBitmap* CItinerary::DecodePictureAttachment(UINT Idx)
+CGdiPlusBitmap* CItinerary::DecodePictureAttachment(UINT Index)
 {
-	ASSERT(Idx<m_Attachments.m_ItemCount);
+	ASSERT(Index<m_Attachments.m_ItemCount);
 
-	return DecodePictureAttachment(m_Attachments.m_Items[Idx]);
+	return DecodePictureAttachment(m_Attachments.m_Items[Index]);
 }
 
 CGdiPlusBitmap* CItinerary::DecodePictureAttachment(AIRX_Attachment& Attachment)
@@ -1769,21 +1779,21 @@ void CItinerary::ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force)
 		}
 }
 
-void CItinerary::DeleteAttachment(UINT Idx, AIRX_Flight* pFlight)
+void CItinerary::DeleteAttachment(UINT Index, AIRX_Flight* pFlight)
 {
-	ASSERT(Idx<m_Attachments.m_ItemCount);
+	ASSERT(Index<m_Attachments.m_ItemCount);
 
-	FreeAttachment(m_Attachments.m_Items[Idx]);
+	FreeAttachment(m_Attachments.m_Items[Index]);
 
 	m_Attachments.m_ItemCount--;
-	for (UINT a=Idx; a<m_Attachments.m_ItemCount; a++)
+	for (UINT a=Index; a<m_Attachments.m_ItemCount; a++)
 		m_Attachments.m_Items[a] = m_Attachments.m_Items[a+1];
 
 	for (UINT a=0; a<m_Flights.m_ItemCount; a++)
-		RemoveAttachment(Idx, &m_Flights.m_Items[a]);
+		RemoveAttachment(Index, &m_Flights.m_Items[a]);
 
 	if (pFlight)
-		RemoveAttachment(Idx, pFlight);
+		RemoveAttachment(Index, pFlight);
 
 	m_IsModified = TRUE;
 }
