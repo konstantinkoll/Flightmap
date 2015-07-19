@@ -83,7 +83,7 @@ void ConvertFile(CString LanguageSuffix)
 
 	// Einlesen
 	CStdioFile input;
-	input.Open(path+"..\\..\\Result\\IATA-"+LanguageSuffix+".TXT", CFile::modeRead | CFile::typeText);
+	input.Open(path+"..\\..\\res\\IATA-"+LanguageSuffix+".TXT", CFile::modeRead | CFile::typeText);
 
 	while (input.ReadString(tmpStr))
 	{

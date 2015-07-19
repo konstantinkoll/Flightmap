@@ -70,7 +70,7 @@ void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL Fi
 
 // Lizensierung
 
-BOOL FMIsLicensed(FMLicense* License=NULL, BOOL Reload=FALSE);
+BOOL FMIsLicensed(FMLicense* pLicense=NULL, BOOL Reload=FALSE);
 BOOL FMIsSharewareExpired();
 
 

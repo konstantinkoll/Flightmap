@@ -46,8 +46,7 @@ FMDynArray<T>::FMDynArray()
 template <typename T>
 FMDynArray<T>::~FMDynArray()
 {
-	if (m_Items)
-		free(m_Items);
+	free(m_Items);
 }
 
 template <typename T>

@@ -465,7 +465,7 @@ BOOL GetLicense(FMLicense* pLicense)
 	return TRUE;
 }
 
-BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
+BOOL FMIsLicensed(FMLicense* pLicense, BOOL Reload)
 {
 	// Setup
 	if (!LicenseRead || Reload)
@@ -476,8 +476,8 @@ BOOL FMIsLicensed(FMLicense* License, BOOL Reload)
 			return FALSE;
 	}
 
-	if (License)
-		*License = LicenseBuffer;
+	if (pLicense)
+		*pLicense = LicenseBuffer;
 
 	return strncmp(LicenseBuffer.ProductID, "Flightmap", 9)==0;
 }

@@ -379,6 +379,7 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 		case 0:
 			pDispInfo->item.pszText = pAttachment->Name;
 			break;
+
 		case 1:
 		case 2:
 			{
@@ -392,9 +393,10 @@ void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
 				GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, Date, 256);
 				GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, Time, 256);
 
-				swprintf_s(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, L"%s, %s", Date, Time);
+				swprintf_s(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, L"%s %s", Date, Time);
 				break;
 			}
+
 		case 3:
 			StrFormatByteSize(pAttachment->Size, pDispInfo->item.pszText, pDispInfo->item.cchTextMax);
 			break;
