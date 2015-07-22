@@ -9,11 +9,19 @@
 // CExplorerList
 //
 
+#define PADDING                               1
+#define DrawLabel(dc, rect, text, format)     dc.DrawText(text, rect, DT_END_ELLIPSIS | format);
+
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	hTheme = NULL;
+	hThemeList = NULL;
+	p_ImageList = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
+	m_ItemsPerRow = m_ColumnsPerTile = 3;
+	m_ColumnCount = 1;
+	m_Hover = FALSE;
+	m_HoverItem = m_TooltipItem = -1;
 }
 
 void CExplorerList::PreSubclassWindow()
@@ -25,39 +33,82 @@ void CExplorerList::PreSubclassWindow()
 		Init();
 }
 
+BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CListCtrl::PreTranslateMessage(pMsg);
+}
+
 void CExplorerList::Init()
 {
+	ModifyStyle(0, LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
 	if ((FMGetApp()->m_ThemeLibLoaded) && (FMGetApp()->OSVersion>=OS_Vista))
 	{
 		FMGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-		hTheme = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hThemeList = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
-	LOGFONT lf;
-	FMGetApp()->m_DefaultFont.GetLogFont(&lf);
+	CHeaderCtrl* pHeader = GetHeaderCtrl();
+	if (pHeader)
+		VERIFY(m_wndHeader.SubclassWindow(pHeader->m_hWnd));
 
-	LVTILEVIEWINFO tvi;
-	ZeroMemory(&tvi, sizeof(tvi));
-	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = (FMGetApp()->OSVersion==OS_XP) ? 2 : 3;
-	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
-	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 20*abs(lf.lfHeight);
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&FMGetApp()->m_DefaultFont);
+	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
 
-	// Hack: CListCtrl formatiert unter Windows XP die Textzeilen falsch, wenn LVS_OWNERDATA gesetzt ist
-	if ((FMGetApp()->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
+	CRect rect;
+	GetWindowRect(rect);
+
+	AdjustLayout(rect.Width());
+
+	// Tooltip
+	m_TooltipCtrl.Create(this);
+}
+
+BOOL CExplorerList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
+{
+	CRect rect;
+	GetWindowRect(rect);
+
+	if (cx<rect.Width())
 	{
-		tvi.dwMask |= LVTVIM_LABELMARGIN;
-		tvi.rcLabelMargin.bottom = 16;
+		AdjustLayout(cx);
+
+		return CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
 	}
+	else
+	{
+		BOOL Result = CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
 
-	SetTileViewInfo(&tvi);
+		AdjustLayout(cx);
 
-	IMAGEINFO ii;
-	FMGetApp()->m_SystemImageListExtraLarge.GetImageInfo(0, &ii);
-	SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+2*abs(lf.lfHeight)+4);
+		return Result;
+	}
 }
 
 void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsible)
@@ -70,6 +121,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.iGroupId = ID;
 	lvg.pszHeader = Name.GetBuffer();
+
 	if (FMGetApp()->OSVersion>=OS_Vista)
 	{
 		if (!Hint.IsEmpty())
@@ -77,6 +129,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 			lvg.pszSubtitle = Hint.GetBuffer();
 			lvg.mask |= LVGF_SUBTITLE;
 		}
+
 		if (Collapsible)
 		{
 			lvg.stateMask = LVGS_COLLAPSIBLE;
@@ -88,18 +141,19 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 	InsertGroup(ID, &lvg);
 }
 
-void CExplorerList::AddColumn(INT ID, CString Name, BOOL Right)
+void CExplorerList::AddColumn(INT ID, LPWSTR Name, INT Width, BOOL Right)
 {
 	LV_COLUMN lvc;
-	ZeroMemory(&lvc, sizeof(lvc));
-
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = Name.GetBuffer();
-	lvc.cx = 100;
+	lvc.pszText = Name;
+	lvc.cx = Width;
 	lvc.fmt = Right ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.iSubItem = ID;
 
 	InsertColumn(ID, &lvc);
+
+	if (ID+1>m_ColumnCount)
+		m_ColumnCount = ID+1;
 }
 
 void CExplorerList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT BackgroundMenuID)
@@ -109,13 +163,253 @@ void CExplorerList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT Backgrou
 	m_BackgroundMenuID = BackgroundMenuID;
 }
 
+void CExplorerList::SetItemsPerRow(INT ItemsPerRow, INT ColumnsPerTile)
+{
+	ASSERT(ItemsPerRow>0);
+
+	m_ItemsPerRow = ItemsPerRow;
+	m_ColumnsPerTile = ColumnsPerTile;
+
+	CRect rect;
+	GetClientRect(rect);
+
+	AdjustLayout(rect.Width());
+}
+
+void CExplorerList::AdjustLayout(INT ListWidth)
+{
+	ASSERT(m_ItemsPerRow>0);
+
+	if ((IsGroupViewEnabled()) && (FMGetApp()->OSVersion==OS_XP))
+		ListWidth -= 14;
+
+	if (GetStyle() & WS_BORDER)
+		ListWidth -= 4;
+
+	if (!(GetStyle() & LVS_ALIGNLEFT))
+		ListWidth -= GetSystemMetrics(SM_CXVSCROLL);
+
+	if (ListWidth<16)
+		return;
+
+	INT Width = ListWidth/m_ItemsPerRow;
+
+	// Tile view
+	LVTILEVIEWINFO tvi;
+	ZeroMemory(&tvi, sizeof(tvi));
+	tvi.cbSize = sizeof(LVTILEVIEWINFO);
+	tvi.cLines = m_ColumnsPerTile;
+	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
+	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
+	tvi.sizeTile.cx = Width;
+	SetTileViewInfo(&tvi);
+
+	// Icon view
+	IMAGEINFO ii;
+	FMGetApp()->m_SystemImageListExtraLarge.GetImageInfo(0, &ii);
+	SetIconSpacing(Width, GetSystemMetrics(SM_CYICONSPACING));
+}
+
+__forceinline void CExplorerList::DrawIcon(CDC* pDC, CRect& rect, LVITEM& Item, UINT State)
+{
+	rect.OffsetRect((rect.Width()-m_IconSize)/2, (rect.Height()-m_IconSize)/2);
+
+	p_ImageList->DrawEx(pDC, Item.iImage, rect.TopLeft(), CSize(m_IconSize, m_IconSize), CLR_NONE, 0xFFFFFF, ((State & LVIS_CUT) || !IsWindowEnabled() ? ILD_BLEND50 : ILD_TRANSPARENT) | (State & LVIS_OVERLAYMASK));
+}
+
+void CExplorerList::DrawItem(INT nID, CDC* pDC)
+{
+	UINT State = GetItemState(nID, LVIS_SELECTED | LVIS_FOCUSED | LVIS_CUT | LVIS_OVERLAYMASK);
+
+	CRect rectItem;
+	GetItemRect(nID, rectItem, LVIR_BOUNDS);
+
+	CRect rect(0, 0, rectItem.Width(), rectItem.Height());
+
+	CDC dc;
+	dc.CreateCompatibleDC(pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	// Hintergrund
+	BOOL Themed = IsCtrlThemed();
+
+	dc.FillSolidRect(rect, GetSysColor(IsWindowEnabled() ? COLOR_WINDOW : COLOR_3DFACE));
+
+	NM_TEXTCOLOR tag;
+	ZeroMemory(&tag, sizeof(tag));
+
+	tag.hdr.code = REQUEST_TEXTCOLOR;
+	tag.hdr.hwndFrom = m_hWnd;
+	tag.hdr.idFrom = GetDlgCtrlID();
+	tag.Item = nID;
+	tag.Color = (COLORREF)-1;
+
+	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+
+	if (IsWindowEnabled())
+	{
+		DrawListItemBackground(dc, rect, hThemeList, Themed, GetFocus()==this,
+			GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
+	}
+	else
+	{
+		dc.SetTextColor(GetSysColor(COLOR_GRAYTEXT));
+	}
+
+	// Item
+	WCHAR Text[256]=L"Test";
+	UINT Columns[4];
+
+	LVITEM Item;
+	ZeroMemory(&Item, sizeof(Item));
+
+	Item.iItem = nID;
+	Item.iSubItem = 0;
+	Item.pszText = Text;
+	Item.cchTextMax = sizeof(Text)/sizeof(WCHAR);
+	Item.puColumns = Columns;
+	Item.cColumns = 4;
+	Item.mask = LVIF_IMAGE | LVIF_TEXT | LVIF_COLUMNS;
+	GetItem(&Item);
+
+	// Zeichnen
+	CRect rectIcon(rect);
+	CRect rectLabel(rect);
+
+	CFont* pOldFont = dc.SelectObject(GetFont());
+
+	switch (m_View)
+	{
+	case LV_VIEW_ICON:
+		rectIcon.top += PADDING;
+		rectIcon.bottom = rectIcon.top+m_IconSize;
+
+		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
+			break;
+
+		rectLabel.top += m_IconSize+PADDING;
+		rectLabel.bottom -= PADDING;
+		DrawLabel(dc, rectLabel, Item.pszText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+
+		break;
+
+	case LV_VIEW_SMALLICON:
+	case LV_VIEW_LIST:
+		rectIcon.left += 2*PADDING;
+		rectIcon.right = rectIcon.left+m_IconSize;
+
+		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
+			break;
+
+		rectLabel.left += m_IconSize+4*PADDING;
+		DrawLabel(dc, rectLabel, Item.pszText, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+		break;
+
+	case LV_VIEW_DETAILS:
+		rectIcon.left++;
+		rectIcon.right = rectIcon.left+m_IconSize;
+
+		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
+			break;
+
+		rectLabel.right = rectLabel.left+m_Columns[0].cx-6*PADDING;
+		rectLabel.left = rectIcon.right+5*PADDING-2;
+		DrawLabel(dc, rectLabel, Text, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+		Item.mask = LVIF_TEXT;
+
+		for (INT a=1; a<min(m_ColumnCount, 16); a++)
+		{
+			Item.iSubItem = a;
+			Item.pszText = Text;
+			GetItem(&Item);
+
+			rectLabel.right += m_Columns[a].cx;
+			rectLabel.left = rectLabel.right-m_Columns[a].cx+11*PADDING+1;
+
+			dc.DrawText(Item.pszText, rectLabel, DT_END_ELLIPSIS | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | ((m_Columns[a].fmt & LVCFMT_JUSTIFYMASK)==LVCFMT_RIGHT ? DT_RIGHT : DT_LEFT));
+		}
+
+		break;
+
+	case LV_VIEW_TILE:
+		rectIcon.left += 3*PADDING;
+		rectIcon.right = rectIcon.left+m_IconSize;
+
+		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
+			break;
+
+		if (Item.cColumns>15)
+			Item.cColumns = 15;
+
+		Item.mask = LVIF_TEXT;
+		INT cCount = 1;
+
+		for (UINT a=1; a<=Item.cColumns; a++)
+		{
+			Item.iSubItem = Item.puColumns[a-1];
+			Item.pszText = Text;
+			GetItem(&Item);
+
+			if (*Item.pszText)
+				cCount++;
+		}
+
+		rectLabel.left += m_IconSize+7*PADDING;
+		rectLabel.right -= 2*PADDING;
+		rectLabel.top += (rect.Height()-cCount*m_FontHeight)/2;
+		rectLabel.bottom = rectLabel.top+m_FontHeight;
+
+		Item.iSubItem = 0;
+		Item.pszText = Text;
+		GetItem(&Item);
+
+		DrawLabel(dc, rectLabel, Item.pszText, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+		if (IsWindowEnabled() && (tag.Color==(COLORREF)-1) && Themed && ((hThemeList) || !(State & LVIS_SELECTED)))
+			dc.SetTextColor(0x808080);
+
+		for (UINT a=1; a<=Item.cColumns; a++)
+		{
+			Item.iSubItem = Item.puColumns[a-1];
+			Item.pszText = Text;
+			GetItem(&Item);
+
+			if (*Item.pszText)
+			{
+				rectLabel.OffsetRect(0, m_FontHeight);
+				dc.DrawText(Item.pszText, rectLabel, DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+			}
+		}
+
+		break;
+	}
+
+	if (p_ImageList)
+		DrawIcon(&dc, rectIcon, Item, State);
+
+	pDC->BitBlt(rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height(), &dc, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldFont);
+	dc.SelectObject(pOldBitmap);
+}
+
 
 BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	//ON_WM_ERASEBKGND()
 	ON_WM_THEMECHANGED()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 	ON_WM_CONTEXTMENU()
-	ON_WM_KEYDOWN()
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
 END_MESSAGE_MAP()
 
 INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -130,23 +424,104 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CExplorerList::OnDestroy()
 {
-	if (hTheme)
-		FMGetApp()->zCloseThemeData(hTheme);
+	if (hThemeList)
+		FMGetApp()->zCloseThemeData(hThemeList);
 
 	CListCtrl::OnDestroy();
+}
+
+BOOL CExplorerList::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
 }
 
 LRESULT CExplorerList::OnThemeChanged()
 {
 	if ((FMGetApp()->m_ThemeLibLoaded) && (FMGetApp()->OSVersion>=OS_Vista))
 	{
-		if (hTheme)
-			FMGetApp()->zCloseThemeData(hTheme);
+		if (hThemeList)
+			FMGetApp()->zCloseThemeData(hThemeList);
 
-		hTheme = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		hThemeList = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	return TRUE;
+}
+
+void CExplorerList::OnMouseMove(UINT nFlags, CPoint point)
+{
+	LVHITTESTINFO htt;
+	htt.pt = point;
+	m_HoverItem = HitTest(&htt);
+
+	if (!m_Hover)
+	{
+		m_Hover = TRUE;
+
+		TRACKMOUSEEVENT tme;
+		ZeroMemory(&tme, sizeof(tme));
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = FMHOVERTIME;
+		tme.hwndTrack = GetSafeHwnd();
+		TrackMouseEvent(&tme);
+	}
+	else
+		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TooltipItem))
+			m_TooltipCtrl.Deactivate();
+
+	CListCtrl::OnMouseMove(nFlags, point);
+}
+
+void CExplorerList::OnMouseLeave()
+{
+	m_TooltipCtrl.Deactivate();
+	m_Hover = FALSE;
+	m_HoverItem = -1;
+
+	CListCtrl::OnMouseLeave();
+}
+
+void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		LVHITTESTINFO htt;
+		htt.pt = point;
+
+		m_TooltipItem = HitTest(&htt);
+		if (m_TooltipItem!=-1)
+			if (!m_TooltipCtrl.IsWindowVisible())
+			{
+				NM_TOOLTIPDATA tag;
+				ZeroMemory(&tag, sizeof(tag));
+
+				tag.hdr.code = REQUEST_TOOLTIP_DATA;
+				tag.hdr.hwndFrom = m_hWnd;
+				tag.hdr.idFrom = GetDlgCtrlID();
+				tag.Item = m_TooltipItem;
+
+				GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+
+				if (tag.Show)
+				{
+					ClientToScreen(&point);
+					m_TooltipCtrl.Track(point, tag.hIcon, tag.hBitmap, GetItemText(m_TooltipItem, 0), tag.Text);
+				}
+			}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
+	}
+
+	TRACKMOUSEEVENT tme;
+	ZeroMemory(&tme, sizeof(tme));
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwHoverTime = FMHOVERTIME;
+	tme.hwndTrack = GetSafeHwnd();
+	TrackMouseEvent(&tme);
 }
 
 void CExplorerList::OnContextMenu(CWnd* pWnd, CPoint pos)
@@ -196,14 +571,48 @@ void CExplorerList::OnContextMenu(CWnd* pWnd, CPoint pos)
 	}
 }
 
-void CExplorerList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CExplorerList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	if ((nChar==VK_F2) && (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+	LPNMLVCUSTOMDRAW lpListViewCustomDraw = (LPNMLVCUSTOMDRAW)pNMHDR;
+
+	CRect rect;
+	GetClientRect(rect);
+
+	switch(lpListViewCustomDraw->nmcd.dwDrawStage)
 	{
-		EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
-	}
-	else
-	{
-		CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	case CDDS_PREPAINT:
+		m_View = GetView();
+
+		if (m_View==LV_VIEW_DETAILS)
+			for (INT a=0; a<=min(m_ColumnCount, 15); a++)
+			{
+				m_Columns[a].mask = LVCF_FMT | LVCF_WIDTH;
+				GetColumn(a, &m_Columns[a]);
+			}
+
+		p_ImageList = GetImageList((m_View==LV_VIEW_ICON) || (m_View==LV_VIEW_TILE) ? LVSIL_NORMAL : LVSIL_SMALL);
+		if (p_ImageList)
+		{
+			IMAGEINFO ii;
+			p_ImageList->GetImageInfo(0, &ii);
+
+			m_IconSize = ii.rcImage.bottom-ii.rcImage.top;
+		}
+		else
+		{
+			m_IconSize = 16;
+		}
+
+		*pResult = CDRF_NOTIFYITEMDRAW;
+		break;
+
+	case CDDS_ITEMPREPAINT:
+		DrawItem((INT)lpListViewCustomDraw->nmcd.dwItemSpec, CDC::FromHandle(lpListViewCustomDraw->nmcd.hdc));
+
+		*pResult = CDRF_SKIPDEFAULT;
+		break;
+
+	default:
+		*pResult = CDRF_DODEFAULT;
 	}
 }

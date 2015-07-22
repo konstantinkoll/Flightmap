@@ -27,6 +27,7 @@ const FixedResolution FixedResolutions[] =
 	{ 800, 600, L"SVGA", 0 },
 	{ 854, 480, L"WVGA", 0 },
 	{ 1024, 768, L"XGA", 0 },
+	{ 1080, 1080, L"Instagram", 4 },
 	{ 1280, 720, L"HDTV 720", 1 },
 	{ 1280, 1024, L"SXGA", 0 },
 	{ 1400, 1050, L"SXGA+", 0 },
@@ -122,24 +123,18 @@ BOOL FMResolutionDlg::OnInitDialog()
 	// Liste
 	BOOL UserDefined = TRUE;
 
-	LVTILEVIEWINFO tvi;
-	ZeroMemory(&tvi, sizeof(tvi));
-	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = 2;
-	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
-	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 136;
-	m_wndResolutionList.SetTileViewInfo(&tvi);
 	m_wndResolutionList.AddColumn(0, _T(""));
 	m_wndResolutionList.AddColumn(1, _T(""));
 
-	UINT puColumns[1];
-	puColumns[0] = 1;
+	static UINT puColumns[1] = { 1 };
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
+
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS | LVIF_STATE;
+	lvi.cColumns = 1;
 	lvi.puColumns = puColumns;
+	lvi.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
 
 	UINT Count = FMIsLicensed() ? sizeof(FixedResolutions)/sizeof(FixedResolution) : 3;
 	for (UINT a=0; a<Count; a++)
@@ -148,7 +143,6 @@ BOOL FMResolutionDlg::OnInitDialog()
 		tmpStr.Format(_T("%u×%u"), FixedResolutions[a].Width, FixedResolutions[a].Height);
 
 		lvi.iItem = a;
-		lvi.cColumns = 1;
 		lvi.pszText = tmpStr.GetBuffer();
 		lvi.iImage = FixedResolutions[a].Image;
 		if ((FixedResolutions[a].Width==*p_Width) && (FixedResolutions[a].Height==*p_Height))
@@ -160,13 +154,13 @@ BOOL FMResolutionDlg::OnInitDialog()
 		{
 			lvi.state = 0;
 		}
-		lvi.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
 		INT Index = m_wndResolutionList.InsertItem(&lvi);
 
 		m_wndResolutionList.SetItemText(Index, 1, FixedResolutions[a].Hint);
 	}
 
 	m_wndResolutionList.SetView(LV_VIEW_TILE);
+	m_wndResolutionList.SetItemsPerRow(4, 1);
 
 	// Checkbox
 	((CButton*)GetDlgItem(IDC_USERDEFINEDRES))->SetCheck(UserDefined);

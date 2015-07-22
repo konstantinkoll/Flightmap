@@ -26,7 +26,7 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
-	CListCtrl m_ShowAttributes;
+	CExplorerList m_ShowAttributes;
 	ViewParameters* p_ViewParameters;
 
 private:

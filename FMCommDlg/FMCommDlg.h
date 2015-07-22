@@ -13,7 +13,6 @@
 #include "CTaskBar.h"
 #include "CTaskButton.h"
 #include "CTooltipHeader.h"
-#include "CTooltipList.h"
 #include "FMDynArray.h"
 #include "FMApplication.h"
 #include "FMColorDlg.h"
@@ -51,6 +50,7 @@ void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
 void FMErrorBox(UINT nID, HWND hWnd=NULL);
 
 

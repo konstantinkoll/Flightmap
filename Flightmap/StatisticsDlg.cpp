@@ -311,7 +311,6 @@ void StatisticsDlg::UpdateStatistics()
 	MilesToString(tmpStr, Miles[1][0], Miles[1][1]);
 	GetDlgItem(IDC_TOTALMILESSPENT)->SetWindowText(tmpStr);
 
-	m_wndListClass.SetRedraw(FALSE);
 	m_wndListClass.DeleteAllItems();
 
 	UINT Columns1[1] = { 1 };
@@ -342,8 +341,7 @@ void StatisticsDlg::UpdateStatistics()
 			m_wndListClass.SetItemText(Index, 2, tmpBuf);
 		}
 
-	m_wndListClass.SetRedraw(TRUE);
-	m_wndListClass.Invalidate();
+	m_wndListClass.SetItemsPerRow(1);
 
 	// Routes
 	Start(m_wndListRoute);
@@ -513,8 +511,8 @@ BOOL StatisticsDlg::OnInitDialog()
 	m_SeatIcons.Create(IDB_SEATICONS, 32, 32);
 	m_wndListClass.SetImageList(&m_SeatIcons, LVSIL_NORMAL);
 
-	m_wndListClass.SetView(LV_VIEW_TILE);
 	m_wndListClass.EnableGroupView(TRUE);
+	m_wndListClass.SetView(LV_VIEW_TILE);
 
 	// Route
 	Prepare(m_wndListRoute);

@@ -395,10 +395,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTooltipList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
@@ -534,10 +530,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTooltipList.h"
 				>
 			</File>
 			<File

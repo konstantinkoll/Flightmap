@@ -25,7 +25,7 @@ protected:
 	CItinerary* p_Itinerary;
 	AIRX_Flight* p_Flight;
 	CTaskbar m_wndTaskbar;
-	CTooltipList m_wndTooltipList;
+	CExplorerList m_wndExplorerList;
 	CTooltipHeader m_wndHeader;
 	UINT m_LastSortColumn;
 	BOOL m_LastSortDirection;
@@ -40,12 +40,12 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
-	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRequestTextColor(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
 
