@@ -670,15 +670,13 @@ CString GetLatestVersion(CString CurrentVersion)
 	// Licensed?
 	if (FMIsLicensed())
 	{
-		CurrentVersion += _T(" (licensed");
+		CurrentVersion += _T(" (licensed)");
 	}
 	else
 		if (FMIsSharewareExpired())
 		{
 			CurrentVersion += _T(" (expired");
 		}
-
-	CurrentVersion += _T(")");
 
 	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("Flightmap/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
