@@ -675,7 +675,7 @@ CBitmap* CMapFactory::CreateBitmap(INT Width, INT Height)
 	dib.bmiHeader.biBitCount = 24;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP hBitmap = CreateDIBSection(GetWindowDC(GetDesktopWindow()), &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hBitmap = CreateDIBSection(GetDC(NULL), &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 
 	CBitmap* pBitmap = new CBitmap();
 	pBitmap->Attach(hBitmap);

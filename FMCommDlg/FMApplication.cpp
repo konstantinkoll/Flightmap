@@ -12,7 +12,7 @@
 // FMApplication
 //
 
-#define ResetNagCounter     m_NagCounter = 0;
+#define RESETNAGCOUNTER     m_NagCounter = 0;
 
 BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
@@ -24,18 +24,20 @@ END_MESSAGE_MAP()
 
 void PlayRegSound(CString Identifier)
 {
-	CString strFile;
-	CString strKey = _T("AppEvents\\Schemes\\");
-	strKey += Identifier;
-	strKey += _T("\\.current");
+	CString strKey;
+	strKey.Format(_T("AppEvents\\Schemes\\%s\\.current"), Identifier);
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
 
 	if (reg.Open(strKey))
+	{
+		CString strFile;
+
 		if (reg.Read(_T(""), strFile))
 			if (!strFile.IsEmpty())
 				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+	}
 }
 
 
@@ -237,27 +239,27 @@ BOOL FMApplication::InitInstance()
 	// Fonts
 	CString face = GetDefaultFontFace();
 
-	INT sz = 8;
+	INT Size = 8;
 	LOGFONT lf;
 	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
-		sz = abs(lf.lfHeight);
+		Size = abs(lf.lfHeight);
 
-	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_DefaultFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_BoldFont.CreateFont(-sz, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
+	m_BoldFont.CreateFont(-Size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_ItalicFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
+	m_ItalicFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
 	m_SmallFont.CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		_T("MSShellDlg"));
-	m_LargeFont.CreateFont(-(sz+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_LargeFont.CreateFont(-(Size+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
-	m_CaptionFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+	m_CaptionFont.CreateFont(-(Size+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
 
@@ -265,7 +267,7 @@ BOOL FMApplication::InitInstance()
 	SetRegistryKey(_T(""));
 
 	// Zähler zurücksetzen
-	ResetNagCounter;
+	RESETNAGCOUNTER;
 
 	return TRUE;
 }
@@ -325,7 +327,7 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 			FMRegisterDlg dlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow());
 			dlg.DoModal();
 
-			ResetNagCounter;
+			RESETNAGCOUNTER;
 
 			return TRUE;
 		}

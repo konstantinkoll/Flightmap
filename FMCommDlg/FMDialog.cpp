@@ -16,6 +16,8 @@ FMDialog::FMDialog(UINT nIDTemplate, CWnd* pParentWnd)
 
 	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
+	p_BottomLeftControl = NULL;
+
 }
 
 void FMDialog::DoDataExchange(CDataExchange* pDX)
@@ -96,6 +98,38 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	}
 }
 
+void FMDialog::SetBottomLeftControl(CWnd* pChildWnd)
+{
+	ASSERT(pChildWnd);
+
+	p_BottomLeftControl = pChildWnd;
+}
+
+void FMDialog::SetBottomLeftControl(UINT nID)
+{
+	CWnd* pChildWnd = GetDlgItem(nID);
+	if (pChildWnd)
+		SetBottomLeftControl(pChildWnd);
+}
+
+void FMDialog::AddBottomRightControl(CWnd* pChildWnd)
+{
+	ASSERT(pChildWnd);
+
+	m_BottomRightControls.AddTail(pChildWnd);
+}
+
+void FMDialog::AddBottomRightControl(UINT nID)
+{
+	CWnd* pChildWnd = GetDlgItem(nID);
+	if (pChildWnd)
+		AddBottomRightControl(pChildWnd);
+}
+
+void FMDialog::AdjustLayout()
+{
+}
+
 void FMDialog::GetLayoutRect(LPRECT lpRect) const
 {
 	GetClientRect(lpRect);
@@ -133,6 +167,13 @@ BOOL FMDialog::OnInitDialog()
 	HICON hIcon = FMGetApp()->LoadDialogIcon(m_nIDTemplate);
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
+
+	CRect rect;
+	GetClientRect(rect);
+	m_LastSize = CPoint(rect.Width(), rect.Height());
+
+	AddBottomRightControl(IDOK);
+	AddBottomRightControl(IDCANCEL);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -182,6 +223,43 @@ BOOL FMDialog::OnEraseBkgnd(CDC* pDC)
 	dc.SelectObject(pOldBitmap);
 
 	return TRUE;
+}
+
+void FMDialog::OnSize(UINT nType, INT cx, INT cy)
+{
+	CDialog::OnSize(nType, cx, cy);
+
+	CPoint diff(cx-m_LastSize.x, cy-m_LastSize.y);
+	m_LastSize.x = cx;
+	m_LastSize.y = cy;
+
+	INT MaxRight = cx;
+	for (POSITION p=m_BottomRightControls.GetHeadPosition(); p; )
+	{
+		CWnd* pWnd = m_BottomRightControls.GetNext(p);
+
+		CRect rect;
+		pWnd->GetWindowRect(&rect);
+		ScreenToClient(&rect);
+
+		pWnd->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
+
+		MaxRight = min(MaxRight, rect.left+diff.x);
+	}
+
+	if (p_BottomLeftControl)
+	{
+		CRect rect;
+		p_BottomLeftControl->GetWindowRect(&rect);
+		ScreenToClient(&rect);
+
+		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	}
+
+	AdjustLayout();
+
+	m_BackBufferL = m_BackBufferH = 0;
+	Invalidate();
 }
 
 LRESULT FMDialog::OnThemeChanged()

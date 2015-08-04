@@ -304,7 +304,7 @@ void CMapWnd::OnMapWndCopy()
 	CWaitCursor csr;
 
 	// Create device-dependent bitmap
-	CDC* pDC = GetWindowDC();
+	CDC* pDC = GetDC();
 	CSize sz = m_pBitmap->GetBitmapDimension();
 
 	CDC dc;

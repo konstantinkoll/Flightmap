@@ -63,6 +63,8 @@ IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 IDB_RESOLUTIONICONS     BITMAP                  "res\\ResolutionIcons.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
+IDB_UPDATEICONS_16      BITMAP                  "res\\UpdateIcons_16.bmp"
+IDB_UPDATEICONS_32      BITMAP                  "res\\UpdateIcons_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -432,8 +434,8 @@ BEGIN
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,171,39,136,148
     CONTROL         "&Aufsteigend",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,187,193,119,10
     CONTROL         "A&bsteigend",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,187,206,119,10
-    CONTROL         20022,IDC_STATIC,"Static",SS_BITMAP,171,193,11,10
-    CONTROL         20023,IDC_STATIC,"Static",SS_BITMAP,171,206,11,10
+    CONTROL         20021,IDC_STATIC,"Static",SS_BITMAP,171,193,11,10
+    CONTROL         20022,IDC_STATIC,"Static",SS_BITMAP,171,206,11,10
     LTEXT           "„Filtern“ erzeugt einen neuen Flugplan, der nur die passenden Flüge in neuer Sortierreihenfolge enthält. Der ursprüngliche Flugplan wird nicht verändert.",IDC_STATIC,7,7,307,20,SS_NOPREFIX
 END
 
@@ -445,7 +447,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,103,96,100,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
-    LTEXT           "Eine neue Version von Flightmap steht zum Herunterladen bereit.",IDC_STATIC,7,50,196,16
+    LTEXT           "Eine neue Version von Flightmap steht zum Herunterladen bereit:",IDC_STATIC,7,50,196,16
     CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,196,10
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,90,9
 END
@@ -576,7 +578,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 203
         TOPMARGIN, 7
-        BOTTOMMARGIN, 111
+        BOTTOMMARGIN, 110
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -670,6 +672,19 @@ BEGIN
     IDS_AIRPORT_COUNTRY     "Land"
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECUTIRYPATCH "Behebt kritische Sicherheitslücken"
+    IDS_UPDATE_IMPORTANTBUGFIX "Wichtige Fehlerbehebungen"
+    IDS_UPDATE_NETWORKAPI   "Aktualisierter Zugriff auf Cloud-Dienste"
+    IDS_UPDATE_NEWFEATURE   "Neue Funktionen"
+    IDS_UPDATE_NEWVISUALIZATION "Neue Visualisierungen"
+    IDS_UPDATE_UI           "Verbesserte Benutzeroberfläche"
+    IDS_UPDATE_SMALLBUGFIX  "Kleine Fehlerbehebungen"
+    IDS_UPDATE_IATA         "Aktualisierte Ortsdatenbank"
+    IDS_UPDATE_PERFORMANCE  "Leistungsverbesserungen"
 END
 
 STRINGTABLE 
@@ -1056,22 +1071,22 @@ BEGIN
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,171,39,136,148
     CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,187,192,119,10
     CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,187,205,119,10
-    CONTROL         20022,IDC_STATIC,"Static",SS_BITMAP,171,192,11,10
-    CONTROL         20023,IDC_STATIC,"Static",SS_BITMAP,171,205,11,10
+    CONTROL         20021,IDC_STATIC,"Static",SS_BITMAP,171,192,11,10
+    CONTROL         20022,IDC_STATIC,"Static",SS_BITMAP,171,205,11,10
     LTEXT           "Filtering creates a new itinerary containing all matching flights in a new order. The source itinerary will not be modified.",IDC_STATIC,7,7,307,20,SS_NOPREFIX
 END
 
-IDD_UPDATE DIALOGEX 0, 0, 210, 118
+IDD_UPDATE DIALOGEX 0, 0, 210, 110
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update available"
 CLASS "UpdateDlg"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Download now",IDOK,123,96,80,14,WS_GROUP
+    DEFPUSHBUTTON   "Download now",IDOK,123,88,80,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
-    LTEXT           "A new version of Flightmap is available for download.",IDC_STATIC,7,50,196,16
-    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,196,10
-    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
+    LTEXT           "A new version of Flightmap is available for download:",IDC_STATIC,7,50,196,8
+    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,196,10
+    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,93,110,9
 END
 
 
@@ -1200,7 +1215,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 203
         TOPMARGIN, 7
-        BOTTOMMARGIN, 111
+        BOTTOMMARGIN, 102
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1294,6 +1309,19 @@ BEGIN
     IDS_AIRPORT_COUNTRY     "Country"
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
+    IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
+    IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
+    IDS_UPDATE_NEWFEATURE   "New features"
+    IDS_UPDATE_NEWVISUALIZATION "New visualizations"
+    IDS_UPDATE_UI           "UI improvements"
+    IDS_UPDATE_SMALLBUGFIX  "Minor bugfixes"
+    IDS_UPDATE_IATA         "Updated IATA airport database"
+    IDS_UPDATE_PERFORMANCE  "Performance improvements"
 END
 
 STRINGTABLE 

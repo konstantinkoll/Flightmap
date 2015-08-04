@@ -726,7 +726,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	return VersionIni;
 }
 
-CString GetIniValue(CString Ini, CString Name)
+CString GetIniValue(CString Ini, const CString Name)
 {
 	while (!Ini.IsEmpty())
 	{
@@ -746,11 +746,61 @@ CString GetIniValue(CString Ini, CString Name)
 	return _T("");
 }
 
-void ParseVersion(CString tmpStr, FMVersion* pVersion)
+void ParseVersion(const CString tmpStr, FMVersion* pVersion)
 {
 	ASSERT(pVersion);
 
 	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
+}
+
+BOOL IsVersionLater(FMVersion& LatestVersion, FMVersion& CurrentVersion)
+{
+	return ((LatestVersion.Major>CurrentVersion.Major) ||
+		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor>CurrentVersion.Minor)) ||
+		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor==CurrentVersion.Minor) && (LatestVersion.Build>CurrentVersion.Build)));
+}
+
+BOOL IsLaterFeature(const CString VersionIni, const CString Name, FMVersion& CurrentVersion)
+{
+	FMVersion FeatureVersion = { 0 };
+
+	ParseVersion(GetIniValue(VersionIni, Name), &FeatureVersion);
+
+	return IsVersionLater(FeatureVersion, CurrentVersion);
+}
+
+DWORD GetFeatures(const CString VersionIni, FMVersion& CurrentVersion)
+{
+	DWORD Features = 0;
+
+	if (IsLaterFeature(VersionIni, _T("SecurityPatch"), CurrentVersion))
+		Features |= UPDATE_SECUTIRYPATCH;
+
+	if (IsLaterFeature(VersionIni, _T("ImportantBugfix"), CurrentVersion))
+		Features |= UPDATE_IMPORTANTBUGFIX;
+
+	if (IsLaterFeature(VersionIni, _T("NetworkAPI"), CurrentVersion))
+		Features |= UPDATE_NETWORKAPI;
+
+	if (IsLaterFeature(VersionIni, _T("NewFeature"), CurrentVersion))
+		Features |= UPDATE_NEWFEATURE;
+
+	if (IsLaterFeature(VersionIni, _T("NewVisualization"), CurrentVersion))
+		Features |= UPDATE_NEWVISUALIZATION;
+
+	if (IsLaterFeature(VersionIni, _T("UI"), CurrentVersion))
+		Features |= UPDATE_UI;
+
+	if (IsLaterFeature(VersionIni, _T("SmallBugfix"), CurrentVersion))
+		Features |= UPDATE_SMALLBUGFIX;
+
+	if (IsLaterFeature(VersionIni, _T("IATA"), CurrentVersion))
+		Features |= UPDATE_IATA;
+
+	if (IsLaterFeature(VersionIni, _T("Performance"), CurrentVersion))
+		Features |= UPDATE_PERFORMANCE;
+
+	return Features;
 }
 
 void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
@@ -758,6 +808,9 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Obtain current version from instance version resource
 	CString CurrentVersion;
 	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
+
+	FMVersion CV = { 0 };
+	ParseVersion(CurrentVersion, &CV);
 
 	// Check due?
 	BOOL Check = Force;
@@ -767,6 +820,7 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	// Perform check
 	CString LatestVersion = FMGetApp()->GetString(_T("LatestUpdateVersion"));
 	CString LatestMSN = FMGetApp()->GetString(_T("LatestUpdateMSN"));
+	DWORD LatestFeatures = FMGetApp()->GetInt(_T("LatestUpdateFeatures"));
 
 	if (Check)
 	{
@@ -777,9 +831,11 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 		{
 			LatestVersion = GetIniValue(VersionIni, _T("Version"));
 			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
+			LatestFeatures = GetFeatures(VersionIni, CV);
 
 			FMGetApp()->WriteString(_T("LatestUpdateVersion"), LatestVersion);
 			FMGetApp()->WriteString(_T("LatestUpdateMSN"), LatestMSN);
+			FMGetApp()->WriteInt(_T("LatestUpdateFeatures"), LatestFeatures);
 		}
 	}
 
@@ -787,18 +843,12 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	BOOL UpdateAvailable = FALSE;
 	if (!LatestVersion.IsEmpty())
 	{
-		FMVersion CV = { 0 };
-		ParseVersion(CurrentVersion, &CV);
-
 		FMVersion LV = { 0 };
 		ParseVersion(LatestVersion, &LV);
 
 		CString IgnoreMSN = FMGetApp()->GetString(_T("IgnoreUpdateMSN"));
 
-		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) &&
-			((LV.Major>CV.Major) ||
-			((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
-			((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build)));
+		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) && IsVersionLater(LV, CV);
 	}
 
 	// Result
@@ -809,7 +859,7 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			if (FMGetApp()->m_pUpdateNotification)
 				FMGetApp()->m_pUpdateNotification->DestroyWindow();
 
-			FMUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
+			FMUpdateDlg dlg(LatestVersion, LatestMSN, LatestFeatures, pParentWnd);
 			dlg.DoModal();
 		}
 		else
@@ -819,7 +869,7 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			}
 			else
 			{
-				FMGetApp()->m_pUpdateNotification = new FMUpdateDlg(LatestVersion, LatestMSN);
+				FMGetApp()->m_pUpdateNotification = new FMUpdateDlg(LatestVersion, LatestMSN, LatestFeatures);
 				FMGetApp()->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
 				FMGetApp()->m_pUpdateNotification->ShowWindow(SW_SHOW);
 			}

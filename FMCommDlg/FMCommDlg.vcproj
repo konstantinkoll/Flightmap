@@ -795,6 +795,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\UpdateIcons_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Wallet_Tiny.ico"
 				>
 			</File>

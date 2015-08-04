@@ -15,18 +15,21 @@ static const GUID TrayIcon = { 0xFD604358, 0x411B, 0x4D4C, { 0x88, 0xF9, 0xD5, 0
 //
 
 #define WM_TRAYMENU     WM_USER+10
+#define MARGIN          4
 
-FMUpdateDlg::FMUpdateDlg(CString Version, CString MSN, CWnd* pParentWnd)
+FMUpdateDlg::FMUpdateDlg(CString Version, CString MSN, DWORD Features, CWnd* pParentWnd)
 	: FMDialog(IDD_UPDATE, pParentWnd)
 {
 	m_NotificationWindow = (pParentWnd==NULL);
-	m_CaptionTop = m_IconTop = 0;
+	m_CaptionTop = m_IconTop = m_FeaturesTop = m_FeaturesLeft = m_FeatureItemHeight = 0;
 	m_Connected = TRUE;
 
-	p_Logo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_64, _T("PNG"));
+	m_pLogo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_64, _T("PNG"));
 
 	m_Version = Version;
 	m_MSN = MSN;
+	m_Features = Features;
+
 	ENSURE(m_AppName.LoadString(IDR_APPLICATION));
 }
 
@@ -119,7 +122,7 @@ void FMUpdateDlg::UpdateFrame(BOOL bMove)
 
 BOOL FMUpdateDlg::AddTrayIcon()
 {
-	INT sz = GetSystemMetrics(SM_CXSMICON);
+	INT Size = GetSystemMetrics(SM_CXSMICON);
 
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
@@ -129,7 +132,7 @@ BOOL FMUpdateDlg::AddTrayIcon()
 	nid.guidItem = TrayIcon;
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WM_TRAYMENU;
-	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, sz, sz, LR_DEFAULTCOLOR);
+	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, Size, Size, LR_DEFAULTCOLOR);
 	GetWindowText(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
 
@@ -209,23 +212,13 @@ BOOL FMUpdateDlg::OnInitDialog()
 {
 	FMDialog::OnInitDialog();
 
+	AddBottomRightControl(IDC_HIDE);
+	AddBottomRightControl(&m_wndIgnoreUpdate);
+
 	if (m_NotificationWindow)
 		FMGetApp()->AddFrame(this);
 
-	// Stil
-	if (m_NotificationWindow)
-	{
-		FMGetApp()->PlayWarningSound();
-
-		UpdateFrame(TRUE);
-	}
-	else
-	{
-		FMGetApp()->PlayStandardSound();
-
-		GetDlgItem(IDC_IGNOREUPDATE)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_HIDE)->ShowWindow(SW_HIDE);
-	}
+	INT DynamicHeight = 0;
 
 	// Version
 	CRect rectWnd;
@@ -234,9 +227,11 @@ BOOL FMUpdateDlg::OnInitDialog()
 
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
-	CString text;
-	text.Format(Caption, m_Version, m_MSN);
-	m_wndVersionInfo.SetWindowText(text);
+
+	CString Text;
+	Text.Format(Caption, m_Version, m_MSN);
+
+	m_wndVersionInfo.SetWindowText(Text);
 
 	// Hintergrund
 	const INT Height = rectWnd.Height();
@@ -259,6 +254,56 @@ BOOL FMUpdateDlg::OnInitDialog()
 	rectWnd.left = 82;
 	rectWnd.top = m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+
+	// Feature-Liste
+	GetDlgItem(IDC_IGNOREUPDATE)->GetWindowRect(rectWnd);
+	ScreenToClient(&rectWnd);
+
+	if (m_Features)
+	{
+		m_FeaturesTop = rectWnd.top;
+		m_FeaturesLeft = rectWnd.left;
+
+		UINT Count = 0;
+		for (DWORD Features=m_Features; Features; Features>>=1)
+			if (Features & 1)
+				Count++;
+
+		CDC* pDC = GetDC();
+		HFONT hOldFont = (HFONT)pDC->SelectStockObject(DEFAULT_GUI_FONT);
+		m_FeatureItemHeight = pDC->GetTextExtent(_T("Wy")).cy>14 ? 32 : Count<=3 ? 32 : 16;
+		pDC->SelectObject(hOldFont);
+		ReleaseDC(pDC);
+
+		m_UpdateIcons.Create(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight, m_FeatureItemHeight);
+
+		DynamicHeight += Count*(m_FeatureItemHeight+MARGIN)+m_FeaturesLeft;
+	}
+
+	// Größe anpassen
+	if (!m_NotificationWindow)
+		DynamicHeight -= rectWnd.Height()+rectWnd.left-2;
+
+	if (DynamicHeight)
+	{
+		GetWindowRect(rectWnd);
+		SetWindowPos(NULL, 0, 0, rectWnd.Width(), rectWnd.Height()+DynamicHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+	}
+
+	// Stil
+	if (m_NotificationWindow)
+	{
+		FMGetApp()->PlayWarningSound();
+
+		UpdateFrame(TRUE);
+	}
+	else
+	{
+		FMGetApp()->PlayStandardSound();
+
+		GetDlgItem(IDC_IGNOREUPDATE)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_HIDE)->ShowWindow(SW_HIDE);
+	}
 
 	// Internet
 	CheckInternetConnection();
@@ -303,7 +348,8 @@ void FMUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(p_Logo->m_pBitmap, 9, m_IconTop);
+	// Logo
+	g.DrawImage(m_pLogo->m_pBitmap, 9, m_IconTop);
 
 	CRect r(rect);
 	r.top = m_CaptionTop;
@@ -312,9 +358,34 @@ void FMUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
-	dc.SetTextColor((IsCtrlThemed() && FMGetApp()->m_UseBgImages) ? 0x000000 : 0x606060);
+	dc.SetTextColor(IsCtrlThemed() ? 0xCB3300 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(m_AppName, r, fmt);
+
+	// Features
+	r.top = m_FeaturesTop;
+	r.bottom = m_FeaturesTop+m_FeatureItemHeight;
+	r.left = m_FeaturesLeft;
+	r.right -= m_FeaturesLeft;
+
+	dc.SelectStockObject(DEFAULT_GUI_FONT);
+	dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+
+	for (UINT a=0; a<=31; a++)
+		if (m_Features & (1<<a))
+		{
+			INT Index = a ? a+1 : FMGetApp()->OSVersion==OS_Vista ? 1 : 0;
+
+			m_UpdateIcons.Draw(&dc, Index, r.TopLeft(), ILD_TRANSPARENT);
+
+			CRect rectText(r);
+			rectText.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
+
+			CString Text((LPCSTR)IDS_UPDATE_FIRST+a);
+			dc.DrawText(Text, rectText, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
+
+			r.OffsetRect(0, m_FeatureItemHeight+MARGIN);
+		}
 
 	dc.SelectObject(pOldFont);
 }
@@ -323,6 +394,7 @@ LRESULT FMUpdateDlg::OnNcHitTest(CPoint point)
 {
 	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
 	LRESULT uHitTest = FMDialog::OnNcHitTest(point);
+
 	return m_NotificationWindow ? ((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest : uHitTest;
 }
 

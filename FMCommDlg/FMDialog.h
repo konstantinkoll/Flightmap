@@ -16,6 +16,7 @@ public:
 	FMDialog(UINT nIDTemplate, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void AdjustLayout();
 
 	void GetLayoutRect(LPRECT lpRect) const;
 
@@ -23,10 +24,15 @@ protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
 	CWnd* GetBottomWnd() const;
+	void SetBottomLeftControl(CWnd* pChildWnd);
+	void SetBottomLeftControl(UINT nID);
+	void AddBottomRightControl(CWnd* pChildWnd);
+	void AddBottomRightControl(UINT nID);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysColorChange();
 	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
@@ -41,4 +47,7 @@ private:
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
+	CWnd* p_BottomLeftControl;
+	CList<CWnd*> m_BottomRightControls;
+	CPoint m_LastSize;
 };

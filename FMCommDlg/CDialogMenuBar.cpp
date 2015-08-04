@@ -978,9 +978,9 @@ void CDialogMenuPopup::GetCheckSize(CSize& sz)
 {
 	if (hThemeButton)
 	{
-		CDC* dc = GetDC();
-		FMGetApp()->zGetThemePartSize(hThemeButton, *dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &sz);
-		ReleaseDC(dc);
+		CDC* pDC = GetDC();
+		FMGetApp()->zGetThemePartSize(hThemeButton, *pDC, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &sz);
+		ReleaseDC(pDC);
 	}
 	else
 	{
@@ -1779,7 +1779,7 @@ void CDialogMenuGallery::Execute()
 
 INT CDialogMenuGallery::GetMinHeight()
 {
-	CDC* pDC = p_ParentPopup->GetWindowDC();
+	CDC* pDC = p_ParentPopup->GetDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
 	m_ItemHeight = max(m_CheckSize.cy, pDC->GetTextExtent(_T("Wy")).cy)+BORDER+m_IconSize.cy+5;
 	pDC->SelectObject(pOldFont);
@@ -2050,7 +2050,7 @@ void CDialogMenuCommand::Execute()
 
 INT CDialogMenuCommand::GetMinHeight()
 {
-	CDC* pDC = p_ParentPopup->GetWindowDC();
+	CDC* pDC = p_ParentPopup->GetDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
 
 	INT h = 0;
@@ -2074,7 +2074,7 @@ INT CDialogMenuCommand::GetMinHeight()
 
 INT CDialogMenuCommand::GetMinWidth()
 {
-	CDC* pDC = p_ParentPopup->GetWindowDC();
+	CDC* pDC = p_ParentPopup->GetDC();
 	CFont* pOldFont = p_ParentPopup->SelectNormalFont(pDC);
 
 	INT l = 0;
@@ -2578,7 +2578,7 @@ CDialogMenuCaption::CDialogMenuCaption(CDialogMenuPopup* pParentPopup, UINT ResI
 
 INT CDialogMenuCaption::GetMinHeight()
 {
-	CDC* pDC = p_ParentPopup->GetWindowDC();
+	CDC* pDC = p_ParentPopup->GetDC();
 	CFont* pOldFont = p_ParentPopup->SelectCaptionFont(pDC);
 
 	CRect rectCaption(0, 0, 1000, 1000);
@@ -2592,7 +2592,7 @@ INT CDialogMenuCaption::GetMinHeight()
 
 INT CDialogMenuCaption::GetMinWidth()
 {
-	CDC* pDC = p_ParentPopup->GetWindowDC();
+	CDC* pDC = p_ParentPopup->GetDC();
 	CFont* pOldFont = p_ParentPopup->SelectCaptionFont(pDC);
 
 	CRect rectCaption(0, 0, 1000, 1000);
