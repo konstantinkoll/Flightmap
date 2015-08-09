@@ -71,9 +71,9 @@ void CGroupBox::OnPaint()
 	BOOL Themed = IsCtrlThemed();
 
 	// Background
-	HBRUSH brush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-	if (brush)
-		FillRect(dc, rect, brush);
+	HBRUSH hBrush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
+	if (hBrush)
+		FillRect(dc, rect, hBrush);
 
 	// Border
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
@@ -151,8 +151,8 @@ void CGroupBox::OnPaint()
 	rectCaption.right = min(rectCaption.left+sz.cx+4, rectBounds.right-6);
 	rectCaption.bottom = rectCaption.top+sz.cy;
 
-	if (brush)
-		FillRect(dc, rectCaption, brush);
+	if (hBrush)
+		FillRect(dc, rectCaption, hBrush);
 
 	dc.DrawText(Caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
