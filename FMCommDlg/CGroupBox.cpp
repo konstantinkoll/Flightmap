@@ -135,11 +135,7 @@ void CGroupBox::OnPaint()
 		}
 		else
 		{
-			rectBounds.left++;
-			rectBounds.top++;
-			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
-
-			rectBounds.OffsetRect(-1, -1);
+			rectBounds.right--;
 			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 
 			dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
