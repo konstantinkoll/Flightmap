@@ -291,7 +291,7 @@ LRESULT FMDialog::OnUseBgImagesChanged(WPARAM wParam, LPARAM /*lParam*/)
 HBRUSH FMDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 	{
@@ -302,8 +302,8 @@ HBRUSH FMDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		pDC->SetBkMode(TRANSPARENT);
 		pDC->SetBrushOrg(-rc.left, -rc.top);
 
-		hbr = hBackgroundBrush;
+		hBrush = hBackgroundBrush;
 	}
 
-	return hbr;
+	return hBrush;
 }
