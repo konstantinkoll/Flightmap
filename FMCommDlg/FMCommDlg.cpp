@@ -512,6 +512,7 @@ static FILETIME ExpireBuffer = { 0 };
 
 void ParseInput(CHAR* pStr, FMLicense* pLicense)
 {
+	ASSERT(pStr);
 	ASSERT(pLicense);
 
 	ZeroMemory(pLicense, sizeof(FMLicense));
@@ -582,6 +583,7 @@ BOOL GetLicense(FMLicense* pLicense)
 	ASSERT(pLicense);
 
 	CHAR Message[BUFSIZE];
+	ZeroMemory(Message, sizeof(Message));
 	if (!ReadCodedLicense(Message, sizeof(Message)))
 		return FALSE;
 
