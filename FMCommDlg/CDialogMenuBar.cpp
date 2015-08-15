@@ -1546,7 +1546,7 @@ void CDialogMenuPopup::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		else
 		{
-			FMGetApp()->PlayStandardSound();
+			FMGetApp()->PlayDefaultSound();
 		}
 
 		return;

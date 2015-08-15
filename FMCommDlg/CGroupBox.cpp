@@ -99,15 +99,15 @@ void CGroupBox::OnPaint()
 		GraphicsPath path;
 		CreateRoundRectangle(rectBounds, 2, path);
 
-		Pen pen(Color(224, 196, 240, 248));
+		Pen pen(Color(0xE0, 196, 240, 248));
 		g.DrawPath(&pen, &path);
 
 		path.Transform(&m1);
-		pen.SetColor(Color(128, 255, 255, 255));
+		pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
 		g.DrawPath(&pen, &path);
 
 		path.Transform(&m2);
-		pen.SetColor(Color(64, 60, 96, 112));
+		pen.SetColor(Color(0x40, 60, 96, 112));
 		g.DrawPath(&pen, &path);
 
 		dc.SetTextColor(0xCC6600);
@@ -115,9 +115,6 @@ void CGroupBox::OnPaint()
 	else
 		if (Themed)
 		{
-			rectBounds.right--;
-			rectBounds.bottom--;
-
 			if (FMGetApp()->OSVersion==OS_Eight)
 			{
 				dc.Draw3dRect(rect, 0xDDDDDD, 0xDDDDDD);

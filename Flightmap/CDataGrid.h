@@ -118,7 +118,6 @@ protected:
 	BOOL m_EditAllowCursor;
 	CGridHeader m_wndHeader;
 	ViewParameters m_ViewParameters;
-	FMTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;
 	CPoint m_FocusItem;

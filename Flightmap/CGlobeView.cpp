@@ -12,7 +12,7 @@
 
 
 #define DISTANCE        39.0f
-#define ARROWSIZE       9
+#define ARROWSIZE       8
 #define ANIMLENGTH      200
 #define MOVEDELAY       10
 #define MOVEDIVIDER     8.0f
@@ -209,7 +209,7 @@ BOOL CGlobeView::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 		break;
 	}
 
@@ -273,7 +273,7 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 
 void CGlobeView::UpdateViewOptions(BOOL Force)
 {
-	m_TooltipCtrl.Deactivate();
+	FMGetApp()->HideTooltip();
 
 	if (Force)
 	{
@@ -582,20 +582,20 @@ __forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* 
 	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
 	UINT W3 = m_Fonts[0].GetTextWidth(Coordinates);
 	UINT W4 = m_Fonts[0].GetTextWidth(Description);
-	UINT Width = max(W1, max(W2, max(W3, W4)))+12;
+	UINT Width = max(W1, max(W2, max(W3, W4)))+11;
 
 	// Höhe
-	UINT Height = 7;
+	UINT Height = 8;
 	Height += m_Fonts[1].GetTextHeight(Caption);
 	Height += m_Fonts[0].GetTextHeight(Subcaption);
 	Height += m_Fonts[0].GetTextHeight(Coordinates);
 	Height += m_Fonts[0].GetTextHeight(Description);
 
 	// Position
-	INT top = (ga->ScreenPoint[1]<m_Height/2) ? -1 : 1;
+	INT Top = (ga->ScreenPoint[1]<m_Height/2) ? -1 : 1;
 
 	INT x = ga->Rect.left = ga->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_Width-ga->ScreenPoint[0])/m_Width);
-	INT y = ga->Rect.top = ga->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? (INT)Height : 0);
+	INT y = ga->Rect.top = ga->ScreenPoint[1]+(ARROWSIZE-2)*Top-(Top<0 ? (INT)Height : 0);
 	ga->Rect.right = x+Width;
 	ga->Rect.bottom = y+Height;
 
@@ -607,151 +607,157 @@ __forceinline void CGlobeView::DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* 
 	}
 
 	// Farben
-	COLORREF brCol = Hot ? GetSysColor(COLOR_HIGHLIGHT) : Themed ? 0xD5D1D0 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF bkCol = 0xFFFFFF;
-	COLORREF txCol = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF atCol = Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT);
-	COLORREF cpCol = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clrBorder = Themed ? Focused ? 0xE08010 : Hot ? 0xF0C08A : 0xD5D1D0 : GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_3DSHADOW);
+	COLORREF clrBackground = Themed ? 0xFFFFFF : GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_WINDOW);
+	COLORREF clrText = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
+	COLORREF clrAttr = Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clrCaption = Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT);
+
+	if (Focused)
+		clrCaption = clrText = clrAttr = Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT);
 
 	GLfloat BorderColor[4];
-	ColorRef2GLColor(&BorderColor[0], brCol);
+	ColorRef2GLColor(&BorderColor[0], clrBorder);
 	GLfloat BaseColor[4];
-	ColorRef2GLColor(&BaseColor[0], bkCol);
+	ColorRef2GLColor(&BaseColor[0], clrBackground);
 	GLfloat TextColor[4];
-	ColorRef2GLColor(&TextColor[0], txCol);
+	ColorRef2GLColor(&TextColor[0], clrText);
 	GLfloat CaptionColor[4];
-	ColorRef2GLColor(&CaptionColor[0], cpCol);
+	ColorRef2GLColor(&CaptionColor[0], clrCaption);
 	GLfloat AttrColor[4];
-	ColorRef2GLColor(&AttrColor[0], atCol);
+	ColorRef2GLColor(&AttrColor[0], clrAttr);
 
 	// Schatten
 	if (Themed)
 	{
-		glColor4f(0.0f, 0.0f, 0.0f, ga->Alpha*(10.0f/256.0f));
+		glColor4f(0.0f, 0.0f, 0.0f, ga->Alpha*(12.0f/256.0f));
 		glBegin(GL_LINES);
-		glVertex2i(x+1, y+Height+1);
-		glVertex2i(x+Width, y+Height+1);
-		glVertex2i(x+Width+1, y+1);
-		glVertex2i(x+Width+1, y+Height);
-		glVertex2i(x+Width, y+Height);
-		glVertex2i(x+Width+1, y+Height);
+		glVertex2i(x+2, y+Height);
+		glVertex2i(x+Width-1, y+Height);
+		glVertex2i(x+Width, y+2);
+		glVertex2i(x+Width, y+Height-1);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x+Width, y+Height-1);
 		glEnd();
 	}
 
 	// Innen
-	if (Hot | Focused)
+	if (Themed && (Hot | Focused))
 	{
-		if (FMGetApp()->OSVersion==OS_Eight)
-		{
-			const COLORREF ColorRef = Hot ? Focused ? 0xF3E0B8 : 0xFBF3E5 : (GetFocus()==this) ? 0xF6E8CB : 0xF7F7F7;
+		const COLORREF TopColorRef = Focused ? 0xFFA020 : 0xFFFCF9;
+		const COLORREF BottomColorRef = Focused ? 0xE08010 : 0xFAEBE0;
 
-			ColorRef2GLColor(&BaseColor[0], ColorRef);
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], ga->Alpha);
+		GLfloat TopColor[4];
+		ColorRef2GLColor(&TopColor[0], TopColorRef);
+		GLfloat BottomColor[4];
+		ColorRef2GLColor(&BottomColor[0], BottomColorRef);
 
-			glRecti(x, y, x+Width, y+Height);
-		}
-		else
-		{
-			const COLORREF TopColorRef = Hot ? Focused ? 0xFCEBDC : 0xFDFBFA : (GetFocus()==this) ? 0xFEF4EB : 0xF8F8F8;
-			const COLORREF BottomColorRef = Hot ? Focused ? 0xFCDBC1 : 0xFDF3EB : (GetFocus()==this) ? 0xFEE4CF : 0xE5E5E5;
+		glBegin(GL_QUADS);
+		glColor4f(TopColor[0], TopColor[1], TopColor[2], ga->Alpha);
+		glVertex2i(x+1, y+1);
+		glVertex2i(x+Width-1, y+1);
+		glColor4f(BottomColor[0], BottomColor[1], BottomColor[2], ga->Alpha);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x+1, y+Height-1);
+		glEnd();
 
-			GLfloat TopColor[4];
-			ColorRef2GLColor(&TopColor[0], TopColorRef);
-			GLfloat BottomColor[4];
-			ColorRef2GLColor(&BottomColor[0], BottomColorRef);
+		glColor4f(1.0f, 1.0f, 1.0f, ((Hot && !Focused) ? 0x60 : 0x48)*ga->Alpha/256.0f);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(x+1, y+1);
+		glVertex2i(x+Width-2, y+1);
+		glVertex2i(x+Width-2, y+Height-2);
+		glVertex2i(x+1, y+Height-2);
+		glEnd();
 
-			glBegin(GL_QUADS);
-			glColor4f(TopColor[0], TopColor[1], TopColor[2], ga->Alpha);
-			glVertex2i(x, y);
-			glVertex2i(x+Width, y);
-			glColor4f(BottomColor[0], BottomColor[1], BottomColor[2], ga->Alpha);
-			glVertex2i(x+Width, y+Height);
-			glVertex2i(x, y+Height);
-			glEnd();
-
-			glColor4f(1.0f, 1.0f, 1.0f, ga->Alpha*0.2f);
-			glBegin(GL_LINE_LOOP);
-			glVertex2i(x, y);
-			glVertex2i(x+Width-1, y);
-			glVertex2i(x+Width-1, y+Height-1);
-			glVertex2i(x, y+Height-1);
-			glEnd();
-
-			ColorRef2GLColor(&BaseColor[0], top>0 ? TopColorRef : BottomColorRef);
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], ga->Alpha);
-		}
+		ColorRef2GLColor(&BaseColor[0], Top>0 ? TopColorRef : BottomColorRef);
+		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], ga->Alpha);
 	}
 	else
 	{
 		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], ga->Alpha);
-		glRecti(x, y, x+Width, y+Height);
+		glRecti(x+1, y+1, x+Width-1, y+Height-1);
 	}
 
+	// Pfeil
 	glBegin(GL_TRIANGLES);
-	glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]);
-	glVertex2i(ga->ScreenPoint[0]+(ARROWSIZE-2), ga->ScreenPoint[1]+(ARROWSIZE-2)*top);
-	glVertex2i(ga->ScreenPoint[0]-(ARROWSIZE-2), ga->ScreenPoint[1]+(ARROWSIZE-2)*top);
+	if (Top>0)
+	{
+		glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]);
+		glVertex2i(ga->ScreenPoint[0]+ARROWSIZE+1, ga->ScreenPoint[1]+ARROWSIZE);
+		glVertex2i(ga->ScreenPoint[0]-ARROWSIZE, ga->ScreenPoint[1]+ARROWSIZE);
+	}
+	else
+	{
+		glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]);
+		glVertex2i(ga->ScreenPoint[0]+ARROWSIZE, ga->ScreenPoint[1]-ARROWSIZE);
+		glVertex2i(ga->ScreenPoint[0]-ARROWSIZE, ga->ScreenPoint[1]-ARROWSIZE);
+	}
 	glEnd();
 
 	// Rand
 	glBegin(GL_LINES);
 	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], ga->Alpha);
-	glVertex2i(x-1, y+1);					// Links
-	glVertex2i(x-1, y+Height-1);
-	glVertex2i(x+Width, y+1);				// Rechts
-	glVertex2i(x+Width, y+Height-1);
-	if (top>0)
-	{
-		glVertex2i(x+1, y+Height);			// Unten
-		glVertex2i(x+Width-1, y+Height);
+	glVertex2i(x, y+2);					// Links
+	glVertex2i(x, y+Height-2);
+	glVertex2i(x+Width-1, y+2);			// Rechts
+	glVertex2i(x+Width-1, y+Height-2);
 
+	if (Top>0)
+	{
+		glVertex2i(x+2, y+Height-1);	// Unten
+		glVertex2i(x+Width-2, y+Height-1);
 		glEnd();
+
 		glBegin(GL_LINE_STRIP);
-		glVertex2i(x+1, y-1);
-		glVertex2i(ga->ScreenPoint[0]-(ARROWSIZE-2), y-1);
-		glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]-top);
-		glVertex2i(ga->ScreenPoint[0]+(ARROWSIZE-2), y-1);
-		glVertex2i(x+Width-1, y-1);
+		glVertex2i(x+2, y);
+		glVertex2i(ga->ScreenPoint[0]-(ARROWSIZE-1), y);
+		glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]-1);
+		glVertex2i(ga->ScreenPoint[0]+(ARROWSIZE-1), y);
+		glVertex2i(x+Width-2, y);
 	}
 	else
 	{
-		glVertex2i(x+1, y-1);				// Oben
-		glVertex2i(x+Width-1, y-1);
-
+		glVertex2i(x+2, y);				// Oben
+		glVertex2i(x+Width-2, y);
 		glEnd();
+
 		glBegin(GL_LINE_STRIP);
-		glVertex2i(x+1, y+Height);
-		glVertex2i(ga->ScreenPoint[0]-(ARROWSIZE-2), y+Height);
+		glVertex2i(x+2, y+Height-1);
+		glVertex2i(ga->ScreenPoint[0]-(ARROWSIZE-1), y+Height-1);
 		glVertex2i(ga->ScreenPoint[0], ga->ScreenPoint[1]);
-		glVertex2i(ga->ScreenPoint[0]+(ARROWSIZE-2), y+Height);
-		glVertex2i(x+Width-1, y+Height);
+		glVertex2i(ga->ScreenPoint[0]+(ARROWSIZE-1), y+Height-1);
+		glVertex2i(x+Width-2, y+Height-1);
 	}
 	glEnd();
 
 	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], ga->Alpha*0.5f);
+
 	glBegin(GL_POINTS);
-	glVertex2i(x-1, y);						// Oben links
-	glVertex2i(x, y);
-	glVertex2i(x, y-1);
+	glVertex2i(x, y+1);					// Oben links
+	glVertex2i(x+1, y+1);
+	glVertex2i(x+1, y);
 	glEnd();
+
 	glBegin(GL_POINTS);
-	glVertex2i(x-1, y+Height-1);			// Unten links
-	glVertex2i(x, y+Height-1);
-	glVertex2i(x, y+Height);
+	glVertex2i(x, y+Height-2);			// Unten links
+	glVertex2i(x+1, y+Height-2);
+	glVertex2i(x+1, y+Height-1);
 	glEnd();
+
 	glBegin(GL_POINTS);
-	glVertex2i(x+Width, y);					// Oben rechts
-	glVertex2i(x+Width-1, y);
-	glVertex2i(x+Width-1, y-1);
+	glVertex2i(x+Width-1, y+1);			// Oben rechts
+	glVertex2i(x+Width-2, y+1);
+	glVertex2i(x+Width-2, y);
 	glEnd();
+
 	glBegin(GL_POINTS);
-	glVertex2i(x+Width, y+Height-1);		// Unten rechts
-	glVertex2i(x+Width-1, y+Height-1);
-	glVertex2i(x+Width-1, y+Height);
+	glVertex2i(x+Width-1, y+Height-2);	// Unten rechts
+	glVertex2i(x+Width-2, y+Height-2);
+	glVertex2i(x+Width-2, y+Height-1);
 	glEnd();
 
 	x += 5;
-	y += 2;
+	y += 3;
 
 	glColor4f(CaptionColor[0], CaptionColor[1], CaptionColor[2], ga->Alpha);
 	y += m_Fonts[1].Render(Caption, x, y);
@@ -1104,8 +1110,6 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_TooltipCtrl.Create(this);
-
 	m_pDC = new CClientDC(this);
 	if (!m_pDC)
 		return -1;
@@ -1257,8 +1261,8 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
-			m_TooltipCtrl.Deactivate();
+		if ((FMGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
+			FMGetApp()->HideTooltip();
 
 	if (m_HotItem!=Item)
 	{
@@ -1284,7 +1288,7 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 
 void CGlobeView::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	FMGetApp()->HideTooltip();
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
@@ -1296,15 +1300,14 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 			if (m_HotItem!=-1)
 			{
-				if (!m_TooltipCtrl.IsWindowVisible())
+				if (!FMGetApp()->IsTooltipVisible())
 				{
-					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, m_Airports.m_Items[m_HotItem].pAirport, m_Airports.m_Items[m_HotItem].CountStringLarge);
+					FMGetApp()->ShowTooltip(this, point, m_Airports.m_Items[m_HotItem].pAirport, m_Airports.m_Items[m_HotItem].CountStringLarge);
 				}
 			}
 			else
 			{
-				m_TooltipCtrl.Deactivate();
+				FMGetApp()->HideTooltip();
 			}
 
 	TRACKMOUSEEVENT tme;
@@ -1534,7 +1537,7 @@ void CGlobeView::OnSaveAs()
 
 void CGlobeView::OnJumpToLocation()
 {
-	FMSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
+	FMSelectLocationIATADlg dlg(this);
 
 	if (dlg.DoModal()==IDOK)
 	{

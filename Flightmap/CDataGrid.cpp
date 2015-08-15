@@ -28,7 +28,6 @@
                                             SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
 
-static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
 
 CDataGrid::CDataGrid()
@@ -117,7 +116,7 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 		break;
 	}
 
@@ -1013,6 +1012,8 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
 		return -1;
 
+	m_wndHeader.SetFont(&FMGetApp()->m_DefaultFont);
+
 	m_IgnoreHeaderItemChange = TRUE;
 
 	for (UINT a=0; a<FMAttributeCount; a++)
@@ -1035,8 +1036,6 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wDay = st.wDay;
 
 	SetTimer(1, 1000, NULL);
-
-	m_TooltipCtrl.Create(this);
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
@@ -1332,8 +1331,8 @@ void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && ((Item!=m_HotItem) || (Subitem!=m_HotSubitem)))
-			m_TooltipCtrl.Deactivate();
+		if ((FMGetApp()->IsTooltipVisible()) && ((Item!=m_HotItem) || (Subitem!=m_HotSubitem)))
+			FMGetApp()->HideTooltip();
 
 	if (!OnItem)
 	{
@@ -1353,7 +1352,7 @@ void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 
 void CDataGrid::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	FMGetApp()->HideTooltip();
 	InvalidateItem(m_HotItem);
 
 	m_Hover = FALSE;
@@ -1365,9 +1364,8 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
 		if ((m_HotItem.x!=-1) && (m_HotItem.y!=-1) && (p_Itinerary) && (!p_Edit))
-			if (!m_TooltipCtrl.IsWindowVisible() && (m_HotItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
+			if (!FMGetApp()->IsTooltipVisible() && (m_HotItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
 			{
-				ClientToScreen(&point);
 				const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[m_HotItem.y];
 				UINT Attr = m_ViewParameters.ColumnOrder[m_HotItem.x];
 				WCHAR tmpStr[256];
@@ -1376,13 +1374,13 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 				{
 				case 0:
 					if (strlen(pFlight->From.Code)==3)
-						m_TooltipCtrl.Track(point, (CHAR*)&pFlight->From.Code, _T(""));
+						FMGetApp()->ShowTooltip(this, point, (CHAR*)&pFlight->From.Code, _T(""));
 
 					break;
 
 				case 3:
 					if (strlen(pFlight->To.Code)==3)
-						m_TooltipCtrl.Track(point, (CHAR*)&pFlight->To.Code, _T(""));
+						FMGetApp()->ShowTooltip(this, point, (CHAR*)&pFlight->To.Code, _T(""));
 
 					break;
 
@@ -1402,7 +1400,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 								Message = Message.Mid(Pos+1);
 							}
 
-							m_TooltipCtrl.Track(point, theApp.m_FlagIcons32.ExtractIcon(m_HotSubitem), NULL, Caption, Message);
+							FMGetApp()->ShowTooltip(this, point, Caption, Message, theApp.m_FlagIcons32.ExtractIcon(m_HotSubitem));
 						}
 
 					case FMTypeColor:
@@ -1520,7 +1518,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 
 								CString cpt((LPCSTR)IDS_COLUMN0+Attr);
 
-								m_TooltipCtrl.Track(point, NULL, NULL, cpt, msg);
+								FMGetApp()->ShowTooltip(this, point, cpt, msg);
 							}
 							break;
 						}
@@ -1536,7 +1534,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 							dc.SelectObject(pOldFont);
 
 							if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-2*MARGIN-1) || (FMAttributes[Attr].Type==FMTypeColor))
-								m_TooltipCtrl.Track(point, NULL, NULL, _T(""), tmpStr);
+								FMGetApp()->ShowTooltip(this, point, _T(""), tmpStr);
 						}
 					}
 				}
@@ -1544,7 +1542,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
@@ -1570,7 +1568,7 @@ BOOL CDataGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 
 		m_VScrollPos += nInc;
 		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
@@ -1593,7 +1591,7 @@ void CDataGrid::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
 	if (nInc)
 	{
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 
 		m_HScrollPos += nInc;
 		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);

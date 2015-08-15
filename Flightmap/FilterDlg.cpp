@@ -108,7 +108,7 @@ void FilterDlg::OnSelectIATA()
 	CHAR Code[4];
 	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, Code, 4, NULL, NULL);
 
-	FMSelectLocationIATADlg dlg(IDD_SELECTIATA, this, Code);
+	FMSelectLocationIATADlg dlg(this, Code);
 	if (dlg.DoModal()==IDOK)
 	{
 		tmpStr = dlg.p_Airport->Code;

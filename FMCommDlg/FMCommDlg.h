@@ -5,10 +5,9 @@
 #include "CGdiPlusBitmap.h"
 #include "CGridHeader.h"
 #include "CGroupBox.h"
+#include "CHoverButton.h"
 #include "CImageListTransparent.h"
 #include "CMainWindow.h"
-#include "CMapSelectionCtrl.h"
-#include "CMapPreviewCtrl.h"
 #include "CRatingCtrl.h"
 #include "CTaskBar.h"
 #include "CTaskButton.h"
@@ -22,7 +21,6 @@
 #include "FMResolutionDlg.h"
 #include "FMSelectLocationGPSDlg.h"
 #include "FMSelectLocationIATADlg.h"
-#include "FMTooltip.h"
 #include "FMUpdateDlg.h"
 #include "IATA.h"
 #include "License.h"
@@ -46,11 +44,16 @@ struct FMLicense
 	FMVersion Version;
 };
 
-void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path);
+extern BLENDFUNCTION BF;
+
+void CreateRoundRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path);
+void CreateRelectionRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path);
 BOOL IsCtrlThemed();
 HBITMAP CreateTransparentBitmap(LONG Width, LONG Height);
 void DrawControlBorder(CWnd* pWnd);
-void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
+void DrawListItemForeground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected);
+void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal=FALSE);
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover);
 void FMErrorBox(UINT nID, HWND hWnd=NULL);
 
@@ -65,6 +68,7 @@ INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport
 BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** ppAirport);
 HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height);
 void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero);
+void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero);
 void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero);
 void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero=FALSE);
 

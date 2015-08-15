@@ -48,33 +48,6 @@ public:
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
-	GlobeParameters m_GlobeTarget;
-	GlobeParameters m_GlobeCurrent;
-	BOOL m_ShowSpots;
-	BOOL m_ShowAirportIATA;
-	BOOL m_ShowAirportNames;
-	BOOL m_ShowGPS;
-	BOOL m_ShowFlightCount;
-	BOOL m_ShowViewport;
-	BOOL m_ShowCrosshairs;
-	BOOL m_UseColors;
-	BOOL m_Clamp;
-
-	FMDynArray<GlobeAirport> m_Airports;
-	FMDynArray<FlightSegments*> m_Routes;
-
-	CClientDC* m_pDC;
-	HGLRC hRC;
-	INT m_FocusItem;
-	INT m_HotItem;
-	INT m_Width;
-	INT m_Height;
-	BOOL m_IsSelected;
-	BOOL m_Hover;
-	GLTexture* m_pTextureGlobe;
-	GLTexture* m_pTextureIcons;
-	GLFont m_Fonts[2];
-
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT Index);
 	void SelectItem(INT Index, BOOL Select);
@@ -131,7 +104,37 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	GlobeParameters m_GlobeTarget;
+	GlobeParameters m_GlobeCurrent;
+	BOOL m_ShowSpots;
+	BOOL m_ShowAirportIATA;
+	BOOL m_ShowAirportNames;
+	BOOL m_ShowGPS;
+	BOOL m_ShowFlightCount;
+	BOOL m_ShowViewport;
+	BOOL m_ShowCrosshairs;
+	BOOL m_UseColors;
+	BOOL m_Clamp;
+
+	FMDynArray<GlobeAirport> m_Airports;
+	FMDynArray<FlightSegments*> m_Routes;
+
+	CClientDC* m_pDC;
+	HGLRC hRC;
+	INT m_FocusItem;
+	INT m_HotItem;
+	INT m_Width;
+	INT m_Height;
+	BOOL m_IsSelected;
+	BOOL m_Hover;
+	GLTexture* m_pTextureGlobe;
+	GLTexture* m_pTextureIcons;
+	GLFont m_Fonts[2];
+
 private:
+	BOOL CursorOnGlobe(CPoint point);
+	void UpdateCursor();
+
 	LPCTSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
@@ -159,8 +162,4 @@ private:
 	CString m_FlightCount_Singular;
 	CString m_FlightCount_Plural;
 	CString m_DisplayName;
-	FMTooltip m_TooltipCtrl;
-
-	BOOL CursorOnGlobe(CPoint point);
-	void UpdateCursor();
 };

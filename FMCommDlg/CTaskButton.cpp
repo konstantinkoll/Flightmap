@@ -11,25 +11,21 @@
 
 #define BORDER     4
 
-CTaskButton::CTaskButton()
-	: CButton()
-{
-	m_Hover = FALSE;
-}
-
-BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconSize, INT IconID)
+BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CMFCToolBarImages* pButtonIcons, CMFCToolBarImages* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon)
 {
 	m_Caption = Caption;
-	m_TooltipHeader = TooltipHeader;
-	m_TooltipHint = TooltipHint;
-	p_Icons = Icons;
+	m_Hint = Hint;
+	p_ButtonIcons = pButtonIcons;
+	p_TooltipIcons = pTooltipIcons;
 	m_IconSize = IconSize;
 	m_IconID = IconID;
+	m_ForceSmall = ForceSmall;
+	m_HideIcon = HideIcon;
 	m_OverlayID = -1;
 
 	CRect rect;
 	rect.SetRectEmpty();
-	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
+	return CHoverButton::Create(Caption, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
@@ -48,11 +44,11 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 		break;
 	}
 
-	return CButton::PreTranslateMessage(pMsg);
+	return CHoverButton::PreTranslateMessage(pMsg);
 }
 
 void CTaskButton::SetIconID(INT IconID, INT OverlayID)
@@ -63,14 +59,21 @@ void CTaskButton::SetIconID(INT IconID, INT OverlayID)
 	Invalidate();
 }
 
-INT CTaskButton::GetPreferredWidth()
+INT CTaskButton::GetPreferredWidth(BOOL Small)
 {
-	INT Width = 2*(BORDER+2)+1;
+	m_Small = Small | m_ForceSmall;
 
-	if ((p_Icons) && (m_IconID!=-1))
-		Width += m_IconSize+(m_Caption.IsEmpty() ? 0 : BORDER);
+	INT Width = 2*(BORDER+2);
 
-	if (!m_Caption.IsEmpty())
+	if (p_ButtonIcons && (!m_HideIcon || m_Small))
+	{
+		Width += m_IconSize;
+
+		if (!m_Small)
+			Width += BORDER;
+	}
+
+	if (!m_Small)
 	{
 		CDC* pDC = GetDC();
 		HFONT hOldFont = (HFONT)pDC->SelectObject(IsCtrlThemed() ? FMGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
@@ -83,32 +86,11 @@ INT CTaskButton::GetPreferredWidth()
 }
 
 
-BEGIN_MESSAGE_MAP(CTaskButton, CButton)
-	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
+BEGIN_MESSAGE_MAP(CTaskButton, CHoverButton)
 	ON_WM_PAINT()
-	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
-
-INT CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CButton::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
-
-	return 0;
-}
-
-BOOL CTaskButton::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
 
 void CTaskButton::OnPaint()
 {
@@ -143,83 +125,51 @@ void CTaskButton::OnPaint()
 		rectText.OffsetRect(1, 1);
 
 	// Icon
-	if ((p_Icons) && (m_IconID!=-1))
+	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
 		CAfxDrawState ds;
-		p_Icons->PrepareDrawImage(ds);
+		p_ButtonIcons->PrepareDrawImage(ds);
 
 		CPoint pt(rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1));
-		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
+		p_ButtonIcons->Draw(&dc, pt.x, pt.y, m_IconID);
 
 		if (m_OverlayID!=-1)
-			p_Icons->Draw(&dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
+			p_ButtonIcons->Draw(&dc, pt.x+5, pt.y-(m_IconSize==32 ? 2 : 3), m_OverlayID);
 
-		p_Icons->EndDrawImage(ds);
+		p_ButtonIcons->EndDrawImage(ds);
 
 		rectText.left += m_IconSize+BORDER;
 	}
 
 	// Text
-	dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
+	if (!m_Small)
+	{
+		dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
 
-	HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? FMGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
-	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-	dc.SelectObject(hOldFont);
+		HFONT hOldFont = (HFONT)dc.SelectObject(Themed ? FMGetApp()->m_DefaultFont.m_hObject : GetStockObject(DEFAULT_GUI_FONT));
+		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		dc.SelectObject(hOldFont);
+	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 }
 
-void CTaskButton::OnMouseMove(UINT nFlags, CPoint point)
-{
-	CButton::OnMouseMove(nFlags, point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-		Invalidate();
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = FMHOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-}
-
 void CTaskButton::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
-	m_Hover = FALSE;
-	Invalidate();
+	FMGetApp()->HideTooltip();
 
-	CButton::OnMouseLeave();
+	CHoverButton::OnMouseLeave();
 }
 
 void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 {
-	if (!m_TooltipHeader.IsEmpty())
-		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-		{
-			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, NULL, NULL, m_TooltipHint.IsEmpty() ? _T("") : m_TooltipHeader, m_TooltipHint.IsEmpty() ? m_TooltipHeader : m_TooltipHint);
-		}
-		else
-		{
-			m_TooltipCtrl.Deactivate();
-		}
-}
-
-void CTaskButton::OnSetFocus(CWnd* pOldWnd)
-{
-	CButton::OnSetFocus(pOldWnd);
-	Invalidate();
-}
-
-
-void CTaskButton::OnKillFocus(CWnd* pNewWnd)
-{
-	CButton::OnKillFocus(pNewWnd);
-	Invalidate();
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		FMGetApp()->ShowTooltip(this, point, m_Caption, m_Hint, p_TooltipIcons->ExtractIcon(m_IconID));
+	}
+	else
+	{
+		FMGetApp()->HideTooltip();
+	}
 }

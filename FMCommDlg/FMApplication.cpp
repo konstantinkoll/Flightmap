@@ -9,6 +9,26 @@
 #include <mmsystem.h>
 
 
+void AppendAttribute(CString& dst, UINT ResID, CString Value)
+{
+	if (!Value.IsEmpty())
+	{
+		CString Name((LPCSTR)ResID);
+
+		dst.Append(Name);
+		dst.Append(_T(": "));
+		dst.Append(Value);
+		dst.Append(_T("\n"));
+	}
+}
+
+void AppendAttribute(CString& dst, UINT ResID, CHAR* Value)
+{
+	CString tmpStr(Value);
+	AppendAttribute(dst, ResID, tmpStr);
+}
+
+
 // FMApplication
 //
 
@@ -25,7 +45,7 @@ END_MESSAGE_MAP()
 void PlayRegSound(CString Identifier)
 {
 	CString strKey;
-	strKey.Format(_T("AppEvents\\Schemes\\%s\\.current"), Identifier);
+	strKey.Format(_T("AppEvents\\Schemes\\%s\\.Current"), Identifier);
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
@@ -237,7 +257,7 @@ BOOL FMApplication::InitInstance()
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
 	// Fonts
-	CString face = GetDefaultFontFace();
+	CString Face = GetDefaultFontFace();
 
 	INT Size = 8;
 	LOGFONT lf;
@@ -246,28 +266,31 @@ BOOL FMApplication::InitInstance()
 
 	m_DefaultFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_BoldFont.CreateFont(-Size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_ItalicFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_SmallFont.CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		_T("MSShellDlg"));
 	m_LargeFont.CreateFont(-(Size+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 	m_CaptionFont.CreateFont(-(Size+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
+		Face);
 
 	// Registry
 	SetRegistryKey(_T(""));
 
 	// Zähler zurücksetzen
 	RESETNAGCOUNTER;
+
+	// Tooltip
+	m_wndTooltip.Create();
 
 	return TRUE;
 }
@@ -415,6 +438,53 @@ HANDLE FMApplication::LoadFontFromResource(UINT nID)
 }
 
 
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
+{
+	ASSERT(IsWindow(m_wndTooltip));
+	ASSERT(pCallerWnd);
+
+	pCallerWnd->ClientToScreen(&point);
+	m_wndTooltip.ShowTooltip(point, strCaption, strText, hIcon, hBitmap);
+}
+
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, CString strText)
+{
+	CString Caption(pAirport->Code);
+	CString Text(_T(""));
+	CString tmpStr;
+
+	AppendAttribute(Text, IDS_AIRPORT_NAME, pAirport->Name);
+	AppendAttribute(Text, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+	FMGeoCoordinatesToString(pAirport->Location, tmpStr);
+	AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
+
+	if (!strText.IsEmpty())
+		Text.Append(strText);
+
+	ShowTooltip(pCallerWnd, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
+}
+
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, CHAR* Code, CString strText)
+{
+	FMAirport* pAirport = NULL;
+	if (FMIATAGetAirportByCode(Code, &pAirport))
+		ShowTooltip(pCallerWnd, point, pAirport, strText);
+}
+
+BOOL FMApplication::IsTooltipVisible()
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	return m_wndTooltip.IsWindowVisible();
+}
+
+void FMApplication::HideTooltip()
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	m_wndTooltip.HideTooltip();
+}
+
 
 void FMApplication::OnAppSupport()
 {
@@ -449,24 +519,44 @@ void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 }
 
 
-void FMApplication::PlayStandardSound()
+void FMApplication::PlayAsteriskSound()
 {
-	PlayRegSound(L"Apps\\.Default\\.Default");
+	PlayRegSound(_T("Apps\\.Default\\SystemAsterisk"));
+}
+
+void FMApplication::PlayDefaultSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\.Default"));
+}
+
+void FMApplication::PlayErrorSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemHand"));
 }
 
 void FMApplication::PlayNavigateSound()
 {
-	PlayRegSound(L"Apps\\Explorer\\Navigating");
+	PlayRegSound(_T("Apps\\Explorer\\Navigating"));
 }
 
-void FMApplication::PlayWarningSound()
+void FMApplication::PlayNotificationSound()
 {
-	PlayRegSound(L"Apps\\Explorer\\SecurityBand");
+	PlayRegSound(_T("Apps\\Explorer\\SecurityBand"));
+}
+
+void FMApplication::PlayQuestionSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemQuestion"));
 }
 
 void FMApplication::PlayTrashSound()
 {
-	PlayRegSound(L"Apps\\Explorer\\EmptyRecycleBin");
+	PlayRegSound(_T("Apps\\Explorer\\EmptyRecycleBin"));
+}
+
+void FMApplication::PlayWarningSound()
+{
+	PlayRegSound(_T("Apps\\.Default\\SystemExclamation"));
 }
 
 

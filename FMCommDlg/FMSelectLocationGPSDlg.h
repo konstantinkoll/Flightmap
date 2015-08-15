@@ -3,8 +3,7 @@
 //
 
 #pragma once
-#include "CMapSelectionCtrl.h"
-#include "IATA.h"
+#include "CMapCtrl.h"
 
 
 // FMSelectLocationGPSDlg
@@ -13,7 +12,7 @@
 class FMSelectLocationGPSDlg : public CDialog
 {
 public:
-	FMSelectLocationGPSDlg(const FMGeoCoordinates Location, CWnd* pParentWnd=NULL);
+	FMSelectLocationGPSDlg(const FMGeoCoordinates& Location, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -21,14 +20,15 @@ public:
 
 protected:
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnReset();
 	afx_msg void OnLatitudeChanged();
 	afx_msg void OnLongitudeChanged();
+
+	afx_msg void OnIATA();
+	afx_msg void OnReset();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CMapSelectionCtrl m_Map;
+	CMapCtrl m_wndMap;
 };

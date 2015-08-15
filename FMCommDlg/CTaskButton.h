@@ -3,42 +3,37 @@
 //
 
 #pragma once
-#include "FMTooltip.h"
+#include "CHoverButton.h"
 
 
 // CTaskButton
 //
 
-class CTaskButton : public CButton
+class CTaskButton : public CHoverButton
 {
 public:
-	CTaskButton();
-
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons=NULL, INT IconSize=0, INT IconID=-1);
+	BOOL Create(CWnd* pParentWnd, UINT nID, CString Caption, CString Hint, CMFCToolBarImages* pButtonIcons, CMFCToolBarImages* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon);
 	void SetIconID(INT IconID, INT OverlayID=-1);
-	INT GetPreferredWidth();
+	INT GetPreferredWidth(BOOL Small=FALSE);
 
 protected:
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 
-private:
+	CMFCToolBarImages* p_ButtonIcons;
+	CMFCToolBarImages* p_TooltipIcons;
 	CString m_Caption;
-	CString m_TooltipHeader;
-	CString m_TooltipHint;
-	FMTooltip m_TooltipCtrl;
-	CMFCToolBarImages* p_Icons;
-	INT m_IconSize;
+	CString m_Hint;
+	BOOL m_Small;
 	INT m_IconID;
 	INT m_OverlayID;
-	BOOL m_Hover;
+
+private:
+	INT m_IconSize;
+	BOOL m_ForceSmall;
+	BOOL m_HideIcon;
 };

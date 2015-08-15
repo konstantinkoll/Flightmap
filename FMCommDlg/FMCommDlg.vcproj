@@ -363,6 +363,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHoverButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
@@ -371,11 +375,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMapPreviewCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CMapSelectionCtrl.cpp"
+				RelativePath=".\CMapCtrl.cpp"
 				>
 			</File>
 			<File
@@ -501,6 +501,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHoverButton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.h"
 				>
 			</File>
@@ -509,11 +513,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMapPreviewCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMapSelectionCtrl.h"
+				RelativePath=".\CMapCtrl.h"
 				>
 			</File>
 			<File

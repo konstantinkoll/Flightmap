@@ -25,24 +25,33 @@
 using namespace CryptoPP;
 
 
-void CreateRoundRectangle(CRect rect, INT Radius, GraphicsPath& Path)
+BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+
+
+void CreateRoundRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
+{
+	INT d = Radius*2+1;
+	INT r = pRect->right-d-1;
+	INT b = pRect->bottom-d-1;
+
+	Path.Reset();
+	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
+	Path.AddArc(r, pRect->top, d, d, 270, 90);
+	Path.AddArc(r-1, b-1, d+1, d+1, 0, 90);
+	Path.AddArc(pRect->left, b-1, d+1, d+1, 90, 90);
+	Path.CloseFigure();
+}
+
+void CreateReflectionRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
 {
 	Path.Reset();
 
-	INT l = rect.left;
-	INT t = rect.top;
-	INT w = rect.Width();
-	INT h = rect.Height();
-	INT d = Radius<<1;
+	INT d = Radius*2+1;
+	INT h = pRect->bottom-pRect->top-1;
+	INT w = min((INT)(h*1.681), pRect->right-pRect->left-1);
 
-	Path.AddArc(l, t, d, d, 180, 90);
-	Path.AddLine(l+Radius, t, l+w-Radius, t);
-	Path.AddArc(l+w-d, t, d, d, 270, 90);
-	Path.AddLine(l+w, t+Radius, l+w, t+h-Radius);
-	Path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
-	Path.AddLine(l+w-Radius, t+h, l+Radius, t+h);
-	Path.AddArc(l, t+h-d, d, d, 90, 90);
-	Path.AddLine(l, t+h-Radius, l, t+Radius);
+	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
+	Path.AddArc(pRect->left, pRect->top, 2*w, 2*h, 270, -90);
 	Path.CloseFigure();
 }
 
@@ -103,63 +112,68 @@ void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Themed, BOOL WinFocused, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+void DrawReflection(Graphics& g, CRect &rect)
 {
-	if (hThemeList)
-	{
-		dc.SetTextColor(TextColor==(COLORREF)-1 ? 0x000000 : TextColor);
+	GraphicsPath pathReflection;
+	CreateReflectionRectangle(rect, 2, pathReflection);
 
-		if (Hot | Selected)
+	LinearGradientBrush brush(Point(rect.left, rect.top), Point(rect.left+min((INT)(rect.Height()*1.681), rect.Width()), rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
+	g.FillPath(&brush, &pathReflection);
+}
+
+void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+{
+	if (Themed)
+	{
+		if (Hover || Focused || Selected)
 		{
-			const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, !WinFocused ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-			UINT State = 0;
-			if (Hot)
-				State |= 1;
+			Graphics g(dc);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+			GraphicsPath pathOuter;
+			CreateRoundRectangle(rectItem, 3, pathOuter);
+
+			CRect rect(rectItem);
+			rect.DeflateRect(1, 1);
+
+			GraphicsPath pathInner;
+			CreateRoundRectangle(rect, 2, pathInner);
+
 			if (Selected)
-				State |= 2;
-			FMGetApp()->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+			{
+				LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0x20, 0xA0, 0xFF), Color(0x10, 0x80, 0xE0));
+				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+			}
+			else
+				if (Hover)
+				{
+					LinearGradientBrush brush1(Point(0, rectItem->top), Point(0, rectItem->bottom), Color(0xF9, 0xFC, 0xFF), Color(0xE0, 0xEB, 0xFA));
+					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+				}
+
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
+			g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+			if ((ShowFocusRect && WinFocused) || Hover || Selected)
+				if ((Focused && ShowFocusRect && WinFocused) || Selected)
+				{
+					Pen pen1(Color(0x10, 0x80, 0xE0));
+					g.DrawPath(&pen1, &pathOuter);
+				}
+				else
+				{
+					Pen pen1(Color(0x8A, 0xC0, 0xF0));
+					g.DrawPath(&pen1, &pathOuter);
+				}
+
+			if (Hover || Selected)
+			{
+				Pen pen2(Color((Hover && !Selected) ? 0x60 : 0x48, 0xFF, 0xFF, 0xFF));
+				g.DrawPath(&pen2, &pathInner);
+			}
 		}
 
-		if (WinFocused && Focused)
-			switch (FMGetApp()->OSVersion)
-			{
-			case OS_Vista:
-				if (ShowFocusRect)
-				{
-					CRect rect(rectItem);
-					rect.DeflateRect(1, 1);
-
-					dc.SetBkColor(0xFFFFFF);
-					dc.DrawFocusRect(rect);
-				}
-
-				break;
-
-			case OS_Seven:
-				if (!Selected)
-				{
-					CRect rect(rectItem);
-					rect.bottom--;
-					rect.right--;
-
-					Graphics g(dc);
-					g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-					GraphicsPath path;
-					CreateRoundRectangle(rect, 2, path);
-
-					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
-					g.DrawPath(&pen, &path);
-				}
-
-				break;
-
-			case OS_Eight:
-				if (!Selected)
-					dc.Draw3dRect(rectItem, 0xCEA27D, 0xCEA27D);
-
-				break;
-			}
+		dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
 	}
 	else
 	{
@@ -171,8 +185,8 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Th
 		}
 		else
 		{
-			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-			dc.SetBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+			dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetBkColor(GetSysColor(COLOR_WINDOW));
 		}
 
 		if (WinFocused && Focused)
@@ -183,6 +197,93 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, HTHEME hThemeList, BOOL Th
 	}
 }
 
+void DrawListItemForeground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL /*WinFocused*/, BOOL Hover, BOOL /*Focused*/, BOOL Selected)
+{
+	if (Themed && (Hover || Selected))
+	{
+		Graphics g(dc);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		CRect rect(rectItem);
+		rect.DeflateRect(1, 1);
+
+		DrawReflection(g, rect);
+	}
+}
+
+void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
+{
+	if (Hover || Selected)
+		if (Themed)
+		{
+			if (FMGetApp()->OSVersion==OS_Eight)
+			{
+				COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
+				COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
+
+				CRect rectBounds(rect);
+				dc.Draw3dRect(rectBounds, colBorder, colBorder);
+				rectBounds.DeflateRect(1, 0);
+				dc.FillSolidRect(rectBounds, colInner);
+			}
+			else
+			{
+				COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
+
+				if (ClipHorizontal)
+				{
+					dc.FillSolidRect(rect.left, rect.top, 1, rect.Height(), clr);
+					dc.FillSolidRect(rect.right-1, rect.top, 1, rect.Height(), clr);
+					rect.DeflateRect(1, 0);
+				}
+				else
+				{
+					dc.Draw3dRect(rect, clr, clr);
+					rect.DeflateRect(1, 1);
+				}
+
+				Graphics g(dc);
+				g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+				if (Hover)
+				{
+					LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
+					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+
+					rect.DeflateRect(1, 1);
+					INT y = (rect.top+rect.bottom)/2;
+
+					LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
+					g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
+
+					LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
+					g.FillRectangle(&brush3, rect.left, y, rect.Width(), rect.bottom-y);
+				}
+				else
+				{
+					dc.FillSolidRect(rect, 0xF6E4C2);
+
+					INT y = (rect.top+rect.bottom)/2;
+
+					LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
+					g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
+
+					LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+					g.FillRectangle(&brush3, rect.left, rect.top, rect.Width(), 2);
+
+					LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+					g.FillRectangle(&brush4, rect.left, rect.top, 2, rect.Height());
+				}
+			}
+		}
+		else
+		{
+			dc.DrawEdge(rect, Selected ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
+		}
+
+	dc.SetTextColor(Themed ? Selected || Hover ? 0x000000 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+}
+
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover)
 {
 	if (Themed)
@@ -190,28 +291,24 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 		if (Focused || Selected || Hover)
 		{
 			Graphics g(dc);
-			g.SetSmoothingMode(SmoothingModeNone);
-
-			CRect rectBounds(rect);
-			rectBounds.right--;
-			rectBounds.bottom--;
 
 			// Inner Border
+			CRect rectBounds(rect);
 			rectBounds.DeflateRect(1, 1);
 
 			if (Selected)
 			{
 				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
+				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
 			}
 			else
 				if (Hover)
 				{
 					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
+					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
 
 					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
+					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+1, rectBounds.Width(), rectBounds.Height()-rectBounds.Height()/2);
 				}
 
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -316,6 +413,9 @@ BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** ppAirport)
 	if (!Code)
 		return FALSE;
 
+	if (strlen(Code)!=3)
+		return FALSE;
+
 	INT First = 0;
 	INT Last = (INT)FMIATAGetAirportCount()-1;
 
@@ -358,11 +458,10 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 
 	BYTE* pbData = NULL;
 	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
-	HGDIOBJ hOldBitmap = dc.SelectObject(hBitmap);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	// Draw
 	Graphics g(dc);
-	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
@@ -387,7 +486,9 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 
 	if (PosX>1)
 		g.DrawImage(pMap->m_pBitmap, PosX-L, PosY, L, H);
+
 	g.DrawImage(pMap->m_pBitmap, PosX, PosY, L, H);
+
 	if (PosX<(INT)Width-L)
 		g.DrawImage(pMap->m_pBitmap, PosX+L, PosY, L, H);
 
@@ -400,36 +501,37 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	WCHAR pszBuf[4];
 	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 
-	StringFormat strformat;
+	StringFormat StrFormat;
 	GraphicsPath TextPath;
-	TextPath.Reset();
-	TextPath.AddString(pszBuf, (INT)wcslen(pszBuf), &fontFamily, FontStyleRegular, 21, Gdiplus::Point(0, 0), &strformat);
+	TextPath.AddString(pszBuf, -1, &fontFamily, FontStyleRegular, 21, Point(0, 0), &StrFormat);
 
 	// Pfad verschieben
-	Rect tr;
-	TextPath.GetBounds(&tr);
+	Rect rt;
+	TextPath.GetBounds(&rt);
 
 	INT FntX = LocX+pIndicator->m_pBitmap->GetWidth();
-	INT FntY = LocY-tr.Y;
+	INT FntY = LocY-rt.Y;
 
 	if (FntY<10)
 	{
 		FntY = 10;
 	}
 	else
-		if (FntY+tr.Height+10>(INT)Height)
+		if (FntY+rt.Height+10>(INT)Height)
 		{
-			FntY = Height-tr.Height-10;
+			FntY = Height-rt.Height-10;
 		}
+
 	Matrix m;
-	m.Translate((Gdiplus::REAL)FntX, (Gdiplus::REAL)FntY-1.25f);
+	m.Translate((Gdiplus::REAL)FntX, (Gdiplus::REAL)FntY-1.0f);
 	TextPath.Transform(&m);
 
 	// Text
-	Pen pen(Color(0, 0, 0), 3.0);
+	Pen pen(Color(0x00, 0x00, 0x00), 3.5);
 	pen.SetLineJoin(LineJoinRound);
 	g.DrawPath(&pen, &TextPath);
-	SolidBrush brush(Color(255, 255, 255));
+
+	SolidBrush brush(Color(0xFF, 0xFF, 0xFF));
 	g.FillPath(&brush, &TextPath);
 
 	dc.SelectObject(hOldBitmap);
@@ -458,6 +560,14 @@ void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsL
 		(UINT)GetMinutes(c),
 		(UINT)(GetSeconds(c)+0.5),
 		c>0 ? IsLatitude ? 'S' : 'E' : IsLatitude ? 'N' : 'W');
+}
+
+void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero)
+{
+	CHAR Coordinate[16];
+	FMGeoCoordinateToString(c, Coordinate, 16, IsLatitude, FillZero);
+
+	tmpStr = Coordinate;
 }
 
 void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)
@@ -690,6 +800,7 @@ BOOL FMIsSharewareExpired()
 
 
 // Update
+//
 
 void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 {

@@ -214,6 +214,7 @@ INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Active = (CWnd::GetActiveWindow()==this);
 
+	FMGetApp()->HideTooltip();
 	FMGetApp()->AddFrame(this);
 
 	return 0;
@@ -221,6 +222,8 @@ INT CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainWindow::OnClose()
 {
+	FMGetApp()->HideTooltip();
+
 	if (GetStyle() & WS_OVERLAPPEDWINDOW)
 	{
 		m_WindowPlacement.length = sizeof(m_WindowPlacement);

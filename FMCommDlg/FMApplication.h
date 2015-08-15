@@ -5,6 +5,8 @@
 #pragma once
 #include "resource.h"
 #include "CGdiPlusBitmap.h"
+#include "FMTooltip.h"
+#include "IATA.h"
 #include <uxtheme.h>
 
 #define RatingBitmapWidth      88
@@ -86,10 +88,19 @@ public:
 	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
-	static void PlayStandardSound();
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, CString strText);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, CHAR* Code, CString strText);
+	BOOL IsTooltipVisible();
+	void HideTooltip();
+	static void PlayAsteriskSound();
+	static void PlayDefaultSound();
+	static void PlayErrorSound();
 	static void PlayNavigateSound();
-	static void PlayWarningSound();
+	static void PlayNotificationSound();
+	static void PlayQuestionSound();
 	static void PlayTrashSound();
+	static void PlayWarningSound();
 	static HRESULT SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
 	static void AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last=FALSE);
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
@@ -149,6 +160,7 @@ protected:
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	FMTooltip m_wndTooltip;
 	CList<ResourceCacheItem> m_ResourceCache;
 	UINT m_NagCounter;
 

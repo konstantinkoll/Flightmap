@@ -293,13 +293,13 @@ BOOL FMUpdateDlg::OnInitDialog()
 	// Stil
 	if (m_NotificationWindow)
 	{
-		FMGetApp()->PlayWarningSound();
+		FMGetApp()->PlayNotificationSound();
 
 		UpdateFrame(TRUE);
 	}
 	else
 	{
-		FMGetApp()->PlayStandardSound();
+		FMGetApp()->PlayAsteriskSound();
 
 		GetDlgItem(IDC_IGNOREUPDATE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_HIDE)->ShowWindow(SW_HIDE);

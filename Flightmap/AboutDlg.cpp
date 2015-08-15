@@ -88,6 +88,28 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+{
+	FMDialog::OnEraseBkgnd(dc, g, rect);
+
+	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
+	if (p_Santa)
+		g.DrawImage(p_Santa->m_pBitmap, -6, m_IconTop-10);
+
+	CRect r(rect);
+	r.top = m_CaptionTop;
+	r.left = (p_Santa ? 178 : 148)-1;
+
+	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
+
+	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
+	dc.SetTextColor((IsCtrlThemed() && FMGetApp()->m_UseBgImages) ? 0x000000 : 0x606060);
+	dc.SetBkMode(TRANSPARENT);
+	dc.DrawText(m_AppName, r, fmt);
+
+	dc.SelectObject(pOldFont);
+}
+
 void AboutDlg::CheckLicenseKey()
 {
 	FMLicense License;
@@ -192,28 +214,6 @@ void AboutDlg::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
-{
-	FMDialog::OnEraseBkgnd(dc, g, rect);
-
-	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, m_IconTop);
-	if (p_Santa)
-		g.DrawImage(p_Santa->m_pBitmap, -6, m_IconTop-10);
-
-	CRect r(rect);
-	r.top = m_CaptionTop;
-	r.left = (p_Santa ? 178 : 148)-1;
-
-	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
-
-	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
-	dc.SetTextColor((IsCtrlThemed() && FMGetApp()->m_UseBgImages) ? 0x000000 : 0x606060);
-	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, r, fmt);
-
-	dc.SelectObject(pOldFont);
 }
 
 void AboutDlg::On3DSettings()

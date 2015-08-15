@@ -17,8 +17,6 @@
                                             SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
 
-static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-
 CRatingCtrl::CRatingCtrl()
 	: CWnd()
 {

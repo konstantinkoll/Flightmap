@@ -45,7 +45,7 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	case WM_NCMBUTTONUP:
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 		break;
 	}
 
@@ -54,12 +54,7 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 
 void CTooltipHeader::Init()
 {
-	SetFont(&FMGetApp()->m_DefaultFont);
-
 	m_SortIndicators.Create(IDB_SORTINDICATORS, 7, 4);
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
 }
 
 
@@ -112,12 +107,9 @@ void CTooltipHeader::OnPaint()
 	Graphics g(dc);
 
 	if (Themed)
-	{
 		dc.FillSolidRect(rect, 0xFFFFFF);
 
-	}
-
-	const UINT Line = rect.Height()*2/5;
+	const INT Line = rect.Height()*2/5;
 	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00, 0x00, 0x00, 0x00), Color(0x40, 0x00, 0x00, 0x00));
 	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
 
@@ -138,6 +130,15 @@ void CTooltipHeader::OnPaint()
 			{
 				if (Themed)
 				{
+					if ((rectItem.left==0) && (lpBuffer[0]!=L'\0'))
+					{
+						g.DrawRectangle(&pen, rectItem.left-1, -1, 2, rectItem.Height()-1);
+						g.FillRectangle(&brush1, rectItem.left, 0, 1, Line);
+						g.FillRectangle(&brush2, rectItem.left, Line, 1, rectItem.Height()-Line-1);
+
+						rectItem.left++;
+					}
+
 					g.DrawRectangle(&pen, rectItem.right-2, -1, 2, rectItem.Height()-1);
 					g.FillRectangle(&brush1, rectItem.right-1, 0, 1, Line);
 					g.FillRectangle(&brush2, rectItem.right-1, Line, 1, rectItem.Height()-Line-1);
@@ -147,59 +148,20 @@ void CTooltipHeader::OnPaint()
 
 				if (lpBuffer[0]!=L'\0')
 				{
+					CRect rectBounds(rectItem);
+
 					if (Themed)
 					{
-						const BOOL Hover = (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a)));
+						rectBounds.InflateRect(1, 0);
 
-						if (Hover || (m_PressedItem==a))
-						{
-							CRect rectBounds(rectItem);
-							rectBounds.InflateRect(1, 0);
+						if (rectBounds.left<0)
+							rectBounds.left = 0;
+					}
 
-							if (rectBounds.left<0)
-								rectBounds.left = 0;
+					DrawSubitemBackground(dc, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
 
-							COLORREF clr = FMGetApp()->OSVersion==OS_Eight ? Hover ? 0xEDC093 : 0xDAA026 : Hover ? 0xB17F3C : 0x8B622C;
-							dc.Draw3dRect(rectBounds, clr, clr);
-
-							rectBounds.DeflateRect(1, 1);
-
-							if (FMGetApp()->OSVersion==OS_Eight)
-							{
-								dc.FillSolidRect(rectBounds, Hover ? 0xF8F0E1 : 0xF0E1C3);
-							}
-							else
-								if (m_PressedItem==a)
-								{
-									dc.FillSolidRect(rectBounds, 0xF6E4C2);
-
-									INT y = (rectBounds.top+rectBounds.bottom)/2;
-
-									LinearGradientBrush brush2(Point(rectBounds.left, y-1), Point(rectBounds.left, rectBounds.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
-									g.FillRectangle(&brush2, rectBounds.left, y, rectBounds.Width(), rectBounds.bottom-y);
-
-									LinearGradientBrush brush3(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+2), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-									g.FillRectangle(&brush3, rectBounds.left, rectBounds.top, rectBounds.Width(), 2);
-
-									LinearGradientBrush brush4(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left+2, rectBounds.top), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-									g.FillRectangle(&brush4, rectBounds.left, rectBounds.top, 2, rectBounds.Height());
-								}
-								else
-								{
-									LinearGradientBrush brush1(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
-									g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
-
-									rectBounds.DeflateRect(1, 1);
-									INT y = (rectBounds.top+rectBounds.bottom)/2;
-
-									LinearGradientBrush brush2(Point(rectBounds.left, rectBounds.top-1), Point(rectBounds.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
-									g.FillRectangle(&brush2, rectBounds.left, rectBounds.top, rectBounds.Width(), y-rectBounds.top);
-
-									LinearGradientBrush brush3(Point(rectBounds.left, y-1), Point(rectBounds.left, rectBounds.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
-									g.FillRectangle(&brush3, rectBounds.left, y, rectBounds.Width(), rectBounds.bottom-y);
-								}
-							}
-
+					if (Themed)
+					{
 						if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
 							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
 
@@ -208,7 +170,6 @@ void CTooltipHeader::OnPaint()
 					}
 					else
 					{
-						dc.DrawEdge(rectItem, m_PressedItem==a ? EDGE_SUNKEN : EDGE_RAISED, BF_RECT | BF_SOFT);
 						rectItem.right--;
 					}
 
@@ -233,7 +194,6 @@ void CTooltipHeader::OnPaint()
 						break;
 					}
 
-					dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
 					dc.DrawText(lpBuffer, rectItem, nFormat);
 
 					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
@@ -300,15 +260,15 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TooltipItem))
-			m_TooltipCtrl.Deactivate();
+		if ((FMGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
+			FMGetApp()->HideTooltip();
 
 	CHeaderCtrl::OnMouseMove(nFlags, point);
 }
 
 void CTooltipHeader::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	FMGetApp()->HideTooltip();
 	m_Hover = FALSE;
 	m_HoverItem = -1;
 
@@ -324,7 +284,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 
 		m_TooltipItem = HitTest(&htt);
 		if (m_TooltipItem!=-1)
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!FMGetApp()->IsTooltipVisible())
 			{
 				HDITEMW i;
 				WCHAR TooltipTextBuffer[256];
@@ -334,15 +294,12 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 
 				if (GetItem(m_TooltipItem, &i))
 					if (TooltipTextBuffer[0]!=L'\0')
-					{
-						ClientToScreen(&point);
-						m_TooltipCtrl.Track(point, NULL, NULL, _T(""), TooltipTextBuffer);
-					}
+						FMGetApp()->ShowTooltip(this, point, _T(""), TooltipTextBuffer);
 			}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;

@@ -43,7 +43,6 @@ protected:
 
 private:
 	CGroupBox m_GroupBox[4];
-	CBitmap m_BackBuffer;
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;

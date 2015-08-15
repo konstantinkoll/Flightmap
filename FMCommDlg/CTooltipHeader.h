@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CImageListTransparent.h"
-#include "FMTooltip.h"
 
 
 // CTooltipHeader
@@ -33,7 +32,6 @@ protected:
 	virtual void Init();
 
 	CImageListTransparent m_SortIndicators;
-	FMTooltip m_TooltipCtrl;
 	BOOL m_Hover;
 	INT m_HoverItem;
 	INT m_PressedItem;

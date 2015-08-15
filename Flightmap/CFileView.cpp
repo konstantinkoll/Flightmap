@@ -533,8 +533,8 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			if (Scale>1.0)
 				Scale = 1.0;
 
-			INT Width = 2+(INT)(Scale*(DOUBLE)l);
-			INT Height = 2+(INT)(Scale*(DOUBLE)h);
+			INT Width = (INT)(Scale*(DOUBLE)l);
+			INT Height = (INT)(Scale*(DOUBLE)h);
 
 			// Create bitmap
 			CDC dc;
@@ -557,9 +557,8 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			g.SetCompositingMode(CompositingModeSourceOver);
 			g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-			g.DrawImage(pBitmap->m_pBitmap, 1, 1, Width-2, Height-2);
+			g.DrawImage(pBitmap->m_pBitmap, 0, 0, Width, Height);
 
-			dc.Draw3dRect(0, 0, Width, Height, 0x000000, 0x000000);
 			dc.SelectObject(hOldBitmap);
 		}
 		else
@@ -603,9 +602,9 @@ void CFileView::OnAdd()
 	CFileDialog dlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_ALLOWMULTISELECT, NULL, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		POSITION pos = dlg.GetStartPosition();
-		while (pos)
-			if (!p_Itinerary->AddAttachment(*p_Flight, dlg.GetNextPathName(pos)))
+		POSITION Pos = dlg.GetStartPosition();
+		while (Pos)
+			if (!p_Itinerary->AddAttachment(*p_Flight, dlg.GetNextPathName(Pos)))
 				break;
 
 		Reload();

@@ -48,8 +48,8 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		return;
 	}
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
+	CRect rectBorders(0, 0, 7, 7);
+	MapDialogRect(&rectBorders);
 
 	CRect btn;
 	pBottomWnd->GetWindowRect(&btn);
@@ -134,17 +134,17 @@ void FMDialog::GetLayoutRect(LPRECT lpRect) const
 {
 	GetClientRect(lpRect);
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
+	CRect rectBorders(0, 0, 7, 7);
+	MapDialogRect(&rectBorders);
 
 	CWnd* pBottomWnd = GetBottomWnd();
 	if (!pBottomWnd)
 		return;
 
-	CRect btn;
-	pBottomWnd->GetWindowRect(&btn);
-	ScreenToClient(&btn);
-	lpRect->bottom = btn.top-borders.Height()-2;
+	CRect rectButton;
+	pBottomWnd->GetWindowRect(&rectButton);
+	ScreenToClient(&rectButton);
+	lpRect->bottom = rectButton.top-rectBorders.Height()-2;
 }
 
 
@@ -175,13 +175,16 @@ BOOL FMDialog::OnInitDialog()
 	AddBottomRightControl(IDOK);
 	AddBottomRightControl(IDCANCEL);
 
+	FMGetApp()->HideTooltip();
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void FMDialog::OnDestroy()
 {
-	if (hBackgroundBrush)
-		DeleteObject(hBackgroundBrush);
+	FMGetApp()->HideTooltip();
+
+	DeleteObject(hBackgroundBrush);
 
 	CDialog::OnDestroy();
 }
@@ -191,36 +194,30 @@ BOOL FMDialog::OnEraseBkgnd(CDC* pDC)
 	CRect rect;
 	GetClientRect(rect);
 
-	CDC dc;
-	dc.CreateCompatibleDC(pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap* pOldBitmap;
 	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
 	{
 		m_BackBufferL = rect.Width();
 		m_BackBufferH = rect.Height();
 
-		m_BackBuffer.DeleteObject();
-		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		CDC dc;
+		dc.CreateCompatibleDC(pDC);
+		dc.SetBkMode(TRANSPARENT);
+
+		CBitmap MemBitmap;
+		MemBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 		Graphics g(dc);
-		g.SetCompositingMode(CompositingModeSourceOver);
 
 		OnEraseBkgnd(dc, g, rect);
 
-		if (hBackgroundBrush)
-			DeleteObject(hBackgroundBrush);
-		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
-	}
-	else
-	{
-		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+		dc.SelectObject(pOldBitmap);
+
+		DeleteObject(hBackgroundBrush);
+		hBackgroundBrush = CreatePatternBrush(MemBitmap);
 	}
 
-	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
+	FillRect(*pDC, rect, hBackgroundBrush);
 
 	return TRUE;
 }

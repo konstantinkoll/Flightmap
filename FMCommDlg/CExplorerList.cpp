@@ -15,7 +15,6 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	hThemeList = NULL;
 	p_ImageList = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 	m_ItemsPerRow = m_ColumnsPerTile = 3;
@@ -53,7 +52,7 @@ BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
 	case WM_NCMBUTTONUP:
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 		break;
 	}
 
@@ -62,14 +61,8 @@ BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
 
 void CExplorerList::Init()
 {
-	ModifyStyle(0, LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
+	ModifyStyle(0, WS_CLIPCHILDREN | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-
-	if ((FMGetApp()->m_ThemeLibLoaded) && (FMGetApp()->OSVersion>=OS_Vista))
-	{
-		FMGetApp()->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-		hThemeList = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-	}
 
 	CHeaderCtrl* pHeader = GetHeaderCtrl();
 	if (pHeader)
@@ -85,9 +78,6 @@ void CExplorerList::Init()
 	GetWindowRect(rect);
 
 	AdjustLayout(rect.Width());
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
 }
 
 BOOL CExplorerList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
@@ -252,7 +242,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 	if (IsWindowEnabled())
 	{
-		DrawListItemBackground(dc, rect, hThemeList, Themed, GetFocus()==this,
+		DrawListItemBackground(dc, rect, Themed, GetFocus()==this,
 			GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED, tag.Color);
 	}
 	else
@@ -261,7 +251,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	}
 
 	// Item
-	WCHAR Text[256]=L"Test";
+	WCHAR Text[256];
 	UINT Columns[4];
 
 	LVITEM Item;
@@ -317,7 +307,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 		if ((this->GetEditControl()) && (State & LVIS_FOCUSED))
 			break;
 
-		rectLabel.right = rectLabel.left+m_Columns[0].cx-6*PADDING;
+		rectLabel.right = rectLabel.left+m_Columns[0].cx-5*PADDING;
 		rectLabel.left = rectIcon.right+5*PADDING-2;
 		DrawLabel(dc, rectLabel, Text, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
@@ -330,7 +320,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 			GetItem(&Item);
 
 			rectLabel.right += m_Columns[a].cx;
-			rectLabel.left = rectLabel.right-m_Columns[a].cx+11*PADDING+1;
+			rectLabel.left = rectLabel.right-m_Columns[a].cx+11*PADDING-2;
 
 			dc.DrawText(Item.pszText, rectLabel, DT_END_ELLIPSIS | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | ((m_Columns[a].fmt & LVCFMT_JUSTIFYMASK)==LVCFMT_RIGHT ? DT_RIGHT : DT_LEFT));
 		}
@@ -371,7 +361,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 		DrawLabel(dc, rectLabel, Item.pszText, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-		if (IsWindowEnabled() && (tag.Color==(COLORREF)-1) && Themed && ((hThemeList) || !(State & LVIS_SELECTED)))
+		if (IsWindowEnabled() && (tag.Color==(COLORREF)-1) && Themed && !(State & LVIS_SELECTED))
 			dc.SetTextColor(0x808080);
 
 		for (UINT a=1; a<=Item.cColumns; a++)
@@ -393,6 +383,10 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	if (p_ImageList)
 		DrawIcon(&dc, rectIcon, Item, State);
 
+	if (IsWindowEnabled())
+		DrawListItemForeground(dc, rect, Themed, GetFocus()==this,
+			GetHotItem()==nID, State & LVIS_FOCUSED, State & LVIS_SELECTED);
+
 	pDC->BitBlt(rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldFont);
@@ -402,9 +396,6 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 
 BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
-	ON_WM_DESTROY()
-	//ON_WM_ERASEBKGND()
-	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -422,37 +413,17 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CExplorerList::OnDestroy()
-{
-	if (hThemeList)
-		FMGetApp()->zCloseThemeData(hThemeList);
-
-	CListCtrl::OnDestroy();
-}
-
-BOOL CExplorerList::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
-LRESULT CExplorerList::OnThemeChanged()
-{
-	if ((FMGetApp()->m_ThemeLibLoaded) && (FMGetApp()->OSVersion>=OS_Vista))
-	{
-		if (hThemeList)
-			FMGetApp()->zCloseThemeData(hThemeList);
-
-		hThemeList = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-	}
-
-	return TRUE;
-}
-
 void CExplorerList::OnMouseMove(UINT nFlags, CPoint point)
 {
 	LVHITTESTINFO htt;
 	htt.pt = point;
-	m_HoverItem = HitTest(&htt);
+	INT HoverItem = HitTest(&htt);
+
+	if (HoverItem!=m_HoverItem)
+	{
+		m_HoverItem = HoverItem;
+		Invalidate();
+	}
 
 	if (!m_Hover)
 	{
@@ -467,17 +438,18 @@ void CExplorerList::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TooltipItem))
-			m_TooltipCtrl.Deactivate();
+		if ((FMGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
+			FMGetApp()->HideTooltip();
 
 	CListCtrl::OnMouseMove(nFlags, point);
 }
 
 void CExplorerList::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
+	FMGetApp()->HideTooltip();
 	m_Hover = FALSE;
 	m_HoverItem = -1;
+	Invalidate();
 
 	CListCtrl::OnMouseLeave();
 }
@@ -491,7 +463,7 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 
 		m_TooltipItem = HitTest(&htt);
 		if (m_TooltipItem!=-1)
-			if (!m_TooltipCtrl.IsWindowVisible())
+			if (!FMGetApp()->IsTooltipVisible())
 			{
 				NM_TOOLTIPDATA tag;
 				ZeroMemory(&tag, sizeof(tag));
@@ -504,15 +476,12 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 				GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
 
 				if (tag.Show)
-				{
-					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, tag.hIcon, tag.hBitmap, GetItemText(m_TooltipItem, 0), tag.Text);
-				}
+					FMGetApp()->ShowTooltip(this, point, GetItemText(m_TooltipItem, 0), tag.Text, tag.hIcon, tag.hBitmap);
 			}
 	}
 	else
 	{
-		m_TooltipCtrl.Deactivate();
+		FMGetApp()->HideTooltip();
 	}
 
 	TRACKMOUSEEVENT tme;
@@ -600,7 +569,7 @@ void CExplorerList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 		else
 		{
-			m_IconSize = 16;
+			m_IconSize = 0;
 		}
 
 		*pResult = CDRF_NOTIFYITEMDRAW;
