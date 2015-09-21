@@ -6,6 +6,7 @@
 #include "CGridHeader.h"
 #include "CGroupBox.h"
 #include "CHoverButton.h"
+#include "CIcons.h"
 #include "CImageListTransparent.h"
 #include "CMainWindow.h"
 #include "CRatingCtrl.h"

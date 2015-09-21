@@ -39,8 +39,6 @@ protected:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 
-	UINT m_nIDTemplate;
-
 private:
 	CGroupBox m_GroupBox[4];
 	INT m_BackBufferL;

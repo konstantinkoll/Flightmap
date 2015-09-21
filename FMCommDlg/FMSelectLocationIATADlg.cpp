@@ -184,12 +184,6 @@ BOOL FMSelectLocationIATADlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = FMGetApp()->LoadDialogIcon(IDD_SELECTIATA);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	// Combobox füllen
 	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);
 	UINT cCount = FMIATAGetCountryCount();

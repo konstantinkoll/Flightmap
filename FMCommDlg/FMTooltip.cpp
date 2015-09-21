@@ -83,7 +83,7 @@ void FMTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 		if (GetIconInfo(hIcon, &IconInfo))
 			if (GetObject(IconInfo.hbmColor, sizeof(Bitmap), &Bitmap))
 			{
-				Size.cx += Bitmap.bmWidth+2*MARGIN;
+				Size.cx += (Bitmap.bmWidth==34 ? 32 : Bitmap.bmWidth)+2*MARGIN;
 				Size.cy = max(Size.cy, Bitmap.bmHeight);
 			}
 	}
@@ -236,7 +236,7 @@ void FMTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 	if (hIcon)
 	{
 		DrawIconEx(dc, rect.left, rect.top, hIcon, Bitmap.bmWidth, Bitmap.bmHeight, 0, NULL, DI_NORMAL);
-		rect.left += Bitmap.bmWidth+2*MARGIN;
+		rect.left += (Bitmap.bmWidth==34 ? 32 : Bitmap.bmWidth)+2*MARGIN;
 	}
 	else
 		if (hBitmap)
@@ -254,7 +254,7 @@ void FMTooltip::ShowTooltip(CPoint point, const CString& strCaption, const CStri
 				dc.BitBlt(rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, &dcBitmap, 0, 0, SRCCOPY);
 
 				Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
-				g.DrawRectangle(&pen, rect.left, rect.top, Bitmap.bmWidth-1, Bitmap.bmHeight-1);
+				g.DrawRectangle(&pen, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight);
 			}
 
 			SelectObject(dcBitmap, hOldBitmap);

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CIcons.h"
 #include "CMainWindow.h"
 #include "FMDynArray.h"
 
@@ -104,7 +105,7 @@ protected:
 	INT m_HoverItem;
 	BOOL m_Hover;
 	BOOL m_UseDropdown;
-	CMFCToolBarImages m_Icons;
+	CIcons m_Icons;
 	INT m_IconSize;
 	LOGFONT m_MenuLogFont;
 	LOGFONT m_NormalLogFont;
@@ -211,8 +212,8 @@ protected:
 	INT m_LastSelectedItem;
 	BOOL m_Hover;
 	BOOL m_Keyboard;
-	CMFCToolBarImages m_LargeIcons;
-	CMFCToolBarImages m_SmallIcons;
+	CIcons m_LargeIcons;
+	CIcons m_SmallIcons;
 	CDialogMenuPopup* p_SubMenu;
 	CWnd* p_ParentMenu;
 
@@ -284,7 +285,7 @@ public:
 protected:
 	virtual void Execute();
 
-	CMFCToolBarImages m_Icons;
+	CIcons m_Icons;
 	UINT m_CmdID;
 	UINT m_ItemCount;
 	UINT m_Rows;

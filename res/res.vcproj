@@ -152,14 +152,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\ChooseColor_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ChooseColor_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Copy_16.png"
 				>
 			</File>
@@ -341,14 +333,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Paste_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Plane_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Plane_32.png"
 				>
 			</File>
 			<File
@@ -621,18 +605,6 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\3DSettings_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\About_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Add_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\air.ico"
 			>
 		</File>
@@ -661,10 +633,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\ChooseColor_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Descending_16.bmp"
 			>
 		</File>
@@ -678,26 +646,6 @@
 		</File>
 		<File
 			RelativePath=".\Earthmap.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Edit_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\FileAttachments_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\FileInspect_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\FileProperties_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\FilterByForm_Tiny.ico"
 			>
 		</File>
 		<File
@@ -753,19 +701,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Key_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Letter_Gothic.ttf"
 			>
 		</File>
 		<File
 			RelativePath=".\liquidFOLDERS.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Location_Tiny.ico"
 			>
 		</File>
 		<File
@@ -786,22 +726,6 @@
 		</File>
 		<File
 			RelativePath=".\NRT_Unregistered.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Passport.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Passport_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Plane.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Plane_Tiny.ico"
 			>
 		</File>
 		<File
@@ -853,10 +777,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Resolution_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Santa.png"
 			>
 		</File>
@@ -905,23 +825,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Statistics_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Table_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Tools.ico"
 			>
 		</File>
 		<File
 			RelativePath=".\Tools.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Wallet_Tiny.ico"
 			>
 		</File>
 		<File

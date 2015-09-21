@@ -5,10 +5,6 @@
 #define IDR_APPLICATION                 128
 #define IDR_MAP                         129
 #define IDR_GLOBE                       130
-#define IDR_PASSPORT                    131
-#define IDI_EDITFLIGHT                  132
-#define IDI_ADDROUTE                    133
-#define IDI_ATTACHMENTS                 134
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202

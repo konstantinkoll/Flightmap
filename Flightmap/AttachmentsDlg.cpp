@@ -29,12 +29,6 @@ BOOL AttachmentsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadDialogIcon(IDI_ATTACHMENTS);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	// FileView
 	m_wndFileView.SetData(GetDlgItem(IDC_FILESTATUS), p_Itinerary);
 

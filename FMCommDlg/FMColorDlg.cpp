@@ -28,12 +28,6 @@ BOOL FMColorDlg::OnInitDialog()
 {
 	CColorDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = FMGetApp()->LoadDialogIcon(IDD_CHOOSECOLOR);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	if (!m_Caption.IsEmpty())
 		SetWindowText(m_Caption);
 

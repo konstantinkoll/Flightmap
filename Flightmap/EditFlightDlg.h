@@ -21,7 +21,6 @@ public:
 	AIRX_Flight m_Flight;
 
 protected:
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 

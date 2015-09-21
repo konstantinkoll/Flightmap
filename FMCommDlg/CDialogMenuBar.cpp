@@ -52,9 +52,8 @@ BOOL CDialogMenuBar::Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, 
 
 	m_IconSize = abs(lf.lfHeight)>=24 ? 32 : 16;
 
-	m_Icons.SetImageSize(CSize(m_IconSize, m_IconSize));
 	if (LargeResID)
-		m_Icons.Load(m_IconSize==16 ? SmallResID : LargeResID);
+		m_Icons.Load(m_IconSize==16 ? SmallResID : LargeResID, m_IconSize);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
@@ -481,10 +480,7 @@ void CDialogMenuBar::OnPaint()
 
 			if (m_Items.m_Items[a].CmdID)
 			{
-				CAfxDrawState ds;
-				m_Icons.PrepareDrawImage(ds);
-				m_Icons.Draw(&dc, rectItem.left+(rectItem.Width()-m_IconSize)/2, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID);
-				m_Icons.EndDrawImage(ds);
+				m_Icons.Draw(dc, rectItem.left+(rectItem.Width()-m_IconSize)/2, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_Items.m_Items[a].IconID);
 			}
 			else
 			{
@@ -793,12 +789,10 @@ BOOL CDialogMenuPopup::Create(CWnd* pParentWnd, UINT LargeIconsID, UINT SmallIco
 {
 	// Load icons
 	m_LargeIconsID = LargeIconsID;
-	m_LargeIcons.SetImageSize(CSize(32, 32));
 	if (LargeIconsID)
-		m_LargeIcons.Load(LargeIconsID);
+		m_LargeIcons.Load(LargeIconsID, 32);
 
 	m_SmallIconsID = SmallIconsID;
-	m_SmallIcons.SetImageSize(CSize(16, 16));
 	if (SmallIconsID)
 		m_SmallIcons.Load(SmallIconsID);
 
@@ -1752,9 +1746,9 @@ CDialogMenuGallery::CDialogMenuGallery(CDialogMenuPopup* pParentPopup, UINT CmdI
 	m_DefaultColor = DefaultColor;
 
 	pParentPopup->GetCheckSize(m_CheckSize);
-	m_Icons.SetImageSize(IconSize);
+
 	if (IconsID)
-		m_Icons.Load(IconsID);
+		m_Icons.Load(IconsID, IconSize);
 
 	m_Captions = new CString[ItemCount];
 	for (UINT a=0; a<ItemCount; a++)
@@ -1828,18 +1822,7 @@ void CDialogMenuGallery::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 			p_ParentPopup->DrawSelectedBackground(pDC, rectItem, m_Enabled);
 
 		rectItem.DeflateRect(BORDER/2+1, BORDER/2+1);
-
-		if ((INT)a<m_Icons.GetCount())
-		{
-			CAfxDrawState ds;
-			m_Icons.PrepareDrawImage(ds);
-			m_Icons.Draw(pDC, rectItem.left+1, rectItem.top+1, a);
-			m_Icons.EndDrawImage(ds);
-		}
-		else
-		{
-			pDC->FillSolidRect(rectItem.left+1, rectItem.top+1, m_IconSize.cx, m_IconSize.cy, m_DefaultColor);
-		}
+		m_Icons.Draw(*pDC, rectItem.left+1, rectItem.top+1, a);
 
 		COLORREF clr = Themed ? m_Enabled ? (Selected && ((INT)a==m_HoverItem)) ? 0x000000 : 0x8F8F8E : 0xB1B1B1 : 0x000000;
 		pDC->Draw3dRect(rectItem.left, rectItem.top, m_IconSize.cx+2, m_IconSize.cy+2, clr, clr);
@@ -2205,12 +2188,7 @@ void CDialogMenuCommand::OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Them
 
 void CDialogMenuCommand::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL /*Themed*/)
 {
-	CMFCToolBarImages* pIcons = (m_IconSize.cx==16) ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons;
-
-	CAfxDrawState ds;
-	pIcons->PrepareDrawImage(ds);
-	pIcons->Draw(pDC, pt.x, pt.y, m_IconID);
-	pIcons->EndDrawImage(ds);
+	(m_IconSize.cx==16 ? &p_ParentPopup->m_SmallIcons : &p_ParentPopup->m_LargeIcons)->Draw(*pDC, pt.x, pt.y, m_IconID);
 }
 
 void CDialogMenuCommand::OnSelect(BOOL Keyboard, BOOL /*FromTop*/)
@@ -2337,8 +2315,7 @@ CDialogMenuFileType::CDialogMenuFileType(CDialogMenuPopup* pParentPopup, UINT Cm
 
 void CDialogMenuFileType::OnDrawIcon(CDC* pDC, CPoint pt, BOOL /*Selected*/, BOOL /*Themed*/)
 {
-	CImageList* pIcons = (m_IconSize.cx<32) ? &FMGetApp()->m_SystemImageListSmall : &FMGetApp()->m_SystemImageListLarge;
-	pIcons->DrawEx(pDC, m_IconID, pt, m_IconSize, CLR_NONE, CLR_NONE, ILD_NORMAL);
+	(m_IconSize.cx<32 ? &FMGetApp()->m_SystemImageListSmall : &FMGetApp()->m_SystemImageListLarge)->DrawEx(pDC, m_IconID, pt, m_IconSize, CLR_NONE, CLR_NONE, ILD_NORMAL);
 }
 
 

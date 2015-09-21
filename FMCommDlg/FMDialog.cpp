@@ -12,8 +12,6 @@
 FMDialog::FMDialog(UINT nIDTemplate, CWnd* pParentWnd)
 	: CDialog(nIDTemplate, pParentWnd)
 {
-	m_nIDTemplate = nIDTemplate;
-
 	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = 0;
 	p_BottomLeftControl = NULL;
@@ -162,11 +160,13 @@ BOOL FMDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = FMGetApp()->LoadDialogIcon(m_nIDTemplate);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
+	if (GetStyle() & WS_SIZEBOX)
+	{
+		HICON hIcon = FMGetApp()->LoadDialogIcon(IDR_APPLICATION);
+
+		SetIcon(hIcon, FALSE);
+		SetIcon(hIcon, TRUE);
+	}
 
 	CRect rect;
 	GetClientRect(rect);

@@ -57,12 +57,6 @@ BOOL AddRouteDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadDialogIcon(IDI_ADDROUTE);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	// Route
 	CString tmpStr((LPCSTR)IDS_CUEBANNER_ROUTE);
 	m_wndRoute.SetCueBanner(tmpStr);

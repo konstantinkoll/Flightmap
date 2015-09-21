@@ -111,12 +111,6 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadDialogIcon(IDD_CHOOSEDETAILS);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	// Kontrollelemente einstellen
 	const UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS | LVS_EX_CHECKBOXES;
 	m_ShowAttributes.SetExtendedStyle(m_ShowAttributes.GetExtendedStyle() | dwExStyle);

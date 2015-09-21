@@ -367,6 +367,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CIcons.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
@@ -505,6 +509,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CIcons.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.h"
 				>
 			</File>
@@ -619,18 +627,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\3DSettings_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\About_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Add_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Ascending_16.bmp"
 				>
 			</File>
@@ -639,35 +635,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\ChooseColor_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Descending_16.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\res\Earthmap.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Edit_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FileAttachments_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FileInspect_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FileProperties_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FilterByForm_Tiny.ico"
 				>
 			</File>
 			<File
@@ -695,15 +667,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Key_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Letter_Gothic.ttf"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Location_Tiny.ico"
 				>
 			</File>
 			<File
@@ -716,14 +680,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Map_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Passport_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Plane_Tiny.ico"
 				>
 			</File>
 			<File
@@ -771,10 +727,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Resolution_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\ResolutionIcons.bmp"
 				>
 			</File>
@@ -783,23 +735,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Statistics_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Table_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\UpdateIcons_16.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\res\UpdateIcons_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Wallet_Tiny.ico"
 				>
 			</File>
 		</Filter>

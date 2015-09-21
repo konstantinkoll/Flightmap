@@ -55,19 +55,6 @@ BEGIN_MESSAGE_MAP(EditFlightDlg, CPropertySheet)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-BOOL EditFlightDlg::OnInitDialog()
-{
-	CPropertySheet::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadDialogIcon(IDI_EDITFLIGHT);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
-}
-
 void EditFlightDlg::OnDestroy()
 {
 	for (UINT a=0; a<EDITFLIGHTPAGES; a++)

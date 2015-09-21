@@ -75,12 +75,6 @@ BOOL FMSelectLocationGPSDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = FMGetApp()->LoadDialogIcon(IDD_SELECTGPS);
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	m_wndMap.SetLocation(m_Location);
 	m_wndMap.SetMenu(IDM_SELECTGPS);
 
