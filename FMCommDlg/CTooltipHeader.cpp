@@ -263,6 +263,9 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		if ((FMGetApp()->IsTooltipVisible()) && (m_HoverItem!=m_TooltipItem))
 			FMGetApp()->HideTooltip();
 
+	if (m_PressedItem==-1)
+		Invalidate();
+
 	CHeaderCtrl::OnMouseMove(nFlags, point);
 }
 
@@ -273,6 +276,7 @@ void CTooltipHeader::OnMouseLeave()
 	m_HoverItem = -1;
 
 	CHeaderCtrl::OnMouseLeave();
+	Invalidate();
 }
 
 void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)

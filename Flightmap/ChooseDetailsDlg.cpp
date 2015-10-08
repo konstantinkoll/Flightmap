@@ -115,6 +115,8 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	const UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS | LVS_EX_CHECKBOXES;
 	m_ShowAttributes.SetExtendedStyle(m_ShowAttributes.GetExtendedStyle() | dwExStyle);
 
+	m_ShowAttributes.AddColumn(0, _T(""));
+
 	for (UINT a=0; a<FMAttributeCount; a++)
 		if (p_ViewParameters->ColumnWidth[p_ViewParameters->ColumnOrder[a]])
 			AddAttribute(p_ViewParameters->ColumnOrder[a]);
@@ -123,8 +125,8 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 		if (!p_ViewParameters->ColumnWidth[p_ViewParameters->ColumnOrder[a]])
 			AddAttribute(p_ViewParameters->ColumnOrder[a]);
 
-	m_ShowAttributes.SetColumnWidth(0, LVSCW_AUTOSIZE);
 	m_ShowAttributes.SetItemState(0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_ShowAttributes.SetColumnWidth(0, LVSCW_AUTOSIZE);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
