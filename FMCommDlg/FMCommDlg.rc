@@ -42,6 +42,7 @@ IDB_FLIGHTMAP_256       PNG                     "res\\Flightmap_256.png"
 IDB_BACKDROP            PNG                     "res\\Backdrop.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
+IDB_TOOLTIPBACKGROUND   PNG                     "res\\TooltipBackground.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

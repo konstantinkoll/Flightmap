@@ -63,6 +63,7 @@
 #define IDB_DESCENDING                  20022
 #define IDB_UPDATEICONS_16              20023
 #define IDB_UPDATEICONS_32              20024
+#define IDB_TOOLTIPBACKGROUND           20025
 #define IDS_PURCHASEURL                 20100
 #define IDS_UPDATEURL                   20101
 #define IDS_EXCLUSIVEURL                20102
