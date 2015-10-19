@@ -108,7 +108,6 @@ public:
 	INT m_GlobeLongitude;
 	INT m_GlobeZoom;
 	// 3D settings
-	BOOL m_GlobeHQModel;
 	BOOL m_GlobeAntialising;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;

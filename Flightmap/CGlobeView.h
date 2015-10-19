@@ -141,7 +141,6 @@ private:
 
 	GLint m_GlobeModel;
 	GLint m_GlobeRoutes;
-	BOOL m_IsHQModel;
 	INT m_CurrentGlobeTexture;
 
 	GLfloat m_Scale;

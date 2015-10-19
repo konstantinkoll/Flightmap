@@ -132,10 +132,9 @@
 #define IDC_PURCHASE                    21401
 #define IDD_3DSETTINGS                  21500
 #define IDC_TEXTURESIZE                 21501
-#define IDC_HQMODEL                     21502
-#define IDC_ANTIALISING                 21503
-#define IDC_LIGHTING                    21504
-#define IDC_ATMOSPHERE                  21505
+#define IDC_ANTIALISING                 21502
+#define IDC_LIGHTING                    21503
+#define IDC_ATMOSPHERE                  21504
 #define IDD_CHOOSECOLOR                 21600
 #define IDD_RESOLUTION                  21700
 #define IDC_RESLIST                     21701

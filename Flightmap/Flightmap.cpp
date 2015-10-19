@@ -126,7 +126,6 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_GlobeZoom = GetInt(_T("GlobeZoom"), 600);
-	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeAntialising = GetInt(_T("GlobeAntialising"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
@@ -274,7 +273,6 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeLatitude"), m_GlobeLatitude);
 		WriteInt(_T("GlobeLongitude"), m_GlobeLongitude);
 		WriteInt(_T("GlobeZoom"), m_GlobeZoom);
-		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeAntialising"), m_GlobeAntialising);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);

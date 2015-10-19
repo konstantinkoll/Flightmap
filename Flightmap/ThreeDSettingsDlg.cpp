@@ -19,7 +19,6 @@ void ThreeDSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXTURESIZE, m_wndTextureSize);
 
-	DDX_Check(pDX, IDC_HQMODEL, theApp.m_GlobeHQModel);
 	DDX_Check(pDX, IDC_ANTIALISING, theApp.m_GlobeAntialising);
 	DDX_Check(pDX, IDC_LIGHTING, theApp.m_GlobeLighting);
 	DDX_Check(pDX, IDC_ATMOSPHERE, theApp.m_GlobeAtmosphere);
