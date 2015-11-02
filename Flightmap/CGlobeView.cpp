@@ -32,7 +32,7 @@ __forceinline double decToRad(double dec)
 	return dec*(PI/180.0);
 }
 
-__forceinline void MatrixMul(GLfloat Result[4][4], GLfloat Left[4][4], GLfloat Right[4][4])
+__forceinline void MatrixMul(GLfloat Result[4][4], const GLfloat Left[4][4], const GLfloat Right[4][4])
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
@@ -180,14 +180,11 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
-
-	CRect rect;
-	rect.SetRectEmpty();
-	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
+	if (!CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID))
 		return FALSE;
 
 	UpdateViewOptions(TRUE);
+
 	return TRUE;
 }
 
@@ -231,11 +228,11 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 		ga.pAirport = pPair1->value.pAirport;
 
 		strcpy_s(ga.NameString, 130, ga.pAirport->Name);
-		FMCountry* Country = FMIATAGetCountry(ga.pAirport->CountryID);
-		if (Country)
+		const FMCountry* pCountry = FMIATAGetCountry(ga.pAirport->CountryID);
+		if (pCountry)
 		{
 			strcat_s(ga.NameString, 130, ", ");
-			strcat_s(ga.NameString, 130, Country->Name);
+			strcat_s(ga.NameString, 130, pCountry->Name);
 		}
 
 		FMGeoCoordinatesToString(ga.pAirport->Location, ga.CoordString, 32, FALSE);
@@ -337,12 +334,12 @@ void CGlobeView::SelectItem(INT Index, BOOL Select)
 	}
 }
 
-BOOL CGlobeView::CursorOnGlobe(CPoint point)
+BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
 {
-	GLfloat distX = point.x-(GLfloat)m_Width/2;
-	GLfloat distY = point.y-(GLfloat)m_Height/2;
+	GLfloat DistX = point.x-(GLfloat)m_Width/2;
+	GLfloat DistY = point.y-(GLfloat)m_Height/2;
 
-	return distX*distX+distY*distY<m_Radius*m_Radius;
+	return DistX*DistX + DistY*DistY < m_Radius*m_Radius;
 }
 
 void CGlobeView::UpdateCursor()
@@ -517,7 +514,7 @@ __forceinline void CGlobeView::Normalize()
 		m_GlobeTarget.Longitude -= 360.0f;
 }
 
-__forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
+__forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4])
 {
 	GLfloat SizeX = m_Width/2.0f;
 	GLfloat SizeY = m_Height/2.0f;
@@ -1139,7 +1136,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Fonts[1].Create(&theApp.m_LargeFont);
 
 	// Icons
-	m_pTextureIcons = new GLTextureCombine(FMGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_RGB, _T("PNG")), FMGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_ALPHA, _T("PNG")));
+	m_pTextureIcons = new GLTextureCombine(FMGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_RGB), FMGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_ALPHA));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
@@ -1251,7 +1248,7 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = FMHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
@@ -1308,7 +1305,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = FMHOVERTIME;
+	tme.dwHoverTime = HOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
 }

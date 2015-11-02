@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CExplorerList.h"
-#include "CImageListTransparent.h"
 
 
 // FMResolutionDlg
@@ -23,10 +22,10 @@ protected:
 	afx_msg void OnUserDefinedRes();
 	DECLARE_MESSAGE_MAP()
 
+	CImageList m_ResolutionIcons;
 	CExplorerList m_wndResolutionList;
 	CMFCMaskedEdit m_wndWidth;
 	CMFCMaskedEdit m_wndHeight;
-	CImageListTransparent m_Icons;
 	UINT* p_Width;
 	UINT* p_Height;
 };

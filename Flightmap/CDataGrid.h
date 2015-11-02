@@ -38,9 +38,9 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
-	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE);
-	BOOL IsSelected(UINT Index);
-	UINT GetCurrentRow();
+	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE) const;
+	BOOL IsSelected(UINT Index) const;
+	UINT GetCurrentRow() const;
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -53,13 +53,13 @@ protected:
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* Item, INT* pSubitem=NULL);
-	void InvalidateItem(CPoint Item);
+	void InvalidateItem(const CPoint& Item);
 	void InvalidateItem(UINT Row, UINT Attr);
 	void InvalidateRow(UINT Row);
-	void SetFocusItem(CPoint FocusItem, BOOL ShiftSelect);
+	void SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect);
 	void SelectItem(UINT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
-	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected);
 	void FindReplace(INT iSelectPage);
+	void ScrollWindow(INT dx, INT dy);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -116,7 +116,8 @@ protected:
 	CItinerary* p_Itinerary;
 	CMFCMaskedEdit* p_Edit;
 	BOOL m_EditAllowCursor;
-	CGridHeader m_wndHeader;
+	CTooltipHeader m_wndHeader;
+	static CIcons m_FlagIcons;
 	ViewParameters m_ViewParameters;
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;
@@ -133,8 +134,9 @@ protected:
 private:
 	void DoCopy(BOOL Cut);
 	void DoDelete();
+	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected);
 	void AutosizeColumn(UINT Attr);
-	void FinishEdit(WCHAR* pStr, CPoint Item);
+	void FinishEdit(WCHAR* pStr, const CPoint& Item);
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	INT m_HScrollMax;

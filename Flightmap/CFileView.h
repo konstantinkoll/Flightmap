@@ -24,6 +24,8 @@ protected:
 	CWnd* p_Status;
 	CItinerary* p_Itinerary;
 	AIRX_Flight* p_Flight;
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
 	CTaskbar m_wndTaskbar;
 	CExplorerList m_wndExplorerList;
 	CTooltipHeader m_wndHeader;

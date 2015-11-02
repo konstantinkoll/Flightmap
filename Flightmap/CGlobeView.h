@@ -55,7 +55,7 @@ protected:
 	void PrepareRoutes();
 	void PrepareTexture();
 	void Normalize();
-	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
+	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
 	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	void DrawStatusBar(INT Height);
@@ -116,8 +116,8 @@ protected:
 	BOOL m_UseColors;
 	BOOL m_Clamp;
 
-	FMDynArray<GlobeAirport> m_Airports;
-	FMDynArray<FlightSegments*> m_Routes;
+	FMDynArray<GlobeAirport, 64, 64> m_Airports;
+	FMDynArray<FlightSegments*, 128, 128> m_Routes;
 
 	CClientDC* m_pDC;
 	HGLRC hRC;
@@ -132,7 +132,7 @@ protected:
 	GLFont m_Fonts[2];
 
 private:
-	BOOL CursorOnGlobe(CPoint point);
+	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
 
 	LPCTSTR lpszCursorName;

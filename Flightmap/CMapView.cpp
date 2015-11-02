@@ -31,9 +31,7 @@ BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CMapView::SetBitmap(CBitmap* pBitmap)
@@ -60,7 +58,7 @@ void CMapView::ResetScrollbars()
 void CMapView::AdjustScrollbars()
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 
 	if (p_Bitmap)
 	{

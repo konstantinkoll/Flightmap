@@ -29,6 +29,7 @@ struct FlightRoute
 	COLORREF Color;
 	UINT Count;
 	BYTE Arrows;
+
 	// Annotations
 	DOUBLE LabelS;
 	DOUBLE LabelZ;
@@ -57,9 +58,9 @@ typedef CMap<CStringA, LPCSTR, FlightRoute, FlightRoute&> CFlightRoutes;
 class CKitchen
 {
 public:
-	CKitchen(CString DisplayName, BOOL MergeMetro=FALSE);
+	CKitchen(const CString& DisplayName, BOOL MergeMetro=FALSE);
 
-	void AddFlight(AIRX_Flight& Flight, AIRX_Attachment* pGPSPath);
+	void AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath);
 	static FlightSegments* Tesselate(FlightRoute& Route);
 
 	CString m_DisplayName;
@@ -73,6 +74,6 @@ protected:
 	UINT m_WaypointCount;
 
 private:
-	FMAirport* AddAirport(CHAR* Code);
+	FMAirport* AddAirport(const CHAR* Code);
 	static FlightSegments* ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile);
 };

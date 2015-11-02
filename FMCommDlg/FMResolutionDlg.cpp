@@ -44,6 +44,8 @@ const FixedResolution FixedResolutions[] =
 	{ 8192, 4096, L"", 3 }
 };
 
+CIcons ResolutionIcons;
+
 FMResolutionDlg::FMResolutionDlg(UINT* pWidth, UINT* pHeight, CWnd* pParentWnd)
 	: CDialog(IDD_RESOLUTION, pParentWnd)
 {
@@ -69,12 +71,6 @@ void FMResolutionDlg::DoDataExchange(CDataExchange* pDX)
 
 			m_wndHeight.GetWindowText(tmpStr);
 			*p_Height = _wtoi(tmpStr);
-
-			if (!FMIsLicensed())
-			{
-				*p_Width = min(*p_Width, 640);
-				*p_Height = min(*p_Height, 640);
-			}
 		}
 		else
 		{
@@ -111,8 +107,9 @@ BOOL FMResolutionDlg::OnInitDialog()
 	m_wndHeight.SetWindowText(tmpStr);
 
 	// Icons
-	m_Icons.Create(IDB_RESOLUTIONICONS, 32, 32);
-	m_wndResolutionList.SetImageList(&m_Icons, LVSIL_NORMAL);
+	ResolutionIcons.Load(IDB_RESOLUTIONICONS, 32);
+	m_ResolutionIcons.Attach(ResolutionIcons.ExtractImageList());
+	m_wndResolutionList.SetImageList(&m_ResolutionIcons, LVSIL_NORMAL);
 
 	// Liste
 	BOOL UserDefined = TRUE;
@@ -130,8 +127,7 @@ BOOL FMResolutionDlg::OnInitDialog()
 	lvi.puColumns = puColumns;
 	lvi.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
 
-	UINT Count = FMIsLicensed() ? sizeof(FixedResolutions)/sizeof(FixedResolution) : 3;
-	for (UINT a=0; a<Count; a++)
+	for (UINT a=0; a<sizeof(FixedResolutions)/sizeof(FixedResolution); a++)
 	{
 		CString tmpStr;
 		tmpStr.Format(_T("%u×%u"), FixedResolutions[a].Width, FixedResolutions[a].Height);
@@ -139,6 +135,7 @@ BOOL FMResolutionDlg::OnInitDialog()
 		lvi.iItem = a;
 		lvi.pszText = tmpStr.GetBuffer();
 		lvi.iImage = FixedResolutions[a].Image;
+
 		if ((FixedResolutions[a].Width==*p_Width) && (FixedResolutions[a].Height==*p_Height))
 		{
 			lvi.state = LVIS_SELECTED | LVIS_FOCUSED;
@@ -148,6 +145,7 @@ BOOL FMResolutionDlg::OnInitDialog()
 		{
 			lvi.state = 0;
 		}
+
 		INT Index = m_wndResolutionList.InsertItem(&lvi);
 
 		m_wndResolutionList.SetItemText(Index, 1, FixedResolutions[a].Hint);

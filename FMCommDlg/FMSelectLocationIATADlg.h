@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CExplorerList.h"
+#include "FMDialog.h"
 
 
 // FMSelectLocationIATADlg
@@ -11,14 +12,16 @@
 
 #define MaxAirportsPerCountry   2500
 
-class FMSelectLocationIATADlg : public CDialog
+class FMSelectLocationIATADlg : public FMDialog
 {
 public:
-	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, CHAR* Airport=NULL);
+	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, const CHAR* pAirport=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	FMAirport* p_Airport;
+	BOOL m_OverwriteName;
+	BOOL m_OverwriteGPS;
 
 protected:
 	void Sort();
@@ -33,6 +36,7 @@ protected:
 	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
+	BOOL m_IsPropertyDialog;
 	UINT m_LastCountrySelected;
 	UINT m_LastSortColumn;
 	BOOL m_LastSortDirection;

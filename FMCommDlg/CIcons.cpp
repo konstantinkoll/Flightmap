@@ -21,14 +21,29 @@ CIcons::~CIcons()
 
 void CIcons::Load(UINT nID, CSize Size)
 {
-	ASSERT(!hBitmap);
+	if (!hBitmap)
+	{
+		Bitmap* pIcons = FMGetApp()->GetResourceImage(nID);
+		if (pIcons)
+		{
+			hBitmap = CreateTransparentBitmap(pIcons->GetWidth(), pIcons->GetHeight());
 
-	hBitmap = (HBITMAP)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-	m_Size = Size;
-	m_ShadowSize = min(Size.cx, Size.cy)/12;
+			CDC dc;
+			dc.CreateCompatibleDC(NULL);
 
-	PreMultiplyAlpha(hBitmap);
-	CreateShadows(hBitmap);
+			HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+			Graphics g(dc);
+			g.DrawImage(pIcons, 0, 0);
+
+			dc.SelectObject(hOldBitmap);
+
+			m_Size = Size;
+			CreateShadow(hBitmap);
+
+			delete pIcons;
+		}
+	}
 }
 
 void CIcons::Load(UINT nID, INT Size)
@@ -36,85 +51,78 @@ void CIcons::Load(UINT nID, INT Size)
 	Load(nID, CSize(Size, Size));
 }
 
-void CIcons::Draw(CDC& dc, INT x, INT y, UINT nImage, BOOL Shadow)
+void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Shadow) const
 {
-	CDC dcMem;
-	dcMem.CreateCompatibleDC(&dc);
-
-	HBITMAP hOldBitmap;
-
-	if (Shadow)
+	if (nImage>=0)
 	{
-		hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmapShadow);
+		CDC dcMem;
+		dcMem.CreateCompatibleDC(&dc);
 
-		BLENDFUNCTION BFShadow = BF;
+		HBITMAP hOldBitmap;
 
-		for (INT Offset=1; Offset<=m_ShadowSize; Offset++)
+		if (Shadow)
 		{
-			BFShadow.SourceConstantAlpha = 0xFF >> Offset;
-			dc.AlphaBlend(x+Offset, y+Offset, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BFShadow);
+			hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmapShadow);
+			dc.AlphaBlend(x, y-1, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
+			dcMem.SelectObject(hBitmap);
+		}
+		else
+		{
+			hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmap);
 		}
 
-		dcMem.SelectObject(hBitmap);
+		dc.AlphaBlend(x, y, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
+		dcMem.SelectObject(hOldBitmap);
 	}
-	else
-	{
-		hOldBitmap = (HBITMAP)dcMem.SelectObject(hBitmap);
-	}
-
-	dc.AlphaBlend(x, y, m_Size.cx, m_Size.cy, &dcMem, nImage*m_Size.cx, 0, m_Size.cx, m_Size.cy, BF);
-	dcMem.SelectObject(hOldBitmap);
 }
 
-HICON CIcons::ExtractIcon(UINT nImage)
+HICON CIcons::ExtractIcon(INT nImage) const
 {
 	HICON hIcon = NULL;
 
-	CDC dc;
-	dc.CreateCompatibleDC(NULL);
-
-	HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx+m_ShadowSize, m_Size.cy+m_ShadowSize);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
-
-	Draw(dc, 0, 0, nImage, TRUE);
-
-	dc.SelectObject(hOldBitmap);
-
-	if (hBitmap)
+	if (nImage>=0)
 	{
-		ICONINFO ii;
-		ZeroMemory(&ii, sizeof(ii));
-		ii.fIcon = TRUE;
-		ii.hbmColor = hBitmap;
-		ii.hbmMask = hBitmap;
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
 
-		hIcon = CreateIconIndirect(&ii);
+		HBITMAP hBitmap = CreateTransparentBitmap(m_Size.cx, m_Size.cy+1);
+		HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+		Draw(dc, 0, 1, nImage, TRUE);
+
+		dc.SelectObject(hOldBitmap);
+
+		if (hBitmap)
+		{
+			ICONINFO ii;
+			ZeroMemory(&ii, sizeof(ii));
+			ii.fIcon = TRUE;
+			ii.hbmColor = hBitmap;
+			ii.hbmMask = hBitmap;
+
+			hIcon = CreateIconIndirect(&ii);
+		}
+
+		DeleteObject(hBitmap);
 	}
-
-	DeleteObject(hBitmap);
 
 	return hIcon;
 }
 
-void CIcons::PreMultiplyAlpha(HBITMAP hBitmap)
+HIMAGELIST CIcons::ExtractImageList() const
 {
-	BITMAP Bitmap;
-	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
-	{
-		const LONG Length = Bitmap.bmWidth*Bitmap.bmHeight;
-		RGBQUAD* pBits = (RGBQUAD*)Bitmap.bmBits;
+	HIMAGELIST hImageList = NULL;
 
-		for (LONG Count=0; Count<Length; Count++)
-		{
-			pBits->rgbRed = (BYTE)(pBits->rgbRed*pBits->rgbReserved/255);
-			pBits->rgbGreen = (BYTE)(pBits->rgbGreen*pBits->rgbReserved/255);
-			pBits->rgbBlue = (BYTE)(pBits->rgbBlue*pBits->rgbReserved/255);
-			pBits++;
-		}
+	if (hBitmap)
+	{
+		hImageList = ImageList_Create(m_Size.cx, m_Size.cy, ILC_COLOR32, 0, 1);
+		ImageList_Add(hImageList, hBitmap, NULL);
 	}
+
+	return hImageList;
 }
 
-void CIcons::CreateShadows(HBITMAP hBitmap)
+void CIcons::CreateShadow(HBITMAP hBitmap)
 {
 	BITMAP Bitmap;
 	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
@@ -137,12 +145,12 @@ void CIcons::CreateShadows(HBITMAP hBitmap)
 		if (GetObject(hBitmapShadow, sizeof(Bitmap), &Bitmap))
 		{
 			const LONG Length = Bitmap.bmWidth*Bitmap.bmHeight;
-			RGBQUAD* pBits = (RGBQUAD*)Bitmap.bmBits;
+			COLORREF* Ptr = (COLORREF*)Bitmap.bmBits;
 
 			for (LONG Count=0; Count<Length; Count++)
 			{
-				pBits->rgbRed = pBits->rgbGreen = pBits->rgbBlue = 0;
-				pBits++;
+				*Ptr &= 0xFF000000;
+				Ptr++;
 			}
 		}
 	}

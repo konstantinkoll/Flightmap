@@ -100,7 +100,7 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pKillWnd);
 	DECLARE_MESSAGE_MAP()
 
-	FMDynArray<MenuBarItem> m_Items;
+	FMDynArray<MenuBarItem, 8, 4> m_Items;
 	INT m_SelectedItem;
 	INT m_HoverItem;
 	BOOL m_Hover;
@@ -168,8 +168,8 @@ public:
 	CFont* SelectNormalFont(CDC* pDC);
 	CFont* SelectCaptionFont(CDC* pDC);
 	void DrawBevelRect(CDC& dc, INT x, INT y, INT width, INT height, BOOL Themed);
-	void DrawSelectedBackground(CDC* pDC, LPRECT rect, BOOL Enabled=TRUE, BOOL Focused=TRUE);
-	void DrawButton(CDC* pDC, LPRECT rect, BOOL Radio, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed);
+	void DrawSelectedBackground(CDC* pDC, LPCRECT lpRect, BOOL Enabled=TRUE, BOOL Focused=TRUE);
+	void DrawButton(CDC* pDC, LPCRECT lpRect, BOOL Radio, BOOL Checked, BOOL Enabled, BOOL Selected, BOOL Pressed);
 
 protected:
 	void AddItem(CDialogMenuItem* pItem, INT FirstRowOffset=0);
@@ -200,7 +200,7 @@ protected:
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	DECLARE_MESSAGE_MAP()
 
-	FMDynArray<MenuPopupItem> m_Items;
+	FMDynArray<MenuPopupItem, 32, 8> m_Items;
 	UINT m_LargeIconsID;
 	UINT m_SmallIconsID;
 	INT m_Gutter;
@@ -243,7 +243,7 @@ public:
 	virtual BOOL IsChecked();
 	virtual BOOL IsSelectable();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnPaint(CDC* pDC, LPCRECT lpRect, BOOL Selected, UINT Themed);
 	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
@@ -273,7 +273,7 @@ public:
 	virtual BOOL IsChecked();
 	virtual BOOL IsSelectable();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnPaint(CDC* pDC, LPCRECT lpRect, BOOL Selected, UINT Themed);
 	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual void OnDeselect();
 	virtual BOOL OnButtonDown(CPoint point);
@@ -320,7 +320,7 @@ public:
 	virtual BOOL IsEnabled();
 	virtual BOOL IsSelectable();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnPaint(CDC* pDC, LPCRECT lpRect, BOOL Selected, UINT Themed);
 	virtual void OnDrawIcon(CDC* pDC, CPoint pt, BOOL Selected, BOOL Themed);
 	virtual void OnSelect(BOOL Keyboard, BOOL FromTop);
 	virtual void OnDeselect();
@@ -450,7 +450,7 @@ public:
 	virtual INT GetMinHeight();
 	virtual INT GetOuterBorder();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnPaint(CDC* pDC, LPCRECT lpRect, BOOL Selected, UINT Themed);
 
 private:
 	BOOL m_ForBlueArea;
@@ -469,7 +469,7 @@ public:
 	virtual INT GetMinWidth();
 	virtual INT GetOuterBorder();
 
-	virtual void OnPaint(CDC* pDC, LPRECT rect, BOOL Selected, UINT Themed);
+	virtual void OnPaint(CDC* pDC, LPCRECT lpRect, BOOL Selected, UINT Themed);
 
 private:
 	CString m_Caption;

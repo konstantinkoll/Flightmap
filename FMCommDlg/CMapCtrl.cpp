@@ -60,7 +60,7 @@ void CMapCtrl::SetMenu(UINT BackgroundMenuID, BOOL HighlightFirst)
 	m_HighlightFirst = HighlightFirst;
 }
 
-void CMapCtrl::LocationFromPoint(CPoint point, DOUBLE& Latitude, DOUBLE& Longitude)
+void CMapCtrl::LocationFromPoint(const CPoint& point, DOUBLE& Latitude, DOUBLE& Longitude) const
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -78,7 +78,7 @@ void CMapCtrl::LocationFromPoint(CPoint point, DOUBLE& Latitude, DOUBLE& Longitu
 		Longitude = 180.0;
 }
 
-void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY)
+void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY) const
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -87,7 +87,7 @@ void CMapCtrl::PointFromLocation(INT& PosX, INT& PosY)
 	PosY = (INT)(m_Location.Latitude+90)*rect.Height()/180;
 }
 
-void CMapCtrl::SetLocation(CPoint point)
+void CMapCtrl::SetLocation(const CPoint& point)
 {
 	LocationFromPoint(point, m_Location.Latitude, m_Location.Longitude);
 
@@ -170,8 +170,8 @@ BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
 
 		Graphics g(dc);
 
-		CGdiPlusBitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
-		g.DrawImage(pMap->m_pBitmap, 0, 0, rect.Width(), rect.Height());
+		Bitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP);
+		g.DrawImage(pMap, 0, 0, rect.Width(), rect.Height());
 
 		dc.SelectObject(pOldBitmap);
 
@@ -212,8 +212,8 @@ void CMapCtrl::OnPaint()
 
 		Graphics g(dc);
 
-		CGdiPlusBitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"));
-		g.DrawImage(pIndicator->m_pBitmap, PosX-(INT)pIndicator->m_pBitmap->GetWidth()/2, PosY-(INT)pIndicator->m_pBitmap->GetHeight()/2);
+		Bitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8);
+		g.DrawImage(pIndicator, PosX-(INT)pIndicator->GetWidth()/2, PosY-(INT)pIndicator->GetHeight()/2);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

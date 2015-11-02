@@ -49,8 +49,8 @@ void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 	if (Prepare)
 	{
 		CRect rect;
-		GetWindowRect(&rect);
-		GetParent()->ScreenToClient(&rect);
+		GetWindowRect(rect);
+		GetParent()->ScreenToClient(rect);
 
 		if (rect.Width()<RatingBitmapWidth+8)
 			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RatingBitmapWidth+8), max(rect.Height(), RatingBitmapHeight+4), SWP_NOACTIVATE | SWP_NOZORDER);
@@ -60,12 +60,12 @@ void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 	Invalidate();
 }
 
-UCHAR CRatingCtrl::GetRating()
+UCHAR CRatingCtrl::GetRating() const
 {
 	return m_Rating;
 }
 
-void CRatingCtrl::SendChangeMessage()
+void CRatingCtrl::SendChangeMessage() const
 {
 	GetOwner()->SendMessage(WM_RATINGCHANGED);
 }

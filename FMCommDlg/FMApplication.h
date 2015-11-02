@@ -4,7 +4,8 @@
 
 #pragma once
 #include "resource.h"
-#include "CGdiPlusBitmap.h"
+#include "FMDynArray.h"
+#include "FMFont.h"
 #include "FMTooltip.h"
 #include "IATA.h"
 #include <uxtheme.h>
@@ -36,7 +37,7 @@ typedef HRESULT(__stdcall* PFNDRAWTHEMETEXTEX)(HTHEME hTheme, HDC hdc, INT iPart
 typedef HRESULT(__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, INT iFontID, LOGFONT* plf);
 typedef HRESULT(__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, INT iColorID);
 typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, INT iPartId, INT iStateId,
-							LPRECT prc, THEMESIZE eSize, SIZE *psz);
+							LPCRECT prc, THEMESIZE eSize, SIZE *psz);
 typedef HRESULT (__stdcall* PFNSETWINDOWTHEMEATTRIBUTE)(HWND hWnd, WINDOWTHEMEATTRIBUTETYPE eAttribute,
 							void* pAttribute, DWORD cdAttribute);
 typedef BOOL (__stdcall* PFNISTHEMEACTIVE)();
@@ -58,7 +59,7 @@ struct CDS_Wakeup
 
 struct ResourceCacheItem
 {
-	CGdiPlusBitmapResource* pImage;
+	Bitmap* pImage;
 	UINT nID;
 };
 
@@ -82,16 +83,16 @@ public:
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
-	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, CString Caption=_T(""));
-	CString GetDefaultFontFace();
-	void SendMail(CString Subject=_T(""));
-	CGdiPlusBitmap* GetCachedResourceImage(UINT nID, LPCTSTR pType=RT_RCDATA);
+	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, const CString& Caption=_T("")) const;
+	void SendMail(const CString& Subject=_T("")) const;
+	Bitmap* GetResourceImage(UINT nID) const;
+	Bitmap* GetCachedResourceImage(UINT nID);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, CString strText);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, CHAR* Code, CString strText);
-	BOOL IsTooltipVisible();
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CHAR* Code, const CString& Hint);
+	BOOL IsTooltipVisible() const;
 	void HideTooltip();
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
@@ -101,25 +102,27 @@ public:
 	static void PlayQuestionSound();
 	static void PlayTrashSound();
 	static void PlayWarningSound();
-	static HRESULT SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
-	static void AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last=FALSE);
+	static HRESULT SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
+	static void AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last=FALSE);
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
 
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
 	CImageList m_SystemImageListExtraLarge;
 	HBITMAP m_RatingBitmaps[MaxRating+1];
-	CFont m_DefaultFont;
-	CFont m_BoldFont;
-	CFont m_ItalicFont;
-	CFont m_SmallFont;
-	CFont m_LargeFont;
-	CFont m_CaptionFont;
+	FMFont m_DefaultFont;
+	FMFont m_ItalicFont;
+	FMFont m_SmallFont;
+	FMFont m_SmallBoldFont;
+	FMFont m_LargeFont;
+	FMFont m_CaptionFont;
+	FMFont m_DialogFont;
 	UINT OSVersion;
 	BOOL m_UseBgImages;
+	UINT m_LicenseActivatedMsg;
 	UINT m_WakeupMsg;
 	UINT m_UseBgImagesChangedMsg;
 	UINT m_DistanceSettingChangedMsg;
@@ -145,7 +148,7 @@ public:
 	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
 	PFNDWMEXTENDFRAMEINTOCLIENTAREA zDwmExtendFrameIntoClientArea;
 	PFNDWMDEFWINDOWPROC zDwmDefWindowProc;
-	BOOL m_AeroLibLoaded;
+	BOOL m_DwmLibLoaded;
 
 	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
 	BOOL m_ShellLibLoaded;
@@ -161,13 +164,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	FMTooltip m_wndTooltip;
-	CList<ResourceCacheItem> m_ResourceCache;
+	FMDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
 	UINT m_NagCounter;
 
 private:
 	ULONG_PTR m_gdiplusToken;
 	HMODULE hModThemes;
-	HMODULE hModAero;
+	HMODULE hModDwm;
 	HMODULE hModShell;
 	HMODULE hModKernel;
 	HANDLE hFontLetterGothic;

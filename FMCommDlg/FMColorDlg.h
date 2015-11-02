@@ -11,7 +11,7 @@
 class FMColorDlg : public CColorDialog
 {
 public:
-	FMColorDlg(CWnd* pParentWnd=NULL, COLORREF clrInit=0, DWORD dwFlags=0, CString Caption=_T(""));
+	FMColorDlg(CWnd* pParentWnd=NULL, COLORREF clrInit=0, DWORD dwFlags=0, const CString& Caption=_T(""));
 
 protected:
 	afx_msg BOOL OnInitDialog();

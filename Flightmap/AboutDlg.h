@@ -27,7 +27,6 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnEnableAutoUpdate();
 	afx_msg void On3DSettings();
-	afx_msg void OnExclusive();
 	afx_msg void OnUpdateNow();
 	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnterLicenseKey();
@@ -37,10 +36,10 @@ private:
 	void CheckLicenseKey();
 	void CheckInternetConnection();
 
-	CGdiPlusBitmap* p_Logo;
-	CGdiPlusBitmap* p_Santa;
-	CFont m_CaptionFont;
-	CFont m_VersionFont;
+	Bitmap* p_Logo;
+	Bitmap* p_Santa;
+	FMFont m_CaptionFont;
+	FMFont m_VersionFont;
 	INT m_CaptionTop;
 	INT m_IconTop;
 	CString m_Version;

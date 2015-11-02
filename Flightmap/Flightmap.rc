@@ -29,62 +29,55 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Bitmap
 //
 
-IDB_BACKGROUNDS         BITMAP                  "res\\Backgrounds.bmp"
-IDB_MENUBARICONS_16     BITMAP                  "res\\MenubarIcons_16.bmp"
-IDB_MENUBARICONS_32     BITMAP                  "res\\MenubarIcons_32.bmp"
-IDB_MENUFILE_16         BITMAP                  "res\\MenuFile_16.bmp"
-IDB_MENUFILE_32         BITMAP                  "res\\MenuFile_32.bmp"
-IDB_MENUEDIT_16         BITMAP                  "res\\MenuEdit_16.bmp"
-IDB_MENUEDIT_32         BITMAP                  "res\\MenuEdit_32.bmp"
-IDB_MENUMAP_16          BITMAP                  "res\\MenuMap_16.bmp"
-IDB_MENUMAP_32          BITMAP                  "res\\MenuMap_32.bmp"
-IDB_MENUGLOBE_16        BITMAP                  "res\\MenuGlobe_16.bmp"
-IDB_MENUGLOBE_32        BITMAP                  "res\\MenuGlobe_32.bmp"
-IDB_MENUGOOGLEEARTH_16  BITMAP                  "res\\MenuGoogleEarth_16.bmp"
-IDB_MENUGOOGLEEARTH_32  BITMAP                  "res\\MenuGoogleEarth_32.bmp"
-IDB_MENUSTATISTICS_16   BITMAP                  "res\\MenuStatistics_16.bmp"
-IDB_MENUSTATISTICS_32   BITMAP                  "res\\MenuStatistics_32.bmp"
-IDB_MENUMAPWND_16       BITMAP                  "res\\MenuMapWnd_16.bmp"
-IDB_MENUMAPWND_32       BITMAP                  "res\\MenuMapWnd_32.bmp"
-IDB_MENUMAPVIEW_16      BITMAP                  "res\\MenuMapView_16.bmp"
-IDB_MENUMAPVIEW_32      BITMAP                  "res\\MenuMapView_32.bmp"
-IDB_MENUGLOBEWND_16     BITMAP                  "res\\MenuGlobeWnd_16.bmp"
-IDB_MENUGLOBEWND_32     BITMAP                  "res\\MenuGlobeWnd_32.bmp"
-IDB_MENUGLOBEVIEW_16    BITMAP                  "res\\MenuGlobeView_16.bmp"
-IDB_MENUGLOBEVIEW_32    BITMAP                  "res\\MenuGlobeView_32.bmp"
-IDB_MENUGLOBEITEM_16    BITMAP                  "res\\MenuGlobeItem_16.bmp"
-IDB_MENUGLOBEITEM_32    BITMAP                  "res\\MenuGlobeItem_32.bmp"
-IDB_MENUDETAILS_16      BITMAP                  "res\\MenuDetails_16.bmp"
-IDB_MENUDETAILS_32      BITMAP                  "res\\MenuDetails_32.bmp"
 IDB_FLAGS_16            BITMAP                  "res\\Flags_16.bmp"
 IDB_FLAGS_16i           BITMAP                  "res\\Flags_16i.bmp"
-IDB_FLAGS_32            BITMAP                  "res\\Flags_32.bmp"
-IDB_TASKS_16            BITMAP                  "res\\Tasks_16.bmp"
-IDB_TASKS_32            BITMAP                  "res\\Tasks_32.bmp"
-IDB_SEATICONS           BITMAP                  "res\\SeatIcons.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// JPG
+// RCDATA
 //
 
-IDB_BLUEMARBLE_1024     JPG                     "res\\BlueMarble_1024.jpg"
-IDB_BLUEMARBLE_2048     JPG                     "res\\BlueMarble_2048.jpg"
-IDB_BLUEMARBLE_4096     JPG                     "res\\BlueMarble_4096.jpg"
-IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
-IDB_NIGHT_8192          JPG                     "res\\Night_8192.jpg"
-IDB_DOCKED              JPG                     "res\\Docked.jpg"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PNG
-//
-
-IDB_GRAY_8192           PNG                     "res\\Gray_8192.png"
-IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
-IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
-IDB_SANTA               PNG                     "res\\Santa.png"
-IDB_SLOGAN              PNG                     "res\\Slogan.png"
+IDB_GLOBEICONS_RGB      RCDATA                  "res\\GlobeIcons_RGB.png"
+IDB_GLOBEICONS_ALPHA    RCDATA                  "res\\GlobeIcons_Alpha.png"
+IDB_BLUEMARBLE_1024     RCDATA                  "res\\BlueMarble_1024.jpg"
+IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
+IDB_BLUEMARBLE_4096     RCDATA                  "res\\BlueMarble_4096.jpg"
+IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
+IDB_NIGHT_8192          RCDATA                  "res\\Night_8192.jpg"
+IDB_GRAY_8192           RCDATA                  "res\\Gray_8192.png"
+IDB_DOCKED              RCDATA                  "res\\Docked.jpg"
+IDB_BACKGROUNDS         RCDATA                  "res\\Backgrounds.png"
+IDB_MENUBARICONS_16     RCDATA                  "res\\MenubarIcons_16.png"
+IDB_MENUBARICONS_32     RCDATA                  "res\\MenubarIcons_32.png"
+IDB_MENUFILE_16         RCDATA                  "res\\MenuFile_16.png"
+IDB_MENUFILE_32         RCDATA                  "res\\MenuFile_32.png"
+IDB_MENUEDIT_16         RCDATA                  "res\\MenuEdit_16.png"
+IDB_MENUEDIT_32         RCDATA                  "res\\MenuEdit_32.png"
+IDB_MENUMAP_16          RCDATA                  "res\\MenuMap_16.png"
+IDB_MENUMAP_32          RCDATA                  "res\\MenuMap_32.png"
+IDB_MENUGLOBE_16        RCDATA                  "res\\MenuGlobe_16.png"
+IDB_MENUGLOBE_32        RCDATA                  "res\\MenuGlobe_32.png"
+IDB_MENUGOOGLEEARTH_16  RCDATA                  "res\\MenuGoogleEarth_16.png"
+IDB_MENUGOOGLEEARTH_32  RCDATA                  "res\\MenuGoogleEarth_32.png"
+IDB_MENUSTATISTICS_16   RCDATA                  "res\\MenuStatistics_16.png"
+IDB_MENUSTATISTICS_32   RCDATA                  "res\\MenuStatistics_32.png"
+IDB_MENUMAPWND_16       RCDATA                  "res\\MenuMapWnd_16.png"
+IDB_MENUMAPWND_32       RCDATA                  "res\\MenuMapWnd_32.png"
+IDB_MENUMAPVIEW_16      RCDATA                  "res\\MenuMapView_16.png"
+IDB_MENUMAPVIEW_32      RCDATA                  "res\\MenuMapView_32.png"
+IDB_MENUGLOBEWND_16     RCDATA                  "res\\MenuGlobeWnd_16.png"
+IDB_MENUGLOBEWND_32     RCDATA                  "res\\MenuGlobeWnd_32.png"
+IDB_MENUGLOBEVIEW_16    RCDATA                  "res\\MenuGlobeView_16.png"
+IDB_MENUGLOBEVIEW_32    RCDATA                  "res\\MenuGlobeView_32.png"
+IDB_MENUGLOBEITEM_16    RCDATA                  "res\\MenuGlobeItem_16.png"
+IDB_MENUGLOBEITEM_32    RCDATA                  "res\\MenuGlobeItem_32.png"
+IDB_MENUDETAILS_16      RCDATA                  "res\\MenuDetails_16.png"
+IDB_MENUDETAILS_32      RCDATA                  "res\\MenuDetails_32.png"
+IDB_FLAGS_32            RCDATA                  "res\\Flags_32.png"
+IDB_TASKS_FILE_16       RCDATA                  "res\\TasksFile_16.png"
+IDB_TASKS_FILE_32       RCDATA                  "res\\TasksFile_32.png"
+IDB_SEATICONS           RCDATA                  "res\\SeatIcons.png"
+IDB_SLOGAN              RCDATA                  "res\\Slogan.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -92,8 +85,8 @@ IDB_SLOGAN              PNG                     "res\\Slogan.png"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,26,0
- PRODUCTVERSION 2,1,26,0
+ FILEVERSION 2,1,27,0
+ PRODUCTVERSION 2,1,27,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -110,13 +103,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.26"
+            VALUE "FileVersion", "2.1.27"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2015 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.26"
+            VALUE "ProductVersion", "2.1.27"
         END
     END
     BLOCK "VarFileInfo"

@@ -20,6 +20,9 @@ __forceinline void Swap(UINT& Eins, UINT& Zwei)
 #define GetSelectedFile()           m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 #define GetSelectedAttachment()     GetAttachment(GetSelectedFile())
 
+CIcons CFileView::m_LargeIcons;
+CIcons CFileView::m_SmallIcons;
+
 CFileView::CFileView()
 	: CWnd()
 {
@@ -139,17 +142,14 @@ void CFileView::Init()
 {
 	ModifyStyle(0, WS_BORDER);
 
-	m_wndTaskbar.Create(this, IDB_TASKS_32, IDB_TASKS_16, 1);
+	m_wndTaskbar.Create(this, m_LargeIcons, IDB_TASKS_FILE_32, m_SmallIcons, IDB_TASKS_FILE_16, 1);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_OPEN, 1, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILEVIEW_SAVEAS, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILEVIEW_SAVEAS, 2);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_DELETE, 3);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_RENAME, 4);
 
-	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_EDITLABELS;
-	CRect rect;
-	rect.SetRectEmpty();
-	m_wndExplorerList.Create(dwStyle, rect, this, 2);
+	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_EDITLABELS, CRect(0, 0, 0, 0), this, 2);
 
 	m_wndExplorerList.SetImageList(&FMGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
 	m_wndExplorerList.SetImageList(&FMGetApp()->m_SystemImageListLarge, LVSIL_NORMAL);
@@ -512,11 +512,11 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 		swprintf_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndExplorerList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndExplorerList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndExplorerList.GetItemText(pTooltipData->Item, 3));
 
-		CGdiPlusBitmap* pBitmap = p_Itinerary->DecodePictureAttachment(*pAttachment);
-		if (pBitmap->m_pBitmap)
+		Bitmap* pBitmap = p_Itinerary->DecodePictureAttachment(*pAttachment);
+		if (pBitmap)
 		{
-			INT l = pBitmap->m_pBitmap->GetWidth();
-			INT h = pBitmap->m_pBitmap->GetHeight();
+			INT l = pBitmap->GetWidth();
+			INT h = pBitmap->GetHeight();
 			if ((l<16) || (h<16))
 				goto UseIcon;
 
@@ -557,7 +557,7 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			g.SetCompositingMode(CompositingModeSourceOver);
 			g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-			g.DrawImage(pBitmap->m_pBitmap, 0, 0, Width, Height);
+			g.DrawImage(pBitmap, 0, 0, Width, Height);
 
 			dc.SelectObject(hOldBitmap);
 		}
@@ -648,7 +648,7 @@ void CFileView::OnOpen()
 				f.Write(pAttachment->pData, pAttachment->Size);
 				f.Close();
 
-				ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+				ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
 			}
 			catch(CFileException ex)
 			{

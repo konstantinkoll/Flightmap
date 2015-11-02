@@ -633,7 +633,23 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Background_Tooltip.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Descending_16.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Div.png"
+			>
+		</File>
+		<File
+			RelativePath=".\DivDown.png"
+			>
+		</File>
+		<File
+			RelativePath=".\DivUp.png"
 			>
 		</File>
 		<File

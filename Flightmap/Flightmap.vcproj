@@ -726,7 +726,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\Backgrounds.bmp"
+				RelativePath=".\res\Backgrounds.png"
 				>
 			</File>
 			<File
@@ -758,7 +758,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Flags_32.bmp"
+				RelativePath=".\res\Flags_32.png"
 				>
 			</File>
 			<File
@@ -778,107 +778,107 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenubarIcons_16.bmp"
+				RelativePath=".\res\MenubarIcons_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenubarIcons_32.bmp"
+				RelativePath=".\res\MenubarIcons_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuDetails_16.bmp"
+				RelativePath=".\res\MenuDetails_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuDetails_32.bmp"
+				RelativePath=".\res\MenuDetails_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuEdit_16.bmp"
+				RelativePath=".\res\MenuEdit_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuEdit_32.bmp"
+				RelativePath=".\res\MenuEdit_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuFile_16.bmp"
+				RelativePath=".\res\MenuFile_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuFile_32.bmp"
+				RelativePath=".\res\MenuFile_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobe_16.bmp"
+				RelativePath=".\res\MenuGlobe_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobe_32.bmp"
+				RelativePath=".\res\MenuGlobe_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobeItem_16.bmp"
+				RelativePath=".\res\MenuGlobeItem_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobeItem_32.bmp"
+				RelativePath=".\res\MenuGlobeItem_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobeView_16.bmp"
+				RelativePath=".\res\MenuGlobeView_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobeView_32.bmp"
+				RelativePath=".\res\MenuGlobeView_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobeWnd_16.bmp"
+				RelativePath=".\res\MenuGlobeWnd_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGlobeWnd_32.bmp"
+				RelativePath=".\res\MenuGlobeWnd_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGoogleEarth_16.bmp"
+				RelativePath=".\res\MenuGoogleEarth_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuGoogleEarth_32.bmp"
+				RelativePath=".\res\MenuGoogleEarth_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuMap_16.bmp"
+				RelativePath=".\res\MenuMap_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuMap_32.bmp"
+				RelativePath=".\res\MenuMap_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuMapView_16.bmp"
+				RelativePath=".\res\MenuMapView_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuMapView_32.bmp"
+				RelativePath=".\res\MenuMapView_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuMapWnd_16.bmp"
+				RelativePath=".\res\MenuMapWnd_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuMapWnd_32.bmp"
+				RelativePath=".\res\MenuMapWnd_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuStatistics_16.bmp"
+				RelativePath=".\res\MenuStatistics_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\MenuStatistics_32.bmp"
+				RelativePath=".\res\MenuStatistics_32.png"
 				>
 			</File>
 			<File
@@ -886,11 +886,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Santa.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\SeatIcons.bmp"
+				RelativePath=".\res\SeatIcons.png"
 				>
 			</File>
 			<File
@@ -898,11 +894,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Tasks_16.bmp"
+				RelativePath=".\res\TasksFile_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Tasks_32.bmp"
+				RelativePath=".\res\TasksFile_32.png"
 				>
 			</File>
 		</Filter>

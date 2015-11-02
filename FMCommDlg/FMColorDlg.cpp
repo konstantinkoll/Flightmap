@@ -9,7 +9,7 @@
 // FMColorDlg
 //
 
-FMColorDlg::FMColorDlg(CWnd* pParentWnd, COLORREF clrInit, DWORD dwFlags, CString Caption)
+FMColorDlg::FMColorDlg(CWnd* pParentWnd, COLORREF clrInit, DWORD dwFlags, const CString& Caption)
 	: CColorDialog(clrInit, dwFlags, pParentWnd)
 {
 	m_Caption = Caption;

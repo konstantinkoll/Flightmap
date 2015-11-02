@@ -20,7 +20,7 @@
 #define MAXWIDTH      750
 #define MARGIN        3
 #define FLAGCOUNT     7
-#define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
+#define PrepareBlend(rect)                  INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
                                             HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
@@ -29,6 +29,8 @@
                                             DeleteDC(hdcMem); }
 
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
+
+CIcons CDataGrid::m_FlagIcons;
 
 CDataGrid::CDataGrid()
 	: CWnd()
@@ -52,10 +54,7 @@ BOOL CDataGrid::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL;
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
@@ -137,7 +136,7 @@ void CDataGrid::SetItinerary(CItinerary* pItinerary, UINT Row)
 	}
 }
 
-BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected)
+BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected) const
 {
 	if (!p_Itinerary)
 		return FALSE;
@@ -152,14 +151,14 @@ BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected)
 	return FALSE;
 }
 
-BOOL CDataGrid::IsSelected(UINT Index)
+BOOL CDataGrid::IsSelected(UINT Index) const
 {
 	ASSERT(p_Itinerary);
 
 	return (Index<p_Itinerary->m_Flights.m_ItemCount) ? (p_Itinerary->m_Flights.m_Items[Index].Flags & AIRX_Selected ) : FALSE;
 }
 
-UINT CDataGrid::GetCurrentRow()
+UINT CDataGrid::GetCurrentRow() const
 {
 	if (p_Itinerary)
 		if (m_FocusItem.y!=-1)
@@ -197,18 +196,18 @@ void CDataGrid::DoCopy(BOOL Cut)
 		EmptyClipboard();
 
 		// CF_UNICODETEXT
-		SIZE_T sz = (MemBitmap.GetLength()+1)*sizeof(WCHAR);
-		HGLOBAL ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+		SIZE_T Size = (MemBitmap.GetLength()+1)*sizeof(WCHAR);
+		HGLOBAL ClipBuffer = GlobalAlloc(GMEM_DDESHARE, Size);
 		LPVOID pBuffer = GlobalLock(ClipBuffer);
-		wcscpy_s((WCHAR*)pBuffer, sz, MemBitmap.GetBuffer());
+		wcscpy_s((WCHAR*)pBuffer, Size, MemBitmap.GetBuffer());
 		GlobalUnlock(ClipBuffer);
 		SetClipboardData(CF_UNICODETEXT, ClipBuffer);
 
 		// CF_FLIGHTS
 		if (Count)
 		{
-			sz = Count*sizeof(AIRX_Flight);
-			ClipBuffer = GlobalAlloc(GMEM_DDESHARE, sz);
+			Size = Count*sizeof(AIRX_Flight);
+			ClipBuffer = GlobalAlloc(GMEM_DDESHARE, Size);
 			pBuffer = GlobalLock(ClipBuffer);
 
 			AIRX_Flight* pFlight = (AIRX_Flight*)pBuffer;
@@ -265,7 +264,8 @@ void CDataGrid::AdjustLayout()
 	AdjustScrollbars();
 	Invalidate();
 
-	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+	m_wndHeader.Invalidate();
 }
 
 void CDataGrid::AdjustHeader()
@@ -498,6 +498,7 @@ void CDataGrid::EnsureVisible(CPoint Item)
 	nInc = 0;
 	if ((INT)((Item.y+1)*m_RowHeight)>m_VScrollPos+rect.Height()-(INT)m_HeaderHeight)
 		nInc = (Item.y+1)*m_RowHeight-rect.Height()+(INT)m_HeaderHeight-m_VScrollPos;
+
 	if ((INT)(Item.y*m_RowHeight)<m_VScrollPos+nInc)
 		nInc = Item.y*m_RowHeight-m_VScrollPos;
 
@@ -505,7 +506,7 @@ void CDataGrid::EnsureVisible(CPoint Item)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -522,6 +523,7 @@ void CDataGrid::EnsureVisible(CPoint Item)
 	nInc = 0;
 	if (x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]>m_HScrollPos+rect.Width())
 		nInc = x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]-rect.Width()-m_HScrollPos;
+
 	if (x<m_HScrollPos+nInc)
 		nInc = x-m_HScrollPos;
 
@@ -529,7 +531,7 @@ void CDataGrid::EnsureVisible(CPoint Item)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(-nInc, 0);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -541,9 +543,11 @@ void CDataGrid::EnsureVisible(CPoint Item)
 
 void CDataGrid::ResetScrollbars()
 {
-	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
-	ScrollWindowEx(m_HScrollPos, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+	ScrollWindow(0, m_VScrollPos);
+	ScrollWindow(m_HScrollPos, 0);
+
 	m_VScrollPos = m_HScrollPos = 0;
+
 	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 }
@@ -551,7 +555,7 @@ void CDataGrid::ResetScrollbars()
 void CDataGrid::AdjustScrollbars()
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 
 	INT ScrollHeight = p_Itinerary ? (p_Itinerary->m_Flights.m_ItemCount+1)*m_RowHeight : 0;
 	INT ScrollWidth = 0;
@@ -660,7 +664,7 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* Item, INT* pSubitem)
 	return FALSE;
 }
 
-void CDataGrid::InvalidateItem(CPoint Item)
+void CDataGrid::InvalidateItem(const CPoint& Item)
 {
 	if ((Item.x!=-1) && (Item.y!=-1))
 	{
@@ -668,8 +672,7 @@ void CDataGrid::InvalidateItem(CPoint Item)
 		for (UINT a=0; a<(UINT)Item.x; a++)
 			x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
-		CRect rect(x-2, m_HeaderHeight+Item.y*m_RowHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]+1, m_HeaderHeight-m_VScrollPos+(Item.y+1)*m_RowHeight+1);
-		InvalidateRect(rect);
+		InvalidateRect(CRect(x-2, m_HeaderHeight+Item.y*m_RowHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]+1, m_HeaderHeight-m_VScrollPos+(Item.y+1)*m_RowHeight+1));
 	}
 }
 
@@ -689,7 +692,7 @@ void CDataGrid::InvalidateRow(UINT Row)
 	InvalidateRect(rect);
 }
 
-void CDataGrid::SetFocusItem(CPoint FocusItem, BOOL ShiftSelect)
+void CDataGrid::SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect)
 {
 	ASSERT(p_Itinerary);
 
@@ -739,7 +742,7 @@ void CDataGrid::SelectItem(UINT Index, BOOL Select, BOOL InternalCall)
 		}
 }
 
-void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BOOL Selected)
+__forceinline void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected)
 {
 	ASSERT(Attr<FMAttributeCount);
 
@@ -751,34 +754,35 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			case AIRX_Economy:
 			case AIRX_PremiumEconomy:
 			case AIRX_Charter:
-				dc.FillSolidRect(rect, 0xE0FFE0);
+				dc.FillSolidRect(rectItem, 0xE0FFE0);
 				break;
 
 			case AIRX_Business:
-				dc.FillSolidRect(rect, 0xFFF0E0);
+				dc.FillSolidRect(rectItem, 0xFFF0E0);
 				break;
 
 			case AIRX_First:
-				dc.FillSolidRect(rect, 0xE0E0FF);
+				dc.FillSolidRect(rectItem, 0xE0E0FF);
 				break;
 
 			case AIRX_Crew:
-				dc.FillSolidRect(rect, 0xD8FFFF);
+				dc.FillSolidRect(rectItem, 0xD8FFFF);
 				break;
 			}
 
 	// Foreground
-	rect.DeflateRect(MARGIN, 0);
+	rectItem.DeflateRect(MARGIN, 0);
 
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeColor:
 		if (*((COLORREF*)(((BYTE*)&Flight)+FMAttributes[Attr].Offset))!=(COLORREF)-1)
 		{
-			CRect rectColor(rect.left, rect.top+MARGIN, rect.right, rect.bottom-MARGIN);
-			dc.Draw3dRect(rectColor, 0x000000, 0x000000);
-			rectColor.DeflateRect(1, 1);
-			dc.FillSolidRect(rectColor, Flight.Color);
+			rectItem.DeflateRect(0, MARGIN);
+			dc.Draw3dRect(rectItem, 0x000000, 0x000000);
+
+			rectItem.DeflateRect(1, 1);
+			dc.FillSolidRect(rectItem, Flight.Color);
 		}
 
 		break;
@@ -786,11 +790,11 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 	case FMTypeFlags:
 		{
 			HDC hdcMem = CreateCompatibleDC(dc);
-			CPoint pt(rect.left, rect.top+(rect.Height()-16)/2);
+			CPoint pt(rectItem.left, rectItem.top+(rectItem.Height()-16)/2);
 
 			for (UINT a=0; a<FLAGCOUNT; a++)
 			{
-				HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, theApp.m_FlagIcons16[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : Flight.AttachmentCount>0 ? 1 : 0]);
+				HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, theApp.hFlagIcons[a ? Flight.Flags & DisplayFlags[a] ? 1 : 0 : Flight.AttachmentCount>0 ? 1 : 0]);
 				AlphaBlend(dc, pt.x, pt.y, 16, 16, hdcMem, a*16, 0, 16, 16, BF);
 				SelectObject(hdcMem, hOldBitmap);
 
@@ -804,11 +808,11 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 
 	case FMTypeRating:
 		{
-			rect.top += (rect.Height()-RatingBitmapHeight-1)/2;
-
 			UCHAR Rating = (UCHAR)(*((UINT*)(((BYTE*)&Flight)+FMAttributes[Attr].Offset))>>FMAttributes[Attr].DataParameter);
-			PrepareBlend();
-			Blend(dc, rect, Rating, theApp.m_RatingBitmaps);
+
+			rectItem.top += (rectItem.Height()-RatingBitmapHeight-1)/2;
+			PrepareBlend(rectItem);
+			Blend(dc, rectItem, Rating, theApp.m_RatingBitmaps);
 		}
 
 		break;
@@ -818,7 +822,7 @@ void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect rect, BO
 			WCHAR tmpStr[256];
 			AttributeToString(Flight, Attr, tmpStr, 256);
 
-			dc.DrawText(tmpStr, -1, rect, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[Attr].Type==FMTypeDistance) || (FMAttributes[Attr].Type==FMTypeUINT) || (Attr==14)) ? DT_RIGHT : DT_LEFT));
+			dc.DrawText(tmpStr, -1, rectItem, DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | (((FMAttributes[Attr].Type==FMTypeDistance) || (FMAttributes[Attr].Type==FMTypeUINT) || (Attr==14)) ? DT_RIGHT : DT_LEFT));
 		}
 	}
 }
@@ -831,7 +835,9 @@ void CDataGrid::AutosizeColumn(UINT Attr)
 
 	if (p_Itinerary)
 	{
-		CClientDC dc(this);
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
 		CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 		for (UINT row=0; row<p_Itinerary->m_Flights.m_ItemCount; row++)
@@ -850,7 +856,7 @@ void CDataGrid::AutosizeColumn(UINT Attr)
 	m_ViewParameters.ColumnWidth[Attr] = theApp.m_ViewParameters.ColumnWidth[Attr] = min(Width, MAXWIDTH);
 }
 
-void CDataGrid::FinishEdit(WCHAR* pStr, CPoint Item)
+void CDataGrid::FinishEdit(WCHAR* pStr, const CPoint& Item)
 {
 	ASSERT(p_Itinerary);
 
@@ -947,6 +953,42 @@ void CDataGrid::FindReplace(INT iSelectPage)
 	}
 }
 
+void CDataGrid::ScrollWindow(INT dx, INT dy)
+{
+	CRect rect;
+	GetClientRect(rect);
+	rect.top = m_HeaderHeight;
+
+	if (IsWindow(m_wndHeader) && (dx!=0))
+	{
+		CRect rectWindow;
+		GetWindowRect(rectWindow);
+
+		WINDOWPOS wp;
+		HDLAYOUT HdLayout;
+		HdLayout.prc = &rectWindow;
+		HdLayout.pwpos = &wp;
+		m_wndHeader.Layout(&HdLayout);
+
+		wp.x = wp.y = 0;
+
+		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+		m_wndHeader.RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+
+/*	if (IsCtrlThemed() && (dy!=0))
+	{
+		rect.bottom -= BACKSTAGERADIUS;
+
+		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
+		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+	else*/
+	{
+		ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CDataGrid, CWnd)
 	ON_WM_CREATE()
@@ -1006,10 +1048,7 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER;
-	CRect rect;
-	rect.SetRectEmpty();
-	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
+	if (!m_wndHeader.Create(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, CRect(0, 0, 0, 0), this, 1))
 		return -1;
 
 	m_wndHeader.SetFont(&FMGetApp()->m_DefaultFont);
@@ -1037,9 +1076,7 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	SetTimer(1, 1000, NULL);
 
-	LOGFONT lf;
-	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (2*(MARGIN-1)+max(abs(lf.lfHeight), 16)) & ~1;
+	m_RowHeight = (2*(MARGIN-1)+max(theApp.m_DefaultFont.GetFontHeight(), 16)) & ~1;
 
 	ResetScrollbars();
 
@@ -1146,6 +1183,7 @@ void CDataGrid::OnPaint()
 						{
 							const DWORD Flags = p_Itinerary->m_Flights.m_Items[row].Flags;
 							dc.SetTextColor((Selected && (!Themed || (theApp.OSVersion==OS_XP) || (theApp.OSVersion==OS_Eight))) ? GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : (Flags & AIRX_Cancelled) ? colDisabled : (Flags & AIRX_FutureFlight) ? 0x008000 : colText);
+
 							DrawCell(dc, p_Itinerary->m_Flights.m_Items[row], Attr, rectItem, Selected);
 						}
 					}
@@ -1249,8 +1287,8 @@ void CDataGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		if (p_Edit)
 		{
 			CRect rect;
-			p_Edit->GetWindowRect(&rect);
-			ScreenToClient(&rect);
+			p_Edit->GetWindowRect(rect);
+			ScreenToClient(rect);
 
 			rect.OffsetRect(0, -nInc);
 			p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
@@ -1326,7 +1364,7 @@ void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = FMHOVERTIME;
+		tme.dwHoverTime = HOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
@@ -1400,7 +1438,8 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 								Message = Message.Mid(Pos+1);
 							}
 
-							FMGetApp()->ShowTooltip(this, point, Caption, Message, theApp.m_FlagIcons32.ExtractIcon(m_HotSubitem));
+							m_FlagIcons.Load(IDB_FLAGS_32, 32);
+							FMGetApp()->ShowTooltip(this, point, Caption, Message, m_FlagIcons.ExtractIcon(m_HotSubitem));
 						}
 
 					case FMTypeColor:
@@ -1518,7 +1557,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 
 								CString cpt((LPCSTR)IDS_COLUMN0+Attr);
 
-								FMGetApp()->ShowTooltip(this, point, cpt, msg);
+								theApp.ShowTooltip(this, point, cpt, msg);
 							}
 							break;
 						}
@@ -1527,14 +1566,10 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 
 						if (tmpStr[0]!=L'\0')
 						{
-							CClientDC dc(this);
-
-							CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-							CSize szText = dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr));
-							dc.SelectObject(pOldFont);
+							CSize szText = theApp.m_DefaultFont.GetTextExtent(tmpStr);
 
 							if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-2*MARGIN-1) || (FMAttributes[Attr].Type==FMTypeColor))
-								FMGetApp()->ShowTooltip(this, point, _T(""), tmpStr);
+								theApp.ShowTooltip(this, point, _T(""), tmpStr);
 						}
 					}
 				}
@@ -1548,7 +1583,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = FMHOVERTIME;
+	tme.dwHoverTime = HOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
 }
@@ -1556,7 +1591,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 BOOL CDataGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
@@ -1584,7 +1619,7 @@ BOOL CDataGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 void CDataGrid::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 {
 	CRect rect;
-	GetWindowRect(&rect);
+	GetWindowRect(rect);
 	if (!rect.PtInRect(pt))
 		return;
 
@@ -1901,11 +1936,11 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (pWnd->GetSafeHwnd()==m_wndHeader)
 	{
-		CPoint ptClient(point);
-		ScreenToClient(&ptClient);
+		CPoint pt(point);
+		ScreenToClient(&pt);
 
 		HDHITTESTINFO htt;
-		htt.pt = ptClient;
+		htt.pt = pt;
 		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
 
 		CDialogMenuPopup* pPopup = new CDialogMenuPopup();
@@ -1916,6 +1951,7 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 		pPopup->AddCommand(IDM_DETAILS_CHOOSE, 0);
 
 		pPopup->Track(point);
+
 		return;
 	}
 

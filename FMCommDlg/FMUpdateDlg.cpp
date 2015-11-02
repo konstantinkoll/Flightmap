@@ -17,14 +17,14 @@ static const GUID TrayIcon = { 0xFD604358, 0x411B, 0x4D4C, { 0x88, 0xF9, 0xD5, 0
 #define WM_TRAYMENU     WM_USER+10
 #define MARGIN          4
 
-FMUpdateDlg::FMUpdateDlg(CString Version, CString MSN, DWORD Features, CWnd* pParentWnd)
+FMUpdateDlg::FMUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd)
 	: FMDialog(IDD_UPDATE, pParentWnd)
 {
 	m_NotificationWindow = (pParentWnd==NULL);
 	m_CaptionTop = m_IconTop = m_FeaturesTop = m_FeaturesLeft = m_FeatureItemHeight = 0;
 	m_Connected = TRUE;
 
-	m_pLogo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_64, _T("PNG"));
+	p_Logo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_64);
 
 	m_Version = Version;
 	m_MSN = MSN;
@@ -68,42 +68,42 @@ void FMUpdateDlg::UpdateFrame(BOOL bMove)
 	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
 
 	// Glass frame
-	BOOL IsAeroWindow = FALSE;
-	if (FMGetApp()->m_AeroLibLoaded)
-		FMGetApp()->zDwmIsCompositionEnabled(&IsAeroWindow);
+	BOOL IsCompositionEnabled = FALSE;
+	if (FMGetApp()->m_DwmLibLoaded)
+		FMGetApp()->zDwmIsCompositionEnabled(&IsCompositionEnabled);
 
 	// Settings
-	LONG cl = GetClassLong(GetSafeHwnd(), GCL_STYLE);
-	cl &= ~CS_DROPSHADOW;
-	if (!IsAeroWindow && bDropShadow)
-		cl |= CS_DROPSHADOW;
-	SetClassLong(GetSafeHwnd(), GCL_STYLE, cl);
+	LONG ClassStyle = GetClassLong(GetSafeHwnd(), GCL_STYLE);
+	ClassStyle &= ~CS_DROPSHADOW;
+	if (!IsCompositionEnabled && bDropShadow)
+		ClassStyle |= CS_DROPSHADOW;
+	SetClassLong(GetSafeHwnd(), GCL_STYLE, ClassStyle);
 
-	LONG ws = GetWindowLong(GetSafeHwnd(), GWL_STYLE);
-	ws &= ~(WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
-	ws |= WS_POPUPWINDOW;
-	if (IsAeroWindow)
-		ws |= WS_THICKFRAME;
-	SetWindowLong(GetSafeHwnd(), GWL_STYLE, ws);
+	LONG WindowStyle = GetWindowLong(GetSafeHwnd(), GWL_STYLE);
+	WindowStyle &= ~(WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
+	WindowStyle |= WS_POPUPWINDOW;
+	if (IsCompositionEnabled)
+		WindowStyle |= WS_THICKFRAME;
+	SetWindowLong(GetSafeHwnd(), GWL_STYLE, WindowStyle);
 
-	LONG es = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
-	es &= ~WS_EX_DLGMODALFRAME;
-	es |= WS_EX_TOOLWINDOW;
-	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, es);
+	LONG ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
+	ExtendedStyle &= ~WS_EX_DLGMODALFRAME;
+	ExtendedStyle |= WS_EX_TOOLWINDOW;
+	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle);
 
 	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
-	AdjustWindowRectEx(rectClient, ws, FALSE, es);
+	AdjustWindowRectEx(rectClient, WindowStyle, FALSE, ExtendedStyle);
 
 	if (bMove)
 	{
-		MONITORINFO mi;
-		mi.cbSize = sizeof(MONITORINFO);
+		MONITORINFO MonitorInfo;
+		MonitorInfo.cbSize = sizeof(MONITORINFO);
 
 		CRect rectScreen;
-		if (GetMonitorInfo(MonitorFromPoint(CPoint(0, 0), MONITOR_DEFAULTTONEAREST), &mi))
+		if (GetMonitorInfo(MonitorFromPoint(CPoint(0, 0), MONITOR_DEFAULTTONEAREST), &MonitorInfo))
 		{
-			rectScreen = mi.rcWork;
+			rectScreen = MonitorInfo.rcWork;
 		}
 		else
 		{
@@ -222,8 +222,8 @@ BOOL FMUpdateDlg::OnInitDialog()
 
 	// Version
 	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(&rectWnd);
-	ScreenToClient(&rectWnd);
+	m_wndVersionInfo.GetWindowRect(rectWnd);
+	ScreenToClient(rectWnd);
 
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
@@ -239,13 +239,8 @@ BOOL FMUpdateDlg::OnInitDialog()
 	const INT HeightCaption = 4*LineGap;
 	const INT HeightVersion = 2*LineGap;
 
-	m_CaptionFont.CreateFont(HeightCaption, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, _T("Letter Gothic"));
-
-	m_VersionFont.CreateFont(HeightVersion, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, FMGetApp()->GetDefaultFontFace());
+	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
 	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-HeightVersion)/2-9;
@@ -257,7 +252,7 @@ BOOL FMUpdateDlg::OnInitDialog()
 
 	// Feature-Liste
 	GetDlgItem(IDC_IGNOREUPDATE)->GetWindowRect(rectWnd);
-	ScreenToClient(&rectWnd);
+	ScreenToClient(rectWnd);
 
 	if (m_Features)
 	{
@@ -269,13 +264,8 @@ BOOL FMUpdateDlg::OnInitDialog()
 			if (Features & 1)
 				Count++;
 
-		CDC* pDC = GetDC();
-		HFONT hOldFont = (HFONT)pDC->SelectStockObject(DEFAULT_GUI_FONT);
-		m_FeatureItemHeight = pDC->GetTextExtent(_T("Wy")).cy>14 ? 32 : Count<=3 ? 32 : 16;
-		pDC->SelectObject(hOldFont);
-		ReleaseDC(pDC);
-
-		m_UpdateIcons.Create(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight, m_FeatureItemHeight);
+		m_FeatureItemHeight = FMGetApp()->m_DialogFont.GetFontHeight()>14 ? 32 : Count<=3 ? 32 : 16;
+		m_UpdateIcons.Load(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight);
 
 		DynamicHeight += Count*(m_FeatureItemHeight+MARGIN)+m_FeaturesLeft;
 	}
@@ -349,42 +339,41 @@ void FMUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	FMDialog::OnEraseBkgnd(dc, g, rect);
 
 	// Logo
-	g.DrawImage(m_pLogo->m_pBitmap, 9, m_IconTop);
+	g.DrawImage(p_Logo, 9, m_IconTop);
 
-	CRect r(rect);
-	r.top = m_CaptionTop;
-	r.left = 82-2;
+	CRect rectLine(rect);
+	rectLine.top = m_CaptionTop;
+	rectLine.left = 82-2;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
-	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(IsCtrlThemed() ? 0xCB3300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, r, fmt);
+	dc.DrawText(m_AppName, rectLine, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 	// Features
-	r.top = m_FeaturesTop;
-	r.bottom = m_FeaturesTop+m_FeatureItemHeight;
-	r.left = m_FeaturesLeft;
-	r.right -= m_FeaturesLeft;
+	rectLine.top = m_FeaturesTop;
+	rectLine.bottom = m_FeaturesTop+m_FeatureItemHeight;
+	rectLine.left = m_FeaturesLeft;
+	rectLine.right -= m_FeaturesLeft;
 
 	dc.SelectStockObject(DEFAULT_GUI_FONT);
-	dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 
 	for (UINT a=0; a<=31; a++)
 		if (m_Features & (1<<a))
 		{
 			INT Index = a ? a+1 : FMGetApp()->OSVersion==OS_Vista ? 1 : 0;
 
-			m_UpdateIcons.Draw(&dc, Index, r.TopLeft(), ILD_TRANSPARENT);
+			m_UpdateIcons.Draw(dc, rectLine.left, rectLine.top, Index);
 
-			CRect rectText(r);
+			CRect rectText(rectLine);
 			rectText.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
 
 			CString Text((LPCSTR)IDS_UPDATE_FIRST+a);
+
+			dc.SetTextColor(a<3 ? 0x0000FF : GetSysColor(COLOR_WINDOWTEXT));
 			dc.DrawText(Text, rectText, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
 
-			r.OffsetRect(0, m_FeatureItemHeight+MARGIN);
+			rectLine.OffsetRect(0, m_FeatureItemHeight+MARGIN);
 		}
 
 	dc.SelectObject(pOldFont);
@@ -433,7 +422,7 @@ void FMUpdateDlg::OnDownload()
 {
 	CString URL((LPCSTR)IDS_UPDATEURL);
 
-	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
+	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 
 	EndDialog(IDOK);
 }

@@ -16,10 +16,10 @@ public:
 	CRatingCtrl();
 
 	void SetRating(UCHAR Rating, BOOL Prepare=TRUE);
-	UCHAR GetRating();
+	UCHAR GetRating() const;
 
 protected:
-	void SendChangeMessage();
+	void SendChangeMessage() const;
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();

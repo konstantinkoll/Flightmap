@@ -1,21 +1,16 @@
 
 #pragma once
-#include <assert.h>
-
-#define DYN_FIRSTALLOC          1024
-#define DYN_SUBSEQUENTALLOC     1024
 
 
-template <typename T>
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
 class FMDynArray
 {
 public:
 	FMDynArray();
 	~FMDynArray();
 
-	BOOL AddItem(T i);
+	BOOL AddItem(T Item);
 	BOOL InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE);
-	BOOL InsertItems(UINT Pos, T* pData, UINT Count=1);
 	void DeleteItems(UINT Pos, UINT Count=1);
 
 	T* m_Items;
@@ -26,50 +21,47 @@ protected:
 };
 
 
-#define INITFMDYNARRAY() \
-	if (!m_Items) \
-	{ \
-		m_Items = (T*)malloc(DYN_FIRSTALLOC*sizeof(T)); \
-		if (!m_Items) \
-			return FALSE; \
-		m_Allocated = DYN_FIRSTALLOC; \
-	}
-
-
-template <typename T>
-FMDynArray<T>::FMDynArray()
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+FMDynArray<T, FirstAlloc, SubsequentAlloc>::FMDynArray()
 {
 	m_Items = NULL;
 	m_ItemCount = m_Allocated = 0;
 }
 
-template <typename T>
-FMDynArray<T>::~FMDynArray()
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+FMDynArray<T, FirstAlloc, SubsequentAlloc>::~FMDynArray()
 {
 	free(m_Items);
 }
 
-template <typename T>
-BOOL FMDynArray<T>::AddItem(T i)
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+BOOL FMDynArray<T, FirstAlloc, SubsequentAlloc>::AddItem(T Item)
 {
-	INITFMDYNARRAY()
-
-	if (m_ItemCount==m_Allocated)
+	if (!m_Items)
 	{
-		m_Items = (T*)realloc(m_Items, (m_Allocated+DYN_SUBSEQUENTALLOC)*sizeof(T));
+		m_Items = (T*)malloc(FirstAlloc*sizeof(T));
 		if (!m_Items)
 			return FALSE;
 
-		m_Allocated += DYN_SUBSEQUENTALLOC;
+		m_Allocated = FirstAlloc;
 	}
+	else
+		if (m_ItemCount==m_Allocated)
+		{
+			m_Items = (T*)realloc(m_Items, (m_Allocated+SubsequentAlloc)*sizeof(T));
+			if (!m_Items)
+				return FALSE;
 
-	m_Items[m_ItemCount++] = i;
+			m_Allocated += SubsequentAlloc;
+		}
+
+	m_Items[m_ItemCount++] = Item;
 
 	return TRUE;
 }
 
-template <typename T>
-BOOL FMDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+BOOL FMDynArray<T, FirstAlloc, SubsequentAlloc>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 {
 	if (!Count)
 		return TRUE;
@@ -77,17 +69,25 @@ BOOL FMDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 	if (Pos>m_ItemCount+1)
 		return FALSE;
 
-	INITFMDYNARRAY()
-
-	if (m_ItemCount<m_Allocated+Count)
+	if (!m_Items)
 	{
-		const UINT Add = (Count+DYN_SUBSEQUENTALLOC-1) & ~(DYN_SUBSEQUENTALLOC-1);
-		m_Items = (T*)realloc(m_Items, (m_Allocated+Add)*sizeof(T));
+		const UINT Size = max(FirstAlloc, Count);
+		m_Items = (T*)malloc(Size*sizeof(T));
 		if (!m_Items)
 			return FALSE;
 
-		m_Allocated += Add;
+		m_Allocated = Size;
 	}
+	else
+		if (m_ItemCount<m_Allocated+Count)
+		{
+			const UINT Size = max(SubsequentAlloc, Count);
+			m_Items = (T*)realloc(m_Items, (m_Allocated+Size)*sizeof(T));
+			if (!m_Items)
+				return FALSE;
+
+			m_Allocated += Size;
+		}
 
 	for (INT a=((INT)(m_ItemCount))-1; a>=(INT)Pos; a--)
 		m_Items[a+Count] = m_Items[a];
@@ -100,21 +100,8 @@ BOOL FMDynArray<T>::InsertEmpty(UINT Pos, UINT Count=1, BOOL ZeroOut=TRUE)
 	return TRUE;
 }
 
-template <typename T>
-BOOL FMDynArray<T>::InsertItems(UINT Pos, T* pData, UINT Count=1)
-{
-	assert(pData);
-
-	if (!InsertEmpty(Pos, Count, FALSE))
-		return FALSE;
-
-	memcpy_s(m_Items[Pos], sizeof(T)*Count, pData, sizeof(T)*Count);
-
-	return TRUE;
-}
-
-template <typename T>
-void FMDynArray<T>::DeleteItems(UINT Pos, UINT Count=1)
+template <typename T, SIZE_T FirstAlloc, SIZE_T SubsequentAlloc>
+void FMDynArray<T, FirstAlloc, SubsequentAlloc>::DeleteItems(UINT Pos, UINT Count=1)
 {
 	if (!Count)
 		return;

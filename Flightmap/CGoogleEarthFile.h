@@ -21,8 +21,8 @@ public:
 	void Close();
 
 private:
-	void WriteAttribute(UINT ResID, CString Value);
-	void WriteAttribute(UINT ResID, CHAR* Value);
+	void WriteAttribute(UINT ResID, const CString& Value);
+	void WriteAttribute(UINT ResID, LPCSTR pValue);
 
 	BOOL m_IsOpen;
 };

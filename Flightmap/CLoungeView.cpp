@@ -21,9 +21,7 @@ BOOL CLoungeView::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
@@ -31,21 +29,21 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	BOOL Themed = IsCtrlThemed();
 	if (Themed && theApp.m_UseBgImages)
 	{
-		CGdiPlusBitmap* pBackdrop = FMGetApp()->GetCachedResourceImage(IDB_DOCKED, _T("JPG"));
-		INT l = pBackdrop->m_pBitmap->GetWidth();
-		INT h = pBackdrop->m_pBitmap->GetHeight();
+		Bitmap* pBackdrop = FMGetApp()->GetCachedResourceImage(IDB_DOCKED);
+		INT l = pBackdrop->GetWidth();
+		INT h = pBackdrop->GetHeight();
 
 		DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
 		l = max(rect.Width(), (INT)(l*f));
 		h = max(rect.Height(), (INT)(h*f));
 
-		g.DrawImage(pBackdrop->m_pBitmap, 0, rect.Height()-h, l, h);
+		g.DrawImage(pBackdrop, 0, rect.Height()-h, l, h);
 
-		CGdiPlusBitmap* pSlogan = FMGetApp()->GetCachedResourceImage(IDB_SLOGAN, _T("PNG"));
-		l = pSlogan->m_pBitmap->GetWidth();
-		h = pSlogan->m_pBitmap->GetHeight();
+		Bitmap* pSlogan = FMGetApp()->GetCachedResourceImage(IDB_SLOGAN);
+		l = pSlogan->GetWidth();
+		h = pSlogan->GetHeight();
 		if ((rect.Width()>=520) && (rect.Height()>=150))
-			g.DrawImage(pSlogan->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+			g.DrawImage(pSlogan, rect.Width()-l, rect.Height()-h, l, h);
 
 		SolidBrush brush(Color(0x14, 0x00, 0x00, 0x00));
 		for (INT a=0; a<5; a++)
@@ -57,21 +55,21 @@ void CLoungeView::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 		if (Themed)
 		{
-			CGdiPlusBitmap* pLogo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_128, _T("PNG"));
-			INT l = pLogo->m_pBitmap->GetWidth();
-			INT h = pLogo->m_pBitmap->GetHeight();
+			Bitmap* pLogo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_128);
+			INT l = pLogo->GetWidth();
+			INT h = pLogo->GetHeight();
 
 			if ((rect.Width()>=l+24) && (rect.Height()>=h+24))
 			{
-				g.DrawImage(pLogo->m_pBitmap, rect.Width()-l-10, rect.Height()-h-6, l, h);
+				g.DrawImage(pLogo, rect.Width()-l-10, rect.Height()-h-6, l, h);
 
 				SYSTEMTIME st;
 				GetSystemTime(&st);
 
 				if (st.wMonth==12)
 				{
-					CGdiPlusBitmap* pSanta = FMGetApp()->GetCachedResourceImage(IDB_SANTA, _T("PNG"));
-					g.DrawImage(pSanta->m_pBitmap, rect.Width()-l-55, rect.Height()-h-16);
+					Bitmap* pSanta = FMGetApp()->GetCachedResourceImage(IDB_SANTA);
+					g.DrawImage(pSanta, rect.Width()-l-55, rect.Height()-h-16);
 				}
 			}
 		}
@@ -171,21 +169,20 @@ LRESULT CLoungeView::OnUseBgImagesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 HBRUSH CLoungeView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 	{
 		CRect rc;
-		pWnd->GetWindowRect(&rc);
-		ScreenToClient(&rc);
+		pWnd->GetWindowRect(rc);
+		ScreenToClient(rc);
 
-		pDC->SetBkMode(TRANSPARENT);
 		pDC->SetBrushOrg(-rc.left, -rc.top);
 
-		hbr = hBackgroundBrush;
+		hBrush = hBackgroundBrush;
 	}
 
-	return hbr;
+	return hBrush;
 }
 
 void CLoungeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)

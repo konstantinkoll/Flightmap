@@ -3,21 +3,23 @@
 //
 
 #pragma once
+#include "CFrontstageWnd.h"
 #include "CTaskButton.h"
+#include "FMDynArray.h"
 
 
 // CTaskbar
 //
 
-class CTaskbar : public CWnd
+class CTaskbar : public CFrontstageWnd
 {
 public:
 	CTaskbar();
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-	BOOL Create(CWnd* pParentWnd, UINT LargeResID, UINT SmallResID, UINT nID);
-	UINT GetPreferredHeight();
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID);
+	UINT GetPreferredHeight() const;
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
 	void AdjustLayout();
 
@@ -31,17 +33,14 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CIcons m_ButtonIcons;
-	CIcons m_TooltipIcons;
+	CIcons* p_ButtonIcons;
+	CIcons* p_TooltipIcons;
 	INT m_IconSize;
-	CList<CTaskButton*> m_ButtonsLeft;
-	CList<CTaskButton*> m_ButtonsRight;
-	CBitmap m_BackBuffer;
-	INT m_BackBufferL;
+	UINT m_FirstRight;
+	FMDynArray<CTaskButton*, 8, 8> m_Buttons;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
 };

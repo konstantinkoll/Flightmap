@@ -9,7 +9,7 @@
 #include <mmsystem.h>
 
 
-void AppendAttribute(CString& dst, UINT ResID, CString Value)
+void AppendAttribute(CString& dst, UINT ResID, const CString& Value)
 {
 	if (!Value.IsEmpty())
 	{
@@ -22,25 +22,10 @@ void AppendAttribute(CString& dst, UINT ResID, CString Value)
 	}
 }
 
-void AppendAttribute(CString& dst, UINT ResID, CHAR* Value)
+void AppendAttribute(CString& dst, UINT ResID, LPCSTR pValue)
 {
-	CString tmpStr(Value);
-	AppendAttribute(dst, ResID, tmpStr);
+	AppendAttribute(dst, ResID, CString(pValue));
 }
-
-
-// FMApplication
-//
-
-#define RESETNAGCOUNTER     m_NagCounter = 0;
-
-BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
-	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
-	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
-	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
-END_MESSAGE_MAP()
 
 void PlayRegSound(CString Identifier)
 {
@@ -61,7 +46,8 @@ void PlayRegSound(CString Identifier)
 }
 
 
-// FMApplication-Erstellung
+// FMApplication
+//
 
 FMApplication::FMApplication(GUID& AppID)
 {
@@ -82,7 +68,8 @@ FMApplication::FMApplication(GUID& AppID)
 	SetDllDirectory(_T(""));
 
 	// Messages
-	m_WakeupMsg = 0;
+	m_LicenseActivatedMsg = RegisterWindowMessage(_T("Flightmap.LicenseActivated"));
+	m_WakeupMsg = RegisterWindowMessage(_T("Flightmap.NewWindow"));
 	m_UseBgImagesChangedMsg = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
 	m_DistanceSettingChangedMsg = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
 	m_TaskbarButtonCreated = RegisterWindowMessageA("TaskbarButtonCreated");
@@ -131,18 +118,18 @@ FMApplication::FMApplication(GUID& AppID)
 	}
 
 	// Aero
-	hModAero = LoadLibrary(_T("DWMAPI.DLL"));
-	if (hModAero)
+	hModDwm = LoadLibrary(_T("DWMAPI.DLL"));
+	if (hModDwm)
 	{
-		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModAero, "DwmIsCompositionEnabled");
-		zDwmExtendFrameIntoClientArea = (PFNDWMEXTENDFRAMEINTOCLIENTAREA)GetProcAddress(hModAero, "DwmExtendFrameIntoClientArea");
-		zDwmDefWindowProc = (PFNDWMDEFWINDOWPROC)GetProcAddress(hModAero, "DwmDefWindowProc");
+		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModDwm, "DwmIsCompositionEnabled");
+		zDwmExtendFrameIntoClientArea = (PFNDWMEXTENDFRAMEINTOCLIENTAREA)GetProcAddress(hModDwm, "DwmExtendFrameIntoClientArea");
+		zDwmDefWindowProc = (PFNDWMDEFWINDOWPROC)GetProcAddress(hModDwm, "DwmDefWindowProc");
 
-		m_AeroLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea && zDwmDefWindowProc);
-		if (!m_AeroLibLoaded)
+		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea && zDwmDefWindowProc);
+		if (!m_DwmLibLoaded)
 		{
-			FreeLibrary(hModAero);
-			hModAero = NULL;
+			FreeLibrary(hModDwm);
+			hModDwm = NULL;
 		}
 	}
 	else
@@ -151,7 +138,7 @@ FMApplication::FMApplication(GUID& AppID)
 		zDwmExtendFrameIntoClientArea = NULL;
 		zDwmDefWindowProc = NULL;
 
-		m_AeroLibLoaded = FALSE;
+		m_DwmLibLoaded = FALSE;
 	}
 
 	// Shell
@@ -198,8 +185,10 @@ FMApplication::FMApplication(GUID& AppID)
 	IImageList* il;
 	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&il)))
 		m_SystemImageListSmall.Attach((HIMAGELIST)il);
+
 	if (SUCCEEDED(SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListLarge.Attach((HIMAGELIST)il);
+
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
 }
@@ -208,12 +197,16 @@ FMApplication::~FMApplication()
 {
 	if (hModThemes)
 		FreeLibrary(hModThemes);
-	if (hModAero)
-		FreeLibrary(hModAero);
+
+	if (hModDwm)
+		FreeLibrary(hModDwm);
+
 	if (hModShell)
 		FreeLibrary(hModShell);
+
 	if (hModKernel)
 		FreeLibrary(hModKernel);
+
 	if (hFontLetterGothic)
 		RemoveFontMemResourceEx(hFontLetterGothic);
 }
@@ -257,37 +250,34 @@ BOOL FMApplication::InitInstance()
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
 
 	// Fonts
-	CString Face = GetDefaultFontFace();
+	INT Size = 11;
+	LOGFONT LogFont;
+	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &LogFont, 0))
+		Size = max(abs(LogFont.lfHeight), 11);
 
-	INT Size = 8;
-	LOGFONT lf;
-	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
-		Size = abs(lf.lfHeight);
+	afxGlobalData.fontTooltip.GetLogFont(&LogFont);
 
-	m_DefaultFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_BoldFont.CreateFont(-Size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_ItalicFont.CreateFont(-Size, 0, 0, 0, FW_NORMAL, 1, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_SmallFont.CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		_T("MSShellDlg"));
-	m_LargeFont.CreateFont(-(Size+2), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
-	m_CaptionFont.CreateFont(-(Size+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		Face);
+	m_DefaultFont.CreateFont(-Size);
+	m_ItalicFont.CreateFont(-Size, CLEARTYPE_QUALITY, FW_NORMAL, 1);
+	m_SmallFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
+	m_SmallBoldFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
+	m_LargeFont.CreateFont(-Size*7/6);
+	m_CaptionFont.CreateFont(-Size*2, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+
+	CFont* pDialogFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+	ASSERT_VALID(pDialogFont);
+
+	pDialogFont->GetLogFont(&LogFont);
+	LogFont.lfItalic = 0;
+	LogFont.lfWeight = FW_NORMAL;
+
+	m_DialogFont.CreateFontIndirect(&LogFont);
 
 	// Registry
 	SetRegistryKey(_T(""));
 
 	// Zähler zurücksetzen
-	RESETNAGCOUNTER;
+	m_NagCounter = 3;
 
 	// Tooltip
 	m_wndTooltip.Create();
@@ -302,8 +292,8 @@ CWnd* FMApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 INT FMApplication::ExitInstance()
 {
-	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
-		delete m_ResourceCache.GetNext(p).pImage;
+	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
+		delete m_ResourceCache.m_Items[a].pImage;
 
 	for (UINT a=0; a<=MaxRating; a++)
 		DeleteObject(m_RatingBitmaps[a]);
@@ -312,8 +302,8 @@ INT FMApplication::ExitInstance()
 
 	if (hModThemes)
 		FreeLibrary(hModThemes);
-	if (hModAero)
-		FreeLibrary(hModAero);
+	if (hModDwm)
+		FreeLibrary(hModDwm);
 
 	return CWinAppEx::ExitInstance();
 }
@@ -350,7 +340,7 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 			FMRegisterDlg dlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow());
 			dlg.DoModal();
 
-			RESETNAGCOUNTER;
+			m_NagCounter = 0;
 
 			return TRUE;
 		}
@@ -358,7 +348,7 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 	return FALSE;
 }
 
-BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, CString Caption)
+BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, const CString& Caption) const
 {
 	ASSERT(pColor);
 
@@ -372,82 +362,109 @@ BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, CString Capt
 	return FALSE;
 }
 
-CString FMApplication::GetDefaultFontFace()
-{
-	LOGFONT lf;
-	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0);
-
-	return lf.lfFaceName;
-}
-
-void FMApplication::SendMail(CString Subject)
+void FMApplication::SendMail(const CString& Subject) const
 {
 	CString URL = _T("mailto:support@flightmap.net");
 	if (!Subject.IsEmpty())
 		URL += _T("?subject=")+Subject;
 
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
-CGdiPlusBitmap* FMApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType)
+Bitmap* FMApplication::GetResourceImage(UINT nID) const
 {
-	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
-	{
-		ResourceCacheItem Item = m_ResourceCache.GetNext(p);
+	Bitmap* pBitmap = NULL;
 
-		if (Item.nID==nID)
-			return Item.pImage;
+	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), RT_RCDATA);
+	if (hResource)
+	{
+		HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
+		if (hMemory)
+		{
+			LPVOID pResourceData = LockResource(hMemory);
+			if (pResourceData)
+			{
+				DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
+				if (Size)
+				{
+					IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
+
+					pBitmap = Gdiplus::Bitmap::FromStream(pStream);
+
+					pStream->Release();
+				}
+			}
+
+			UnlockResource(hMemory);
+		}
 	}
 
-	ResourceCacheItem Item;
-	Item.pImage = new CGdiPlusBitmapResource(nID, pType, AfxGetResourceHandle());
-	Item.nID = nID;
+	return pBitmap;
+}
 
-	m_ResourceCache.AddTail(Item);
-	return Item.pImage;
+Bitmap* FMApplication::GetCachedResourceImage(UINT nID)
+{
+	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
+		if (m_ResourceCache.m_Items[a].nID==nID)
+			return m_ResourceCache.m_Items[a].pImage;
+
+	Bitmap* pBitmap = GetResourceImage(nID);;
+	if (pBitmap)
+	{
+		ResourceCacheItem Item;
+		Item.pImage = pBitmap;
+		Item.nID = nID;
+
+		m_ResourceCache.AddItem(Item);
+	}
+
+	return pBitmap;
 }
 
 HICON FMApplication::LoadDialogIcon(UINT nID)
 {
-	return (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, 16, 16, LR_SHARED);
+	return (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED);
 }
 
 HANDLE FMApplication::LoadFontFromResource(UINT nID)
 {
-	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), L"TTF");
-	if (!hResource)
-		return NULL;
+	HANDLE hFont = NULL;
 
-	HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
-	if (!hMemory)
-		return NULL;
+	HRSRC hResource = FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nID), RT_RCDATA);
+	if (hResource)
+	{
+		HGLOBAL hMemory = LoadResource(AfxGetResourceHandle(), hResource);
+		if (hMemory)
+		{
+			LPVOID pResourceData = LockResource(hMemory);
+			if (pResourceData)
+			{
+				DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
+				if (Size)
+				{
+					DWORD nFonts;
+					hFont = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
+				}
+			}
 
-	LPVOID pResourceData = LockResource(hMemory);
-	if (!pResourceData)
-		return NULL;
+			UnlockResource(hMemory);
+		}
+	}
 
-	DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
-	if (!Size)
-		return NULL;
-
-	DWORD nFonts;
-	HANDLE Result = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
-
-	UnlockResource(hMemory);
-	return Result;
+	return hFont;
 }
 
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& strCaption, const CString& strText, HICON hIcon, HBITMAP hBitmap)
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
 {
 	ASSERT(IsWindow(m_wndTooltip));
 	ASSERT(pCallerWnd);
 
 	pCallerWnd->ClientToScreen(&point);
-	m_wndTooltip.ShowTooltip(point, strCaption, strText, hIcon, hBitmap);
+	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
 }
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, CString strText)
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint)
 {
 	CString Caption(pAirport->Code);
 	CString Text(_T(""));
@@ -458,20 +475,20 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirp
 	FMGeoCoordinatesToString(pAirport->Location, tmpStr);
 	AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
 
-	if (!strText.IsEmpty())
-		Text.Append(strText);
+	if (!Hint.IsEmpty())
+		Text.Append(Hint);
 
 	ShowTooltip(pCallerWnd, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
 }
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, CHAR* Code, CString strText)
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CHAR* Code, const CString& Hint)
 {
 	FMAirport* pAirport = NULL;
 	if (FMIATAGetAirportByCode(Code, &pAirport))
-		ShowTooltip(pCallerWnd, point, pAirport, strText);
+		ShowTooltip(pCallerWnd, point, pAirport, Hint);
 }
 
-BOOL FMApplication::IsTooltipVisible()
+BOOL FMApplication::IsTooltipVisible() const
 {
 	ASSERT(IsWindow(m_wndTooltip));
 
@@ -483,39 +500,6 @@ void FMApplication::HideTooltip()
 	ASSERT(IsWindow(m_wndTooltip));
 
 	m_wndTooltip.HideTooltip();
-}
-
-
-void FMApplication::OnAppSupport()
-{
-	SendMail();
-}
-
-void FMApplication::OnAppPurchase()
-{
-	CString URL((LPCSTR)IDS_PURCHASEURL);
-
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
-}
-
-void FMApplication::OnAppEnterLicenseKey()
-{
-	FMLicenseDlg dlg(m_pActiveWnd);
-	dlg.DoModal();
-}
-
-void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case ID_APP_PURCHASE:
-	case ID_APP_ENTERLICENSEKEY:
-		pCmdUI->Enable(!FMIsLicensed());
-		break;
-
-	default:
-		pCmdUI->Enable(TRUE);
-	}
 }
 
 
@@ -560,13 +544,13 @@ void FMApplication::PlayWarningSound()
 }
 
 
-HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID& guidFileType, BOOL DeleteBitmap)
+HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap)
 {
 	ASSERT(pBitmap);
 
 	CImage img;
 	img.Attach(*pBitmap);
-	HRESULT Result = img.Save(Filename, guidFileType);
+	HRESULT Result = img.Save(FileName, guidFileType);
 
 	if (!DeleteBitmap)
 		img.Detach();
@@ -574,7 +558,7 @@ HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, CString Filename, const GUID
 	return Result;
 }
 
-void FMApplication::AddFileExtension(CString& Extensions, UINT nID, CString Extension, BOOL Last)
+void FMApplication::AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last)
 {
 	CString tmpStr((LPCSTR)nID);
 
@@ -584,6 +568,7 @@ void FMApplication::AddFileExtension(CString& Extensions, UINT nID, CString Exte
 	Extensions += _T(")|*.");
 	Extensions += Extension;
 	Extensions += _T("|");
+
 	if (Last)
 		Extensions += _T("|");
 }
@@ -592,6 +577,7 @@ void FMApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 {
 	if (EnableAutoUpdate)
 		*EnableAutoUpdate = GetInt(_T("EnableAutoUpdate"), 1)!=0;
+
 	if (Interval)
 		*Interval = GetInt(_T("UpdateCheckInterval"), 0);
 }
@@ -654,16 +640,56 @@ BOOL FMApplication::IsUpdateCheckDue()
 	return FALSE;
 }
 
-void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
+void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
 {
-	UINT sz;
-	LPBYTE buf = NULL;
-	CWinAppEx::GetBinary(lpszEntry, &buf, &sz);
-	if (buf)
+	UINT Bytes;
+	LPBYTE pBuffer = NULL;
+	CWinAppEx::GetBinary(lpszEntry, &pBuffer, &Bytes);
+
+	if (pBuffer)
 	{
-		if (sz<size)
-			size = sz;
-		memcpy_s(pData, size, buf, size);
-		free(buf);
+		memcpy_s(pData, Size, pBuffer, min(Size, Bytes));
+		free(pBuffer);
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
+	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
+	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
+	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
+END_MESSAGE_MAP()
+
+void FMApplication::OnAppSupport()
+{
+	SendMail();
+}
+
+void FMApplication::OnAppPurchase()
+{
+	CString URL((LPCSTR)IDS_PURCHASEURL);
+
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+}
+
+void FMApplication::OnAppEnterLicenseKey()
+{
+	FMLicenseDlg dlg(m_pActiveWnd);
+	dlg.DoModal();
+}
+
+void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	case ID_APP_PURCHASE:
+	case ID_APP_ENTERLICENSEKEY:
+		pCmdUI->Enable(!FMIsLicensed());
+		break;
+
+	default:
+		pCmdUI->Enable(TRUE);
 	}
 }

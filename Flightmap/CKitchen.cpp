@@ -10,7 +10,7 @@
 // CKitchen
 //
 
-CKitchen::CKitchen(CString DisplayName, BOOL MergeMetro)
+CKitchen::CKitchen(const CString& DisplayName, BOOL MergeMetro)
 {
 	m_DisplayName = DisplayName;
 	m_MaxRouteCount = m_WaypointCount = 0;
@@ -21,7 +21,7 @@ CKitchen::CKitchen(CString DisplayName, BOOL MergeMetro)
 	m_FlightRoutes.InitHashTable(4096);
 }
 
-FMAirport* CKitchen::AddAirport(CHAR* Code)
+FMAirport* CKitchen::AddAirport(const CHAR* Code)
 {
 	ASSERT(Code);
 
@@ -52,7 +52,7 @@ FMAirport* CKitchen::AddAirport(CHAR* Code)
 	return pAirport;
 }
 
-void CKitchen::AddFlight(AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
+void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 {
 	FMAirport* pFrom = AddAirport(Flight.From.Code);
 	FMAirport* pTo = AddAirport(Flight.To.Code);

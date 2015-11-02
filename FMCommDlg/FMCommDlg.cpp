@@ -28,30 +28,30 @@ using namespace CryptoPP;
 BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 
-void CreateRoundRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
+void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
 	INT d = Radius*2+1;
-	INT r = pRect->right-d-1;
-	INT b = pRect->bottom-d-1;
+	INT r = lpRect->right-d-1;
+	INT b = lpRect->bottom-d-1;
 
 	Path.Reset();
-	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
-	Path.AddArc(r, pRect->top, d, d, 270, 90);
+	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
+	Path.AddArc(r, lpRect->top, d, d, 270, 90);
 	Path.AddArc(r-1, b-1, d+1, d+1, 0, 90);
-	Path.AddArc(pRect->left, b-1, d+1, d+1, 90, 90);
+	Path.AddArc(lpRect->left, b-1, d+1, d+1, 90, 90);
 	Path.CloseFigure();
 }
 
-void CreateReflectionRectangle(LPRECT pRect, INT Radius, GraphicsPath& Path)
+void CreateReflectionRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
 	Path.Reset();
 
 	INT d = Radius*2+1;
-	INT h = pRect->bottom-pRect->top-1;
-	INT w = min((INT)(h*1.681), pRect->right-pRect->left-1);
+	INT h = lpRect->bottom-lpRect->top-1;
+	INT w = min((INT)(h*1.681), lpRect->right-lpRect->left-1);
 
-	Path.AddArc(pRect->left, pRect->top, d, d, 180, 90);
-	Path.AddArc(pRect->left, pRect->top, 2*w, 2*h, 270, -90);
+	Path.AddArc(lpRect->left, lpRect->top, d, d, 180, 90);
+	Path.AddArc(lpRect->left, lpRect->top, 2*w, 2*h, 270, -90);
 	Path.CloseFigure();
 }
 
@@ -72,11 +72,7 @@ HBITMAP CreateTransparentBitmap(LONG Width, LONG Height)
 	DIB.bmiHeader.biBitCount = 32;
 	DIB.bmiHeader.biCompression = BI_RGB;
 
-	HDC hDC = GetDC(NULL);
-	HBITMAP hBitmap = CreateDIBSection(hDC, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
-	ReleaseDC(NULL, hDC);
-
-	return hBitmap;
+	return CreateDIBSection(NULL, &DIB, DIB_RGB_COLORS, NULL, NULL, 0);
 }
 
 void DrawControlBorder(CWnd* pWnd)
@@ -112,16 +108,16 @@ void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-void DrawReflection(Graphics& g, CRect &rect)
+void DrawReflection(Graphics& g, LPCRECT lpRect)
 {
 	GraphicsPath pathReflection;
-	CreateReflectionRectangle(rect, 2, pathReflection);
+	CreateReflectionRectangle(lpRect, 2, pathReflection);
 
-	LinearGradientBrush brush(Point(rect.left, rect.top), Point(rect.left+min((INT)(rect.Height()*1.681), rect.Width()), rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
+	LinearGradientBrush brush(Point(lpRect->left, lpRect->top), Point(lpRect->left+min((INT)((lpRect->bottom-lpRect->top)*1.681), lpRect->right-lpRect->left), lpRect->bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x10, 0xFF, 0xFF, 0xFF));
 	g.FillPath(&brush, &pathReflection);
 }
 
-void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
+void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect)
 {
 	if (Themed)
 	{
@@ -197,7 +193,7 @@ void DrawListItemBackground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL WinFocus
 	}
 }
 
-void DrawListItemForeground(CDC& dc, LPRECT rectItem, BOOL Themed, BOOL /*WinFocused*/, BOOL Hover, BOOL /*Focused*/, BOOL Selected)
+void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL /*WinFocused*/, BOOL Hover, BOOL /*Focused*/, BOOL Selected)
 {
 	if (Themed && (Hover || Selected))
 	{
@@ -216,64 +212,51 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 	if (Hover || Selected)
 		if (Themed)
 		{
-			if (FMGetApp()->OSVersion==OS_Eight)
-			{
-				COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
-				COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
+			COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
 
-				CRect rectBounds(rect);
-				dc.Draw3dRect(rectBounds, colBorder, colBorder);
-				rectBounds.DeflateRect(1, 0);
-				dc.FillSolidRect(rectBounds, colInner);
+			if (ClipHorizontal)
+			{
+				dc.FillSolidRect(rect.left, rect.top, 1, rect.Height(), clr);
+				dc.FillSolidRect(rect.right-1, rect.top, 1, rect.Height(), clr);
+				rect.DeflateRect(1, 0);
 			}
 			else
 			{
-				COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
+				dc.Draw3dRect(rect, clr, clr);
+				rect.DeflateRect(1, 1);
+			}
 
-				if (ClipHorizontal)
-				{
-					dc.FillSolidRect(rect.left, rect.top, 1, rect.Height(), clr);
-					dc.FillSolidRect(rect.right-1, rect.top, 1, rect.Height(), clr);
-					rect.DeflateRect(1, 0);
-				}
-				else
-				{
-					dc.Draw3dRect(rect, clr, clr);
-					rect.DeflateRect(1, 1);
-				}
+			Graphics g(dc);
+			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-				Graphics g(dc);
-				g.SetPixelOffsetMode(PixelOffsetModeHalf);
+			if (Hover)
+			{
+				LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
+				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 
-				if (Hover)
-				{
-					LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
-					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
+				rect.DeflateRect(1, 1);
+				INT y = (rect.top+rect.bottom)/2;
 
-					rect.DeflateRect(1, 1);
-					INT y = (rect.top+rect.bottom)/2;
+				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
+				g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
 
-					LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
-					g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
+				LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
+				g.FillRectangle(&brush3, rect.left, y, rect.Width(), rect.bottom-y);
+			}
+			else
+			{
+				dc.FillSolidRect(rect, 0xF6E4C2);
 
-					LinearGradientBrush brush3(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
-					g.FillRectangle(&brush3, rect.left, y, rect.Width(), rect.bottom-y);
-				}
-				else
-				{
-					dc.FillSolidRect(rect, 0xF6E4C2);
+				INT y = (rect.top+rect.bottom)/2;
 
-					INT y = (rect.top+rect.bottom)/2;
+				LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
+				g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
 
-					LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
-					g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
+				LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+				g.FillRectangle(&brush3, rect.left, rect.top, rect.Width(), 2);
 
-					LinearGradientBrush brush3(Point(rect.left, rect.top), Point(rect.left, rect.top+2), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-					g.FillRectangle(&brush3, rect.left, rect.top, rect.Width(), 2);
-
-					LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-					g.FillRectangle(&brush4, rect.left, rect.top, 2, rect.Height());
-				}
+				LinearGradientBrush brush4(Point(rect.left, rect.top), Point(rect.left+2, rect.top), Color(0x20, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+				g.FillRectangle(&brush4, rect.left, rect.top, 2, rect.Height());
 			}
 		}
 		else
@@ -293,22 +276,21 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 			Graphics g(dc);
 
 			// Inner Border
-			CRect rectBounds(rect);
-			rectBounds.DeflateRect(1, 1);
+			rect.DeflateRect(1, 1);
 
 			if (Selected)
 			{
 				SolidBrush brush(Color(0x20, 0x50, 0x57, 0x62));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
+				g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 			}
 			else
 				if (Hover)
 				{
 					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height()/2);
+					g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height()/2);
 
 					SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+1, rectBounds.Width(), rectBounds.Height()-rectBounds.Height()/2);
+					g.FillRectangle(&brush2, rect.left, rect.top+rect.Height()/2+1, rect.Width(), rect.Height()-rect.Height()/2);
 				}
 
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -316,15 +298,15 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 			if (!Selected)
 			{
-				CreateRoundRectangle(rectBounds, 1, path);
+				CreateRoundRectangle(rect, 1, path);
 
 				Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
 				g.DrawPath(&pen, &path);
 			}
 
 			// Outer Border
-			rectBounds.InflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 2, path);
+			rect.InflateRect(1, 1);
+			CreateRoundRectangle(rect, 2, path);
 
 			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
 			g.DrawPath(&pen, &path);
@@ -340,10 +322,10 @@ void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, B
 
 		if (Focused)
 		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
+			rect.DeflateRect(2, 2);
+
 			dc.SetTextColor(0x000000);
-			dc.DrawFocusRect(rectFocus);
+			dc.DrawFocusRect(rect);
 		}
 	}
 }
@@ -377,7 +359,7 @@ UINT FMIATAGetAirportCount()
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-FMCountry* FMIATAGetCountry(UINT CountryID)
+const FMCountry* FMIATAGetCountry(UINT CountryID)
 {
 	return UseGermanDB ? &Countries_DE[CountryID] : &Countries_EN[CountryID];
 }
@@ -408,7 +390,7 @@ INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport
 	return Last;
 }
 
-BOOL FMIATAGetAirportByCode(CHAR* Code, FMAirport** ppAirport)
+BOOL FMIATAGetAirportByCode(const CHAR* Code, FMAirport** ppAirport)
 {
 	if (!Code)
 		return FALSE;
@@ -465,11 +447,11 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	CGdiPlusBitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"));
-	CGdiPlusBitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"));
+	Bitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP);
+	Bitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16);
 
-	INT L = pMap->m_pBitmap->GetWidth();
-	INT H = pMap->m_pBitmap->GetHeight();
+	INT L = pMap->GetWidth();
+	INT H = pMap->GetHeight();
 	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
 	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
 	INT PosX = -LocX+Width/2;
@@ -485,19 +467,19 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 		}
 
 	if (PosX>1)
-		g.DrawImage(pMap->m_pBitmap, PosX-L, PosY, L, H);
+		g.DrawImage(pMap, PosX-L, PosY, L, H);
 
-	g.DrawImage(pMap->m_pBitmap, PosX, PosY, L, H);
+	g.DrawImage(pMap, PosX, PosY, L, H);
 
 	if (PosX<(INT)Width-L)
-		g.DrawImage(pMap->m_pBitmap, PosX+L, PosY, L, H);
+		g.DrawImage(pMap, PosX+L, PosY, L, H);
 
-	LocX += PosX-pIndicator->m_pBitmap->GetWidth()/2+1;
-	LocY += PosY-pIndicator->m_pBitmap->GetHeight()/2+1;
-	g.DrawImage(pIndicator->m_pBitmap, LocX, LocY);
+	LocX += PosX-pIndicator->GetWidth()/2+1;
+	LocY += PosY-pIndicator->GetHeight()/2+1;
+	g.DrawImage(pIndicator, LocX, LocY);
 
 	// Pfad erstellen
-	FontFamily fontFamily(FMGetApp()->GetDefaultFontFace());
+	FontFamily fontFamily(_T("Arial"));
 	WCHAR pszBuf[4];
 	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 
@@ -509,7 +491,7 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	Rect rt;
 	TextPath.GetBounds(&rt);
 
-	INT FntX = LocX+pIndicator->m_pBitmap->GetWidth();
+	INT FntX = LocX+pIndicator->GetWidth();
 	INT FntY = LocY-rt.Y;
 
 	if (FntY<10)
@@ -679,7 +661,7 @@ __forceinline BOOL ReadCodedLicense(CHAR* pStr, SIZE_T cCount)
 	HKEY hKey;
 	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Flightmap", &hKey)==ERROR_SUCCESS)
 	{
-		DWORD dwSize = cCount;
+		DWORD dwSize = (DWORD)cCount;
 		Result = (RegQueryValueExA(hKey, "License", 0, NULL, (BYTE*)pStr, &dwSize)==ERROR_SUCCESS);
 
 		RegCloseKey(hKey);
@@ -802,10 +784,10 @@ BOOL FMIsSharewareExpired()
 // Update
 //
 
-void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 {
-	if (Version)
-		Version->Empty();
+	Version.Empty();
+
 	if (Copyright)
 		Copyright->Empty();
 
@@ -826,15 +808,15 @@ void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 				LPVOID valPtr = NULL;
 				LPCWSTR valData = NULL;
 
-				if (Version)
-					if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
-					{
-						VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-						Version->Format(_T("%u.%u.%u"), 
-							(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
-							(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
-							(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
-					}
+				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
+				{
+					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
+					Version.Format(_T("%u.%u.%u"), 
+						(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
+						(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
+						(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
+				}
+
 				if (Copyright)
 					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
@@ -907,7 +889,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	return VersionIni;
 }
 
-CString GetIniValue(CString Ini, const CString Name)
+CString GetIniValue(CString Ini, const CString& Name)
 {
 	while (!Ini.IsEmpty())
 	{
@@ -927,14 +909,14 @@ CString GetIniValue(CString Ini, const CString Name)
 	return _T("");
 }
 
-void ParseVersion(const CString tmpStr, FMVersion* pVersion)
+void ParseVersion(const CString& tmpStr, FMVersion* pVersion)
 {
 	ASSERT(pVersion);
 
 	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
 }
 
-BOOL IsVersionLater(FMVersion& LatestVersion, FMVersion& CurrentVersion)
+BOOL IsVersionLater(const FMVersion& LatestVersion, const FMVersion& CurrentVersion)
 {
 	return ((LatestVersion.Major>CurrentVersion.Major) ||
 		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor>CurrentVersion.Minor)) ||
@@ -950,7 +932,7 @@ BOOL IsLaterFeature(const CString VersionIni, const CString Name, FMVersion& Cur
 	return IsVersionLater(FeatureVersion, CurrentVersion);
 }
 
-DWORD GetFeatures(const CString VersionIni, FMVersion& CurrentVersion)
+DWORD GetFeatures(const CString& VersionIni, FMVersion& CurrentVersion)
 {
 	DWORD Features = 0;
 
@@ -988,7 +970,7 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 {
 	// Obtain current version from instance version resource
 	CString CurrentVersion;
-	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
+	GetFileVersion(AfxGetResourceHandle(), CurrentVersion);
 
 	FMVersion CV = { 0 };
 	ParseVersion(CurrentVersion, &CV);

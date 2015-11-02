@@ -29,7 +29,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CItinerary* p_Itinerary;
-	CImageListTransparent m_SeatIcons;
+	CImageList m_SeatIcons;
 	CMFCMaskedEdit m_wndFilterAirport;
 	CComboBox m_wndFilterCarrier;
 	CComboBox m_wndFilterEquipment;

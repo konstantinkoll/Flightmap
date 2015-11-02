@@ -51,12 +51,6 @@ struct FactoryAirportData
 CMapFactory::CMapFactory(MapSettings* pSettings)
 {
 	m_Settings = *pSettings;
-
-	if (!FMIsLicensed())
-	{
-		m_Settings.Width = min(m_Settings.Width, 640);
-		m_Settings.Height = min(m_Settings.Height, 640);
-	}
 }
 
 CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
@@ -649,6 +643,12 @@ SkipNote:
 		pBitmap = pBitmap2;
 	}
 
+	// Deface
+#ifndef _DEBUG
+	if (!FMIsLicensed())
+		Deface(pBitmap);
+#endif
+
 	// Finish
 	if (DeleteKitchen)
 		delete pKitchen;
@@ -706,13 +706,12 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 	else
 	{
 		const UINT ResID[3] = { IDB_BLUEMARBLE_8192, IDB_NIGHT_8192, IDB_GRAY_8192 };
-		CGdiPlusBitmapResource img(ResID[m_Settings.Background], m_Settings.Background==2 ? _T("PNG") : _T("JPG"));
 
 		ImageAttributes ImgAttr;
 		ImgAttr.SetWrapMode(WrapModeTile);
 
 		Graphics g(dc);
-		g.DrawImage(img.m_pBitmap, Rect(0, 0, Width, Height), Left-MapOffset, Top, Right-Left, Bottom-Top, UnitPixel, &ImgAttr);
+		g.DrawImage(theApp.GetCachedResourceImage(ResID[m_Settings.Background]), Rect(0, 0, Width, Height), Left-MapOffset, Top, Right-Left, Bottom-Top, UnitPixel, &ImgAttr);
 	}
 
 	dc.SelectObject(pOldBitmap);
@@ -782,4 +781,20 @@ void CMapFactory::DrawArrow(Graphics& g, Brush& brush, DOUBLE x1, DOUBLE y1, DOU
 	points[2] = PointF((REAL)(16.0*Upscale*cos(Angle-PI/7)+x1), (REAL)(16.0*Upscale*sin(Angle-PI/7)+y1));
 
 	g.FillPolygon(&brush, points, 3);
+}
+
+__forceinline void CMapFactory::Deface(CBitmap* pBitmap)
+{
+	ASSERT(pBitmap);
+
+	CSize sz = pBitmap->GetBitmapDimension();
+
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+	CBitmap* pOldBitmap = dc.SelectObject(pBitmap);
+
+	for (INT z=0; z<sz.cy; z+=48)
+		dc.FillSolidRect(0, z, sz.cx, 16, 0xFF00FF);
+
+	dc.SelectObject(pOldBitmap);
 }

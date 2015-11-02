@@ -351,11 +351,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGdiPlusBitmap.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CGridHeader.cpp"
+				RelativePath=".\CFrontstageWnd.cpp"
 				>
 			</File>
 			<File
@@ -368,10 +364,6 @@
 			</File>
 			<File
 				RelativePath=".\CIcons.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
 			<File
@@ -412,6 +404,10 @@
 			</File>
 			<File
 				RelativePath=".\FMDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMFont.cpp"
 				>
 			</File>
 			<File
@@ -493,11 +489,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGdiPlusBitmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGridHeader.h"
+				RelativePath=".\CFrontstageWnd.h"
 				>
 			</File>
 			<File
@@ -510,10 +502,6 @@
 			</File>
 			<File
 				RelativePath=".\CIcons.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.h"
 				>
 			</File>
 			<File
@@ -558,6 +546,10 @@
 			</File>
 			<File
 				RelativePath=".\FMDynArray.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMFont.h"
 				>
 			</File>
 			<File
@@ -635,7 +627,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Background_DarkLinen.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Background_Tooltip.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Close.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Descending_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Div.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\DivDown.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\DivUp.png"
 				>
 			</File>
 			<File
@@ -683,6 +699,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Maximize.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Minimize.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Rating0.bmp"
 				>
 			</File>
@@ -727,23 +751,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\ResolutionIcons.bmp"
+				RelativePath=".\res\ResolutionIcons.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\SortIndicators.bmp"
+				RelativePath=".\res\Restore.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\TooltipBackground.png"
+				RelativePath=".\res\Santa.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\UpdateIcons_16.bmp"
+				RelativePath=".\res\SidebarShadow.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\res\UpdateIcons_32.bmp"
+				RelativePath=".\res\SortIndicators.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_32.png"
 				>
 			</File>
 		</Filter>

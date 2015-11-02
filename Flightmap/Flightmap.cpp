@@ -50,10 +50,8 @@ END_MESSAGE_MAP()
 CFlightmapApp::CFlightmapApp()
 	: FMApplication(theAppID)
 {
-	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.Flightmap.NewWindow"));
-	m_NagCounter = 3;
 	m_AppInitialized = FALSE;
-	m_FlagIcons16[0] = m_FlagIcons16[1] = NULL;
+	hFlagIcons[0] = hFlagIcons[1] = NULL;
 
 	CF_FLIGHTS = (CLIPFORMAT)RegisterClipboardFormat(_T("liquidFOLDERS.Flightmap"));
 }
@@ -110,9 +108,8 @@ BOOL CFlightmapApp::InitInstance()
 	}
 
 	// Icons
-	m_FlagIcons16[0] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16i));
-	m_FlagIcons16[1] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16));
-	m_FlagIcons32.Create(IDB_FLAGS_32, 32, 32);
+	hFlagIcons[0] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16i));
+	hFlagIcons[1] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16));
 
 	// Registry auslesen
 	SetRegistryBase();
@@ -258,8 +255,8 @@ CWnd* CFlightmapApp::OpenCommandLine(WCHAR* CmdLine)
 
 INT CFlightmapApp::ExitInstance()
 {
-	DeleteObject(m_FlagIcons16[0]);
-	DeleteObject(m_FlagIcons16[1]);
+	DeleteObject(hFlagIcons[0]);
+	DeleteObject(hFlagIcons[1]);
 
 	if (m_AppInitialized)
 	{
@@ -368,7 +365,7 @@ void CFlightmapApp::Broadcast(UINT Message)
 		m_pMainFrames.GetNext(p)->PostMessage(Message);
 }
 
-void CFlightmapApp::AddToRecentList(CString FileName)
+void CFlightmapApp::AddToRecentList(const CString& FileName)
 {
 	for (POSITION p=m_RecentFiles.GetHeadPosition(); p; )
 	{
@@ -421,7 +418,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 			f.WriteAirport(pAirport);
 			f.Close();
 
-			ShellExecute(GetForegroundWindow(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+			ShellExecute(GetForegroundWindow(), _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
 		}
 		catch(CFileException ex)
 		{
@@ -443,7 +440,7 @@ void CFlightmapApp::OpenAirportLiquidFolders(CHAR* Code)
 	WCHAR Parameter[4];
 	MultiByteToWideChar(CP_ACP, 0, Code, -1, Parameter, 4);
 
-	ShellExecute(GetForegroundWindow(), _T("open"), m_PathLiquidFolders, Parameter, NULL, SW_SHOW);
+	ShellExecute(GetForegroundWindow(), _T("open"), m_PathLiquidFolders, Parameter, NULL, SW_SHOWNORMAL);
 }
 
 
@@ -452,7 +449,7 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	Graphics g(dc);
 	g.SetPageUnit(UnitPixel);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
-	g.DrawImage(GetCachedResourceImage(IDB_FLIGHTMAP_256, _T("PNG"))->m_pBitmap, (REAL)(rect.left*0.95), (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
+	g.DrawImage(GetCachedResourceImage(IDB_FLIGHTMAP_256), (REAL)(rect.left*0.95), (REAL)rect.top, (REAL)(Spacer*2.0), (REAL)(Spacer*2.0));
 
 	CFont fntTitle;
 	fntTitle.CreateFont((INT)Spacer, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,

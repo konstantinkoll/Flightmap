@@ -50,8 +50,8 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	MapDialogRect(&rectBorders);
 
 	CRect btn;
-	pBottomWnd->GetWindowRect(&btn);
-	ScreenToClient(&btn);
+	pBottomWnd->GetWindowRect(btn);
+	ScreenToClient(btn);
 
 	CRect layout;
 	GetLayoutRect(layout);
@@ -60,15 +60,15 @@ void FMDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	BOOL Themed = IsCtrlThemed();
 	if (Themed && FMGetApp()->m_UseBgImages)
 	{
-		CGdiPlusBitmap* pBackdrop = FMGetApp()->GetCachedResourceImage(IDB_BACKDROP, _T("PNG"));
-		INT l = pBackdrop->m_pBitmap->GetWidth();
-		INT h = pBackdrop->m_pBitmap->GetHeight();
+		Bitmap* pBackdrop = FMGetApp()->GetCachedResourceImage(IDB_BACKDROP);
+		INT l = pBackdrop->GetWidth();
+		INT h = pBackdrop->GetHeight();
 
 		DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
 		l = (INT)(l*f);
 		h = (INT)(h*f);
 
-		g.DrawImage(pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+		g.DrawImage(pBackdrop, rect.Width()-l, rect.Height()-h, l, h);
 
 		SolidBrush brush1(Color(168, 255, 255, 255));
 		g.FillRectangle(&brush1, 0, 0, m_BackBufferL, --Line);
@@ -140,8 +140,8 @@ void FMDialog::GetLayoutRect(LPRECT lpRect) const
 		return;
 
 	CRect rectButton;
-	pBottomWnd->GetWindowRect(&rectButton);
-	ScreenToClient(&rectButton);
+	pBottomWnd->GetWindowRect(rectButton);
+	ScreenToClient(rectButton);
 	lpRect->bottom = rectButton.top-rectBorders.Height()-2;
 }
 
@@ -150,8 +150,8 @@ BEGIN_MESSAGE_MAP(FMDialog, CDialog)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
-	ON_WM_THEMECHANGED()
 	ON_WM_SYSCOLORCHANGE()
+	ON_WM_THEMECHANGED()
 	ON_REGISTERED_MESSAGE(FMGetApp()->m_UseBgImagesChangedMsg, OnUseBgImagesChanged)
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
@@ -236,8 +236,8 @@ void FMDialog::OnSize(UINT nType, INT cx, INT cy)
 		CWnd* pWnd = m_BottomRightControls.GetNext(p);
 
 		CRect rect;
-		pWnd->GetWindowRect(&rect);
-		ScreenToClient(&rect);
+		pWnd->GetWindowRect(rect);
+		ScreenToClient(rect);
 
 		pWnd->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
 
@@ -247,8 +247,8 @@ void FMDialog::OnSize(UINT nType, INT cx, INT cy)
 	if (p_BottomLeftControl)
 	{
 		CRect rect;
-		p_BottomLeftControl->GetWindowRect(&rect);
-		ScreenToClient(&rect);
+		p_BottomLeftControl->GetWindowRect(rect);
+		ScreenToClient(rect);
 
 		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
@@ -259,17 +259,17 @@ void FMDialog::OnSize(UINT nType, INT cx, INT cy)
 	Invalidate();
 }
 
+void FMDialog::OnSysColorChange()
+{
+	if (!IsCtrlThemed())
+		m_BackBufferL = m_BackBufferH = 0;
+}
+
 LRESULT FMDialog::OnThemeChanged()
 {
 	m_BackBufferL = m_BackBufferH = 0;
 
 	return TRUE;
-}
-
-void FMDialog::OnSysColorChange()
-{
-	if (!IsCtrlThemed())
-		m_BackBufferL = m_BackBufferH = 0;
 }
 
 LRESULT FMDialog::OnUseBgImagesChanged(WPARAM wParam, LPARAM /*lParam*/)
@@ -290,17 +290,18 @@ HBRUSH FMDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-	{
-		CRect rc;
-		pWnd->GetWindowRect(&rc);
-		ScreenToClient(&rc);
+	if (hBackgroundBrush)
+		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		{
+			CRect rc;
+			pWnd->GetWindowRect(rc);
+			ScreenToClient(rc);
 
-		pDC->SetBkMode(TRANSPARENT);
-		pDC->SetBrushOrg(-rc.left, -rc.top);
+			pDC->SetBkMode(TRANSPARENT);
+			pDC->SetBrushOrg(-rc.left, -rc.top);
 
-		hBrush = hBackgroundBrush;
-	}
+			hBrush = hBackgroundBrush;
+		}
 
 	return hBrush;
 }

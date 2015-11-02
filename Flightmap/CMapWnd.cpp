@@ -32,7 +32,7 @@ BOOL CMapWnd::Create()
 	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Map"));
 }
 
-void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title)
+void CMapWnd::SetBitmap(CBitmap* pBitmap, const CString& DisplayName, CString Title)
 {
 	delete m_pBitmap;
 
@@ -50,13 +50,13 @@ void CMapWnd::SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title)
 	m_wndMapView.SetBitmap(m_pBitmap=pBitmap);
 }
 
-void CMapWnd::ExportMap(CString Filename, GUID guidFileType)
+void CMapWnd::ExportMap(const CString& FileName, GUID guidFileType)
 {
 	ASSERT(m_pBitmap);
 
 	CWaitCursor csr;
 
-	theApp.SaveBitmap(m_pBitmap, Filename, guidFileType, FALSE);
+	theApp.SaveBitmap(m_pBitmap, FileName, guidFileType, FALSE);
 }
 
 void CMapWnd::ExportMap(DWORD FilterIndex)

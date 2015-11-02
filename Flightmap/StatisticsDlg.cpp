@@ -98,6 +98,8 @@ typedef CMap<CStringA, LPCSTR, UINT, UINT> CFlightsAirport;
 typedef CMap<CStringW, LPCWSTR, Airline, Airline> CFlightsCarrier;
 typedef CMap<CStringW, LPCWSTR, UINT, UINT> CFlightsEquipment;
 
+CIcons SeatIcons;
+
 StatisticsDlg::StatisticsDlg(CItinerary* pItinerary, CWnd* pParentWnd)
 	: CDialog(IDD_STATISTICS, pParentWnd)
 {
@@ -502,7 +504,8 @@ BOOL StatisticsDlg::OnInitDialog()
 	m_wndListClass.AddColumn(1, _T(""));
 	m_wndListClass.AddColumn(2, _T(""));
 
-	m_SeatIcons.Create(IDB_SEATICONS, 32, 32);
+	SeatIcons.Load(IDB_SEATICONS, 32);
+	m_SeatIcons.Attach(SeatIcons.ExtractImageList());
 	m_wndListClass.SetImageList(&m_SeatIcons, LVSIL_NORMAL);
 
 	m_wndListClass.EnableGroupView(TRUE);

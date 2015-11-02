@@ -27,7 +27,7 @@ BOOL CCalendarFile::Open(LPCTSTR lpszFileName, LPCTSTR lpszComment, LPCTSTR lpsz
 	m_IsOpen = TRUE;
 
 	CString Version;
-	GetFileVersion(AfxGetInstanceHandle(), &Version);
+	GetFileVersion(AfxGetInstanceHandle(), Version);
 
 	WriteString(_T("BEGIN:VCALENDAR\n"));
 	WriteString(_T("PRODID:-//liquidFOLDERS//Flightmap ")+Version);

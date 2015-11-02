@@ -3,8 +3,9 @@
 //
 
 #pragma once
-#include "CGdiPlusBitmap.h"
+#include "CIcons.h"
 #include "FMDialog.h"
+#include "FMFont.h"
 
 
 // FMUpdateDlg
@@ -23,7 +24,7 @@
 class FMUpdateDlg : public FMDialog
 {
 public:
-	FMUpdateDlg(CString Version, CString MSN, DWORD Features, CWnd* pParentWnd=NULL);
+	FMUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -58,10 +59,10 @@ private:
 	void UpdateDownloadButton();
 	void CheckInternetConnection();
 
-	CGdiPlusBitmap* m_pLogo;
-	CImageListTransparent m_UpdateIcons;
-	CFont m_CaptionFont;
-	CFont m_VersionFont;
+	Bitmap* p_Logo;
+	CIcons m_UpdateIcons;
+	FMFont m_CaptionFont;
+	FMFont m_VersionFont;
 	INT m_CaptionTop;
 	INT m_IconTop;
 	INT m_FeaturesTop;

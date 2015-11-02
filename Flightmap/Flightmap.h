@@ -69,7 +69,7 @@ public:
 
 	void Quit();
 	void Broadcast(UINT Message);
-	void AddToRecentList(CString FileName);
+	void AddToRecentList(const CString& FileName);
 	void AddRecentList(CDialogMenuPopup* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
@@ -80,8 +80,7 @@ public:
 	CString m_PathGoogleEarth;
 	CString m_PathLiquidFolders;
 
-	HBITMAP m_FlagIcons16[2];
-	CImageListTransparent m_FlagIcons32;
+	HBITMAP hFlagIcons[2];
 
 	CLIPFORMAT CF_FLIGHTS;
 

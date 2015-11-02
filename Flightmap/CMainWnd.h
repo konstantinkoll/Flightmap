@@ -27,15 +27,15 @@ public:
 
 protected:
 	void UpdateWindowStatus(BOOL AllowLoungeView=FALSE);
-	void Open(CString FileName);
+	void Open(const CString& FileName);
 	BOOL CloseFile(BOOL AllowLoungeView=FALSE);
 	CKitchen* GetKitchen(BOOL Limit, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	void ExportMap(CString Filename, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	void ExportExcel(CString FileName);
-	void ExportCalendar(CString FileName);
-	BOOL ExportGoogleEarth(CString FileName, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	void ExportText(CString FileName);
+	void ExportMap(const CString& FileName, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	void ExportExcel(const CString& FileName);
+	void ExportCalendar(const CString& FileName);
+	BOOL ExportGoogleEarth(const CString& FileName, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	void ExportText(const CString& FileName);
 	void ExportMap(DWORD FilterIndex=3, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void SaveAs(DWORD FilterIndex=1);
 	void Print(PRINTDLGEX pdex);

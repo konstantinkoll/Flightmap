@@ -122,7 +122,7 @@ void CMainWnd::UpdateWindowStatus(BOOL AllowLoungeView)
 	SetFocus();
 }
 
-void CMainWnd::Open(CString FileName)
+void CMainWnd::Open(const CString& FileName)
 {
 	ASSERT(!m_pItinerary);
 
@@ -194,14 +194,14 @@ CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro)
 	return f.RenderMap(GetKitchen(FALSE, Selected, MergeMetro));
 }
 
-void CMainWnd::ExportMap(CString Filename, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
+void CMainWnd::ExportMap(const CString& FileName, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
 {
 	CWaitCursor csr;
 
-	theApp.SaveBitmap(GetMap(Selected, MergeMetro), Filename, guidFileType);
+	theApp.SaveBitmap(GetMap(Selected, MergeMetro), FileName, guidFileType);
 }
 
-void CMainWnd::ExportExcel(CString FileName)
+void CMainWnd::ExportExcel(const CString& FileName)
 {
 	ASSERT(m_pItinerary);
 
@@ -224,7 +224,7 @@ void CMainWnd::ExportExcel(CString FileName)
 	}
 }
 
-void CMainWnd::ExportCalendar(CString FileName)
+void CMainWnd::ExportCalendar(const CString& FileName)
 {
 	ASSERT(m_pItinerary);
 
@@ -247,7 +247,7 @@ void CMainWnd::ExportCalendar(CString FileName)
 	}
 }
 
-BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors, BOOL Clamp, BOOL Selected, BOOL MergeMetro)
+BOOL CMainWnd::ExportGoogleEarth(const CString& FileName, BOOL UseCount, BOOL UseColors, BOOL Clamp, BOOL Selected, BOOL MergeMetro)
 {
 	CGoogleEarthFile f;
 
@@ -289,7 +289,7 @@ BOOL CMainWnd::ExportGoogleEarth(CString FileName, BOOL UseCount, BOOL UseColors
 	}
 }
 
-void CMainWnd::ExportText(CString FileName)
+void CMainWnd::ExportText(const CString& FileName)
 {
 	ASSERT(m_pItinerary);
 
@@ -1378,7 +1378,7 @@ void CMainWnd::OnGoogleEarthOpen()
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClamp, TRUE, theApp.m_GoogleEarthMergeMetro))
-		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CMainWnd::OnGoogleEarthMergeMetro()

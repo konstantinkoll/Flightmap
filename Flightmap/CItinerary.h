@@ -189,7 +189,7 @@ class CGPXFile : public xml_document<>
 class CItinerary
 {
 public:
-	CItinerary(CString FileName=_T(""));
+	CItinerary(const CString& FileName=_T(""));
 	CItinerary(CItinerary* pItinerary);
 	~CItinerary();
 
@@ -210,32 +210,32 @@ public:
 	void DeleteFlight(UINT Row);
 	void DeleteSelectedFlights();
 
-	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
+	BOOL AddAttachment(AIRX_Flight& Flight, CString FileName);
 	UINT AddAttachment(CItinerary* pItinerary, UINT Index);
-	CGdiPlusBitmap* DecodePictureAttachment(UINT Index);
-	static CGdiPlusBitmap* DecodePictureAttachment(AIRX_Attachment& Attachment);
-	static CGPXFile* DecodeGPXAttachment(AIRX_Attachment& Attachment);
+	Bitmap* DecodePictureAttachment(UINT Index) const;
+	static Bitmap* DecodePictureAttachment(const AIRX_Attachment& Attachment);
+	static CGPXFile* DecodeGPXAttachment(const AIRX_Attachment& Attachment);
 	static void ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force=FALSE);
 	void DeleteAttachment(UINT Index, AIRX_Flight* pFlight=NULL);
 	void DeleteAttachments(AIRX_Flight* pFlight=NULL);
 
 	AIRX_Metadata m_Metadata;
-	FMDynArray<AIRX_Flight> m_Flights;
-	FMDynArray<AIRX_Attachment> m_Attachments;
+	FMDynArray<AIRX_Flight, 128, 128> m_Flights;
+	FMDynArray<AIRX_Attachment, 16, 16> m_Attachments;
 
 	BOOL m_IsModified;
 	CString m_FileName;
 	CString m_DisplayName;
 
 private:
-	void OpenAIRX(CString FileName);
-	void OpenAIR(CString FileName);
-	void OpenCSV(CString FileName);
+	void OpenAIRX(const CString& FileName);
+	void OpenAIR(const CString& FileName);
+	void OpenCSV(const CString& FileName);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	static INT Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending);
 	void Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
-	void SetDisplayName(CString FileName);
+	void SetDisplayName(const CString& FileName);
 
 	BOOL m_IsOpen;
 };
@@ -258,6 +258,6 @@ void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft);
 void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route);
 void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
-void StringToAttribute(WCHAR* pStr, AIRX_Flight& Flight, UINT Attr);
+void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr);
 
-BOOL Tokenize(CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter, WCHAR* pDelimiterFound=NULL);
+BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter, WCHAR* pDelimiterFound=NULL);

@@ -138,7 +138,7 @@ void CGoogleEarthFile::Close()
 	}
 }
 
-void CGoogleEarthFile::WriteAttribute(UINT ResID, CString Value)
+void CGoogleEarthFile::WriteAttribute(UINT ResID, const CString& Value)
 {
 	if (!Value.IsEmpty())
 	{
@@ -152,8 +152,7 @@ void CGoogleEarthFile::WriteAttribute(UINT ResID, CString Value)
 	}
 }
 
-void CGoogleEarthFile::WriteAttribute(UINT ResID, CHAR* Value)
+void CGoogleEarthFile::WriteAttribute(UINT ResID, LPCSTR pValue)
 {
-	CString tmpStr(Value);
-	WriteAttribute(ResID, tmpStr);
+	WriteAttribute(ResID, CString(pValue));
 }

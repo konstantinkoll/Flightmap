@@ -21,10 +21,10 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create();
-	void SetBitmap(CBitmap* pBitmap, CString DisplayName, CString Title);
+	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName, CString Title);
 
 protected:
-	void ExportMap(CString Filename, GUID guidFileType);
+	void ExportMap(const CString& FileName, GUID guidFileType);
 	void ExportMap(DWORD FilterIndex=3);
 	void Print(PRINTDLGEX pdex);
 
