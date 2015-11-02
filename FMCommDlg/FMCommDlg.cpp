@@ -856,7 +856,7 @@ CString GetLatestVersion(CString CurrentVersion)
 	else
 		if (FMIsSharewareExpired())
 		{
-			CurrentVersion += _T(" (expired");
+			CurrentVersion += _T(" (expired)");
 		}
 
 	// Get available version
