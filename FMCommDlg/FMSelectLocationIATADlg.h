@@ -12,7 +12,7 @@
 
 #define MaxAirportsPerCountry   2500
 
-class FMSelectLocationIATADlg : public FMDialog
+class FMSelectLocationIATADlg : public CDialog
 {
 public:
 	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, const CHAR* pAirport=NULL);

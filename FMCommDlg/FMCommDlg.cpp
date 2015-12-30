@@ -466,13 +466,10 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 			PosY = Height-H;
 		}
 
-	if (PosX>1)
-		g.DrawImage(pMap, PosX-L, PosY, L, H);
+	ImageAttributes ImgAttr;
+	ImgAttr.SetWrapMode(WrapModeTile);
 
-	g.DrawImage(pMap, PosX, PosY, L, H);
-
-	if (PosX<(INT)Width-L)
-		g.DrawImage(pMap, PosX+L, PosY, L, H);
+	g.DrawImage(pMap, Rect(0, 0, Width, Height), -PosX, -PosY, Width, Height, UnitPixel, &ImgAttr);
 
 	LocX += PosX-pIndicator->GetWidth()/2+1;
 	LocY += PosY-pIndicator->GetHeight()/2+1;

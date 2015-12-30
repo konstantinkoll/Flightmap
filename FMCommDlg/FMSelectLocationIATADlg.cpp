@@ -36,7 +36,7 @@ void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
 //
 
 FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, const CHAR* pAirport)
-	: FMDialog(IDD_SELECTIATA, pParentWnd)
+	: CDialog(IDD_SELECTIATA, pParentWnd)
 {
 	m_LastCountrySelected = FMGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
 	m_LastSortColumn = FMGetApp()->GetInt(_T("IATALastSortColumn"), 0);
@@ -48,7 +48,7 @@ FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, const CHAR* p
 
 void FMSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 {
-	FMDialog::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_AIRPORTS, m_wndAirportList);
 
@@ -168,7 +168,7 @@ void FMSelectLocationIATADlg::LoadCountry(UINT Country)
 }
 
 
-BEGIN_MESSAGE_MAP(FMSelectLocationIATADlg, FMDialog)
+BEGIN_MESSAGE_MAP(FMSelectLocationIATADlg, CDialog)
 	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
 	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
 	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
@@ -179,7 +179,7 @@ END_MESSAGE_MAP()
 
 BOOL FMSelectLocationIATADlg::OnInitDialog()
 {
-	FMDialog::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	// Combobox füllen
 	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);

@@ -26,8 +26,8 @@ void AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
 // CColor
 //
 
-CColor::CColor(COLORREF clr, BYTE alpha)
-	: Color(alpha, clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF)
+CColor::CColor(COLORREF clr, BYTE Alpha)
+	: Color(Alpha, clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF)
 {
 }
 
@@ -240,7 +240,6 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	CBitmap* pOldBitmap = dc.SelectObject(pBitmap);
 
 	Graphics g(dc);
-	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetPixelOffsetMode(PixelOffsetModeHighQuality);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
