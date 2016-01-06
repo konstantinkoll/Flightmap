@@ -225,6 +225,8 @@ BOOL CFlightmapApp::InitInstance()
 	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
 	if (pFrame)
 	{
+		pFrame->RedrawWindow(NULL, NULL, RDW_UPDATENOW);
+
 		if (!FMIsLicensed())
 			ShowNagScreen(NAG_FORCE, pFrame);
 

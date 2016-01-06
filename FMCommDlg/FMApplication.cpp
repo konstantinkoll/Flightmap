@@ -394,8 +394,6 @@ Bitmap* FMApplication::GetResourceImage(UINT nID) const
 					pStream->Release();
 				}
 			}
-
-			UnlockResource(hMemory);
 		}
 	}
 
@@ -446,8 +444,6 @@ HANDLE FMApplication::LoadFontFromResource(UINT nID)
 					hFont = AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
 				}
 			}
-
-			UnlockResource(hMemory);
 		}
 	}
 
