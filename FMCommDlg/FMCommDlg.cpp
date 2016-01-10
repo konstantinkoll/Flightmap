@@ -733,25 +733,25 @@ BOOL FMIsSharewareExpired()
 
 		BOOL Result = FALSE;
 
-		HKEY k;
-		if (RegOpenKey(HKEY_CURRENT_USER, _T("Software\\Flightmap"), &k)==ERROR_SUCCESS)
+		HKEY hKey;
+		if (RegOpenKey(HKEY_CURRENT_USER, _T("Software\\Flightmap"), &hKey)==ERROR_SUCCESS)
 		{
-			DWORD sz = sizeof(DWORD);
-			if (RegQueryValueEx(k, _T("Seed"), 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &sz)==ERROR_SUCCESS)
+			DWORD dwSize = sizeof(DWORD);
+			if (RegQueryValueEx(hKey, _T("Seed"), 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &dwSize)==ERROR_SUCCESS)
 			{
-				sz = sizeof(DWORD);
-				if (RegQueryValueEx(k, _T("Envelope"), 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
+				dwSize = sizeof(DWORD);
+				if (RegQueryValueEx(hKey, _T("Envelope"), 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &dwSize)==ERROR_SUCCESS)
 					Result = TRUE;
 			}
 
 			if (!Result)
 			{
 				GetSystemTimeAsFileTime(&ExpireBuffer);
-				RegSetValueEx(k, _T("Seed"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
-				RegSetValueEx(k, _T("Envelope"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
+				RegSetValueEx(hKey, _T("Seed"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
+				RegSetValueEx(hKey, _T("Envelope"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
 			}
 
-			RegCloseKey(k);
+			RegCloseKey(hKey);
 		}
 	}
 
@@ -761,7 +761,7 @@ BOOL FMIsSharewareExpired()
 
 	ULARGE_INTEGER FirstInstall;
 	FirstInstall.HighPart = ExpireBuffer.dwHighDateTime;
-	FirstInstall.LowPart = ExpireBuffer.dwHighDateTime;
+	FirstInstall.LowPart = ExpireBuffer.dwLowDateTime;
 
 	ULARGE_INTEGER Now;
 	Now.HighPart = ft.dwHighDateTime;
