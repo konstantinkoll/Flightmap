@@ -85,8 +85,8 @@ IDB_SLOGAN              RCDATA                  "res\\Slogan.png"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,29,0
- PRODUCTVERSION 2,1,29,0
+ FILEVERSION 2,1,30,0
+ PRODUCTVERSION 2,1,30,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -103,13 +103,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.29"
+            VALUE "FileVersion", "2.1.30"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.29"
+            VALUE "ProductVersion", "2.1.30"
         END
     END
     BLOCK "VarFileInfo"
