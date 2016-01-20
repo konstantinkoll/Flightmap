@@ -619,7 +619,7 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
-    IDS_UPDATENOTAVAILABLE  "Ihr Flightmap ist aktuell."
+    IDS_UPDATENOTAVAILABLE  "Ihr Flightmap ist auf dem neuesten Stand."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AUTOMATIC           "Automatisch wählen"
     IDS_AIRPORT_NAME        "Name"
