@@ -729,13 +729,14 @@ BOOL FMIsSharewareExpired()
 	// Setup
 	if (!ExpireRead)
 	{
+		GetSystemTimeAsFileTime(&ExpireBuffer);
 		ExpireRead = TRUE;
 
-		BOOL Result = FALSE;
-
 		HKEY hKey;
-		if (RegOpenKey(HKEY_CURRENT_USER, _T("Software\\Flightmap"), &hKey)==ERROR_SUCCESS)
+		if (RegCreateKey(HKEY_CURRENT_USER, _T("Software\\Flightmap"), &hKey)==ERROR_SUCCESS)
 		{
+			BOOL Result = FALSE;
+
 			DWORD dwSize = sizeof(DWORD);
 			if (RegQueryValueEx(hKey, _T("Seed"), 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &dwSize)==ERROR_SUCCESS)
 			{
@@ -746,7 +747,6 @@ BOOL FMIsSharewareExpired()
 
 			if (!Result)
 			{
-				GetSystemTimeAsFileTime(&ExpireBuffer);
 				RegSetValueEx(hKey, _T("Seed"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
 				RegSetValueEx(hKey, _T("Envelope"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
 			}
