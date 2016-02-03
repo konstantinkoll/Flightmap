@@ -11,6 +11,7 @@
 //
 
 CCalendarFile::CCalendarFile()
+	: CStdioFile()
 {
 	m_IsOpen = FALSE;
 }

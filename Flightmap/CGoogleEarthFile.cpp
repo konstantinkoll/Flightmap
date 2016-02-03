@@ -11,6 +11,7 @@
 //
 
 CGoogleEarthFile::CGoogleEarthFile()
+	: CStdioFile()
 {
 	m_IsOpen = FALSE;
 }
