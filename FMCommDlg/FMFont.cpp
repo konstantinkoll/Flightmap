@@ -36,11 +36,6 @@ BOOL FMFont::CreateFontIndirect(const LOGFONT* lpLogFont)
 	return Result;
 }
 
-INT FMFont::GetFontHeight() const
-{
-	return m_FontHeight;
-}
-
 CSize FMFont::GetTextExtent(LPCTSTR lpszString) const
 {
 	CDC dc;

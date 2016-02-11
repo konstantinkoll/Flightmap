@@ -247,10 +247,16 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	// Draw routes
 	if (m_Settings.ShowFlightRoutes)
 	{
+		UINT MinRouteCount = pKitchen->m_MaxRouteCount;
+
+		for (UINT a=0; a<RouteCount; a++)
+			if (RouteData[a]->Route.Count<MinRouteCount)
+				MinRouteCount = RouteData[a]->Route.Count;
+
 #define PreparePen(Route) \
-	const BYTE Alpha = (m_Settings.UseCountOpacity && (pKitchen->m_MaxRouteCount!=0)) ? 0x40+(BYTE)(191.0*((DOUBLE)Route.Count)/((DOUBLE)pKitchen->m_MaxRouteCount)) : 0xFF; \
+	const BYTE Alpha = (m_Settings.UseCountOpacity && (pKitchen->m_MaxRouteCount!=0)) ? 0x60+(BYTE)(159.0*((DOUBLE)(Route.Count-MinRouteCount))/((DOUBLE)(pKitchen->m_MaxRouteCount-MinRouteCount+1))) : 0xFF; \
 	CColor col(((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : Route.Color, Alpha); \
-	const DOUBLE Width = (m_Settings.UseCountWidth && (pKitchen->m_MaxRouteCount!=0)) ? (0.5+(5.9*((DOUBLE)Route.Count)/((DOUBLE)pKitchen->m_MaxRouteCount))) : 3.2; \
+	const DOUBLE Width = (m_Settings.UseCountWidth && (pKitchen->m_MaxRouteCount!=0)) ? (0.2+(3.0*((DOUBLE)(Route.Count-MinRouteCount))/((DOUBLE)(pKitchen->m_MaxRouteCount-MinRouteCount+1)))) : 3.2; \
 	Pen pen(col, (REAL)(Width*Upscale));
 
 		if (!m_Settings.StraightLines)
@@ -345,6 +351,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 
 					if (pPair2->value.Arrows & ARROW_FT)
 						DrawArrow(g, brush, pTo->S, pTo->Z, pFrom->S, pFrom->Z, MinS, MinZ, Scale, Upscale);
+
 					if (pPair2->value.Arrows & ARROW_TF)
 						DrawArrow(g, brush, pFrom->S, pFrom->Z, pTo->S, pTo->Z, MinS, MinZ, Scale, Upscale);
 				}
@@ -423,42 +430,65 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 				case 0:
 					if (((a&8)==0) && (pData->TBLR & 8))
 						continue;
+
 					rectLabel.OffsetRect((INT)(Radius*1.5), -H/2);
+
 					break;
+
 				case 1:
 					if (((a&8)==0) && (pData->TBLR & 4))
 						continue;
+
 					rectLabel.OffsetRect(-L-(INT)(Radius*1.5), -H/2);
+
 					break;
+
 				case 2:
 					if (((a&8)==0) && (pData->TBLR & 2))
 						continue;
+
 					rectLabel.OffsetRect(-L/2, (INT)(Radius*1.5));
+
 					break;
+
 				case 3:
 					if (((a&8)==0) && (pData->TBLR & 1))
 						continue;
+
 					rectLabel.OffsetRect(-L/2, -H-(INT)(Radius*1.5));
+
 					break;
+
 				case 4:
 					if (((a&8)==0) && (pData->TBLR & 2))
 						continue;
+
 					rectLabel.OffsetRect(-L-(INT)(Radius*1.5), (INT)(Radius*1.5));
+
 					break;
+
 				case 5:
 					if (((a&8)==0) && (pData->TBLR & 1))
 						continue;
+
 					rectLabel.OffsetRect(-L-(INT)(Radius*1.5), -H-(INT)(Radius*1.5));
-					break;				
+
+					break;
+
 				case 6:
 					if (((a&8)==0) && (pData->TBLR & 2))
 						continue;
+
 					rectLabel.OffsetRect((INT)(Radius*1.5), (INT)(Radius*1.5));
+
 					break;
+
 				case 7:
 					if (((a&8)==0) && (pData->TBLR & 1))
 						continue;
+
 					rectLabel.OffsetRect((INT)(Radius*1.5), -H-(INT)(Radius*1.5));
+
 					break;
 				}
 
