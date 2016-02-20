@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 	StringSource(message+signature, true, new Base64Encoder(new StringSink(result)));
 
 	ofstream keyMetadataOutput(argv[2]);
-	keyMetadataOutput << "text/plain:liquidFOLDERS.lic" << endl;
+	keyMetadataOutput << "text/plain:Flightmap.lic" << endl;
 	keyMetadataOutput.close();
 
 	ofstream keyOutput(argv[3]);

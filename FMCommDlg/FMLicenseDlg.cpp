@@ -20,28 +20,35 @@ void FMLicenseDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		CString Key;
-		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(Key);
+		CString LicenseKey;
+		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(LicenseKey);
 
-		FMGetApp()->WriteString(_T("License"), Key);
+		FMGetApp()->WriteString(_T("License"), LicenseKey);
 
-		CString Caption;
-		CString Message;
 		if (FMIsLicensed(NULL, TRUE))
 		{
-			ENSURE(Caption.LoadString(IDS_LICENSEVALID_CAPTION));
-			ENSURE(Message.LoadString(IDS_LICENSEVALID_MSG));
-			MessageBox(Message, Caption, MB_ICONINFORMATION);
+			::PostMessage(HWND_BROADCAST, FMGetApp()->m_LicenseActivatedMsg, NULL, NULL);
+
+			CString Caption((LPCSTR)IDS_LICENSEVALID_CAPTION);
+			CString Message((LPCSTR)IDS_LICENSEVALID_MSG);
+			FMMessageBox(this, Message, Caption, MB_ICONINFORMATION | MB_OK);
 		}
 		else
 		{
-			ENSURE(Caption.LoadString(IDS_ERROR));
-			ENSURE(Message.LoadString(IDS_INVALIDLICENSE));
-			MessageBox(Message, Caption, MB_ICONWARNING);
+			CString Caption((LPCSTR)IDS_ERROR);
+			CString Message((LPCSTR)IDS_INVALIDLICENSE);
+			FMMessageBox(this, Message, Caption, MB_ICONWARNING | MB_OK);
 
 			pDX->Fail();
 		}
 	}
+}
+
+BOOL FMLicenseDlg::InitDialog()
+{
+	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&FMGetApp()->m_DefaultFont);
+
+	return TRUE;
 }
 
 
@@ -55,9 +62,6 @@ void FMLicenseDlg::OnLoadLicense()
 	CString tmpStr((LPCSTR)IDS_LICFILEFILTER);
 	tmpStr += _T(" (*.lic)|*.lic||");
 
-	CString Caption((LPCSTR)IDS_ERROR);
-	CString Message((LPCSTR)IDS_CANNOTLOADLICENSE);
-
 	CFileDialog dlg(TRUE, _T(".lic"), NULL, OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, tmpStr, this);
 	if (dlg.DoModal()==IDOK)
 	{
@@ -66,7 +70,7 @@ void FMLicenseDlg::OnLoadLicense()
 		CStdioFile f;
 		if (!f.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
 		{
-			MessageBox(Message, Caption, MB_OK | MB_ICONERROR);
+			FMErrorBox(this, IDS_CANNOTLOADLICENSE);
 		}
 		else
 		{
@@ -80,7 +84,7 @@ void FMLicenseDlg::OnLoadLicense()
 			}
 			catch(CFileException ex)
 			{
-				MessageBox(Message, Caption, MB_OK | MB_ICONERROR);
+				FMErrorBox(this, IDS_CANNOTLOADLICENSE);
 			}
 
 			f.Close();

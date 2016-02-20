@@ -165,7 +165,7 @@ void StatisticsDlg::UpdateStatistics()
 
 	for (UINT a=0; a<Count; a++)
 	{
-		const AIRX_Flight* pFlight = &p_Itinerary->m_Flights.m_Items[a];
+		const AIRX_Flight* pFlight = &p_Itinerary->m_Flights[a];
 
 		// Cancelled
 		if (pFlight->Flags & AIRX_Cancelled)
@@ -179,18 +179,23 @@ void StatisticsDlg::UpdateStatistics()
 		if (strlen(FilterAirport)==3)
 			if ((strcmp(FilterAirport, pFlight->From.Code)!=0) && (strcmp(FilterAirport, pFlight->To.Code)!=0))
 				continue;
+
 		if (!FilterCarrier.IsEmpty())
 			if (wcscmp(FilterCarrier, pFlight->Carrier)!=0)
 				continue;
+
 		if (!FilterEquipment.IsEmpty())
 			if (wcscmp(FilterEquipment, pFlight->Equipment)!=0)
 				continue;
+
 		if (FilterBusiness)
 			if ((pFlight->Flags & AIRX_BusinessTrip)==0)
 				continue;
+
 		if (FilterLeisure)
 			if ((pFlight->Flags & AIRX_LeisureTrip)==0)
 				continue;
+
 		if (pFlight->Flags>>28<FilterRating)
 			continue;
 
@@ -220,7 +225,7 @@ void StatisticsDlg::UpdateStatistics()
 		Miles[IsAwardFlight ? 1 : 0][0] += pFlight->MilesAward;
 		Miles[IsAwardFlight ? 1 : 0][1] += pFlight->MilesStatus;
 
-		if (theApp.m_MergeAwards)
+		if (theApp.m_StatisticsMergeAwards)
 			IsAwardFlight = FALSE;
 
 		INT Class;
@@ -233,13 +238,13 @@ void StatisticsDlg::UpdateStatistics()
 			Class = IsAwardFlight ? 7 : 1;
 			break;
 		case AIRX_PremiumEconomy:
-			Class = theApp.m_MergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 8 : 2;
+			Class = theApp.m_StatisticsMergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 8 : 2;
 			break;
 		case AIRX_Economy:
 			Class = IsAwardFlight ? 9 : 3;
 			break;
 		case AIRX_Charter:
-			Class = theApp.m_MergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 9 : 4;
+			Class = theApp.m_StatisticsMergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 9 : 4;
 			break;
 		case AIRX_Crew:
 			Class = 5;
@@ -257,20 +262,41 @@ void StatisticsDlg::UpdateStatistics()
 
 		Spent += pFlight->Fare;
 
-		if ((strlen(pFlight->From.Code)==3) && (strlen(pFlight->To.Code)==3))
+		CHAR From[4];
+		strcpy_s(From, 4, pFlight->From.Code);
+
+		CHAR To[4];
+		strcpy_s(To, 4, pFlight->To.Code);
+
+		if (theApp.m_StatisticsMergeMetro)
 		{
-			BOOL Swap = (strcmp(pFlight->To.Code, pFlight->From.Code)<0) && theApp.m_MergeDirections;
+			FMAirport* pAirport;
+
+			if (FMIATAGetAirportByCode(From, &pAirport))
+				if ((pAirport->MetroCode[0]!='\0') && (strcmp(pAirport->Code, pAirport->MetroCode)!=0))
+					strcpy_s(From, 4, pAirport->MetroCode);
+
+			if (FMIATAGetAirportByCode(To, &pAirport))
+				if ((pAirport->MetroCode[0]!='\0') && (strcmp(pAirport->Code, pAirport->MetroCode)!=0))
+						strcpy_s(To, 4, pAirport->MetroCode);
+		}
+
+		if ((strlen(From)==3) && (strlen(To)==3))
+		{
+			const BOOL Swap = theApp.m_StatisticsMergeDirections && (strcmp(To, From)<0);
+
 			CHAR Key[7];
-			strcpy_s(Key, 7, Swap ? pFlight->To.Code : pFlight->From.Code);
-			strcat_s(Key, 7, Swap ? pFlight->From.Code : pFlight->To.Code);
+			strcpy_s(Key, 7, Swap ? To : From);
+			strcat_s(Key, 7, Swap ? From : To);
 
 			Route[Key]++;
 		}
 
-		if (strlen(pFlight->From.Code)==3)
-			Airport[pFlight->From.Code]++;
-		if (strlen(pFlight->To.Code)==3)
-			Airport[pFlight->To.Code]++;
+		if (strlen(From)==3)
+			Airport[From]++;
+
+		if (strlen(To)==3)
+			Airport[To]++;
 
 		if (pFlight->Carrier[0]!=L'\0')
 		{

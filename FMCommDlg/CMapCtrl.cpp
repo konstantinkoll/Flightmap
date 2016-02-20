@@ -16,11 +16,7 @@ CMapCtrl::CMapCtrl()
 	ZeroMemory(&wndcls, sizeof(wndcls));
 	wndcls.style = CS_HREDRAW | CS_VREDRAW;
 	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-	wndcls.hIcon = NULL;
 	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
-	wndcls.hbrBackground = NULL;
-	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CMapCtrl";
 
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CMapCtrl", &wndcls)))
@@ -120,8 +116,9 @@ void CMapCtrl::SendUpdateMsg()
 BEGIN_MESSAGE_MAP(CMapCtrl, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
+	ON_WM_NCCALCSIZE()
 	ON_WM_NCPAINT()
+	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -150,6 +147,19 @@ void CMapCtrl::OnDestroy()
 	CWnd::OnDestroy();
 }
 
+void CMapCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
+{
+	lpncsp->rgrc[0].top += 2;
+	lpncsp->rgrc[0].left += 2;
+	lpncsp->rgrc[0].bottom -= 2;
+	lpncsp->rgrc[0].right -= 2;
+}
+
+void CMapCtrl::OnNcPaint()
+{
+	DrawControlBorder(this);
+}
+
 BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rect;
@@ -170,7 +180,7 @@ BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
 
 		Graphics g(dc);
 
-		Bitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_EARTHMAP);
+		Bitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
 		g.DrawImage(pMap, 0, 0, rect.Width(), rect.Height());
 
 		dc.SelectObject(pOldBitmap);
@@ -180,11 +190,6 @@ BOOL CMapCtrl::OnEraseBkgnd(CDC* pDC)
 	}
 
 	return TRUE;
-}
-
-void CMapCtrl::OnNcPaint()
-{
-	DrawControlBorder(this);
 }
 
 void CMapCtrl::OnPaint()
@@ -211,12 +216,11 @@ void CMapCtrl::OnPaint()
 		PointFromLocation(PosX, PosY);
 
 		Graphics g(dc);
-
-		Bitmap* pIndicator = FMGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8);
-		g.DrawImage(pIndicator, PosX-(INT)pIndicator->GetWidth()/2, PosY-(INT)pIndicator->GetHeight()/2);
+		DrawLocationIndicator(g, PosX-4, PosY-4, 8);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
 	dc.SelectObject(pOldBitmap);
 }
 

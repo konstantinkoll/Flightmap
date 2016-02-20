@@ -7,6 +7,7 @@
 #include "FMDynArray.h"
 #include "FMFont.h"
 #include "FMTooltip.h"
+#include "GLRenderer.h"
 #include "IATA.h"
 #include <uxtheme.h>
 
@@ -17,7 +18,6 @@
 #define OS_XP                   0
 #define OS_Vista                1
 #define OS_Seven                2
-#define OS_Eight                3
 
 #define NAG_EXPIRED             1
 #define NAG_COUNTER             0
@@ -28,28 +28,19 @@ typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
 typedef HRESULT(__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, INT iPartId,
 							INT iStateId, const RECT* pRect, const RECT* pClipRect);
-typedef HRESULT(__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, INT iPartId,
-							INT iStateId, LPCWSTR pszText, INT iCharCount, DWORD dwTextFlags,
-							DWORD dwTextFlags2, const RECT* pRect);
-typedef HRESULT(__stdcall* PFNDRAWTHEMETEXTEX)(HTHEME hTheme, HDC hdc, INT iPartId,
-							INT iStateId, LPCWSTR pszText, INT iCharCount, DWORD dwTextFlags,
-							const RECT* pRect, const DTTOPTS* pOptions);
-typedef HRESULT(__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, INT iFontID, LOGFONT* plf);
-typedef HRESULT(__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, INT iColorID);
 typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, INT iPartId, INT iStateId,
 							LPCRECT prc, THEMESIZE eSize, SIZE *psz);
-typedef HRESULT (__stdcall* PFNSETWINDOWTHEMEATTRIBUTE)(HWND hWnd, WINDOWTHEMEATTRIBUTETYPE eAttribute,
-							void* pAttribute, DWORD cdAttribute);
 typedef BOOL (__stdcall* PFNISTHEMEACTIVE)();
 typedef BOOL (__stdcall* PFNISAPPTHEMED)();
 
 typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
-typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
-typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
+typedef HRESULT(__stdcall* PFNDWMSETWINDOWATTRIBUTE)(HWND hWnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
 
 typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
 
 typedef HRESULT(__stdcall* PFNREGISTERAPPLICATIONRESTART)(PCWSTR CommandLine, DWORD Flags);
+
+typedef HRESULT(__stdcall* PFNCHANGEWINDOWMESSAGEFILTER)(HWND hWnd, UINT message, DWORD action);
 
 struct CDS_Wakeup
 {
@@ -83,7 +74,7 @@ public:
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
-	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, const CString& Caption=_T("")) const;
+	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, BOOL AllowReset=TRUE);
 	void SendMail(const CString& Subject=_T("")) const;
 	Bitmap* GetResourceImage(UINT nID) const;
 	Bitmap* GetCachedResourceImage(UINT nID);
@@ -112,42 +103,40 @@ public:
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
 	CImageList m_SystemImageListExtraLarge;
-	HBITMAP m_RatingBitmaps[MaxRating+1];
+	HBITMAP hRatingBitmaps[MaxRating+1];
 	FMFont m_DefaultFont;
 	FMFont m_ItalicFont;
 	FMFont m_SmallFont;
 	FMFont m_SmallBoldFont;
 	FMFont m_LargeFont;
 	FMFont m_CaptionFont;
+	FMFont m_UACFont;
 	FMFont m_DialogFont;
 	UINT OSVersion;
-	BOOL m_UseBgImages;
-	UINT m_LicenseActivatedMsg;
-	UINT m_WakeupMsg;
-	UINT m_UseBgImagesChangedMsg;
+	SmoothingMode m_SmoothingModeAntiAlias8x8;
 	UINT m_DistanceSettingChangedMsg;
 	UINT m_TaskbarButtonCreated;
+	UINT m_LicenseActivatedMsg;
+	UINT m_SetProgressMsg;
+	UINT m_WakeupMsg;
 	GUID m_AppID;
-	COLORREF m_CustomColors[16];
+	COLORREF m_ColorHistory[16];
 	CList<CWnd*> m_pMainFrames;
 	FMUpdateDlg* m_pUpdateNotification;
+	GLModelQuality m_ModelQuality;
+	GLTextureQuality m_TextureQuality;
+	BOOL m_TextureCompress;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;
 	PFNCLOSETHEMEDATA zCloseThemeData;
 	PFNDRAWTHEMEBACKGROUND zDrawThemeBackground;
-	PFNDRAWTHEMETEXT zDrawThemeText;
-	PFNDRAWTHEMETEXTEX zDrawThemeTextEx;
-	PFNGETTHEMESYSFONT zGetThemeSysFont;
-	PFNGETTHEMESYSCOLOR zGetThemeSysColor;
 	PFNGETTHEMEPARTSIZE zGetThemePartSize;
-	PFNSETWINDOWTHEMEATTRIBUTE zSetWindowThemeAttribute;
 	PFNISAPPTHEMED zIsAppThemed;
 	BOOL m_ThemeLibLoaded;
 
 	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
-	PFNDWMEXTENDFRAMEINTOCLIENTAREA zDwmExtendFrameIntoClientArea;
-	PFNDWMDEFWINDOWPROC zDwmDefWindowProc;
+	PFNDWMSETWINDOWATTRIBUTE zDwmSetWindowAttribute;
 	BOOL m_DwmLibLoaded;
 
 	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
@@ -156,11 +145,14 @@ public:
 	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
 	BOOL m_KernelLibLoaded;
 
+	PFNCHANGEWINDOWMESSAGEFILTER zChangeWindowMessageFilter;
+	BOOL m_UserLibLoaded;
+
+	afx_msg void OnBackstagePurchase();
 protected:
-	afx_msg void OnAppPurchase();
-	afx_msg void OnAppEnterLicenseKey();
-	afx_msg void OnAppSupport();
-	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
+	afx_msg void OnBackstageEnterLicenseKey();
+	afx_msg void OnBackstageSupport();
+	afx_msg void OnUpdateBackstageCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 	FMTooltip m_wndTooltip;
@@ -168,10 +160,27 @@ protected:
 	UINT m_NagCounter;
 
 private:
-	ULONG_PTR m_gdiplusToken;
+	static void PlayRegSound(const CString& Identifier);
+
+	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
 	HMODULE hModShell;
 	HMODULE hModKernel;
+	HMODULE hModUser;
 	HANDLE hFontLetterGothic;
 };
+
+inline BOOL FMApplication::IsTooltipVisible() const
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	return m_wndTooltip.IsWindowVisible();
+}
+
+inline void FMApplication::HideTooltip()
+{
+	ASSERT(IsWindow(m_wndTooltip));
+
+	m_wndTooltip.HideTooltip();
+}

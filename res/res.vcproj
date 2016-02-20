@@ -109,414 +109,146 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Ribbon"
+			Name="Flags"
 			>
 			<File
-				RelativePath=".\Ribbon\About_16.png"
+				RelativePath=".\Flags\Attachments_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\About_32.png"
+				RelativePath=".\Flags\Attachments_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Add_16.png"
+				RelativePath=".\Flags\Attachments_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Add_32.png"
+				RelativePath=".\Flags\Attachments_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Award_16.png"
+				RelativePath=".\Flags\Attachments_64.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Award_32.png"
+				RelativePath=".\Flags\Award_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Boat_16.png"
+				RelativePath=".\Flags\Award_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Boat_32.png"
+				RelativePath=".\Flags\Award_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Business_16.png"
+				RelativePath=".\Flags\Award_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Business_32.png"
+				RelativePath=".\Flags\Award_64.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Copy_16.png"
+				RelativePath=".\Flags\Business_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Copy_32.png"
+				RelativePath=".\Flags\Business_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Cross_16.png"
+				RelativePath=".\Flags\Business_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Cross_32.png"
+				RelativePath=".\Flags\Business_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Cut_16.png"
+				RelativePath=".\Flags\Business_64.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Cut_32.png"
+				RelativePath=".\Flags\Cancelled_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Delete_16.png"
+				RelativePath=".\Flags\Cancelled_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Delete_32.png"
+				RelativePath=".\Flags\Cancelled_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Edit_16.png"
+				RelativePath=".\Flags\Cancelled_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Edit_32.png"
+				RelativePath=".\Flags\Cancelled_64.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileAttachments_16.png"
+				RelativePath=".\Flags\Ground_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileAttachments_32.png"
+				RelativePath=".\Flags\Ground_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileClose_16.png"
+				RelativePath=".\Flags\Ground_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileClose_32.png"
+				RelativePath=".\Flags\Ground_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileInspect_16.png"
+				RelativePath=".\Flags\Ground_64.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileInspect_32.png"
+				RelativePath=".\Flags\Leisure_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FilePrepare_16.png"
+				RelativePath=".\Flags\Leisure_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FilePrepare_32.png"
+				RelativePath=".\Flags\Leisure_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileProperties_16.png"
+				RelativePath=".\Flags\Leisure_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileProperties_32.png"
+				RelativePath=".\Flags\Leisure_64.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FilterByForm_16.png"
+				RelativePath=".\Flags\Upgrade_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FilterByForm_32.png"
+				RelativePath=".\Flags\Upgrade_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Flipflops_16.png"
+				RelativePath=".\Flags\Upgrade_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Flipflops_32.png"
+				RelativePath=".\Flags\Upgrade_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Globe_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Globe_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Globe_FitToWindow_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\GoogleEarth_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\GoogleEarth_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Key_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Key_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Location_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Location_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Monitor_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Monitor_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\NewEmpty_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\NewEmpty_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\NewSample_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\NewSample_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Open_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Open_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\PaperClip_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\PaperClip_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Paste_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Paste_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Print_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Print_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\PrintOptions_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\PrintOptions_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\PrintQuick_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\PrintQuick_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Quit_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Quit_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Rename_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Rename_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Replace_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Replace_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Resolution_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Resolution_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Save_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Save_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveAs_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveAs_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveSelection_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveSelection_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Search_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Search_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SelectAll_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SelectAll_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Statistics_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Statistics_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Support_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Support_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Table_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Table_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Upgrade_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Upgrade_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Wallet_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Wallet_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\WindowClose_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\WindowClose_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ZoomIn_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ZoomIn_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ZoomOut_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ZoomOut_32.png"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="ResolutionIcons"
-			>
-			<File
-				RelativePath=".\ResolutionIcons\Camera.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\ResolutionIcons\Instagram32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\ResolutionIcons\Picture.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\ResolutionIcons\Screen.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\ResolutionIcons\TV.ico"
+				RelativePath=".\Flags\Upgrade_64.png"
 				>
 			</File>
 		</Filter>
@@ -528,7 +260,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateIATA_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateIATA_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateIATA_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateIATA_64.png"
 				>
 			</File>
 			<File
@@ -536,7 +280,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateImportantBugfix_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateImportantBugfix_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateImportantBugfix_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateImportantBugfix_64.png"
 				>
 			</File>
 			<File
@@ -544,15 +300,39 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateNetwork_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateNetwork_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Update\UpdateNewFeatues_16.png"
+				RelativePath=".\Update\UpdateNetwork_48.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Update\UpdateNewFeatues_32.png"
+				RelativePath=".\Update\UpdateNetwork_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatures_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatures_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatures_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatures_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateNewFeatures_64.png"
 				>
 			</File>
 			<File
@@ -560,7 +340,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdatePerformance_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdatePerformance_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdatePerformance_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdatePerformance_64.png"
 				>
 			</File>
 			<File
@@ -568,7 +360,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateSecurity7_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateSecurity7_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurity7_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurity7_64.png"
 				>
 			</File>
 			<File
@@ -576,7 +380,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateSecurityVista_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateSecurityVista_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurityVista_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSecurityVista_64.png"
 				>
 			</File>
 			<File
@@ -584,7 +400,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateSmallBugfix_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateSmallBugfix_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSmallBugfix_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateSmallBugfix_64.png"
 				>
 			</File>
 			<File
@@ -592,7 +420,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateUI_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateUI_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateUI_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateUI_64.png"
 				>
 			</File>
 			<File
@@ -600,7 +440,683 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Update\UpdateVisualization_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Update\UpdateVisualization_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateVisualization_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Update\UpdateVisualization_64.png"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Tasks"
+			>
+			<File
+				RelativePath=".\Tasks\About_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\About_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\About_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\About_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\About_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\AddAttachment_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\AddAttachment_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\AddAttachment_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\AddAttachment_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\AddAttachment_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Copy_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Copy_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Copy_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Copy_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Copy_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Delete_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Delete_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Delete_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Delete_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Delete_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Edit_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Edit_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Edit_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Edit_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Edit_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Filter_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Filter_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Filter_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Filter_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Filter_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\InsertRow_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\InsertRow_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\InsertRow_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\InsertRow_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\InsertRow_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Install_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Install_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Install_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Install_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Install_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\JumpToLocation_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\JumpToLocation_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\JumpToLocation_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\JumpToLocation_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\JumpToLocation_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Key_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Key_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Key_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Key_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Key_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Open_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Open_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Open_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Open_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Open_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Print_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Print_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Print_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Print_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Print_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Purchase_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Purchase_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Purchase_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Purchase_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Purchase_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Rename_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Rename_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Rename_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Rename_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Rename_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SaveAs_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SaveAs_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SaveAs_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SaveAs_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SaveAs_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Search_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Search_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Search_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Search_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Search_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Sidebar_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Sidebar_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Sidebar_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Sidebar_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Sidebar_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SizeToFit_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SizeToFit_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SizeToFit_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SizeToFit_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\SizeToFit_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Support_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Support_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Support_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Support_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Support_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Tools_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Tools_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Tools_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Tools_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\Tools_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomIn_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomIn_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomIn_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomIn_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomIn_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomOut_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomOut_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomOut_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomOut_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Tasks\ZoomOut_64.png"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Sidebar"
+			>
+			<File
+				RelativePath=".\Sidebar\Globe_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Globe_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Globe_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Globe_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Globe_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\GoogleEarth_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\GoogleEarth_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\GoogleEarth_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\GoogleEarth_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\GoogleEarth_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Itinerary_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Itinerary_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Itinerary_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Itinerary_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Itinerary_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Map_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Map_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Map_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Map_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Map_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Statistics_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Statistics_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Statistics_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Statistics_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Sidebar\Statistics_64.png"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="ResolutionPresets"
+			>
+			<File
+				RelativePath=".\ResolutionPresets\Camera_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Camera_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Camera_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Camera_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Camera_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Image_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Image_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Image_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Image_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Image_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Instagram_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Instagram_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Instagram_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Phone_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Phone_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Phone_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Phone_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Phone_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Screen_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Screen_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Screen_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Screen_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\Screen_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\TV_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\TV_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\TV_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\TV_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\ResolutionPresets\TV_64.png"
 				>
 			</File>
 		</Filter>
@@ -617,19 +1133,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Ascending_16.bmp"
+			RelativePath=".\Background_DarkLinen (Original).png"
 			>
 		</File>
 		<File
-			RelativePath=".\Backdrop Settings.txt"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop.png"
+			RelativePath=".\Background_DarkLinen.png"
 			>
 		</File>
 		<File
@@ -637,7 +1145,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Descending_16.bmp"
+			RelativePath=".\Close.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Close.svg"
 			>
 		</File>
 		<File
@@ -650,18 +1162,6 @@
 		</File>
 		<File
 			RelativePath=".\DivUp.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Docked.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Earthmap.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Earthmap.png"
 			>
 		</File>
 		<File
@@ -681,11 +1181,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Globe.3ds"
-			>
-		</File>
-		<File
-			RelativePath=".\Globe.asc"
+			RelativePath=".\Globe_Small.ico"
 			>
 		</File>
 		<File
@@ -705,27 +1201,23 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Install.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Letter_Gothic.ttf"
 			>
 		</File>
 		<File
-			RelativePath=".\liquidFOLDERS.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\LocationIndicator_16.png"
-			>
-		</File>
-		<File
-			RelativePath=".\LocationIndicator_8.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Map_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Maximize.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Minimize.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Minimize.svg"
 			>
 		</File>
 		<File
@@ -734,6 +1226,10 @@
 		</File>
 		<File
 			RelativePath=".\NRT_Unregistered.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Question.ico"
 			>
 		</File>
 		<File
@@ -781,7 +1277,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Remove.ico"
+			RelativePath=".\Ready.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Restore.ico"
 			>
 		</File>
 		<File
@@ -821,23 +1321,35 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Slogan.png"
+			RelativePath=".\Settings Disabled.txt"
 			>
 		</File>
 		<File
-			RelativePath=".\Slogan.svg"
+			RelativePath=".\Shield_7.ico"
 			>
 		</File>
 		<File
-			RelativePath=".\SortIndicators.bmp"
+			RelativePath=".\Shield_Vista.ico"
 			>
 		</File>
 		<File
-			RelativePath=".\Tools.ico"
+			RelativePath=".\Sidebar.svg"
 			>
 		</File>
 		<File
-			RelativePath=".\Tools.png"
+			RelativePath=".\SidebarShadow.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\SortIndicators.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Statistics_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\StPatrick.png"
 			>
 		</File>
 		<File

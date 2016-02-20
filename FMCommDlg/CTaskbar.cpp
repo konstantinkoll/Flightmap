@@ -9,8 +9,9 @@
 // CTaskbar
 //
 
-#define BORDERLEFT       16
 #define BORDER           4
+#define BORDERLEFT       (BACKSTAGEBORDER-(BORDER+2))
+#define MARGIN           16
 #define TEXTUREWIDTH     16
 
 CTaskbar::CTaskbar()
@@ -22,22 +23,14 @@ CTaskbar::CTaskbar()
 	hBackgroundBrush = NULL;
 }
 
-BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID)
+BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID)
 {
-	m_IconSize = FMGetApp()->m_DefaultFont.GetFontHeight()>=24 ? 32 : 16;
-
-	if (m_IconSize<32)
-	{
-		p_ButtonIcons = &SmallIcons;
-		p_ButtonIcons->Load(SmallResID, m_IconSize);
-	}
-	else
-	{
-		p_ButtonIcons = &LargeIcons;
-	}
+	// Load icons
+	p_ButtonIcons = &SmallIcons;
+	m_IconSize = SmallIcons.Load(ResID);
 
 	p_TooltipIcons = &LargeIcons;
-	p_TooltipIcons->Load(LargeResID, 32);
+	LargeIcons.Load(ResID, LI_FORTOOLTIPS);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
@@ -51,7 +44,7 @@ BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 
 UINT CTaskbar::GetPreferredHeight() const
 {
-	return 4*BORDER+max(m_IconSize-2, FMGetApp()->m_DefaultFont.GetFontHeight())+(IsCtrlThemed() ? 4 : 3);
+	return 4*BORDER+max(m_IconSize, FMGetApp()->m_DefaultFont.GetFontHeight()-2)+(IsCtrlThemed() ? 3 : 2);
 }
 
 CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL ForceSmall)
@@ -95,11 +88,11 @@ void CTaskbar::AdjustLayout()
 	INT Row = BORDER-1;
 	INT Height = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
-	INT RPos = rect.right+2*BORDER-BORDERLEFT;
+	INT RPos = rect.right+BORDER-BORDERLEFT;
 
 	for (UINT a=m_Buttons.m_ItemCount-1; a>=m_FirstRight; a--)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth();
@@ -124,14 +117,14 @@ void CTaskbar::AdjustLayout()
 Nochmal:
 	UINT Count = 0;
 
-	INT LPos = rect.left+BORDERLEFT-BORDER;
+	INT LPos = rect.left+BORDERLEFT;
 	for (UINT a=0; a<min(m_Buttons.m_ItemCount, m_FirstRight); a++)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth(Count++>=FirstSmall);
-			if (LPos+Width+BORDERLEFT-BORDER<RPos)
+			if (LPos+Width+MARGIN<RPos)
 			{
 				pTaskButton->SetWindowPos(NULL, LPos, Row, Width, Height, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 				pTaskButton->ShowWindow(SW_SHOW);
@@ -147,7 +140,7 @@ Nochmal:
 				pTaskButton->ShowWindow(SW_HIDE);
 			}
 
-			LPos += Width+BORDERLEFT;
+			LPos += Width+MARGIN;
 		}
 		else
 		{
@@ -156,6 +149,17 @@ Nochmal:
 	}
 
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+}
+
+void CTaskbar::DrawTaskbarShadow(Graphics& g, const CRect& rectClient)
+{
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
+	SolidBrush brush1(Color(0x18000000));
+	g.FillRectangle(&brush1, 0, 0, rectClient.Width(), 1);
+
+	SolidBrush brush2(Color(0x0C000000));
+	g.FillRectangle(&brush2, 0, 1, rectClient.Width(), 1);
 }
 
 
@@ -167,6 +171,7 @@ BEGIN_MESSAGE_MAP(CTaskbar, CFrontstageWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
@@ -175,7 +180,7 @@ void CTaskbar::OnDestroy()
 {
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		pTaskButton->DestroyWindow();
 		delete pTaskButton;
 	}
@@ -221,7 +226,7 @@ void CTaskbar::OnPaint()
 			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
+			LinearGradientBrush brush(Point(0, Line), Point(0, rect.bottom), Color(0xFFFFFFFF), Color(0xFFE5E9EE));
 			g.FillRectangle(&brush, 0, Line, TEXTUREWIDTH, rect.bottom-Line-1);
 
 			dc.SelectObject(pOldBitmap);
@@ -276,8 +281,19 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
+
 	OnIdleUpdateCmdUI();
 	AdjustLayout();
+}
+
+void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
+		if (m_Buttons[a]->IsWindowEnabled())
+		{
+			m_Buttons[a]->SetFocus();
+			break;
+		}
 }
 
 void CTaskbar::OnIdleUpdateCmdUI()
@@ -286,7 +302,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		BOOL Enabled = pTaskButton->IsWindowEnabled();
 
 		CCmdUI cmdUI;
@@ -324,7 +340,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		if ((INT)a==m_FirstRight)
 			NeedsSeparator = TRUE;
 
-		CTaskButton* pTaskButton = m_Buttons.m_Items[a];
+		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())
 		{
 			if (NeedsSeparator)

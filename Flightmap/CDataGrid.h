@@ -4,6 +4,7 @@
 
 
 #pragma once
+#include "FMCommDlg.h"
 #include "CItinerary.h"
 
 
@@ -30,14 +31,14 @@ struct ViewParameters
 	INT ColumnWidth[FMAttributeCount];
 };
 
-class CDataGrid : public CWnd
+class CDataGrid : public CFrontstageWnd
 {
 public:
 	CDataGrid();
 	~CDataGrid();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetItinerary(CItinerary* pItinerary, UINT Row=0);
+	BOOL Create(CItinerary* pItinerary, CWnd* pParentWnd, UINT nID);
+	void SetItinerary(CItinerary* pItinerary);
 	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE) const;
 	BOOL IsSelected(UINT Index) const;
 	UINT GetCurrentRow() const;
@@ -48,18 +49,16 @@ protected:
 	void AdjustLayout();
 	void AdjustHeader();
 	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint Item=CPoint(-1, -1));
-	void EditFlight(CPoint Item=CPoint(-1, -1), INT iSelectPage=-1);
+	void EditFlight(CPoint Item=CPoint(-1, -1), INT SelectTab=-1);
 	void EnsureVisible(CPoint Item=CPoint(-1, -1));
-	void ResetScrollbars();
-	void AdjustScrollbars();
 	BOOL HitTest(CPoint point, CPoint* Item, INT* pSubitem=NULL);
 	void InvalidateItem(const CPoint& Item);
 	void InvalidateItem(UINT Row, UINT Attr);
 	void InvalidateRow(UINT Row);
 	void SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect);
 	void SelectItem(UINT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
-	void FindReplace(INT iSelectPage);
-	void ScrollWindow(INT dx, INT dy);
+	void FindReplace(INT SelectTab=-1);
+	void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -96,6 +95,7 @@ protected:
 	afx_msg void OnAddRoute();
 	afx_msg void OnFind();
 	afx_msg void OnReplace();
+	afx_msg void OnFindReplace();
 	afx_msg void OnFindReplaceAgain();
 	afx_msg void OnFilter();
 	afx_msg void OnSelectAll();
@@ -117,7 +117,9 @@ protected:
 	CMFCMaskedEdit* p_Edit;
 	BOOL m_EditAllowCursor;
 	CTooltipHeader m_wndHeader;
-	static CIcons m_FlagIcons;
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
+	static CIcons m_DisabledIcons;
 	ViewParameters m_ViewParameters;
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;
@@ -132,6 +134,8 @@ protected:
 	FindReplaceSettings m_FindReplaceSettings;
 
 private:
+	void ResetScrollbars();
+	void AdjustScrollbars();
 	void DoCopy(BOOL Cut);
 	void DoDelete();
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected);

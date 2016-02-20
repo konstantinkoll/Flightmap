@@ -11,7 +11,7 @@
 //
 
 FilterDlg::FilterDlg(CItinerary* pItinerary, CWnd* pParentWnd)
-	: CDialog(IDD_FILTER, pParentWnd)
+	: FMDialog(IDD_FILTER, pParentWnd)
 {
 	p_Itinerary = pItinerary;
 
@@ -20,13 +20,15 @@ FilterDlg::FilterDlg(CItinerary* pItinerary, CWnd* pParentWnd)
 
 void FilterDlg::DoDataExchange(CDataExchange* pDX)
 {
+	FMDialog::DoDataExchange(pDX);
+
 	DDX_MaskedText(pDX, IDC_FILTER_AIRPORT, m_wndFilterAirport, 0);
 	DDX_Control(pDX, IDC_FILTER_CARRIER, m_wndFilterCarrier);
 	DDX_Control(pDX, IDC_FILTER_EQUIPMENT, m_wndFilterEquipment);
 	DDX_Control(pDX, IDC_FILTER_RATING, m_wndFilterRating);
 	DDX_Control(pDX, IDC_FILTER_MONTH, m_wndFilterMonth);
 	DDX_Control(pDX, IDC_VIEWATTRIBUTES, m_wndSortAttributes);
-	DDX_Control(pDX, IDC_ASCENDING, m_wndAscending);
+	DDX_Control(pDX, IDC_SORTDIRECTION, m_wndSortDirection);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -49,30 +51,24 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 		if (swscanf_s(tmpStr.GetBuffer(), L"%u", &m_Filter.DepartureYear)!=1)
 			m_Filter.DepartureYear = 0;
 
-		INT Index = m_wndSortAttributes.GetNextItem(-1, LVIS_SELECTED);
+		const INT Index = m_wndSortAttributes.GetNextItem(-1, LVIS_SELECTED);
 		m_Filter.SortBy = (Index==-1) ? -1 : (INT)m_wndSortAttributes.GetItemData(Index);
 
-		m_Filter.Descending = m_wndAscending.GetCheck()>0;
+		m_Filter.Descending = m_wndSortDirection.GetCurSel();
 	}
 }
 
-
-BEGIN_MESSAGE_MAP(FilterDlg, CDialog)
-	ON_BN_CLICKED(IDD_SELECTIATA, OnSelectIATA)
-END_MESSAGE_MAP()
-
-BOOL FilterDlg::OnInitDialog()
+BOOL FilterDlg::InitDialog()
 {
-	CDialog::OnInitDialog();
+	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&FMGetApp()->m_DefaultFont);
 
 	// Filter
 	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);
 	PrepareEquipmentCtrl(&m_wndFilterEquipment, p_Itinerary, FALSE);
 	m_wndFilterRating.SetRating(0);
 
-	// Sort
-	const UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS;
-	m_wndSortAttributes.SetExtendedStyle(m_wndSortAttributes.GetExtendedStyle() | dwExStyle);
+	// Sort attributes
+	m_wndSortAttributes.AddColumn(0);
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
@@ -89,23 +85,37 @@ BOOL FilterDlg::OnInitDialog()
 			m_wndSortAttributes.InsertItem(&lvi);
 		}
 
-	m_wndAscending.SetCheck(1);
+	// Sort direction
+	m_wndSortDirection.SetCurSel(0);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;
 }
+
+
+BEGIN_MESSAGE_MAP(FilterDlg, FMDialog)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWATTRIBUTES, OnSelectionChange)
+	ON_BN_CLICKED(IDD_SELECTIATA, OnSelectIATA)
+END_MESSAGE_MAP()
 
 void FilterDlg::OnSelectIATA()
 {
-	CString tmpStr;
-	m_wndFilterAirport.GetWindowText(tmpStr);
+	WCHAR CodeW[4];
+	m_wndFilterAirport.GetWindowText(CodeW, 4);
 
-	CHAR Code[4];
-	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, Code, 4, NULL, NULL);
+	CHAR CodeA[4];
+	WideCharToMultiByte(CP_ACP, 0, CodeW, -1, CodeA, 4, NULL, NULL);
 
-	FMSelectLocationIATADlg dlg(this, Code);
+	FMSelectLocationIATADlg dlg(this, CodeA);
 	if (dlg.DoModal()==IDOK)
-	{
-		tmpStr = dlg.p_Airport->Code;
-		m_wndFilterAirport.SetWindowText(tmpStr);
-	}
+		m_wndFilterAirport.SetWindowText(CString(dlg.p_Airport->Code));
+}
+
+void FilterDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	if (pNMListView->uChanged & LVIF_STATE)
+		m_wndSortDirection.EnableWindow(pNMListView->uNewState & LVIS_SELECTED);
+
+	*pResult = 0;
 }

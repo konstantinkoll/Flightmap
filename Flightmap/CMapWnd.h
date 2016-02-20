@@ -11,44 +11,35 @@
 // CMapWnd
 //
 
-class CMapWnd : public CMainWindow
+class CMapWnd : public CBackstageWnd
 {
 public:
 	CMapWnd();
 	virtual ~CMapWnd();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
-	virtual void AdjustLayout();
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 
 	BOOL Create();
-	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName, CString Title);
+	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName, const CString& Title);
 
 protected:
-	void ExportMap(const CString& FileName, GUID guidFileType);
-	void ExportMap(DWORD FilterIndex=3);
-	void Print(PRINTDLGEX pdex);
+	void PrintMap(PRINTDLGEX pdex);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
 
-	afx_msg void OnMapWndCopy();
 	afx_msg void OnMapWndSaveAs();
 	afx_msg void OnMapWndPrint();
-	afx_msg void OnMapWndPrintQuick();
-	afx_msg void OnMapWndClose();
+	afx_msg void OnMapWndCopy();
 	afx_msg void OnUpdateMapWndCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnMapExportBMP();
-	afx_msg void OnMapExportJPEG();
-	afx_msg void OnMapExportPNG();
-	afx_msg void OnMapExportTIFF();
-	afx_msg void OnUpdateMapExportCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	CBitmap* m_pBitmap;
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
+	CTaskbar m_wndTaskbar;
 	CMapView m_wndMapView;
+	CBitmap* m_pBitmap;
 
 private:
 	CString m_Title;

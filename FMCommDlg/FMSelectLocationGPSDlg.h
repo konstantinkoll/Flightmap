@@ -4,22 +4,23 @@
 
 #pragma once
 #include "CMapCtrl.h"
+#include "FMDialog.h"
 
 
 // FMSelectLocationGPSDlg
 //
 
-class FMSelectLocationGPSDlg : public CDialog
+class FMSelectLocationGPSDlg : public FMDialog
 {
 public:
 	FMSelectLocationGPSDlg(const FMGeoCoordinates& Location, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	FMGeoCoordinates m_Location;
 
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLatitudeChanged();
 	afx_msg void OnLongitudeChanged();
@@ -30,5 +31,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	static DOUBLE StringToCoord(LPCWSTR Str);
+
 	CMapCtrl m_wndMap;
 };

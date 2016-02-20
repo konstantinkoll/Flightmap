@@ -4,22 +4,20 @@
 
 #pragma once
 #include "CItinerary.h"
+#include "FMCommDlg.h"
 
 
 // PropertiesDlg
 //
 
-class PropertiesDlg : public CDialog
+class PropertiesDlg : public FMDialog
 {
 public:
 	PropertiesDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
-	afx_msg BOOL OnInitDialog();
-	DECLARE_MESSAGE_MAP()
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
 
-private:
 	CItinerary* p_Itinerary;
 };

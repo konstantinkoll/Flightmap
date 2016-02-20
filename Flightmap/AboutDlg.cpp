@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "AboutDlg.h"
 #include "Flightmap.h"
-#include "ThreeDSettingsDlg.h"
 #include <wininet.h>
 
 
@@ -28,10 +27,8 @@
 #define COMPILE_DAY        ((__DATE__[4]==' ' ? 0 : __DATE__[4]-'0')*10+(__DATE__[5]-'0'))
 
 AboutDlg::AboutDlg(CWnd* pParentWnd)
-	: FMDialog(IDD_ABOUT, pParentWnd)
+	: FMDialog(IDD_ABOUT, pParentWnd, TRUE)
 {
-	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
-	m_UseBgImages = theApp.m_UseBgImages;
 	m_CaptionTop = m_IconTop = 0;
 
 	SYSTEMTIME st;
@@ -41,6 +38,7 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	st.wYear = COMPILE_YEAR;
 	st.wHour = COMPILE_HOUR;
 	st.wMinute = COMPILE_MINUTE;
+	st.wSecond = COMPILE_SECOND;
 
 	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, m_Build, 256);
 	wcscat_s(m_Build, 256, L", ");
@@ -51,12 +49,14 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 
 	GetLocalTime(&st);
 	p_Santa = (st.wMonth==12) ? FMGetApp()->GetCachedResourceImage(IDB_SANTA) : NULL;
-	p_Logo = FMGetApp()->GetCachedResourceImage(IDB_FLIGHTMAP_128);
+	p_Logo = FMGetApp()->GetCachedResourceImage((st.wMonth==3) && (st.wDay==17) ? IDB_STPATRICK : IDB_FLIGHTMAP_128);
 
 	GetFileVersion(AfxGetInstanceHandle(), m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
 
 	ENSURE(m_AppName.LoadString(IDR_APPLICATION));
+
+	m_UseStatuteMiles = theApp.m_UseStatuteMiles;
 }
 
 void AboutDlg::DoDataExchange(CDataExchange* pDX)
@@ -65,7 +65,9 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_VERSIONINFO, m_wndVersionInfo);
 	DDX_Radio(pDX, IDC_NAUTICALMILES, m_UseStatuteMiles);
-	DDX_Check(pDX, IDC_BGIMAGES, m_UseBgImages);
+	DDX_Control(pDX, IDC_MODELQUALITY, m_wndModelQuality);
+	DDX_Control(pDX, IDC_TEXTUREQUALITY, m_wndTextureQuality);
+	DDX_Check(pDX, IDC_TEXTURECOMPRESS, theApp.m_TextureCompress);
 
 	BOOL EnableAutoUpdate;
 	INT UpdateCheckInterval;
@@ -75,11 +77,16 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		theApp.SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+		FMGetApp()->SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+
+		theApp.m_ModelQuality = (GLModelQuality)m_wndModelQuality.GetCurSel();
+		theApp.m_TextureQuality = (GLTextureQuality)m_wndTextureQuality.GetCurSel();
+
+		theApp.Broadcast(WM_3DSETTINGSCHANGED);
 	}
 	else
 	{
-		theApp.GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
+		FMGetApp()->GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
@@ -88,22 +95,23 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void AboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+void AboutDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 {
-	FMDialog::OnEraseBkgnd(dc, g, rect);
+	FMDialog::PaintOnBackground(dc, g, rectLayout);
 
-	g.DrawImage(p_Logo, p_Santa ? 39 : 9, m_IconTop);
+	// Icon
+	g.DrawImage(p_Logo, rectLayout.left+(p_Santa ? 39 : 9), rectLayout.top+m_IconTop);
 	if (p_Santa)
-		g.DrawImage(p_Santa, -7, m_IconTop-8);
+		g.DrawImage(p_Santa, rectLayout.left-7, rectLayout.top+m_IconTop-8);
 
-	CRect rectText(rect);
-	rectText.top = m_CaptionTop;
-	rectText.left = (p_Santa ? 178 : 148)-1;
+	// Caption
+	CRect rectText(rectLayout);
+	rectText.left = rectLayout.left+(p_Santa ? 177 : 147);
+	rectText.top = rectLayout.top+m_CaptionTop;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
-	dc.SetTextColor((IsCtrlThemed() && FMGetApp()->m_UseBgImages) ? 0x000000 : 0x606060);
-	dc.SetBkMode(TRANSPARENT);
+	dc.SetTextColor(IsCtrlThemed() ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(m_AppName, rectText, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 	dc.SelectObject(pOldFont);
@@ -113,38 +121,34 @@ void AboutDlg::CheckLicenseKey()
 {
 	FMLicense License;
 	if (FMIsLicensed(&License))
+	{
+		SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
+		SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
+		SetWindowTextA(GetDlgItem(IDC_PURCHASEID)->GetSafeHwnd(), License.PurchaseID);
+		SetWindowTextA(GetDlgItem(IDC_PRODUCT)->GetSafeHwnd(), License.ProductID);
+		SetWindowTextA(GetDlgItem(IDC_QUANTITY)->GetSafeHwnd(), License.Quantity);
+
 		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
 
-	SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
-	SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
-	SetWindowTextA(GetDlgItem(IDC_PURCHASEID)->GetSafeHwnd(), License.PurchaseID);
-	SetWindowTextA(GetDlgItem(IDC_PRODUCT)->GetSafeHwnd(), License.ProductID);
-	SetWindowTextA(GetDlgItem(IDC_QUANTITY)->GetSafeHwnd(), License.Quantity);
+		m_BackBufferL = m_BackBufferH = 0;
+		Invalidate();
+	}
 }
 
 void AboutDlg::CheckInternetConnection()
 {
 	DWORD Flags;
-	BOOL Connected = InternetGetConnectedState(&Flags, 0);
-
-	GetDlgItem(IDC_UPDATENOW)->EnableWindow(Connected);
+	GetDlgItem(IDC_UPDATENOW)->EnableWindow(InternetGetConnectedState(&Flags, 0));
 }
 
-
-BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
-	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
-	ON_BN_CLICKED(IDD_3DSETTINGS, On3DSettings)
-	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
-	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
-	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
-END_MESSAGE_MAP()
-
-BOOL AboutDlg::OnInitDialog()
+void AboutDlg::AddQuality(CComboBox& wndCombobox, UINT nResID)
 {
-	FMDialog::OnInitDialog();
+	CString tmpStr((LPCSTR)nResID);
+	wndCombobox.AddString(tmpStr);
+}
 
+BOOL AboutDlg::InitDialog()
+{
 	// Version
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(rectWnd);
@@ -158,9 +162,11 @@ BOOL AboutDlg::OnInitDialog()
 
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
-	CString text;
-	text.Format(Caption, m_Version+ISET, m_Build, m_Copyright);
-	m_wndVersionInfo.SetWindowText(text);
+
+	CString Text;
+	Text.Format(Caption, m_Version+ISET, m_Build, m_Copyright);
+
+	m_wndVersionInfo.SetWindowText(Text);
 
 	// Hintergrund
 	const INT Height = rectWnd.Height()-16;
@@ -168,16 +174,50 @@ BOOL AboutDlg::OnInitDialog()
 	const INT HeightCaption = 4*LineGap;
 	const INT HeightVersion = 2*LineGap;
 
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
 	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
 	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-LineGap-3*HeightVersion)/2-8;
-	m_IconTop = rectWnd.top+(rectWnd.bottom-124)/2-8;
+	m_CaptionTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-HeightCaption-LineGap-3*HeightVersion)/2-4;
+	m_IconTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-124)/2-4;
 
-	rectWnd.left = p_Santa ? 178 : 148;
-	rectWnd.top = m_CaptionTop+HeightCaption+LineGap;
+	rectWnd.left = rectLayout.left+(p_Santa ? 178 : 148);
+	rectWnd.top = rectLayout.top+m_CaptionTop+HeightCaption+LineGap;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+
+	// Initialize OpenGL
+	theRenderer.Initialize();
+
+	// 3D model
+	AddQuality(m_wndModelQuality, IDS_QUALITY_LOW);
+
+	if (theRenderer.m_MaxModelQuality>=MODELMEDIUM)
+		AddQuality(m_wndModelQuality, IDS_QUALITY_MEDIUM);
+
+	if (theRenderer.m_MaxModelQuality>=MODELHIGH)
+		AddQuality(m_wndModelQuality, IDS_QUALITY_HIGH);
+
+	if (theRenderer.m_MaxModelQuality>=MODELULTRA)
+		AddQuality(m_wndModelQuality, IDS_QUALITY_ULTRA);
+
+	m_wndModelQuality.SetCurSel(min((INT)theApp.m_ModelQuality, (INT)theRenderer.m_MaxModelQuality));
+
+	// Texture
+	AddQuality(m_wndTextureQuality, IDS_QUALITY_LOW);
+
+	if (theRenderer.m_MaxTextureQuality>=TEXTUREMEDIUM)
+		AddQuality(m_wndTextureQuality, IDS_QUALITY_MEDIUM);
+
+	if (theRenderer.m_MaxTextureQuality>=TEXTUREULTRA)
+		AddQuality(m_wndTextureQuality, IDS_QUALITY_ULTRA);
+
+	m_wndTextureQuality.SetCurSel(min((INT)theApp.m_TextureQuality, (INT)theRenderer.m_MaxTextureQuality));
+
+	// Disabled controls
+	GetDlgItem(IDC_TEXTURECOMPRESS)->EnableWindow(theRenderer.m_SupportsTextureCompression);
 
 	// Lizenz
 	CheckLicenseKey();
@@ -186,8 +226,18 @@ BOOL AboutDlg::OnInitDialog()
 	CheckInternetConnection();
 	SetTimer(1, 1000, NULL);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return FALSE;
 }
+
+
+BEGIN_MESSAGE_MAP(AboutDlg, FMDialog)
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
+	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
+	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
+	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
+END_MESSAGE_MAP()
 
 void AboutDlg::OnDestroy()
 {
@@ -206,12 +256,6 @@ void AboutDlg::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-void AboutDlg::On3DSettings()
-{
-	ThreeDSettingsDlg dlg(this);
-	dlg.DoModal();
 }
 
 void AboutDlg::OnEnableAutoUpdate()
@@ -240,7 +284,6 @@ void AboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 void AboutDlg::OnEnterLicenseKey()
 {
 	FMLicenseDlg dlg(this);
-	dlg.DoModal();
-
-	CheckLicenseKey();
+	if (dlg.DoModal()==IDOK)
+		CheckLicenseKey();
 }

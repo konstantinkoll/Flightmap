@@ -41,7 +41,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 // CFlightmapApp
 
 BEGIN_MESSAGE_MAP(CFlightmapApp, FMApplication)
-	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
 END_MESSAGE_MAP()
 
 
@@ -51,7 +51,6 @@ CFlightmapApp::CFlightmapApp()
 	: FMApplication(theAppID)
 {
 	m_AppInitialized = FALSE;
-	hFlagIcons[0] = hFlagIcons[1] = NULL;
 
 	CF_FLIGHTS = (CLIPFORMAT)RegisterClipboardFormat(_T("liquidFOLDERS.Flightmap"));
 }
@@ -107,50 +106,45 @@ BOOL CFlightmapApp::InitInstance()
 		RegCloseKey(hKey);
 	}
 
-	// Icons
-	hFlagIcons[0] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16i));
-	hFlagIcons[1] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_FLAGS_16));
-
 	// Registry auslesen
 	SetRegistryBase();
+
+	m_ModelQuality = (GLModelQuality)GetInt(_T("ModelQuality"), MODELULTRA);
+	m_TextureQuality = (GLTextureQuality)GetInt(_T("TextureQuality"), TEXTUREMEDIUM);
+	m_TextureCompress = GetInt(_T("TextureCompress"), FALSE);
+
 	m_UseStatuteMiles = GetInt(_T("UseStatuteMiles"), FALSE);
-	m_UseBgImages = GetInt(_T("UseBgImages"), OSVersion!=OS_Eight);
-	m_nTextureSize = GetInt(_T("TextureSize"), FMTextureAuto);
-	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), FMTexture4096);
+	GetBinary(_T("ColorHistory"), &m_ColorHistory, sizeof(m_ColorHistory));
+
 	m_MapMergeMetro = GetInt(_T("MapMergeMetro"), FALSE);
 	m_MapZoomFactor = GetInt(_T("MapZoomFactor"), 6);
-	m_MapAutosize= GetInt(_T("MapAutosize"), TRUE);
 	m_GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_GlobeZoom = GetInt(_T("GlobeZoom"), 600);
-	m_GlobeAntialising = GetInt(_T("GlobeAntialising"), TRUE);
-	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
-	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_GlobeMergeMetro = GetInt(_T("GlobeMergeMetro"), FALSE);
-	m_GlobeUseColors = GetInt(_T("GlobeUseColors"), TRUE);
-	m_GlobeClamp = GetInt(_T("GlobeClamp"), FALSE);
 	m_GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
 	m_GlobeShowAirportIATA = GetInt(_T("GlobeShowAirportIATA"), TRUE);
 	m_GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_GlobeShowGPS = GetInt(_T("GlobeShowGPS"), FALSE);
-	m_GlobeShowFlightCount = GetInt(_T("GlobeShowFlightCount"), FALSE);
-	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
-	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
+	m_GlobeShowMovements = GetInt(_T("GlobeShowMovements"), FALSE);
+	m_GlobeDarkBackground = GetInt(_T("GlobeDarkBackground"), FALSE);
 	m_GoogleEarthMergeMetro = GetInt(_T("GoogleEarthMergeMetro"), FALSE);
 	m_GoogleEarthUseCount = GetInt(_T("GoogleEarthUseCount"), FALSE);
 	m_GoogleEarthUseColors = GetInt(_T("GoogleEarthUseColors"), TRUE);
-	m_GoogleEarthClamp = GetInt(_T("GoogleEarthClamp"), FALSE);
-	m_MergeDirections = GetInt(_T("MergeDirections"), TRUE);
-	m_MergeAwards = GetInt(_T("MergeAwards"), FALSE);
-	m_MergeClasses = GetInt(_T("MergeClasses"), TRUE);
-	GetBinary(_T("CustomColors"), &m_CustomColors, sizeof(m_CustomColors));
+	m_GoogleEarthClampHeight = GetInt(_T("GoogleEarthClampHeight"), FALSE);
+	m_StatisticsMergeMetro = GetInt(_T("StatisticsMergeMetro"), FALSE);
+	m_StatisticsMergeDirections = GetInt(_T("StatisticsMergeDirections"), TRUE);
+	m_StatisticsMergeAwards = GetInt(_T("StatisticsMergeAwards"), FALSE);
+	m_StatisticsMergeClasses = GetInt(_T("StatisticsMergeClasses"), TRUE);
 	m_MapSettings.Background = GetInt(_T("MapBackground"), 0);
 	m_MapSettings.BackgroundColor = GetInt(_T("MapBackgroundColor"), 0xF0F0F0);
 	m_MapSettings.Width = GetInt(_T("MapWidth"), 640);
 	m_MapSettings.Height = GetInt(_T("MapHeight"), 640);
 	m_MapSettings.CenterPacific = GetInt(_T("MapCenterPacific"), FALSE);
 	m_MapSettings.WideBorder = GetInt(_T("MapWideBorder"), FALSE);
-	m_MapSettings.ShowFlightRoutes = GetInt(_T("MapShowFlightRoutes"), TRUE);
+	m_MapSettings.ShowRoutes = GetInt(_T("MapShowRoutes"), TRUE);
+	m_MapSettings.RouteColor = GetInt(_T("MapRouteColor"), 0xFFFFFF);
+	m_MapSettings.UseColors = GetInt(_T("MapUseColors"), TRUE);
 	m_MapSettings.StraightLines = GetInt(_T("MapStraightLines"), FALSE);
 	m_MapSettings.Arrows = GetInt(_T("MapArrows"), FALSE);
 	m_MapSettings.UseCountWidth = GetInt(_T("MapUseCountWidth"), FALSE);
@@ -163,14 +157,12 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.NoteSmallFont = GetInt(_T("MapNoteSmallFont"), TRUE);
 	m_MapSettings.NoteInnerColor = GetInt(_T("MapNoteInnerColor"), 0xFFFFFF);
 	m_MapSettings.NoteOuterColor = GetInt(_T("MapNoteOuterColor"), 0x000000);
-	m_MapSettings.UseColors = GetInt(_T("MapUseColors"), TRUE);
-	m_MapSettings.RouteColor = GetInt(_T("MapRouteColor"), 0xFFFFFF);
 	m_MapSettings.ShowLocations = GetInt(_T("MapShowLocations"), TRUE);
-	m_MapSettings.LocationInnerColor = GetInt(_T("MapLocationInnerColor"), 0x0000FF);
-	m_MapSettings.LocationOuterColor = GetInt(_T("MapLocationOuterColor"), 0xFFFFFF);
+	m_MapSettings.LocationsInnerColor = GetInt(_T("MapLocationsInnerColor"), 0x0000FF);
+	m_MapSettings.LocationsOuterColor = GetInt(_T("MapLocationsOuterColor"), 0xFFFFFF);
 	m_MapSettings.ShowIATACodes = GetInt(_T("MapShowIATACodes"), TRUE);
-	m_MapSettings.IATAInnerColor = GetInt(_T("MapIATAInnerColor"), 0xFFFFFF);
-	m_MapSettings.IATAOuterColor = GetInt(_T("MapIATAOuterColor"), 0x000000);
+	m_MapSettings.IATACodesInnerColor = GetInt(_T("MapIATACodesInnerColor"), 0xFFFFFF);
+	m_MapSettings.IATACodesOuterColor = GetInt(_T("MapIATACodesOuterColor"), 0x000000);
 
 	m_FindReplaceSettings.Flags = GetInt(_T("FindReplaceFlags"), 0);
 	m_FindReplaceSettings.SearchTerm[0] = m_FindReplaceSettings.ReplaceTerm[0] = L'\0';
@@ -207,11 +199,6 @@ BOOL CFlightmapApp::InitInstance()
 			m_RecentReplaceTerms.AddTail(tmpValue);
 	}
 
-	if (m_nTextureSize<0)
-		m_nTextureSize = 0;
-	if (m_nTextureSize>m_nMaxTextureSize)
-		m_nTextureSize = m_nMaxTextureSize;
-
 	if (m_MapSettings.Width<400)
 		m_MapSettings.Width = 400;
 	if (m_MapSettings.Width>8192)
@@ -222,16 +209,11 @@ BOOL CFlightmapApp::InitInstance()
 	if (m_MapSettings.Height>4096)
 		m_MapSettings.Height = 4096;
 
-	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
-	if (pFrame)
-	{
-		pFrame->RedrawWindow(NULL, NULL, RDW_UPDATENOW);
+	FMCheckForUpdate();
 
-		if (!FMIsLicensed())
-			ShowNagScreen(NAG_FORCE, pFrame);
-
-		FMCheckForUpdate();
-	}
+	CWnd* pFrameWnd = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
+	if (pFrameWnd)
+		ShowNagScreen(NAG_FORCE, pFrameWnd);
 
 	m_AppInitialized = TRUE;
 
@@ -242,64 +224,55 @@ CWnd* CFlightmapApp::OpenCommandLine(WCHAR* CmdLine)
 {
 	if (CmdLine)
 		if (_wcsicmp(CmdLine, L"/CHECKUPDATE")==0)
-		{
-			FMCheckForUpdate();
 			return NULL;
-		}
 
-	CMainWnd* pFrame = new CMainWnd();
-	pFrame->Create(new CItinerary(CmdLine));
-	pFrame->ShowWindow(SW_SHOW);
-	pFrame->UpdateWindow();
+	CMainWnd* pFrameWnd = new CMainWnd();
+	pFrameWnd->Create(new CItinerary(CmdLine));
+	pFrameWnd->ShowWindow(SW_SHOW);
 
-	return pFrame;
+	return pFrameWnd;
 }
 
 INT CFlightmapApp::ExitInstance()
 {
-	DeleteObject(hFlagIcons[0]);
-	DeleteObject(hFlagIcons[1]);
-
 	if (m_AppInitialized)
 	{
+		WriteInt(_T("ModelQuality"), m_ModelQuality);
+		WriteInt(_T("TextureQuality"), m_TextureQuality);
+		WriteInt(_T("TextureCompress"), m_TextureCompress);
+
 		WriteInt(_T("UseStatuteMiles"), m_UseStatuteMiles);
-		WriteInt(_T("UseBgImages"), m_UseBgImages);
-		WriteInt(_T("TextureSize"), m_nTextureSize);
-		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+		WriteBinary(_T("ColorHistory"), (LPBYTE)&m_ColorHistory, sizeof(m_ColorHistory));
+
 		WriteInt(_T("MapMergeMetro"), m_MapMergeMetro);
 		WriteInt(_T("MapZoomFactor"), m_MapZoomFactor);
-		WriteInt(_T("MapAutosize"), m_MapAutosize);
 		WriteInt(_T("GlobeLatitude"), m_GlobeLatitude);
 		WriteInt(_T("GlobeLongitude"), m_GlobeLongitude);
 		WriteInt(_T("GlobeZoom"), m_GlobeZoom);
-		WriteInt(_T("GlobeAntialising"), m_GlobeAntialising);
-		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
-		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 		WriteInt(_T("GlobeMergeMetro"), m_GlobeMergeMetro);
-		WriteInt(_T("GlobeUseColors"), m_GlobeUseColors);
-		WriteInt(_T("GlobeClamp"), m_GlobeClamp);
 		WriteInt(_T("GlobeShowSpots"), m_GlobeShowSpots);
 		WriteInt(_T("GlobeShowAirportIATA"), m_GlobeShowAirportIATA);
 		WriteInt(_T("GlobeShowAirportNames"), m_GlobeShowAirportNames);
 		WriteInt(_T("GlobeShowGPS"), m_GlobeShowGPS);
-		WriteInt(_T("GlobeShowFlightCount"), m_GlobeShowFlightCount);
-		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
-		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
+		WriteInt(_T("GlobeShowMovements"), m_GlobeShowMovements);
+		WriteInt(_T("GlobeDarkBackground"), m_GlobeDarkBackground);
 		WriteInt(_T("GoogleEarthMergeMetro"), m_GoogleEarthMergeMetro);
 		WriteInt(_T("GoogleEarthUseCount"), m_GoogleEarthUseCount);
 		WriteInt(_T("GoogleEarthUseColors"), m_GoogleEarthUseColors);
-		WriteInt(_T("GoogleEarthClamp"), m_GoogleEarthClamp);
-		WriteInt(_T("MergeDirections"), m_MergeDirections);
-		WriteInt(_T("MergeAwards"), m_MergeAwards);
-		WriteInt(_T("MergeClasses"), m_MergeClasses);
-		WriteBinary(_T("CustomColors"), (LPBYTE)&m_CustomColors, sizeof(m_CustomColors));
+		WriteInt(_T("GoogleEarthClampHeight"), m_GoogleEarthClampHeight);
+		WriteInt(_T("StatisticsMergeMetro"), m_StatisticsMergeMetro);
+		WriteInt(_T("StatisticsMergeDirections"), m_StatisticsMergeDirections);
+		WriteInt(_T("StatisticsMergeAwards"), m_StatisticsMergeAwards);
+		WriteInt(_T("StatisticsMergeClasses"), m_StatisticsMergeClasses);
 		WriteInt(_T("MapBackground"), m_MapSettings.Background);
 		WriteInt(_T("MapBackgroundColor"), m_MapSettings.BackgroundColor);
 		WriteInt(_T("MapWidth"), m_MapSettings.Width);
 		WriteInt(_T("MapHeight"), m_MapSettings.Height);
 		WriteInt(_T("MapCenterPacific"), m_MapSettings.CenterPacific);
 		WriteInt(_T("MapWideBorder"), m_MapSettings.WideBorder);
-		WriteInt(_T("MapShowFlightRoutes"), m_MapSettings.ShowFlightRoutes);
+		WriteInt(_T("MapShowRoutes"), m_MapSettings.ShowRoutes);
+		WriteInt(_T("MapRouteColor"), m_MapSettings.RouteColor);
+		WriteInt(_T("MapUseColors"), m_MapSettings.UseColors);
 		WriteInt(_T("MapStraightLines"), m_MapSettings.StraightLines);
 		WriteInt(_T("MapArrows"), m_MapSettings.Arrows);
 		WriteInt(_T("MapUseCountWidth"), m_MapSettings.UseCountWidth);
@@ -312,14 +285,12 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("MapNoteSmallFont"), m_MapSettings.NoteSmallFont);
 		WriteInt(_T("MapNoteInnerColor"), m_MapSettings.NoteInnerColor);
 		WriteInt(_T("MapNoteOuterColor"), m_MapSettings.NoteOuterColor);
-		WriteInt(_T("MapUseColors"), m_MapSettings.UseColors);
-		WriteInt(_T("MapRouteColor"), m_MapSettings.RouteColor);
 		WriteInt(_T("MapShowLocations"), m_MapSettings.ShowLocations);
-		WriteInt(_T("MapLocationInnerColor"), m_MapSettings.LocationInnerColor);
-		WriteInt(_T("MapLocationOuterColor"), m_MapSettings.LocationOuterColor);
+		WriteInt(_T("MapLocationsInnerColor"), m_MapSettings.LocationsInnerColor);
+		WriteInt(_T("MapLocationsOuterColor"), m_MapSettings.LocationsOuterColor);
 		WriteInt(_T("MapShowIATACodes"), m_MapSettings.ShowIATACodes);
-		WriteInt(_T("MapIATAInnerColor"), m_MapSettings.IATAInnerColor);
-		WriteInt(_T("MapIATAOuterColor"), m_MapSettings.IATAOuterColor);
+		WriteInt(_T("MapIATACodesInnerColor"), m_MapSettings.IATACodesInnerColor);
+		WriteInt(_T("MapIATACodesOuterColor"), m_MapSettings.IATACodesOuterColor);
 
 		WriteInt(_T("FindReplaceFlags"), m_FindReplaceSettings.Flags);
 
@@ -355,39 +326,34 @@ INT CFlightmapApp::ExitInstance()
 }
 
 
-void CFlightmapApp::Quit()
-{
-	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
-		m_pMainFrames.GetNext(p)->SendMessage(WM_CLOSE);
-}
-
 void CFlightmapApp::Broadcast(UINT Message)
 {
 	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 		m_pMainFrames.GetNext(p)->PostMessage(Message);
 }
 
-void CFlightmapApp::AddToRecentList(const CString& FileName)
+void CFlightmapApp::AddStringToList(CList<CString>& List, const CString& Str)
 {
-	for (POSITION p=m_RecentFiles.GetHeadPosition(); p; )
+	for (POSITION p=List.GetHeadPosition(); p; )
 	{
 		POSITION pl = p;
-		if (m_RecentFiles.GetNext(p)==FileName)
-			m_RecentFiles.RemoveAt(pl);
+		if (List.GetNext(p)==Str)
+			List.RemoveAt(pl);
 	}
 
-	m_RecentFiles.AddHead(FileName);
+	List.AddHead(Str);
 }
 
-void CFlightmapApp::AddRecentList(CDialogMenuPopup* pPopup)
+void CFlightmapApp::AddRecentList(CMenu* pPopup)
 {
 	if (!m_RecentFiles.IsEmpty())
 	{
-		pPopup->AddCaption(IDS_RECENTFILES);
+		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
-		UINT a=0;
-		for (POSITION p=m_RecentFiles.GetHeadPosition(); p; a++)
-			pPopup->AddFile(IDM_FILE_RECENT+a, m_RecentFiles.GetNext(p), m_RecentFiles.GetCount()<=5 ? CDMB_LARGE : CDMB_SMALL);
+		INT a = (INT)m_RecentFiles.GetCount()-1;
+
+		for (POSITION p=m_RecentFiles.GetTailPosition(); p; a--)
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_RECENT+a, m_RecentFiles.GetPrev(p));
 	}
 }
 
@@ -411,7 +377,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	CGoogleEarthFile f;
 	if (!f.Open(szTempName))
 	{
-		FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
+		FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 	}
 	else
 	{
@@ -424,7 +390,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(IDS_DRIVENOTREADY, GetActiveWindow());
+			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 			f.Close();
 		}
 	}
@@ -432,7 +398,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 
 void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
 {
-	FMAirport* pAirport = NULL;
+	FMAirport* pAirport;
 	if (FMIATAGetAirportByCode(Code, &pAirport))
 		OpenAirportGoogleEarth(pAirport);
 }
@@ -466,7 +432,7 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	CFont* pOldFont = dc.SelectObject(&fntTitle);
 
 	CRect rectTitle((INT)(Spacer*3.5), (INT)Spacer, rect.right, (INT)(Spacer*3.0));
-	dc.SetTextColor(0x606060);
+	dc.SetTextColor(0x404040);
 	dc.DrawText(di.lpszDocName, -1, rectTitle, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP);
 
 	dc.SelectObject(&fntSubtitle);
@@ -498,17 +464,13 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 }
 
 
-void CFlightmapApp::OnAppAbout()
+void CFlightmapApp::OnBackstageAbout()
 {
+	CWaitCursor csr;
+
 	AboutDlg dlg(m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
 	{
-		if (m_UseBgImages!=dlg.m_UseBgImages)
-		{
-			m_UseBgImages = dlg.m_UseBgImages;
-			PostMessage(HWND_BROADCAST, m_UseBgImagesChangedMsg, (WPARAM)m_UseBgImages, NULL);
-		}
-
 		if (m_UseStatuteMiles!=dlg.m_UseStatuteMiles)
 		{
 			m_UseStatuteMiles = dlg.m_UseStatuteMiles;

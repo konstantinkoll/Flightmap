@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CItinerary.h"
+#include "FMCommDlg.h"
 
 
 // FilterDlg
@@ -23,18 +24,19 @@ struct FlightFilter
 	UINT DepartureYear;
 };
 
-class FilterDlg : public CDialog
+class FilterDlg : public FMDialog
 {
 public:
 	FilterDlg(CItinerary* pItinerary, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	FlightFilter m_Filter;
 
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnSelectIATA();
+	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 	CItinerary* p_Itinerary;
@@ -44,6 +46,6 @@ protected:
 	CComboBox m_wndFilterEquipment;
 	CRatingCtrl m_wndFilterRating;
 	CComboBox m_wndFilterMonth;
-	CListCtrl m_wndSortAttributes;
-	CButton m_wndAscending;
+	CExplorerList m_wndSortAttributes;
+	CComboBox m_wndSortDirection;
 };

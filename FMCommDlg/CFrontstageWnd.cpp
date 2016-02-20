@@ -25,21 +25,25 @@ void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed)
 
 			rectOutline.InflateRect(1, 1);
 
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
+			g.SetSmoothingMode(FMGetApp()->m_SmoothingModeAntiAlias8x8);
 
-/*			GraphicsPath path;
+			GraphicsPath path;
 			CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
 
-			Pen pen(Color(0x00, 0x00, 0x00));
-			g.DrawPath(&pen, &path);*/
+			Pen pen(Color(0xFF000000));
+			g.DrawPath(&pen, &path);
 		}
 	}
 }
 
 void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed)
 {
-	Graphics g(dc);
-	DrawWindowEdge(g, Themed);
+	if (Themed)
+	{
+		Graphics g(dc);
+
+		DrawWindowEdge(g, Themed);
+	}
 }
 
 
@@ -71,9 +75,9 @@ LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)
 	if (!rectWindow.PtInRect(point))
 		return HTNOWHERE;
 
-/*	if ((point.x<rectWindow.left+BACKSTAGEGRIPPER) || (point.x>=rectWindow.right-BACKSTAGEGRIPPER) ||
+	if ((point.x<rectWindow.left+BACKSTAGEGRIPPER) || (point.x>=rectWindow.right-BACKSTAGEGRIPPER) ||
 		(point.y<rectWindow.top+BACKSTAGEGRIPPER) || (point.y>=rectWindow.bottom-BACKSTAGEGRIPPER))
-		return HTTRANSPARENT;*/
+		return HTTRANSPARENT;
 
 	return CWnd::OnNcHitTest(point);
 }

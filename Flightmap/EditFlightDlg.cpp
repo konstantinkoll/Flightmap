@@ -4,19 +4,16 @@
 
 #include "stdafx.h"
 #include "EditFlightDlg.h"
-#include "EditFlightAttachmentsPage.h"
-#include "EditFlightRoutePage.h"
-#include "EditFlightOtherPage.h"
 #include "Flightmap.h"
 
 
 // EditFlightDlg
 //
 
-static UINT LastPageSelected = 0;
+UINT EditFlightDlg::m_LastTab = 0;
 
-EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParentWnd, CItinerary* pItinerary, INT iSelectPage)
-	: CPropertySheet(IDS_EDITFLIGHT, pParentWnd, iSelectPage==-1 ? LastPageSelected : iSelectPage)
+EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParentWnd, CItinerary* pItinerary, INT SelectTab)
+	: FMTabbedDialog(IDS_EDITFLIGHT, pParentWnd, &m_LastTab)
 {
 	if (pFlight)
 	{
@@ -27,39 +24,311 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParentWnd, CItinerary*
 		ResetFlight(m_Flight);
 	}
 
-	m_pPages[0] = new EditFlightRoutePage(&m_Flight);
-	m_pPages[1] = new EditFlightOtherPage(&m_Flight, pItinerary);
-	m_pPages[2] = new EditFlightAttachmentsPage(&m_Flight, pItinerary);
+	p_Itinerary = pItinerary;
 
-	// Seiten hinzufügen
-	const UINT nIDTemplates[] = { IDD_EDITFLIGHT_ROUTE, IDD_EDITFLIGHT_OTHER, IDD_EDITFLIGHT_ATTACHMENTS };
-	for (UINT a=0; a<EDITFLIGHTPAGES; a++)
+	if (SelectTab!=-1)
+		m_LastTab = SelectTab;
+}
+
+void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
+{
+	FMTabbedDialog::DoDataExchange(pDX);
+
+	// Tab 0
+	DDX_MaskedText(pDX, IDC_FROM_IATA, m_wndFromIATA, 0, &m_Flight);
+	DDX_MaskedText(pDX, IDC_FROM_TIME, m_wndFromTime, 1, &m_Flight);
+	DDX_MaskedText(pDX, IDC_FROM_GATE, m_wndFromGate, 2, &m_Flight);
+	DDX_MaskedText(pDX, IDC_TO_IATA, m_wndToIATA, 3, &m_Flight);
+	DDX_MaskedText(pDX, IDC_TO_TIME, m_wndToTime, 4, &m_Flight);
+	DDX_MaskedText(pDX, IDC_TO_GATE, m_wndToGate, 5, &m_Flight);
+	DDX_MaskedText(pDX, IDC_FLIGHTTIME, m_wndFlighttime, 23, &m_Flight);
+	DDX_MaskedText(pDX, IDC_COMMENT, m_wndComment, 22, &m_Flight);
+
+	// Tab 1
+	INT Class;
+	if (!pDX->m_bSaveAndValidate && (m_Flight.Class!=AIRX_Unknown))
 	{
-		m_pPages[a]->Construct(nIDTemplates[a]);
-		AddPage(m_pPages[a]);
+		Class = (m_Flight.Class==AIRX_Economy) ? 0 : (m_Flight.Class==AIRX_PremiumEconomy) ? 1 : (m_Flight.Class==AIRX_Business) ? 2 : (m_Flight.Class==AIRX_First) ? 3 : (m_Flight.Class==AIRX_Crew) ? 4 : 5;
+		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 	}
 
-	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
+	DDX_Control(pDX, IDC_CARRIER, m_wndCarrier);
+	DDX_Control(pDX, IDC_EQUIPMENT, m_wndEquipment);
+	DDX_MaskedText(pDX, IDC_FLIGHTNO, m_wndFlightNo, 8, &m_Flight);
+	DDX_MaskedText(pDX, IDC_CODESHARES, m_wndCodeshares, 9, &m_Flight);
+	DDX_MaskedText(pDX, IDC_REGISTRATION, m_wndRegistration, 11, &m_Flight);
+	DDX_MaskedText(pDX, IDC_AIRCRAFTNAME, m_wndAircraftName, 12, &m_Flight);
+	DDX_MaskedText(pDX, IDC_ETIXCODE, m_wndEtixCode, 16, &m_Flight);
+	DDX_MaskedText(pDX, IDC_FARE, m_wndFare, 17, &m_Flight);
+	DDX_MaskedText(pDX, IDC_AWARDMILES, m_wndAwardMiles, 18, &m_Flight);
+	DDX_MaskedText(pDX, IDC_STATUSMILES, m_wndStatusMiles, 19, &m_Flight);
+	DDX_MaskedText(pDX, IDC_UPGRADEVOUCHER, m_wndUpgradeVoucher, 24, &m_Flight);
+	DDX_Control(pDX, IDC_COLORINDICATOR, m_wndColorIndicator);
+	DDX_Control(pDX, IDC_RATING, m_wndRating);
+	DDX_MaskedText(pDX, IDC_SEAT, m_wndSeat, 14, &m_Flight);
+
+	// Tab 2
+	DDX_Control(pDX, IDC_FILEVIEW, m_wndFileView);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		// Tab 0
+		CalcDistance(m_Flight, TRUE);
+		CalcFuture(m_Flight);
+
+		m_Flight.Flags &= ~AIRX_GroundTransportation;
+
+		if (((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->GetCheck())
+			m_Flight.Flags |= AIRX_GroundTransportation;
+
+		// Tab 1
+		CString tmpStr;
+		m_wndCarrier.GetWindowText(tmpStr);
+		StringToAttribute(tmpStr.GetBuffer(), m_Flight, 7);
+
+		m_wndEquipment.GetWindowText(tmpStr);
+		StringToAttribute(tmpStr.GetBuffer(), m_Flight, 10);
+
+		DDX_Radio(pDX, IDC_CLASS_Y, Class);
+		m_Flight.Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : (Class==5) ? AIRX_Charter : AIRX_Unknown;
+
+		m_Flight.Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight | AIRX_Upgrade | AIRX_Cancelled);
+		m_Flight.Flags |= m_wndRating.GetRating()<<FMAttributes[21].DataParameter;
+
+		if (((CButton*)GetDlgItem(IDC_LEISURETRIP))->GetCheck())
+			m_Flight.Flags |= AIRX_LeisureTrip;
+
+		if (((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->GetCheck())
+			m_Flight.Flags |= AIRX_BusinessTrip;
+
+		if (((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->GetCheck())
+			m_Flight.Flags |= AIRX_AwardFlight;
+
+		if (((CButton*)GetDlgItem(IDC_UPGRADE))->GetCheck())
+			m_Flight.Flags |= AIRX_Upgrade;
+
+		if (((CButton*)GetDlgItem(IDC_CANCELLED))->GetCheck())
+			m_Flight.Flags |= AIRX_Cancelled;
+	}
 }
 
-BOOL EditFlightDlg::OnCommand(WPARAM wParam, LPARAM lParam) 
+void EditFlightDlg::GetIATACode(UINT nID, CHAR* pIATA)
 {
-	if (LOWORD(wParam)==IDOK)
-		LastPageSelected = GetPageIndex(GetActivePage());
+	ASSERT(pIATA);
 
-	return CPropertySheet::OnCommand(wParam, lParam);
+	CString tmpStr;
+	GetDlgItem(nID)->GetWindowText(tmpStr);
+
+	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, pIATA, 4, NULL, NULL);
+}
+
+void EditFlightDlg::DisplayAirport(UINT nID, FMAirport* pAirport)
+{
+	CString tmpStr1(pAirport->Name);
+	CString tmpStr2(FMIATAGetCountry(pAirport->CountryID)->Name);
+
+	tmpStr1.Append(_T(", "));
+	tmpStr1.Append(tmpStr2);
+
+	GetDlgItem(nID)->SetWindowText(tmpStr1);
+}
+
+void EditFlightDlg::DisplayAirport(UINT nID, CHAR* pIATA)
+{
+	ASSERT(pIATA);
+
+	FMAirport* pAirport;
+	if (FMIATAGetAirportByCode(pIATA, &pAirport))
+	{
+		DisplayAirport(nID, pAirport);
+	}
+	else
+	{
+		GetDlgItem(nID)->SetWindowText(_T(""));
+	}
+}
+
+void EditFlightDlg::DisplayAirport(UINT nDisplayID, UINT nEditID)
+{
+	CHAR Code[4];
+	GetIATACode(nEditID, Code);
+
+	DisplayAirport(nDisplayID, Code);
+}
+
+void EditFlightDlg::SelectAirport(UINT nEditID, CHAR* pIATA)
+{
+	ASSERT(nEditID);
+	ASSERT(pIATA);
+
+	CHAR Code[4];
+	GetIATACode(nEditID, Code);
+
+	FMSelectLocationIATADlg dlg(this, Code);
+	if (dlg.DoModal()==IDOK)
+	{
+		strcpy_s(pIATA, 4, dlg.p_Airport->Code);
+		GetDlgItem(nEditID)->SetWindowText(CString(dlg.p_Airport->Code));
+
+		OnCheckAirports();
+	}
+}
+
+void EditFlightDlg::DisplayLocation(const FMGeoCoordinates& Location)
+{
+	CString tmpStr;
+	FMGeoCoordinatesToString(Location, tmpStr);
+
+	GetDlgItem(IDC_WAYPOINT_DISPLAY)->SetWindowText(tmpStr);
+}
+
+BOOL EditFlightDlg::InitSidebar(LPSIZE pszTabArea)
+{
+	if (!FMTabbedDialog::InitSidebar(pszTabArea))
+		return FALSE;
+
+	AddTab(IDD_EDITFLIGHT_ROUTE, pszTabArea);
+	AddTab(IDD_EDITFLIGHT_OTHER, pszTabArea);
+	AddTab(IDD_EDITFLIGHT_ATTACHMENTS, pszTabArea);
+
+	return TRUE;
+}
+
+BOOL EditFlightDlg::InitDialog()
+{
+	BOOL Result = FMTabbedDialog::InitDialog();
+
+	// Airports
+	DisplayLocation(m_Flight.Waypoint);
+	OnCheckAirports();
+
+	// Flight
+	((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->SetCheck(m_Flight.Flags & AIRX_GroundTransportation);
+
+	// Carrier
+	PrepareCarrierCtrl(&m_wndCarrier, p_Itinerary);
+
+	if (m_wndCarrier.SelectString(-1, m_Flight.Carrier)==-1)
+		m_wndCarrier.SetWindowText(m_Flight.Carrier);
+
+	// Equipment
+	PrepareEquipmentCtrl(&m_wndEquipment, p_Itinerary);
+
+	if (m_wndEquipment.SelectString(-1, m_Flight.Equipment)==-1)
+		m_wndEquipment.SetWindowText(m_Flight.Equipment);
+
+	// Flight
+	((CButton*)GetDlgItem(IDC_LEISURETRIP))->SetCheck(m_Flight.Flags & AIRX_LeisureTrip);
+	((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->SetCheck(m_Flight.Flags & AIRX_BusinessTrip);
+	((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->SetCheck(m_Flight.Flags & AIRX_AwardFlight);
+	((CButton*)GetDlgItem(IDC_UPGRADE))->SetCheck(m_Flight.Flags & AIRX_Upgrade);
+	((CButton*)GetDlgItem(IDC_CANCELLED))->SetCheck(m_Flight.Flags & AIRX_Cancelled);
+
+	// Color
+	m_wndColorIndicator.SetColor(m_Flight.Color);
+
+	// Rating
+	m_wndRating.SetRating((m_Flight.Flags>>FMAttributes[21].DataParameter) & 0xF);
+
+	// Attachments
+	m_wndFileView.SetData(p_Itinerary, &m_Flight);
+
+	return Result;
 }
 
 
-BEGIN_MESSAGE_MAP(EditFlightDlg, CPropertySheet)
-	ON_WM_DESTROY()
+BEGIN_MESSAGE_MAP(EditFlightDlg, FMTabbedDialog)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, 3, OnRequestTooltipData)
+
+	ON_BN_CLICKED(IDC_FROM_SELECT, OnFromSelect)
+	ON_BN_CLICKED(IDC_TO_SELECT, OnToSelect)
+	ON_BN_CLICKED(IDC_WAYPOINT_BTN, OnWaypoint)
+	ON_EN_KILLFOCUS(IDC_FROM_IATA, OnCheckAirports)
+	ON_EN_KILLFOCUS(IDC_TO_IATA, OnCheckAirports)
+
+	ON_BN_CLICKED(IDC_CHOOSECOLOR, OnChooseColor)
 END_MESSAGE_MAP()
 
-void EditFlightDlg::OnDestroy()
+void EditFlightDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	for (UINT a=0; a<EDITFLIGHTPAGES; a++)
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
+
+	const UINT nTab = pTooltipData->Item-IDD_TABBEDDIALOG;
+	if (nTab==2)
 	{
-		m_pPages[a]->DestroyWindow();
-		delete m_pPages[a];
+		INT64 FileSize = 0;
+		for (UINT a=0; a<m_Flight.AttachmentCount; a++)
+			FileSize += p_Itinerary->m_Attachments[m_Flight.Attachments[a]].Size;
+
+		WCHAR tmpBuf[256];
+		StrFormatByteSize(FileSize, tmpBuf, 256);
+
+		CString tmpStr;
+		tmpStr.Format(m_Flight.AttachmentCount==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL, m_Flight.AttachmentCount, tmpBuf);
+
+		wcscpy_s(pTooltipData->Hint, 4096, tmpStr);
+
+		*pResult = TRUE;
 	}
+	else
+	{
+		FMTabbedDialog::OnRequestTooltipData(pNMHDR, pResult);
+	}
+}
+
+
+void EditFlightDlg::OnFromSelect()
+{
+	SelectAirport(IDC_FROM_IATA, m_Flight.From.Code);
+}
+
+void EditFlightDlg::OnToSelect()
+{
+	SelectAirport(IDC_TO_IATA, m_Flight.To.Code);
+}
+
+void EditFlightDlg::OnWaypoint()
+{
+	FMSelectLocationGPSDlg dlg(m_Flight.Waypoint, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		m_Flight.Waypoint = dlg.m_Location;
+		DisplayLocation(dlg.m_Location);
+	}
+}
+
+void EditFlightDlg::OnCheckAirports()
+{
+	BOOL bActive = FALSE;
+
+	// Airports
+	DisplayAirport(IDC_FROM_NAME, IDC_FROM_IATA);
+	DisplayAirport(IDC_TO_NAME, IDC_TO_IATA);
+
+	// Waypoint
+	CHAR Code[4];
+
+	FMAirport* pFrom;
+	GetIATACode(IDC_FROM_IATA, Code);
+	if (!FMIATAGetAirportByCode(Code, &pFrom))
+		goto SetActive;
+
+	FMAirport* pTo;
+	GetIATACode(IDC_TO_IATA, Code);
+	if (!FMIATAGetAirportByCode(Code, &pTo))
+		goto SetActive;
+
+	bActive = (pFrom==pTo) && (pFrom!=NULL);
+
+SetActive:
+	GetDlgItem(IDC_WAYPOINT_BTN)->EnableWindow(bActive);
+	GetDlgItem(IDC_WAYPOINT_DISPLAY)->EnableWindow(bActive);
+}
+
+
+void EditFlightDlg::OnChooseColor()
+{
+	theApp.ChooseColor(&m_Flight.Color, this);
+
+	m_wndColorIndicator.SetColor(m_Flight.Color);
 }

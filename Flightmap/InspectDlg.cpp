@@ -44,7 +44,7 @@ void InspectDlg::Update()
 	{
 		INT64 FileSize = 0;
 		for (UINT a=0; a<p_Itinerary->m_Attachments.m_ItemCount; a++)
-			FileSize += p_Itinerary->m_Attachments.m_Items[a].Size;
+			FileSize += p_Itinerary->m_Attachments[a].Size;
 
 		WCHAR tmpBuf[256];
 		StrFormatByteSize(FileSize, tmpBuf, 256);
@@ -108,7 +108,7 @@ void InspectDlg::OnDeleteAttachments()
 	CString Caption((LPCSTR)IDS_DELETE_CAPTION);
 	CString Message((LPCSTR)IDS_DELETE_ALL);
 
-	if (MessageBox(Message, Caption, MB_YESNO | MB_ICONWARNING)==IDYES)
+	if (FMMessageBox(this, Message, Caption, MB_YESNO | MB_ICONWARNING)==IDYES)
 	{
 		p_Itinerary->DeleteAttachments();
 		Update();

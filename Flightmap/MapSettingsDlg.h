@@ -1,0 +1,89 @@
+
+// MapSettingsDlg.h: Schnittstelle der Klasse MapSettingsDlg
+//
+
+#pragma once
+#include "FMCommDlg.h"
+
+
+// MapSettingsDlg
+//
+
+struct ResolutionPreset
+{
+	UINT Width;
+	UINT Height;
+	WCHAR Hint[19];
+	INT iImage;
+};
+
+class MapSettingsDlg : public FMTabbedDialog
+{
+public:
+	MapSettingsDlg(CWnd* pParentWnd=NULL);
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitSidebar(LPSIZE pszTabArea);
+	virtual BOOL InitDialog();
+
+	void ChooseColor(COLORREF* pColor, BOOL AllowReset, CColorIndicator* pColorIndicator);
+
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnUserDefinedResolution();
+
+	afx_msg void OnBackground();
+	afx_msg void OnChooseColorBackground();
+
+	afx_msg void OnChangeMergeMetropolitan();
+	afx_msg void OnShowLocations();
+	afx_msg void OnChooseColorLocationsInner();
+	afx_msg void OnChooseColorLocationsOuter();
+	afx_msg void OnShowIATACodes();
+	afx_msg void OnChooseColorIATACodesInner();
+	afx_msg void OnChooseColorIATACodesOuter();
+
+	afx_msg void OnShowRoutes();
+	afx_msg void OnChooseColorRoute();
+	afx_msg void OnChooseColorNoteInner();
+	afx_msg void OnChooseColorNoteOuter();
+	DECLARE_MESSAGE_MAP()
+
+	static UINT m_LastTab;
+	static CIcons m_ResolutionPresetIcons;
+	CImageList m_ResolutionPresetIconsImageList;
+	COLORREF m_clrBackground;
+	COLORREF m_clrLocationsInner;
+	COLORREF m_clrLocationsOuter;
+	COLORREF m_clrIATACodesInner;
+	COLORREF m_clrIATACodesOuter;
+	COLORREF m_clrRoute;
+	COLORREF m_clrNoteInner;
+	COLORREF m_clrNoteOuter;
+
+private:
+	CExplorerList m_wndResolutionList;
+	CMFCMaskedEdit m_wndEditWidth;
+	CMFCMaskedEdit m_wndEditHeight;
+	CComboBox m_wndBackground;
+	CColorIndicator m_wndColorIndicatorBackground;
+	CPictureCtrl m_wndBackgroundPreview;
+	CPictureCtrl m_wndMetropolitanPreview;
+	CColorIndicator m_wndColorIndicatorLocationsInner;
+	CColorIndicator m_wndColorIndicatorLocationsOuter;
+	CColorIndicator m_wndColorIndicatorIATACodesInner;
+	CColorIndicator m_wndColorIndicatorIATACodesOuter;
+	CColorIndicator m_wndColorIndicatorRoute;
+	CColorIndicator m_wndColorIndicatorNoteInner;
+	CColorIndicator m_wndColorIndicatorNoteOuter;
+};
+
+inline void MapSettingsDlg::ChooseColor(COLORREF* pColor, BOOL AllowReset, CColorIndicator* pColorIndicator)
+{
+	ASSERT(pColor);
+	ASSERT(pColorIndicator);
+
+	theApp.ChooseColor(pColor, this, AllowReset);
+
+	pColorIndicator->SetColor(*pColor);
+}

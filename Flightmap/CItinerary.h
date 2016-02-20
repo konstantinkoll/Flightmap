@@ -8,8 +8,6 @@
 #include "resource.h"
 
 
-#define PI     3.14159265358979323846
-
 // AIRX format
 //
 
@@ -161,7 +159,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN13, FMTypeClass, offsetof(AIRX_Flight, Class), 0, 75, TRUE, TRUE, TRUE, FALSE },						// Class
 	{ IDS_COLUMN14, FMTypeAnsiString, offsetof(AIRX_Flight, Seat), 3, 50, TRUE, TRUE, TRUE, TRUE },						// Seat
 	{ IDS_COLUMN15, FMTypeColor, offsetof(AIRX_Flight, Color), 0, 50, TRUE, FALSE, TRUE, FALSE },						// Color
-	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 7, 70, FALSE, TRUE, TRUE, TRUE },				// Etix code
+	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 6, 70, FALSE, TRUE, TRUE, TRUE },				// Etix code
 	{ IDS_COLUMN17, FMTypeUINT, offsetof(AIRX_Flight, Fare), 15, 100, FALSE, TRUE, TRUE, TRUE },						// Fare
 	{ IDS_COLUMN18, FMTypeUINT, offsetof(AIRX_Flight, MilesAward), 0 , 70, FALSE, TRUE, TRUE, TRUE },					// Award miles
 	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 70, FALSE, TRUE, TRUE, TRUE },					// Status miles
@@ -200,7 +198,7 @@ public:
 	static CString Flight2Text(AIRX_Flight& Flight);
 	CString Flight2Text(UINT Index);
 
-	void Sort(UINT Attr, BOOL Ascending);
+	void Sort(UINT Attr, BOOL Descending);
 	AIRX_Attachment* GetGPSPath(AIRX_Flight& Flight);
 	AIRX_Attachment* GetGPSPath(UINT Index);
 
@@ -228,6 +226,7 @@ public:
 	CString m_DisplayName;
 
 private:
+	static void Swap(AIRX_Flight& Eins, AIRX_Flight& Zwei);
 	void OpenAIRX(const CString& FileName);
 	void OpenAIR(const CString& FileName);
 	void OpenCSV(const CString& FileName);
@@ -236,9 +235,23 @@ private:
 	void Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
 	void SetDisplayName(const CString& FileName);
+	static void RemoveAttachment(UINT Index, AIRX_Flight* pFlight);
+	static void FreeAttachment(AIRX_Attachment& Attachment);
 
 	BOOL m_IsOpen;
 };
+
+inline void CItinerary::Swap(AIRX_Flight& Eins, AIRX_Flight& Zwei)
+{
+	AIRX_Flight Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}
+
+inline void CItinerary::FreeAttachment(AIRX_Attachment& Attachment)
+{
+	free(Attachment.pData);
+}
 
 
 // Helpers
@@ -258,6 +271,6 @@ void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft);
 void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route);
 void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles);
 void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
-void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr);
+void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr);
 
-BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString Delimiter, WCHAR* pDelimiterFound=NULL);
+BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, WCHAR* pDelimiterFound=NULL);

@@ -11,6 +11,7 @@
 #include "targetver.h"
 #endif
 #include "afxres.h"
+#include "..\FMCommDlg\resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -26,58 +27,59 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
-//
-
-IDB_FLAGS_16            BITMAP                  "res\\Flags_16.bmp"
-IDB_FLAGS_16i           BITMAP                  "res\\Flags_16i.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // RCDATA
 //
 
-IDB_GLOBEICONS_RGB      RCDATA                  "res\\GlobeIcons_RGB.png"
-IDB_GLOBEICONS_ALPHA    RCDATA                  "res\\GlobeIcons_Alpha.png"
-IDB_BLUEMARBLE_1024     RCDATA                  "res\\BlueMarble_1024.jpg"
-IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
-IDB_BLUEMARBLE_4096     RCDATA                  "res\\BlueMarble_4096.jpg"
-IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
-IDB_NIGHT_8192          RCDATA                  "res\\Night_8192.jpg"
-IDB_GRAY_8192           RCDATA                  "res\\Gray_8192.png"
-IDB_DOCKED              RCDATA                  "res\\Docked.jpg"
-IDB_BACKGROUNDS         RCDATA                  "res\\Backgrounds.png"
-IDB_MENUBARICONS_16     RCDATA                  "res\\MenubarIcons_16.png"
-IDB_MENUBARICONS_32     RCDATA                  "res\\MenubarIcons_32.png"
-IDB_MENUFILE_16         RCDATA                  "res\\MenuFile_16.png"
-IDB_MENUFILE_32         RCDATA                  "res\\MenuFile_32.png"
-IDB_MENUEDIT_16         RCDATA                  "res\\MenuEdit_16.png"
-IDB_MENUEDIT_32         RCDATA                  "res\\MenuEdit_32.png"
-IDB_MENUMAP_16          RCDATA                  "res\\MenuMap_16.png"
-IDB_MENUMAP_32          RCDATA                  "res\\MenuMap_32.png"
-IDB_MENUGLOBE_16        RCDATA                  "res\\MenuGlobe_16.png"
-IDB_MENUGLOBE_32        RCDATA                  "res\\MenuGlobe_32.png"
-IDB_MENUGOOGLEEARTH_16  RCDATA                  "res\\MenuGoogleEarth_16.png"
-IDB_MENUGOOGLEEARTH_32  RCDATA                  "res\\MenuGoogleEarth_32.png"
-IDB_MENUSTATISTICS_16   RCDATA                  "res\\MenuStatistics_16.png"
-IDB_MENUSTATISTICS_32   RCDATA                  "res\\MenuStatistics_32.png"
-IDB_MENUMAPWND_16       RCDATA                  "res\\MenuMapWnd_16.png"
-IDB_MENUMAPWND_32       RCDATA                  "res\\MenuMapWnd_32.png"
-IDB_MENUMAPVIEW_16      RCDATA                  "res\\MenuMapView_16.png"
-IDB_MENUMAPVIEW_32      RCDATA                  "res\\MenuMapView_32.png"
-IDB_MENUGLOBEWND_16     RCDATA                  "res\\MenuGlobeWnd_16.png"
-IDB_MENUGLOBEWND_32     RCDATA                  "res\\MenuGlobeWnd_32.png"
-IDB_MENUGLOBEVIEW_16    RCDATA                  "res\\MenuGlobeView_16.png"
-IDB_MENUGLOBEVIEW_32    RCDATA                  "res\\MenuGlobeView_32.png"
-IDB_MENUGLOBEITEM_16    RCDATA                  "res\\MenuGlobeItem_16.png"
-IDB_MENUGLOBEITEM_32    RCDATA                  "res\\MenuGlobeItem_32.png"
-IDB_MENUDETAILS_16      RCDATA                  "res\\MenuDetails_16.png"
-IDB_MENUDETAILS_32      RCDATA                  "res\\MenuDetails_32.png"
+IDB_RESOLUTIONPRESETICONS_16 RCDATA                  "res\\ResolutionPresets_16.png"
+IDB_RESOLUTIONPRESETICONS_24 RCDATA                  "res\\ResolutionPresets_24.png"
+IDB_RESOLUTIONPRESETICONS_32 RCDATA                  "res\\ResolutionPresets_32.png"
+IDB_SIDEBAR_16          RCDATA                  "res\\Sidebar_16.png"
+IDB_SIDEBAR_24          RCDATA                  "res\\Sidebar_24.png"
+IDB_SIDEBAR_32          RCDATA                  "res\\Sidebar_32.png"
+IDB_SIDEBAR_48          RCDATA                  "res\\Sidebar_48.png"
+IDB_SIDEBAR_64          RCDATA                  "res\\Sidebar_64.png"
+IDB_TASKS_ATTACHMENTS_16 RCDATA                  "res\\TasksAttachments_16.png"
+IDB_TASKS_ATTACHMENTS_24 RCDATA                  "res\\TasksAttachments_24.png"
+IDB_TASKS_ATTACHMENTS_32 RCDATA                  "res\\TasksAttachments_32.png"
+IDB_TASKS_ATTACHMENTS_48 RCDATA                  "res\\TasksAttachments_48.png"
+IDB_TASKS_ATTACHMENTS_64 RCDATA                  "res\\TasksAttachments_64.png"
+IDB_TASKS_ITINERARY_16  RCDATA                  "res\\TasksItinerary_16.png"
+IDB_TASKS_ITINERARY_24  RCDATA                  "res\\TasksItinerary_24.png"
+IDB_TASKS_ITINERARY_32  RCDATA                  "res\\TasksItinerary_32.png"
+IDB_TASKS_ITINERARY_48  RCDATA                  "res\\TasksItinerary_48.png"
+IDB_TASKS_ITINERARY_64  RCDATA                  "res\\TasksItinerary_64.png"
+IDB_TASKS_MAP_16        RCDATA                  "res\\TasksMap_16.png"
+IDB_TASKS_MAP_24        RCDATA                  "res\\TasksMap_24.png"
+IDB_TASKS_MAP_32        RCDATA                  "res\\TasksMap_32.png"
+IDB_TASKS_MAP_48        RCDATA                  "res\\TasksMap_48.png"
+IDB_TASKS_MAP_64        RCDATA                  "res\\TasksMap_64.png"
+IDB_TASKS_GLOBE_16      RCDATA                  "res\\TasksGlobe_16.png"
+IDB_TASKS_GLOBE_24      RCDATA                  "res\\TasksGlobe_24.png"
+IDB_TASKS_GLOBE_32      RCDATA                  "res\\TasksGlobe_32.png"
+IDB_TASKS_GLOBE_48      RCDATA                  "res\\TasksGlobe_48.png"
+IDB_TASKS_GLOBE_64      RCDATA                  "res\\TasksGlobe_64.png"
+IDB_FLAGS_16            RCDATA                  "res\\Flags_16.png"
+IDB_FLAGS_24            RCDATA                  "res\\Flags_24.png"
 IDB_FLAGS_32            RCDATA                  "res\\Flags_32.png"
-IDB_TASKS_FILE_16       RCDATA                  "res\\TasksFile_16.png"
-IDB_TASKS_FILE_32       RCDATA                  "res\\TasksFile_32.png"
+IDB_FLAGS_48            RCDATA                  "res\\Flags_48.png"
+IDB_FLAGS_64            RCDATA                  "res\\Flags_64.png"
+IDB_FLAGS_16i           RCDATA                  "res\\Flags_16i.png"
+IDB_FLAGS_24i           RCDATA                  "res\\Flags_24i.png"
+IDB_FLAGS_32i           RCDATA                  "res\\Flags_32i.png"
+IDB_METROPOLITAN_DISTINCT RCDATA                  "res\\MetropolitanDistinct.png"
+IDB_METROPOLITAN_MERGED RCDATA                  "res\\MetropolitanMerged.png"
 IDB_SEATICONS           RCDATA                  "res\\SeatIcons.png"
-IDB_SLOGAN              RCDATA                  "res\\Slogan.png"
+IDB_BACKGROUNDS         RCDATA                  "res\\Backgrounds.png"
+IDB_BLUEMARBLE_512      RCDATA                  "res\\BlueMarble_512.jpg"
+IDB_NIGHT_512           RCDATA                  "res\\Night_512.jpg"
+IDB_NIGHT_8192          RCDATA                  "res\\Night_8192.jpg"
+IDB_ABSTRACT_512        RCDATA                  "res\\Abstract_512.png"
+IDB_ABSTRACT_8192       RCDATA                  "res\\Abstract_8192.png"
+IDB_BLUEMARBLE_1024     RCDATA                  "res\\BlueMarble_1024.jpg"
+IDB_BLUEMARBLE_8192     RCDATA                  "res\\BlueMarble_8192.jpg"
+IDB_CLOUDS_1024         RCDATA                  "res\\Clouds_1024.jpg"
+IDB_CLOUDS_2048         RCDATA                  "res\\Clouds_2048.jpg"
+IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -85,8 +87,8 @@ IDB_SLOGAN              RCDATA                  "res\\Slogan.png"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,32,0
- PRODUCTVERSION 2,1,32,0
+ FILEVERSION 2,1,90,0
+ PRODUCTVERSION 2,1,90,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -103,13 +105,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.32"
+            VALUE "FileVersion", "2.1.90"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.32"
+            VALUE "ProductVersion", "2.1.90"
         END
     END
     BLOCK "VarFileInfo"
@@ -124,18 +126,18 @@ END
 // Accelerator
 //
 
-IDR_ACCELERATOR_MAIN ACCELERATORS 
+IDA_ACCELERATOR_MAIN ACCELERATORS 
 BEGIN
-    "C",            IDM_EDIT_COPY,          VIRTKEY, CONTROL
-    VK_INSERT,      IDM_EDIT_COPY,          VIRTKEY, CONTROL
-    "X",            IDM_EDIT_CUT,           VIRTKEY, CONTROL
-    "V",            IDM_EDIT_PASTE,         VIRTKEY, CONTROL
-    VK_INSERT,      IDM_EDIT_PASTE,         VIRTKEY, SHIFT
-    "F",            IDM_EDIT_FIND,          VIRTKEY, CONTROL
-    VK_F3,          IDM_EDIT_FINDREPLACEAGAIN, VIRTKEY 
-    "H",            IDM_EDIT_REPLACE,       VIRTKEY, CONTROL
-    "R",            IDM_EDIT_REPLACE,       VIRTKEY, CONTROL
-    "A",            IDM_EDIT_SELECTALL,     VIRTKEY, CONTROL
+    "C",            IDM_DATAGRID_COPY,      VIRTKEY, CONTROL
+    VK_INSERT,      IDM_DATAGRID_COPY,      VIRTKEY, CONTROL
+    "X",            IDM_DATAGRID_CUT,       VIRTKEY, CONTROL
+    "V",            IDM_DATAGRID_PASTE,     VIRTKEY, CONTROL
+    VK_INSERT,      IDM_DATAGRID_PASTE,     VIRTKEY, SHIFT
+    "F",            IDM_DATAGRID_FIND,      VIRTKEY, CONTROL
+    VK_F3,          IDM_DATAGRID_FINDREPLACEAGAIN, VIRTKEY 
+    "H",            IDM_DATAGRID_REPLACE,   VIRTKEY, CONTROL
+    "R",            IDM_DATAGRID_REPLACE,   VIRTKEY, CONTROL
+    "A",            IDM_DATAGRID_SELECTALL, VIRTKEY, CONTROL
     "W",            IDM_FILE_CLOSE,         VIRTKEY, CONTROL
     VK_F4,          IDM_FILE_CLOSE,         VIRTKEY, CONTROL
     "N",            IDM_FILE_NEW,           VIRTKEY, CONTROL
@@ -150,12 +152,10 @@ BEGIN
     VK_F12,         IDM_FILE_SAVEAS,        VIRTKEY 
 END
 
-IDR_ACCELERATOR_MAP ACCELERATORS 
+IDA_ACCELERATOR_MAP ACCELERATORS 
 BEGIN
     "C",            IDM_MAPWND_COPY,        VIRTKEY, CONTROL
     VK_INSERT,      IDM_MAPWND_COPY,        VIRTKEY, CONTROL
-    "W",            IDM_MAPWND_CLOSE,       VIRTKEY, CONTROL
-    VK_F4,          IDM_MAPWND_CLOSE,       VIRTKEY, CONTROL
     "P",            IDM_MAPWND_PRINT,       VIRTKEY, CONTROL
     VK_F12,         IDM_MAPWND_PRINT,       VIRTKEY, SHIFT, CONTROL
     "S",            IDM_MAPWND_SAVEAS,      VIRTKEY, CONTROL
@@ -164,15 +164,13 @@ BEGIN
     VK_F12,         IDM_MAPWND_SAVEAS,      VIRTKEY 
 END
 
-IDR_ACCELERATOR_GLOBE ACCELERATORS 
+IDA_ACCELERATOR_GLOBE ACCELERATORS 
 BEGIN
-    "W",            IDM_GLOBEWND_CLOSE,     VIRTKEY, CONTROL
-    VK_F4,          IDM_GLOBEWND_CLOSE,     VIRTKEY, CONTROL
-    "L",            IDM_GLOBEVIEW_JUMPTOLOCATION, VIRTKEY, CONTROL
-    "S",            IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, CONTROL
-    VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, SHIFT
-    VK_F2,          IDM_GLOBEVIEW_SAVEAS,   VIRTKEY, SHIFT, ALT
-    VK_F12,         IDM_GLOBEVIEW_SAVEAS,   VIRTKEY 
+    "L",            IDM_GLOBEWND_JUMPTOLOCATION, VIRTKEY, CONTROL
+    "S",            IDM_GLOBEWND_SAVEAS,    VIRTKEY, CONTROL
+    VK_F12,         IDM_GLOBEWND_SAVEAS,    VIRTKEY, SHIFT
+    VK_F2,          IDM_GLOBEWND_SAVEAS,    VIRTKEY, SHIFT, ALT
+    VK_F12,         IDM_GLOBEWND_SAVEAS,    VIRTKEY 
 END
 
 #endif    // Neutral resources
@@ -193,130 +191,145 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_EDITFLIGHT_ROUTE DIALOGEX 0, 0, 379, 303
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
+IDD_GLOBESETTINGS DIALOGEX 0, 0, 187, 206
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globus-Einstellungen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Flughäfen\nDiese Einstellung gilt nur für den 3D-Globus.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Metropolitan-Codes zusammenfassen",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    DEFPUSHBUTTON   "OK",IDOK,72,184,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,130,184,50,14
+END
+
+IDD_EDITFLIGHT_ROUTE DIALOGEX 0, 0, 366, 218
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Route"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Von",IDC_STATIC,3,3,182,82
-    GROUPBOX        "Nach",IDC_STATIC,193,3,182,82
-    GROUPBOX        "Wegpunkt",IDC_STATIC,3,89,372,61
-    GROUPBOX        "Sonstiges",IDC_STATIC,3,153,372,51
-    LTEXT           "Flughafen:",IDC_STATIC,10,16,50,8
-    EDITTEXT        IDC_FROM_IATA,63,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "Auswählen...",IDC_FROM_SELECT,109,14,70,13,WS_GROUP
-    LTEXT           "Abflugzeit:",IDC_STATIC,10,47,50,8
-    EDITTEXT        IDC_FROM_TIME,63,45,115,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Abfluggate:",IDC_STATIC,10,67,50,8
-    EDITTEXT        IDC_FROM_GATE,63,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Flughafen:",IDC_STATIC,200,16,50,8
-    EDITTEXT        IDC_TO_IATA,253,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "Auswählen...",IDC_TO_SELECT,299,14,70,13,WS_GROUP
-    LTEXT           "Ankunftszeit:",IDC_STATIC,200,47,50,8
-    EDITTEXT        IDC_TO_TIME,253,45,115,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Ankunftsgate:",IDC_STATIC,200,67,50,8
-    EDITTEXT        IDC_TO_GATE,253,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Wenn Start- und Zielflughafen identisch sind, können Sie einen Wegpunkt angeben, der bei der Streckenführung berücksichtigt wird. Auf diese Weise können Sie Rundflüge, etwa den Air Berlin Polarflug, erfassen.",IDC_STATIC,10,100,358,24,SS_NOPREFIX
-    PUSHBUTTON      "&Wegpunkt setzen...",IDC_WAYPOINT_BTN,9,128,100,14,WS_GROUP
-    LTEXT           "X",IDC_WAYPOINT_DISPLAY,116,131,232,8,SS_NOPREFIX | SS_ENDELLIPSIS
-    LTEXT           "Reine Flugzeit:",IDC_STATIC,10,165,50,8
-    EDITTEXT        IDC_FLIGHTTIME,63,163,40,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Kommentar:",IDC_STATIC,10,185,50,8
-    EDITTEXT        IDC_COMMENT,63,183,305,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "X",IDC_FROM_NAME,63,30,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
-    LTEXT           "X",IDC_TO_NAME,253,30,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
-    CONTROL         "&Bodenbeförderung (z.B. Schiffsreise oder Busfahrt)",IDC_GROUNDTRANSPORTATION,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,164,253,10
+    CONTROL         "Von",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,170,15
+    LTEXT           "Flughafen:",IDC_STATIC,7,26,50,8
+    EDITTEXT        IDC_FROM_IATA,61,24,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "Auswählen...",IDC_FROM_SELECT,107,24,70,13,WS_GROUP
+    LTEXT           "X",IDC_FROM_NAME,61,40,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "Abflugzeit:",IDC_STATIC,7,56,50,8
+    EDITTEXT        IDC_FROM_TIME,61,54,116,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Abfluggate:",IDC_STATIC,7,74,50,8
+    EDITTEXT        IDC_FROM_GATE,61,72,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Nach",IDC_CATEGORY2,"CCategory",WS_GROUP,189,7,170,15
+    LTEXT           "Flughafen:",IDC_STATIC,189,26,50,8
+    EDITTEXT        IDC_TO_IATA,243,24,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "Auswählen...",IDC_TO_SELECT,289,24,70,13,WS_GROUP
+    LTEXT           "X",IDC_TO_NAME,243,40,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "Ankunftszeit:",IDC_STATIC,189,56,50,8
+    EDITTEXT        IDC_TO_TIME,243,54,116,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Ankunftsgate:",IDC_STATIC,189,74,50,8
+    EDITTEXT        IDC_TO_GATE,243,72,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Wegpunkt",IDC_CATEGORY3,"CCategory",WS_GROUP,7,95,352,15
+    LTEXT           "Wenn Start- und Zielflughafen identisch sind, können Sie einen Wegpunkt angeben, der bei der Streckenführung berücksichtigt wird. Auf diese Weise können Sie Rundflüge, etwa den Air Berlin Polarflug, erfassen.",IDC_STATIC,7,112,352,24,SS_NOPREFIX
+    PUSHBUTTON      "&Wegpunkt setzen...",IDC_WAYPOINT_BTN,7,141,100,14,WS_GROUP
+    LTEXT           "X",IDC_WAYPOINT_DISPLAY,114,144,245,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    CONTROL         "Sonstiges",IDC_CATEGORY4,"CCategory",WS_GROUP,7,164,352,15
+    LTEXT           "Reine Flugzeit:",IDC_STATIC,7,183,50,8
+    EDITTEXT        IDC_FLIGHTTIME,61,181,40,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Bodenbeförderung (z.B. Schiffsreise oder Zugfahrt)",IDC_GROUNDTRANSPORTATION,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,182,246,10
+    LTEXT           "Kommentar:",IDC_STATIC,7,200,50,8
+    EDITTEXT        IDC_COMMENT,61,198,298,13,ES_AUTOHSCROLL | WS_GROUP
 END
 
-IDD_EDITFLIGHT_OTHER DIALOGEX 0, 0, 379, 303
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
+IDD_EDITFLIGHT_OTHER DIALOGEX 0, 0, 366, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Weitere Angaben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Flug",IDC_STATIC,3,3,182,71
-    GROUPBOX        "Flugzeug",IDC_STATIC,193,3,182,71
-    GROUPBOX        "Buchung",IDC_STATIC,3,79,246,92
-    GROUPBOX        "Vielflieger-Programm",IDC_STATIC,258,79,117,92
-    GROUPBOX        "Farbe",IDC_STATIC,3,176,127,32
-    GROUPBOX        "Sonstiges",IDC_STATIC,138,176,237,32
-    LTEXT           "Fluglinie:",IDC_STATIC,10,16,50,8
-    COMBOBOX        IDC_CARRIER,63,14,115,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Flugnummer:",IDC_STATIC,10,36,50,8
-    EDITTEXT        IDC_FLIGHTNO,63,34,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Codeshares:",IDC_STATIC,10,56,50,8
-    EDITTEXT        IDC_CODESHARES,63,54,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Muster:",IDC_STATIC,200,16,50,8
-    COMBOBOX        IDC_EQUIPMENT,253,14,115,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Registrierung:",IDC_STATIC,200,36,50,8
-    EDITTEXT        IDC_REGISTRATION,253,34,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Name:",IDC_STATIC,200,56,50,8
-    EDITTEXT        IDC_AIRCRAFTNAME,253,54,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,10,90,120,10
-    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,10,103,120,10
-    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,10,116,120,10
-    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,10,129,120,10
-    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,10,142,120,10
-    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,10,155,120,10
-    LTEXT           "Etix-Code:",IDC_STATIC,148,92,49,8
-    EDITTEXT        IDC_ETIXCODE,201,90,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Preis:",IDC_STATIC,148,109,49,8
-    EDITTEXT        IDC_FARE,201,107,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    CONTROL         "&Geschäftsreise",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,148,130,93,10
-    CONTROL         "&Persönlicher Reisegrund",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,143,93,10
-    CONTROL         "Flug &nicht angetreten",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,156,93,10
-    LTEXT           "Prämienmeilen:",IDC_STATIC,265,92,60,8
-    EDITTEXT        IDC_AWARDMILES,328,90,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    LTEXT           "Statusmeilen:",IDC_STATIC,265,109,60,8
-    EDITTEXT        IDC_STATUSMILES,328,107,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    LTEXT           "Voucher:",IDC_STATIC,265,126,60,8
-    EDITTEXT        IDC_UPGRADEVOUCHER,328,124,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    CONTROL         "P&rämienflug",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,143,103,10
-    CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,156,103,10
-    PUSHBUTTON      "Farbe aus&wählen...",IDC_CHOOSECOLOR,9,187,114,14,WS_GROUP
-    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,198,188,40,13
-    LTEXT           "Sitz:",IDC_STATIC,294,190,29,8
-    EDITTEXT        IDC_SEAT,328,188,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Bewertung:",IDC_STATIC,145,190,50,8
+    CONTROL         "Flug",IDC_CATEGORY5,"CCategory",WS_GROUP,7,7,170,15
+    LTEXT           "Fluglinie:",IDC_STATIC,7,26,50,8
+    COMBOBOX        IDC_CARRIER,61,24,116,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Flugnummer:",IDC_STATIC,7,42,50,8
+    EDITTEXT        IDC_FLIGHTNO,61,40,116,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Codeshares:",IDC_STATIC,7,59,50,8
+    EDITTEXT        IDC_CODESHARES,61,57,116,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Flugzeug",IDC_CATEGORY6,"CCategory",WS_GROUP,189,7,170,15
+    LTEXT           "Muster:",IDC_STATIC,189,26,50,8
+    COMBOBOX        IDC_EQUIPMENT,243,24,116,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Registrierung:",IDC_STATIC,189,42,50,8
+    EDITTEXT        IDC_REGISTRATION,243,40,116,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,189,59,50,8
+    EDITTEXT        IDC_AIRCRAFTNAME,243,57,116,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Buchung & Ticket",IDC_CATEGORY7,"CCategory",WS_GROUP,7,79,224,15
+    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,96,110,10
+    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,7,108,110,10
+    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,7,120,110,10
+    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,7,132,110,10
+    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,7,144,110,10
+    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,7,156,110,10
+    LTEXT           "Etix-Code:",IDC_STATIC,131,98,41,8
+    EDITTEXT        IDC_ETIXCODE,176,96,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Preis:",IDC_STATIC,131,114,41,8
+    EDITTEXT        IDC_FARE,176,112,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "&Geschäftsreise",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,131,132,100,10
+    CONTROL         "&Persönlicher Reisegrund",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,131,144,100,10
+    CONTROL         "Flug &nicht angetreten",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,131,157,100,10
+    CONTROL         "Vielflieger-Programm",IDC_CATEGORY8,"CCategory",WS_GROUP,243,79,116,15
+    LTEXT           "Prämienmeilen:",IDC_STATIC,244,98,56,8
+    EDITTEXT        IDC_AWARDMILES,304,96,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    LTEXT           "Statusmeilen:",IDC_STATIC,244,114,56,8
+    EDITTEXT        IDC_STATUSMILES,304,112,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    LTEXT           "Voucher:",IDC_STATIC,244,130,56,8
+    EDITTEXT        IDC_UPGRADEVOUCHER,304,128,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "P&rämienflug",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,144,115,10
+    CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,157,115,10
+    CONTROL         "Farbe",IDC_CATEGORY9,"CCategory",WS_GROUP,7,174,112,15
+    CONTROL         "",IDC_COLORINDICATOR,"CColorIndicator",WS_GROUP,7,191,16,14
+    PUSHBUTTON      "Farbe aus&wählen...",IDC_CHOOSECOLOR,29,191,90,14,WS_GROUP
+    CONTROL         "Sonstiges",IDC_CATEGORY10,"CCategory",WS_GROUP,131,174,228,15
+    LTEXT           "Bewertung:",IDC_STATIC,132,194,41,8
+    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,177,192,40,13
+    LTEXT           "Sitz:",IDC_STATIC,275,194,25,8
+    EDITTEXT        IDC_SEAT,304,192,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
 END
 
-IDD_EDITFLIGHT_ATTACHMENTS DIALOGEX 0, 0, 379, 303
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
+IDD_EDITFLIGHT_ATTACHMENTS DIALOGEX 0, 0, 366, 218
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Angehängte Dateien"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_FILEVIEW,"CFileView",WS_BORDER | WS_GROUP | WS_TABSTOP,2,3,375,287,WS_EX_CONTROLPARENT
-    LTEXT           "X",IDC_FILESTATUS,2,292,375,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    CONTROL         "",IDC_FILEVIEW,"CFileView",WS_GROUP | WS_TABSTOP,0,0,366,217,WS_EX_CONTROLPARENT
 END
 
-IDD_ADDROUTE DIALOGEX 0, 0, 240, 226
+IDD_ADDROUTE DIALOGEX 0, 0, 228, 215
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Route hinzufügen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Flüge",IDC_STATIC,7,7,226,92
-    GROUPBOX        "Buchung",IDC_STATIC,7,105,226,93
-    LTEXT           "Route:",IDC_STATIC,14,20,50,8
-    EDITTEXT        IDC_ROUTE,67,18,159,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Fluglinie:",IDC_STATIC,14,40,50,8
-    COMBOBOX        IDC_CARRIER,67,38,159,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Kommentar:",IDC_STATIC,14,60,50,8
-    EDITTEXT        IDC_COMMENT,67,58,159,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Bewertung:",IDC_STATIC,14,80,50,8
-    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,67,78,40,13
-    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,117,100,10
-    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,14,130,100,10
-    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,14,143,100,10
-    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,14,156,100,10
-    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,14,169,100,10
-    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,14,182,100,10
-    LTEXT           "Etix-Code:",IDC_STATIC,132,118,50,8
-    EDITTEXT        IDC_ETIXCODE,186,116,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    CONTROL         "P&rämienflug",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,132,158,94,10
-    CONTROL         "&Geschäftsreise",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,170,94,10
-    CONTROL         "&Persönlicher Reisegrund",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,182,94,10
-    DEFPUSHBUTTON   "OK",IDOK,125,204,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,183,204,50,14
+    CONTROL         "Flüge",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,214,15
+    LTEXT           "Route:",IDC_STATIC,7,26,50,8
+    EDITTEXT        IDC_ROUTE,61,24,160,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Fluglinie:",IDC_STATIC,7,43,50,8
+    COMBOBOX        IDC_CARRIER,61,41,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Kommentar:",IDC_STATIC,7,60,50,8
+    EDITTEXT        IDC_COMMENT,61,58,160,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Bewertung:",IDC_STATIC,7,77,50,8
+    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,61,75,40,13
+    CONTROL         "Buchung & Ticket",IDC_CATEGORY2,"CCategory",WS_GROUP,7,97,214,15
+    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,114,100,10
+    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,7,125,100,10
+    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,7,136,100,10
+    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,7,147,100,10
+    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,7,158,100,10
+    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,7,169,100,10
+    LTEXT           "Etix-Code:",IDC_STATIC,121,116,41,8
+    EDITTEXT        IDC_ETIXCODE,166,114,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "P&rämienflüge",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,121,133,100,10
+    CONTROL         "&Geschäftsreise",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,145,100,10
+    CONTROL         "&Persönlicher Reisegrund",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,157,100,10
+    CONTROL         "Flüge &nicht angetreten",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,169,100,10
+    DEFPUSHBUTTON   "OK",IDOK,114,193,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,171,193,50,14
 END
 
 IDD_ATTACHMENTS DIALOGEX 0, 0, 403, 351
@@ -330,35 +343,349 @@ BEGIN
     DEFPUSHBUTTON   "Schließen",IDOK,347,330,50,14
 END
 
-IDD_REPLACE DIALOGEX 0, 0, 219, 89
+IDD_REPLACE DIALOGEX 0, 0, 228, 118
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
 CAPTION "Ersetzen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "Suchen nach:",IDC_STATIC,3,5,50,8
-    COMBOBOX        IDC_SEARCHTERM,57,3,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Ersetzen mit:",IDC_STATIC,3,21,50,8
-    COMBOBOX        IDC_REPLACETERM,57,19,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Groß-/Kleinschreibung beachten",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,40,214,10
+    CONTROL         "Ersetzen",IDC_CATEGORY2,"CCategory",WS_GROUP,7,7,214,15
+    LTEXT           "Suchen nach:",IDC_STATIC,7,26,60,8
+    COMBOBOX        IDC_SEARCHTERM,70,24,151,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Ersetzen durch:",IDC_REPLACECAPTION,7,43,60,8
+    COMBOBOX        IDC_REPLACETERM,70,41,151,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Groß-/Kleinschreibung beachten",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,62,214,10
     CONTROL         "Gesamten Zellen&inhalt vergleichen",IDC_MATCHENTIRECELL,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,52,214,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,75,214,10
     CONTROL         "Nur aktuelle &Spalte durchsuchen",IDC_MATCHCOLUMNONLY,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,64,214,10
-    CONTROL         "&Alles ersetzen",IDC_REPLACEALL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,76,214,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,88,214,10
+    CONTROL         "&Alles ersetzen",IDC_REPLACEALL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,101,214,10
 END
 
-IDD_FIND DIALOGEX 0, 0, 219, 78
+IDD_FIND DIALOGEX 0, 0, 221, 30
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
 CAPTION "Suchen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "Suchen nach:",-1,3,5,50,8
-    COMBOBOX        IDC_SEARCHTERM,57,3,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Groß-/Kleinschreibung beachten",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,40,214,10
-    CONTROL         "Gesamten Zellen&inhalt vergleichen",IDC_MATCHENTIRECELL,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,52,214,10
-    CONTROL         "Nur aktuelle &Spalte durchsuchen",IDC_MATCHCOLUMNONLY,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,64,214,10
+    CONTROL         "Suchen",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,207,15
+END
+
+IDD_STATISTICS DIALOGEX 0, 0, 600, 358
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Statistik"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Schließen",IDOK,543,337,50,14
+    GROUPBOX        "Filter",IDC_STATIC,7,7,586,54
+    LTEXT           "Flughafen:",IDC_STATIC,14,16,60,8
+    EDITTEXT        IDC_FILTER_AIRPORT,14,26,60,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "&Auswählen...",IDD_SELECTIATA,13,41,61,13,WS_GROUP
+    LTEXT           "Fluglinie:",IDC_STATIC,105,16,100,8
+    COMBOBOX        IDC_FILTER_CARRIER,105,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Muster:",IDC_STATIC,240,16,100,8
+    COMBOBOX        IDC_FILTER_EQUIPMENT,240,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Nur &Geschäftsreisen",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,375,17,100,10
+    CONTROL         "Nur &private Reisen",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,375,29,100,10
+    LTEXT           "Mindestbewertung:",IDC_STATIC,494,16,92,8
+    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,494,26,40,13
+    GROUPBOX        "Entfernung und Meilen",IDC_STATIC,7,66,210,95
+    LTEXT           "Anzahl:",IDC_STATIC,14,76,80,8
+    CONTROL         "X",IDC_FLIGHTCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,76,110,8
+    LTEXT           "Gesamte Entfernung:",IDC_STATIC,14,86,80,8
+    CONTROL         "X",IDC_TOTALDISTANCE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,86,110,8
+    LTEXT           "Gesamte Flugzeit:",IDC_STATIC,14,96,80,8
+    CONTROL         "X",IDC_TOTALFLIGHTTIME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,96,110,8
+    LTEXT           "Längster Flug:",IDC_STATIC,14,106,80,8
+    CONTROL         "X",IDC_LONGESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,106,110,8
+    LTEXT           "Kürzester Flug:",IDC_STATIC,14,116,80,8
+    CONTROL         "X",IDC_SHORTESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,116,110,8
+    LTEXT           "Gesamtpreis:",IDC_STATIC,14,126,80,8
+    CONTROL         "X",IDC_TOTALMONEYSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,126,110,8
+    LTEXT           "Gesammelte Meilen:",IDC_STATIC,14,136,80,8
+    CONTROL         "X",IDC_TOTALMILESEARNED,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,136,110,8
+    LTEXT           "Ausgegebene Meilen:",IDC_STATIC,14,146,80,8
+    CONTROL         "X",IDC_TOTALMILESSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,146,110,8
+    GROUPBOX        "Klassen",IDC_STATIC,7,166,210,164
+    CONTROL         "",IDC_LIST_CLASS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,177,197,146
+    GROUPBOX        "Routen",IDC_STATIC,225,66,97,130
+    CONTROL         "",IDC_LIST_ROUTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,77,83,111
+    GROUPBOX        "Flughäfen",IDC_STATIC,331,66,262,130
+    CONTROL         "",IDC_LIST_AIRPORT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,338,77,248,111
+    GROUPBOX        "Fluglinien",IDC_STATIC,225,201,223,130
+    CONTROL         "",IDC_LIST_CARRIER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,212,209,111
+    GROUPBOX        "Muster",IDC_STATIC,457,201,136,130
+    CONTROL         "",IDC_LIST_EQUIPMENT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,464,212,122,111
+END
+
+IDD_MAPSETTINGS_RESOLUTION DIALOGEX 0, 0, 187, 320
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Auflösung"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Auflösung\nDie tatsächliche Größe kann abweichen.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "",IDC_RESOLUTIONPRESETS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,35,173,241
+    CONTROL         "&Benutzerdefinierte Auflösung verwenden:",IDC_USERDEFINEDRESOLUTION,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
+    LTEXT           "Breite:",IDC_STATIC,7,301,30,8
+    EDITTEXT        IDC_WIDTH,40,299,40,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Höhe:",IDC_STATIC,107,301,30,8
+    EDITTEXT        IDC_HEIGHT,140,299,40,14,ES_AUTOHSCROLL | WS_GROUP
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 400, 281
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Über Flightmap"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,285,259,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,343,259,50,14,WS_GROUP
+    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt am %s Uhr.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
+    CONTROL         "Maßeinheiten",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
+    CONTROL         "&Nautische Meilen (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,128,189,10
+    CONTROL         "&Landmeilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,141,189,10
+    CONTROL         "3D-Einstellungen (OpenGL)",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
+    LTEXT           "3D-Modell:",IDC_STATIC,204,110,54,8
+    COMBOBOX        IDC_MODELQUALITY,261,108,132,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texturgröße:",IDC_STATIC,204,127,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,261,125,132,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Komprimieren",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,261,141,132,10
+    CONTROL         "Lizenz",IDC_CATEGORY3,"CCategory",WS_GROUP,7,159,189,15
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,176,189,66,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,7,175,184,8
+    LTEXT           "X",IDC_REGNAME,7,185,189,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,7,198,125,8
+    LTEXT           "X",IDC_PURCHASEDATE,7,208,125,8
+    LTEXT           "ID:",IDC_STATIC,145,198,51,8
+    LTEXT           "X",IDC_PURCHASEID,145,208,51,8
+    LTEXT           "Produkt:",IDC_STATIC,7,223,125,8
+    LTEXT           "X",IDC_PRODUCT,7,233,125,8
+    LTEXT           "Menge:",IDC_QUANTITYTITLE,145,223,51,8
+    LTEXT           "X",IDC_QUANTITY,145,233,51,8
+    CONTROL         "Updates",IDC_CATEGORY4,"CCategory",WS_GROUP,204,159,189,15
+    CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,176,189,10
+    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,214,188,179,10
+    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,199,179,10
+    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,210,179,10
+    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,204,228,189,14,WS_GROUP
+    LTEXT           "Entfernungsangaben werden immer in Kilometern (km) angezeigt, und zusätzlich in Meilen:",IDC_STATIC,7,107,189,17
+END
+
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Details auswählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CONTROL         "Details",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,182,15
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,118,213
+    PUSHBUTTON      "Nach &oben",IDC_MOVEUP,131,24,58,14,WS_GROUP
+    PUSHBUTTON      "Nach &unten",IDC_MOVEDOWN,131,43,58,14,WS_GROUP
+    PUSHBUTTON      "&Alle wählen",IDC_CHECKALL,131,67,58,14,WS_GROUP
+    PUSHBUTTON      "&Keine wählen",IDC_UNCHECKALL,131,86,58,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,81,254,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,139,254,50,14,WS_GROUP
+END
+
+IDD_FILTER DIALOGEX 0, 0, 264, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Filtern"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "„Filtern“ erzeugt einen neuen Flugplan, der nur die passenden Flüge in neuer Sortierreihenfolge enthält. Der ursprüngliche Flugplan wird nicht verändert.",IDC_INSTRUCTIONS,7,7,250,35
+    CONTROL         "Filtern",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,140,15
+    LTEXT           "Flughafen:",IDC_STATIC,7,62,140,8
+    EDITTEXT        IDC_FILTER_AIRPORT,7,72,73,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "&Auswählen...",IDD_SELECTIATA,87,72,60,13,WS_GROUP
+    LTEXT           "Fluglinie:",IDC_STATIC,7,92,140,8
+    COMBOBOX        IDC_FILTER_CARRIER,7,102,140,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Muster:",IDC_STATIC,7,121,140,8
+    COMBOBOX        IDC_FILTER_EQUIPMENT,7,132,140,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Nur &Geschäftsreisen",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,152,140,10
+    CONTROL         "Nur &private Reisen",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,164,140,10
+    LTEXT           "Mindestbewertung:",IDC_STATIC,7,182,140,8
+    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,192,40,13
+    LTEXT           "Abflugmonat:",IDC_STATIC,7,214,93,8
+    COMBOBOX        IDC_FILTER_MONTH,7,224,93,12,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Jahr:",IDC_STATIC,107,214,38,8
+    EDITTEXT        IDC_FILTER_YEAR,107,224,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "Ergebnis sortieren",IDC_CATEGORY2,"CCategory",WS_GROUP,159,45,98,15
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,159,62,98,144
+    LTEXT           "Sortierrichtung:",IDC_STATIC,159,214,98,8
+    COMBOBOX        IDC_SORTDIRECTION,159,224,98,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,150,254,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,207,254,50,14,WS_GROUP
+END
+
+IDD_INSPECT DIALOGEX 0, 0, 364, 106
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Flugplan prüfen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Metadaten",IDC_STATIC,7,7,350,34
+    LTEXT           "X\nX",IDC_METADATA_STATUS,14,18,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Bearbeiten...",IDC_METADATA_SHOW,224,18,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "&Entfernen",IDC_METADATA_DELETE,290,18,60,14,WS_DISABLED | WS_GROUP
+    GROUPBOX        "Angehängte Dateien",IDC_STATIC,7,45,350,34
+    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,56,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Anzeigen...",IDC_ATTACHMENTS_SHOW,224,56,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "Alle &löschen",IDC_ATTACHMENTS_DELETE,290,56,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "Schließen",IDOK,307,85,50,14,WS_GROUP
+END
+
+IDD_PROPERTIES DIALOGEX 0, 0, 351, 145
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eigenschaften von %s"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Eigenschaften\nDiese Eigenschaften werden in der Datei gespeichert.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,337,25
+    LTEXT           "Titel:",IDC_STATIC,7,37,55,8
+    EDITTEXT        IDC_TITLE,65,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Autor:",IDC_STATIC,7,56,55,8
+    EDITTEXT        IDC_AUTHOR,65,54,279,14,ES_AUTOHSCROLL
+    LTEXT           "Schlüsselworte:",IDC_STATIC,7,75,55,8
+    EDITTEXT        IDC_KEYWORDS,65,73,279,14,ES_AUTOHSCROLL
+    LTEXT           "Kommentar:",IDC_STATIC,7,94,55,8
+    EDITTEXT        IDC_COMMENTS,65,92,279,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,237,123,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,294,123,50,14,WS_GROUP
+END
+
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 228
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globus-Einstellungen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,45,206,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,103,206,50,14
+    CONTROL         "3D-Einstellungen (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    LTEXT           "3D-Modell:",IDC_STATIC,7,26,54,8
+    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texturgröße:",IDC_STATIC,7,43,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Komprimieren",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
+    CONTROL         "Flughäfen",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
+    CONTROL         "&Orte markieren",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
+    CONTROL         "&IATA-Codes zeigen",IDC_AIRPORTIATA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
+    CONTROL         "&Flughafen-Namen zeigen",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
+    CONTROL         "&GPS-Koordinaten zeigen",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    CONTROL         "Flug&bewegungen zeigen",IDC_MOVEMENTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,145,146,10
+    CONTROL         "Sonstiges",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,146,15
+    CONTROL         "&Dunkler Hintergrund",IDC_DARKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,181,146,10
+END
+
+IDD_GOOGLEEARTHSETTINGS DIALOGEX 0, 0, 187, 265
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Einstellungen für Google Earth"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Flughäfen\nDiese Einstellung gilt nur für Google Earth.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Metropolitan-Codes zusammenfassen",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    CONTROL         "Flugrouten",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "Häufige Routen &dicker zeichnen",IDC_USECOUNT_WIDTH,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
+    CONTROL         "&Farben benutzen",IDC_USECOLORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
+    CONTROL         "&Realistische Flughöhen",IDC_CLAMPHEIGHT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,218,173,10
+    DEFPUSHBUTTON   "OK",IDOK,72,243,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,130,243,50,14
+END
+
+IDD_STATISTICSSETTINGS DIALOGEX 0, 0, 187, 265
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Statistik-Einstellungen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Flughäfen\nDiese Einstellung gilt nur für Statistiken.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Metropolitan-Codes zusammenfassen",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    CONTROL         "Kategorien",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "Flugrichtung &ignorieren",IDC_MERGEDIRECTIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
+    CONTROL         "&Prämienflüge als normale Flüge zählen",IDC_MERGEAWARDS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
+    CONTROL         "&Y+, Y und Charterflüge als Y zählen",IDC_MERGECLASSES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,218,173,10
+    DEFPUSHBUTTON   "OK",IDOK,72,243,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,130,243,50,14
+END
+
+IDD_MAPSETTINGS_LOCATIONS DIALOGEX 0, 0, 187, 320
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Flughäfen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Flughäfen\nDiese Einstellung gilt nur für Karten.",IDC_CATEGORY7,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Metropolitan-Codes zusammenfassen",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    CONTROL         "Orte",IDC_CATEGORY8,"CCategory",WS_GROUP,7,176,173,15
+    CONTROL         "&Orte zeigen",IDC_SHOWLOCATIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,194,173,10
+    CONTROL         "",IDC_LOCATIONS_INNER_INDICATOR,"CColorIndicator",WS_GROUP,17,207,16,14
+    PUSHBUTTON      "&Innenfarbe auswählen...",IDC_LOCATIONS_INNER_CHOOSE,37,207,120,14,WS_GROUP
+    CONTROL         "",IDC_LOCATIONS_OUTER_INDICATOR,"CColorIndicator",WS_GROUP,17,226,16,14
+    PUSHBUTTON      "&Außenfarbe auswählen...",IDC_LOCATIONS_OUTER_CHOOSE,37,226,120,14,WS_GROUP
+    CONTROL         "Beschriftung",IDC_CATEGORY9,"CCategory",WS_GROUP,7,249,173,15
+    CONTROL         "IATA-&Codes zeigen",IDC_SHOWIATACODES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,266,173,10
+    CONTROL         "",IDC_IATACODES_INNER_INDICATOR,"CColorIndicator",WS_GROUP,17,279,16,14
+    PUSHBUTTON      "&Schriftfarbe auswählen...",IDC_IATACODES_INNER_CHOOSE,37,279,120,14,WS_GROUP
+    CONTROL         "",IDC_IATACODES_OUTER_INDICATOR,"CColorIndicator",WS_GROUP,17,298,16,14
+    PUSHBUTTON      "&Umrandungsfarbe auswählen...",IDC_IATACODES_OUTER_CHOOSE,37,298,120,14,WS_GROUP
+END
+
+IDD_MAPSETTINGS_ROUTES DIALOGEX 0, 0, 187, 298
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Flugrouten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Flugrouten",IDC_CATEGORY10,"CCategory",WS_GROUP,7,7,173,15
+    CONTROL         "Flug&routen zeigen",IDC_SHOWROUTES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,25,173,10
+    CONTROL         "Stil",IDC_CATEGORY11,"CCategory",WS_GROUP,7,76,173,15
+    CONTROL         "Farben &benutzen",IDC_USECOLORS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,17,57,163,10
+    CONTROL         "",IDC_ROUTECOLOR_INDICATOR,"CColorIndicator",WS_GROUP,17,38,16,14
+    PUSHBUTTON      "Standard&farbe auswählen...",IDC_ROUTECOLOR_CHOOSE,37,38,110,14,WS_GROUP
+    CONTROL         "Anmerkungen",IDC_CATEGORY12,"CCategory",WS_GROUP,7,152,173,15
+    CONTROL         "&Pfeilspitzen zeichnen",IDC_ARROWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,107,173,10
+    CONTROL         "Häufige Routen &dicker zeichnen",IDC_USECOUNT_WIDTH,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,120,173,10
+    CONTROL         "Häufige Routen &intensiver zeichnen",IDC_USECOUNT_OPACITY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,133,173,10
+    CONTROL         "&Gerade Linien zeichnen",IDC_STRAIGHTLINES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,94,173,10
+    CONTROL         "&Kleinere Schrift für Anmerkungen verwenden",IDC_NOTES_SMALLFONT,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,280,173,10
+    CONTROL         "",IDC_NOTECOLOR_INNER_INDICATOR,"CColorIndicator",WS_GROUP,7,242,16,14
+    PUSHBUTTON      "&Schriftfarbe auswählen...",IDC_NOTECOLOR_INNER_CHOOSE,27,242,120,14,WS_GROUP
+    CONTROL         "",IDC_NOTECOLOR_OUTER_INDICATOR,"CColorIndicator",WS_GROUP,7,261,16,14
+    PUSHBUTTON      "&Umrandungsfarbe auswählen...",IDC_NOTECOLOR_OUTER_CHOOSE,27,261,120,14,WS_GROUP
+    CONTROL         "&Entfernung",IDC_NOTES_DISTANCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,170,173,10
+    CONTROL         "Flug&zeit",IDC_NOTES_FLIGHTTIME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,183,173,10
+    CONTROL         "&Anzahl",IDC_NOTES_FLIGHTCOUNT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,196,173,10
+    CONTROL         "Flug&linie",IDC_NOTES_CARRIER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,209,173,10
+    CONTROL         "Flugzeug&muster",IDC_NOTES_EQUIPMENT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,222,173,10
+END
+
+IDD_MAPSETTINGS_BACKGROUND DIALOGEX 0, 0, 187, 234
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Hintergrund"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Hintergrund",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,173,15
+    COMBOBOX        IDC_BACKGROUND,7,25,173,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_BACKGROUNDCOLOR_INDICATOR,"CColorIndicator",WS_GROUP,7,43,16,14
+    PUSHBUTTON      "&Hintergrundfarbe auswählen...",IDC_BACKGROUNDCOLOR_CHOOSE,27,43,120,14,WS_GROUP
+    CONTROL         "",IDC_BACKGROUND_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,62,173,81
+    CONTROL         "Zentrierung",IDC_CATEGORY5,"CCategory",WS_GROUP,7,151,173,15
+    CONTROL         "&Atlantischer Ozean",IDC_BACKGROUNDCENTER_ATLANTIC,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,168,173,10
+    CONTROL         "&Pazifischer Ozean",IDC_BACKGROUNDCENTER_PACIFIC,"Button",BS_AUTORADIOBUTTON,7,180,173,10
+    CONTROL         "Rand",IDC_CATEGORY6,"CCategory",WS_GROUP,7,199,173,15
+    CONTROL         "&Breiter Rand (z.B. für Bilderrahmen)",IDC_WIDEBORDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,216,173,10
 END
 
 
@@ -370,36 +697,41 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
+    IDD_GLOBESETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
+    END
+
     IDD_EDITFLIGHT_ROUTE, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 375
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 299
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 359
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 211
     END
 
     IDD_EDITFLIGHT_OTHER, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 375
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 299
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 359
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
     END
 
     IDD_EDITFLIGHT_ATTACHMENTS, DIALOG
     BEGIN
-        LEFTMARGIN, 2
-        RIGHTMARGIN, 377
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 300
+        BOTTOMMARGIN, 217
     END
 
     IDD_ADDROUTE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 233
+        RIGHTMARGIN, 221
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 207
     END
 
     IDD_ATTACHMENTS, DIALOG
@@ -412,18 +744,122 @@ BEGIN
 
     IDD_REPLACE, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 217
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 86
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
     END
 
     IDD_FIND, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 217
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 75
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 214
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 23
+    END
+
+    IDD_STATISTICS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 593
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 351
+    END
+
+    IDD_MAPSETTINGS_RESOLUTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 313
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 393
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 273
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 189
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 268
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 257
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 268
+    END
+
+    IDD_INSPECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 357
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 99
+    END
+
+    IDD_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 344
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 137
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 153
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 220
+    END
+
+    IDD_GOOGLEEARTHSETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 257
+    END
+
+    IDD_STATISTICSSETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 257
+    END
+
+    IDD_MAPSETTINGS_LOCATIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_MAPSETTINGS_ROUTES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 290
+    END
+
+    IDD_MAPSETTINGS_BACKGROUND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 226
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -433,6 +869,71 @@ END
 //
 // Menu
 //
+
+IDM_DATAGRID MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Ausschneiden",               IDM_DATAGRID_CUT
+        MENUITEM "&Kopieren",                   IDM_DATAGRID_COPY
+        MENUITEM "&Einfügen",                   IDM_DATAGRID_PASTE
+        MENUITEM "&Löschen",                    IDM_DATAGRID_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Flug &bearbeiten...",         IDM_DATAGRID_EDITFLIGHT
+        MENUITEM "&Route hinzufügen...",        IDM_DATAGRID_ADDROUTE
+        MENUITEM SEPARATOR
+        MENUITEM "&Suchen und Ersetzen...",     IDM_DATAGRID_FINDREPLACE
+        MENUITEM "&Filtern...",                 IDM_DATAGRID_FILTER
+        MENUITEM SEPARATOR
+        MENUITEM "&Zeile einfügen",             IDM_DATAGRID_INSERTROW
+        MENUITEM SEPARATOR
+        MENUITEM "Alles &markieren\tStrg+A",    IDM_DATAGRID_SELECTALL
+    END
+END
+
+IDM_MAPWND MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Speichern &unter...",         IDM_MAPWND_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Drucken",                    IDM_MAPWND_PRINT
+        MENUITEM "&Kopieren",                   IDM_MAPWND_COPY
+    END
+END
+
+IDM_GLOBEWND MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBEWND_JUMPTOLOCATION
+        MENUITEM "&Größe anpassen\tPos1",       IDM_GLOBEWND_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Speichern &unter...",         IDM_GLOBEWND_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBEWND_SETTINGS
+    END
+END
+
+IDM_GLOBEWND_ITEM MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Öffnen in &Google Earth",     IDM_GLOBEWND_GOOGLEEARTH
+        MENUITEM "Öffnen in &liquidFOLDERS",    IDM_GLOBEWND_LIQUIDFOLDERS
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "&Spaltenbreite anpassen",     IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Details auswählen...",       IDM_DETAILS_CHOOSE
+    END
+END
 
 IDM_FILEVIEW_ITEM MENU 
 BEGIN
@@ -458,26 +959,52 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog Info
+//
+
+IDD_FILTER DLGINIT
+BEGIN
+    IDC_FILTER_MONTH, 0x403, 2, 0
+0x0020, 
+    IDC_FILTER_MONTH, 0x403, 7, 0
+0x614a, 0x756e, 0x7261, "\000" 
+    IDC_FILTER_MONTH, 0x403, 8, 0
+0x6546, 0x7262, 0x6175, 0x0072, 
+    IDC_FILTER_MONTH, 0x403, 5, 0
+0xe44d, 0x7a72, "\000" 
+    IDC_FILTER_MONTH, 0x403, 6, 0
+0x7041, 0x6972, 0x006c, 
+    IDC_FILTER_MONTH, 0x403, 4, 0
+0x614d, 0x0069, 
+    IDC_FILTER_MONTH, 0x403, 5, 0
+0x754a, 0x696e, "\000" 
+    IDC_FILTER_MONTH, 0x403, 5, 0
+0x754a, 0x696c, "\000" 
+    IDC_FILTER_MONTH, 0x403, 7, 0
+0x7541, 0x7567, 0x7473, "\000" 
+    IDC_FILTER_MONTH, 0x403, 10, 0
+0x6553, 0x7470, 0x6d65, 0x6562, 0x0072, 
+    IDC_FILTER_MONTH, 0x403, 8, 0
+0x6b4f, 0x6f74, 0x6562, 0x0072, 
+    IDC_FILTER_MONTH, 0x403, 9, 0
+0x6f4e, 0x6576, 0x626d, 0x7265, "\000" 
+    IDC_FILTER_MONTH, 0x403, 9, 0
+0x6544, 0x657a, 0x626d, 0x7265, "\000" 
+    IDC_SORTDIRECTION, 0x403, 12, 0
+0x7541, 0x7366, 0x6574, 0x6769, 0x6e65, 0x0064, 
+    IDC_SORTDIRECTION, 0x403, 11, 0
+0x6241, 0x7473, 0x6965, 0x6567, 0x646e, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
-    IDS_RECENTFILES         "Zuletzt verwendete Flugpläne"
-    IDS_SAMPLEITINERARIES   "Beispiele"
-    IDS_SAVECOPY            "Kopie des Flugplans speichern"
-    IDS_EXPORT              "Den Flugplan exportieren"
-    IDS_PRINT               "Flugplan drucken"
-    IDS_PREPAREDISTRIBUTION "Flugplan für die Verteilung vorbereiten"
-    IDS_BACKGROUND          "Hintergrund"
-    IDS_FLIGHTROUTES        "Flugrouten"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_LOCATIONS           "Orte"
-    IDS_IATACODES           "IATA-Codes"
-    IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_DRIVENOTREADY       "Der Datenträger ist nicht bereit!"
     IDS_ILLEGALFORMAT       "Die Datei ist beschädigt, hat eine falsche Endung oder ein unbekanntes Format!"
     IDS_FLIGHTCOUNT_SINGULAR "%u Flugbewegung"
@@ -486,37 +1013,37 @@ BEGIN
     IDS_BACKGROUND_NIGHT    "Nacht"
     IDS_BACKGROUND_ABSTRACT "Abstrakt"
     IDS_BACKGROUND_COLOR    "Einfarbig"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EMPTYITINERARY      "(Neuer Flugplan)"
     IDS_FILTEREDITINERARY   " (gefiltert)"
     IDS_SAMPLEITINERARY     "(Beispiel-Flugplan)"
     IDS_NOTSAVED            "Möchten Sie die Änderungen speichern?"
     IDS_ATTACHMENTS         "Angehängte Dateien\nKlicken Sie auf das Symbol, um die\nangehängten Dateien zu betrachten."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_AWARDFLIGHT         "Prämienflug"
     IDS_GROUNDTRANSPORTATION "Bodenbeförderung\nSchiffsreise, Busfahrt o.ä."
     IDS_BUSINESSTRIP        "Geschäftsreise"
     IDS_LEISURETRIP         "Privater Reisegrund"
     IDS_UPGRADE             "Upgrade"
-    IDS_CANCELLED           "Flug nicht angetreten\nDieser Flug wird weder dargestellt\nnoch exportiert"
+    IDS_CANCELLED           "Flug nicht angetreten\nDieser Flug wird weder dargestellt\nnoch exportiert."
     IDS_EDITFLIGHT          "Flug bearbeiten"
     IDS_CUEBANNER_DATETIME  " JJJJ-MM-TT SS:MM"
     IDS_CUEBANNER_TIME      " SS:MM"
     IDS_CUEBANNER_ROUTE     " z.B. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
     IDS_PRINTED_UNREGISTERED 
                             "Gedruckt mit einer nicht registrierten Version von Flightmap – http://flightmap.net/"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PRINTED_REGISTERED  "Stand: %s, %s Uhr"
     IDS_METADATA_COMMENTS   "Beispiel-Flugplan"
     IDS_METADATA_TITLE_ATLANTIC "Atlantik-Überquerung"
     IDS_METADATA_TITLE_PACIFIC "Pazifik-Überquerung"
     IDS_METADATA_KEYWORDS_ATLANTIC 
                             "Flightmap Beispiel Flugplan Atlantik Überquerung"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_METADATA_KEYWORDS_PACIFIC 
                             "Flightmap Beispiel Flugplan Pazifik Überquerung"
     IDS_SUBITEM_NAME        "Name"
@@ -531,6 +1058,10 @@ BEGIN
                             "Der Flugplan enthält keine versteckten Metadaten."
     IDS_INSPECT_METADATA_PRESENT 
                             "Der Flugplan enthält versteckte Metadaten wie Autor oder Titel, die persönliche Informationen preisgeben könnten."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_INSPECT_ATTACHMENTS_NONE 
                             "Der Flugplan enthält keine angehängten Dateien."
     IDS_INSPECT_ATTACHMENTS_SINGULAR 
@@ -539,10 +1070,6 @@ BEGIN
                             "Der Flugplan enthält %u angehängte Dateien, die einen Speicherplatz von %s belegen."
     IDS_DELETE_CAPTION      "Löschen"
     IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
@@ -554,16 +1081,14 @@ BEGIN
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
     IDS_MILES               "%u (%u Statusmeilen)"
-    IDS_FLIGHTS             "Flüge"
-    IDS_ROUTE               "Route"
-    IDS_FLIGHTS_SINGULAR    "%u Flug"
-    IDS_FLIGHTS_PLURAL      "%u Flüge"
-    IDS_ROUTESTYLE          "Stil"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ANNOTATIONS         "Zusatzinformationen"
+    IDS_FLIGHTS             "Flüge"
+    IDS_ROUTE               "Route"
+    IDS_FLIGHTS_SINGULAR    "%u Flug"
+    IDS_FLIGHTS_PLURAL      "%u Flüge"
     IDS_RESOLUTION          "\nAuflösung: %u×%u"
     IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nDurchschnitt: %.2lf"
     IDS_TOOLTIP_TIME        "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
@@ -576,6 +1101,20 @@ BEGIN
     IDS_ALLREPLACED         "Alle Begriffe wurden ersetzt."
     IDS_SEARCHTERMNOTFOUND  "Der Suchbegriff ist nicht vorhanden!"
     IDS_REPLACEQUESTION     "Soll dieser Begriff ersetzt werden?"
+    IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_QUALITY_LOW         "Niedrig"
+    IDS_QUALITY_MEDIUM      "Mittel"
+    IDS_QUALITY_HIGH        "Hoch"
+    IDS_QUALITY_ULTRA       "Ultra"
+    IDS_GOOGLEEARTH         "Google Earth"
+    IDS_STATISTICS          "Statistik"
+    IDS_MAPSETTINGS         "Karten-Einstellungen"
+    IDS_COLUMN_RESOLUTION   "Auflösung"
+    IDS_COLUMN_APPLICATION  "Einsatzgebiet"
 END
 
 STRINGTABLE 
@@ -638,141 +1177,14 @@ BEGIN
     IDM_FILE_SAVE           "&Speichern"
     IDM_FILE_SAVEAS         "Speichern &unter"
     IDM_FILE_SAVEAS_AIRX    "Speichert den Flugplan als Flightmap-Datei.\n&Flugplan"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_EDIT                "&Bearbeiten"
-    IDM_EDIT_CUT            "Auss&chneiden"
-    IDM_EDIT_COPY           "&Kopieren"
-    IDM_EDIT_PASTE          "&Einfügen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_EDIT_INSERTROW      "&Zeile einfügen"
-    IDM_EDIT_DELETE         "&Löschen"
-    IDM_EDIT_EDITFLIGHT     "Flug &bearbeiten..."
-    IDM_EDIT_ADDROUTE       "&Route hinzufügen..."
-    IDM_EDIT_FIND           "&Suchen..."
-    IDM_EDIT_REPLACE        "Erse&tzen..."
-    IDM_EDIT_FILTER         "&Filtern..."
-    IDM_EDIT_SELECTALL      "&Alles auswählen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP                 "&Karte"
-    IDM_MAP_OPEN            "Zeigt den Flugplan auf\neiner 2D-Karte an.\nKarte ö&ffnen"
-    IDM_MAP_EXPORT_BMP      "Exportiert den Flugplan\nals Windows Bitmap.\nWindows &Bitmap"
-    IDM_MAP_EXPORT_JPEG     "Exportiert den Flugplan\nals JPEG-Bild.\n&JPEG"
-    IDM_MAP_EXPORT_PNG      "Exportiert den Flugplan\nals Portable Network Graphics.\n&Portable Network Graphics"
-    IDM_MAP_EXPORT_TIFF     "Exportiert den Flugplan\nals TIFF-Datei.\n&TIFF"
-    IDM_MAP_MERGEMETRO      "&Metropolitan-Codes zusammenfassen"
-    IDM_MAP_BACKGROUNDCOLOR "&Hintergrundfarbe"
-    IDM_MAP_CENTERATLANTIC  "&Atlantik mittig"
-    IDM_MAP_CENTERPACIFIC   "&Pazifik mittig"
-    IDM_MAP_RESOLUTION      "Auf&lösung"
-    IDM_MAP_WIDEBORDER      "&Breiter Rand"
-    IDM_MAP_SHOWFLIGHTROUTES "Flug&routen zeigen"
-    IDM_MAP_ROUTESTYLE      "S&til"
-    IDM_MAP_STRAIGHTLINES   "&Gerade Linien"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP_ARROWS          "&Pfeilspitzen"
-    IDM_MAP_USECOUNT_WIDTH  "Häufige Routen &dicker"
-    IDM_MAP_USECOUNT_OPACITY "Häufige Routen &intensiver"
-    IDM_MAP_ANNOTATIONS     "&Zusatzinformationen"
-    IDM_MAP_DISTANCE        "&Entfernung"
-    IDM_MAP_FLIGHTTIME      "Flug&zeit"
-    IDM_MAP_FLIGHTCOUNT     "Flug&anzahl"
-    IDM_MAP_CARRIER         "Flug&linie"
-    IDM_MAP_EQUIPMENT       "Flugzeug&muster"
-    IDM_MAP_SMALLFONT       "&Kleinere Schrift"
-    IDM_MAP_NOTEINNERCOLOR  "S&chriftfarbe"
-    IDM_MAP_NOTEOUTERCOLOR  "&Umrandung"
-    IDM_MAP_USECOLORS       "&Farben benutzen"
-    IDM_MAP_ROUTECOLOR      "&Standardfarbe"
-    IDM_MAP_SHOWLOCATIONS   "&Orte markieren"
-    IDM_MAP_LOCATIONINNERCOLOR "Far&be"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP_LOCATIONOUTERCOLOR "&Umrandung"
-    IDM_MAP_SHOWIATACODES   "&IATA-Codes zeigen"
-    IDM_MAP_IATAINNERCOLOR  "S&chriftfarbe"
-    IDM_MAP_IATAOUTERCOLOR  "&Umrandung"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBE               "&Globus"
-    IDM_GLOBE_OPEN          "Zeigt den Flugplan auf\neinem 3D-Globus an.\nGlobus ö&ffnen"
-    IDM_GLOBE_MERGEMETRO    "&Metropolitan-Codes zusammenfassen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GOOGLEEARTH         "Google &Earth"
-    IDM_GOOGLEEARTH_OPEN    "Öffnet den Flugplan\nin Google Earth.\nIn Google Earth ö&ffnen"
-    IDM_GOOGLEEARTH_EXPORT  "Exportiert den Flugplan\nals Google Earth Overlay.\nE&xportieren"
-    IDM_GOOGLEEARTH_MERGEMETRO "&Metropolitan-Codes zusammenfassen"
-    IDM_GOOGLEEARTH_USECOUNT "Häufige Routen &dicker"
-    IDM_GOOGLEEARTH_COLORS  "&Farben benutzen"
-    IDM_GOOGLEEARTH_CLAMP   "&Echte Flughöhen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STATISTICS          "&Statistik"
-    IDM_STATISTICS_OPEN     "Zeigt eine statistische Auswertung\ndes Flugplans an.\nStatistik ö&ffnen"
-    IDM_STATISTICS_MERGE_DIRECTIONS "&Richtung von Routen ignorieren"
-    IDM_STATISTICS_MERGE_AWARDS "&Prämienflüge als normale Flüge"
-    IDM_STATISTICS_MERGE_CLASSES "&Y+, Y und Charterflüge als Y"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAPWND              "&Karte"
-    IDM_MAPWND_COPY         "&Kopieren"
-    IDM_MAPWND_SAVEAS       "Speichern &unter"
-    IDM_MAPWND_PRINT        "Einen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen.\n&Drucken"
-    IDM_MAPWND_PRINT_QUICK  "Die Karte direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen.\nSchnelld&ruck"
-    IDM_MAPWND_CLOSE        "S&chließen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAPVIEW             "&Ansicht"
-    IDM_MAPVIEW_ZOOMIN      "Ver&größern"
-    IDM_MAPVIEW_ZOOMOUT     "Ver&kleinern"
-    IDM_MAPVIEW_AUTOSIZE    "Größe &anpassen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBEWND            "&Globus"
-    IDM_GLOBEWND_CLOSE      "S&chließen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBEVIEW           "&Ansicht"
-    IDM_GLOBEVIEW_SAVEAS    "Speichern &unter"
-    IDM_GLOBEVIEW_JUMPTOLOCATION 
-                            "Richtet den Globus auf einen\nbestimmten Ort aus.\n&Ort anzeigen..."
-    IDM_GLOBEVIEW_ZOOMIN    "Ver&größern"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_SAVEAS_ICS     "Speichert eine Kopie des Flugplans für\nMicrosoft Outlook und viele andere Programme.\n&Kalendar-Eintrag"
     IDM_FILE_SAVEAS_CSV     "Speichert eine Kopie des Flugplans für\nMicrosoft Excel und viele andere Programme.\nComma Separated &Values"
     IDM_FILE_SAVEAS_TXT     "Speichert eine Kopie des Flugplans\nals unformatierte Textdatei.\n&Textdokument"
     IDM_FILE_SAVEAS_OTHER   "Das Dialogfeld „Speichern unter“ öffnen, um aus den\nmöglichen Dateitypen eine Auswahl zu treffen.\n&Andere Formate"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_PRINT          "Einen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen.\n&Drucken"
     IDM_FILE_PRINT_QUICK    "Den Flugplan direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen.\nSchnelld&ruck"
     IDM_FILE_PREPARE        "Vorberei&ten"
@@ -783,39 +1195,62 @@ BEGIN
     IDM_FILE_PREPARE_ATTACHMENTS 
                             "Angehängte Dateien anzeigen\nund bearbeiten.\nAn&hänge"
     IDM_FILE_CLOSE          "S&chließen"
-    IDM_FILE_QUIT           "&Beenden"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_GLOBEVIEW_ZOOMOUT   "Ver&kleinern"
-    IDM_GLOBEVIEW_AUTOSIZE  "Größe &anpassen"
-    IDM_GLOBEVIEW_FULLSCREEN "&Vollbild"
-    IDM_GLOBEVIEW_COLORS    "&Farben benutzen"
-    IDM_GLOBEVIEW_CLAMP     "&Echte Flughöhen"
-    IDM_GLOBEVIEW_SPOTS     "O&rte markieren"
-    IDM_GLOBEVIEW_AIRPORTIATA "&IATA-Codes zeigen"
-    IDM_GLOBEVIEW_AIRPORTNAMES "Flug&hafen-Namen zeigen"
-    IDM_GLOBEVIEW_GPS       "G&PS-Koordinaten zeigen"
-    IDM_GLOBEVIEW_FLIGHTCOUNT "Flug&bewegungen zeigen"
-    IDM_GLOBEVIEW_VIEWPORT  "Ka&mera-Perspektive zeigen"
-    IDM_GLOBEVIEW_CROSSHAIRS "Fa&denkreuz zeigen"
-    IDM_GLOBEVIEW_3DSETTINGS "3D-&Einstellungen..."
+    IDM_SIDEBAR_ITINERARY   "Zeigt Dateibefehle wie „Öffnen“, „Speichern“ oder „Drucken“ an.\nFlugplan"
+    IDM_SIDEBAR_MAP_OPEN    "Erstellt eine Karte aus dem Flugplan bzw. den markierten Flügen.\nKarte erstellen"
+    IDM_SIDEBAR_MAP_SETTINGS 
+                            "Zeigt die Einstellungen für Karten an.\nEinstellungen"
+    IDM_SIDEBAR_GLOBE_OPEN  "Stellt den Flugplan bzw. die markierten Flüge auf einem 3D-Globus dar.\nGlobus öffnen"
+    IDM_SIDEBAR_GLOBE_SETTINGS 
+                            "Zeigt die Einstellungen des 3D-Globus an.\nEinstellungen"
+    IDM_SIDEBAR_GOOGLEEARTH_OPEN 
+                            "Importiert den Flugplan bzw. die markierten Flüge nach Google Earth.\nGoogle Earth öffnen"
+    IDM_SIDEBAR_GOOGLEEARTH_SETTINGS 
+                            "Zeigt die Einstellungen für Google Earth an.\nEinstellungen"
+    IDM_SIDEBAR_STATISTICS_OPEN 
+                            "Öffnet die Statistik für den Flugplan bzw. die markierten Flüge.\nStatistik öffnen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_GLOBEITEM_OPENGOOGLEEARTH 
-                            "Öffnet den Ort\nin Google Earth.\nIn &Google Earth öffnen"
-    IDM_GLOBEITEM_OPENLIQUIDFOLDERS 
-                            "Öffnet den Ort in liquidFOLDERS\nund zeigt alle getaggten Dateien.\nIn &liquidFOLDERS öffnen"
+    IDM_SIDEBAR_STATISTICS_SETTINGS 
+                            "Zeigt die Einstellungen für Statistiken an.\nEinstellungen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_DETAILS_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
-    IDM_DETAILS_AUTOSIZE    "&Spaltenbreite anpassen"
-    IDM_DETAILS_CHOOSE      "&Details aus&wählen..."
+    IDM_DATAGRID_EDITFLIGHT "Öffnet einen Dialog, um die Daten des gewählten Fluges zu bearbeiten.\nFlug bearbeiten"
+    IDM_DATAGRID_ADDROUTE   "Fügt eine Route hinzu, die aus mehreren Flügen besteht.\nRoute hinzufügen"
+    IDM_DATAGRID_FINDREPLACE 
+                            "Öffnet den „Suchen und Ersetzen“-Dialog.\nSuchen und Ersetzen"
+    IDM_DATAGRID_FILTER     "Erstellt einen neuen Flugplan, der nur bestimmte Flüge des aktuellen Dokuments enthält.\nFiltern"
+    IDM_DATAGRID_INSERTROW  "Fügt eine Leerzeile ein.\nZeile einfügen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAPWND_ZOOMIN       "Vergrößert die Kartenansicht.\nVergrößern"
+    IDM_MAPWND_ZOOMOUT      "Verkleinert die Kartenansicht.\nVerkleinern"
+    IDM_MAPWND_SAVEAS       "Speichert die Karte als Bilddatei ab. Sie können verschiedene Bildformate auswählen.\nSpeichern unter"
+    IDM_MAPWND_PRINT        "Druckt die Karte aus. Sie können einen Drucker, die Anzahl von Exemplaren und weitere Optionen vor dem Drucken auswählen.\nDrucken"
+    IDM_MAPWND_COPY         "Kopiert die Karte als Bild in die Zwischenablage.\nKopieren"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBEWND_JUMPTOLOCATION 
+                            "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
+    IDM_GLOBEWND_ZOOMIN     "Vergrößert den Globus.\nVergrößern"
+    IDM_GLOBEWND_ZOOMOUT    "Verkleinert den Globus.\nVerkleinern"
+    IDM_GLOBEWND_AUTOSIZE   "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
+    IDM_GLOBEWND_SAVEAS     "Speichert die Flüge als Overlay für Google Earth ab.\nSpeichern unter"
+    IDM_GLOBEWND_GOOGLEEARTH 
+                            "Öffnet den Flugplan in Google Earth.\nÖffnen in Google Earth"
+    IDM_GLOBEWND_LIQUIDFOLDERS 
+                            "Öffnet den ausgewählten Ort in liquidFOLDERS und zeigt alle getaggten Dateien.\nÖffnen in liquidFOLDERS"
 END
 
 STRINGTABLE 
@@ -857,6 +1292,7 @@ BEGIN
     "#include ""targetver.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
+    "#include ""..\\FMCommDlg\\resource.h""\r\n"
     "\0"
 END
 
@@ -894,130 +1330,145 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_EDITFLIGHT_ROUTE DIALOGEX 0, 0, 379, 303
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+IDD_GLOBESETTINGS DIALOGEX 0, 0, 187, 206
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globe settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Airports\nThis setting affects only the 3D globe.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    DEFPUSHBUTTON   "OK",IDOK,72,184,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,184,50,14
+END
+
+IDD_EDITFLIGHT_ROUTE DIALOGEX 0, 0, 366, 218
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Route"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "From",IDC_STATIC,3,3,182,82
-    GROUPBOX        "To",IDC_STATIC,193,3,182,82
-    GROUPBOX        "Waypoint",IDC_STATIC,3,89,372,53
-    GROUPBOX        "Miscellaneous",IDC_STATIC,3,145,372,51
-    LTEXT           "Airport:",IDC_STATIC,10,16,50,8
-    EDITTEXT        IDC_FROM_IATA,63,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "Select...",IDC_FROM_SELECT,109,14,70,13,WS_GROUP
-    LTEXT           "Time:",IDC_STATIC,10,47,50,8
-    EDITTEXT        IDC_FROM_TIME,63,45,115,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Gate:",IDC_STATIC,10,67,50,8
-    EDITTEXT        IDC_FROM_GATE,63,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Airport:",IDC_STATIC,200,16,50,8
-    EDITTEXT        IDC_TO_IATA,253,14,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "Select...",IDC_TO_SELECT,299,14,70,13,WS_GROUP
-    LTEXT           "Time:",IDC_STATIC,200,47,50,8
-    EDITTEXT        IDC_TO_TIME,253,45,115,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Gate:",IDC_STATIC,200,67,50,8
-    EDITTEXT        IDC_TO_GATE,253,65,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Provided departure and arrival airport are identical, you can enter a routing waypoint. This allows you to correctly display roundtrip and sightseeing flights, like the annual Air Berlin polar flight.",IDC_STATIC,10,100,338,16,SS_NOPREFIX
-    PUSHBUTTON      "Set &waypoint...",IDC_WAYPOINT_BTN,9,120,100,14,WS_GROUP
-    LTEXT           "X",IDC_WAYPOINT_DISPLAY,116,123,232,8,SS_NOPREFIX | SS_ENDELLIPSIS
-    LTEXT           "Flight time:",IDC_STATIC,10,157,50,8
-    EDITTEXT        IDC_FLIGHTTIME,63,155,40,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Comments:",IDC_STATIC,10,177,50,8
-    EDITTEXT        IDC_COMMENT,63,175,305,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "X",IDC_FROM_NAME,63,30,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
-    LTEXT           "X",IDC_TO_NAME,253,30,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
-    CONTROL         "&Ground transportation (e.g. by cruise ship or bus)",IDC_GROUNDTRANSPORTATION,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,156,253,10
+    CONTROL         "From",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,170,15
+    LTEXT           "Airport:",IDC_STATIC,7,26,50,8
+    EDITTEXT        IDC_FROM_IATA,61,24,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "Select...",IDC_FROM_SELECT,107,24,70,13,WS_GROUP
+    LTEXT           "X",IDC_FROM_NAME,61,40,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "Time:",IDC_STATIC,7,56,50,8
+    EDITTEXT        IDC_FROM_TIME,61,54,116,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Gate:",IDC_STATIC,7,74,50,8
+    EDITTEXT        IDC_FROM_GATE,61,72,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "To",IDC_CATEGORY2,"CCategory",WS_GROUP,189,7,170,15
+    LTEXT           "Airport:",IDC_STATIC,189,26,50,8
+    EDITTEXT        IDC_TO_IATA,243,24,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "Select...",IDC_TO_SELECT,289,24,70,13,WS_GROUP
+    LTEXT           "X",IDC_TO_NAME,243,40,115,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    LTEXT           "Time:",IDC_STATIC,189,56,50,8
+    EDITTEXT        IDC_TO_TIME,243,54,116,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Gate:",IDC_STATIC,189,74,50,8
+    EDITTEXT        IDC_TO_GATE,243,72,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Waypoint",IDC_CATEGORY3,"CCategory",WS_GROUP,7,95,352,15
+    LTEXT           "When departure and arrival airport are the same, you can enter a routing waypoint. This allows you to correctly display roundtrip and sightseeing flights, like the annual Air Berlin polar flight.",IDC_STATIC,7,112,352,24,SS_NOPREFIX
+    PUSHBUTTON      "Set &waypoint...",IDC_WAYPOINT_BTN,7,141,100,14,WS_GROUP
+    LTEXT           "X",IDC_WAYPOINT_DISPLAY,114,144,245,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    CONTROL         "Miscellaneous",IDC_CATEGORY4,"CCategory",WS_GROUP,7,164,352,15
+    LTEXT           "Flight time:",IDC_STATIC,7,183,50,8
+    EDITTEXT        IDC_FLIGHTTIME,61,181,40,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Ground transportation (e.g. by cruise ship or train)",IDC_GROUNDTRANSPORTATION,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,182,246,10
+    LTEXT           "Comments:",IDC_STATIC,7,200,50,8
+    EDITTEXT        IDC_COMMENT,61,198,298,13,ES_AUTOHSCROLL | WS_GROUP
 END
 
-IDD_EDITFLIGHT_ATTACHMENTS DIALOGEX 0, 0, 379, 303
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+IDD_EDITFLIGHT_OTHER DIALOGEX 0, 0, 366, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Weitere Angaben"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CONTROL         "Flight",IDC_CATEGORY5,"CCategory",WS_GROUP,7,7,170,15
+    LTEXT           "Carrier:",IDC_STATIC,7,26,50,8
+    COMBOBOX        IDC_CARRIER,61,24,116,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Flight number:",IDC_STATIC,7,42,50,8
+    EDITTEXT        IDC_FLIGHTNO,61,40,116,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Codeshares:",IDC_STATIC,7,59,50,8
+    EDITTEXT        IDC_CODESHARES,61,57,116,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Aircraft",IDC_CATEGORY6,"CCategory",WS_GROUP,189,7,170,15
+    LTEXT           "Equipment:",IDC_STATIC,189,26,50,8
+    COMBOBOX        IDC_EQUIPMENT,243,24,116,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Registration:",IDC_STATIC,189,42,50,8
+    EDITTEXT        IDC_REGISTRATION,243,40,116,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,189,59,50,8
+    EDITTEXT        IDC_AIRCRAFTNAME,243,57,116,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Booking & ticket",IDC_CATEGORY7,"CCategory",WS_GROUP,7,79,224,15
+    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,96,110,10
+    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,7,108,110,10
+    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,7,120,110,10
+    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,7,132,110,10
+    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,7,144,110,10
+    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,7,156,110,10
+    LTEXT           "Etix code:",IDC_STATIC,131,98,41,8
+    EDITTEXT        IDC_ETIXCODE,176,96,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Fare:",IDC_STATIC,131,114,41,8
+    EDITTEXT        IDC_FARE,176,112,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "&Business trip",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,131,132,100,10
+    CONTROL         "&Leisure trip",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,131,144,100,10
+    CONTROL         "Flight &cancelled",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,131,157,100,10
+    CONTROL         "Frequent flyer program",IDC_CATEGORY8,"CCategory",WS_GROUP,243,79,116,15
+    LTEXT           "Award miles:",IDC_STATIC,244,98,56,8
+    EDITTEXT        IDC_AWARDMILES,304,96,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    LTEXT           "Status miles:",IDC_STATIC,244,114,56,8
+    EDITTEXT        IDC_STATUSMILES,304,112,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    LTEXT           "Voucher:",IDC_STATIC,244,130,56,8
+    EDITTEXT        IDC_UPGRADEVOUCHER,304,128,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "&Award flight",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,144,115,10
+    CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,157,115,10
+    CONTROL         "Color",IDC_CATEGORY9,"CCategory",WS_GROUP,7,174,112,15
+    CONTROL         "",IDC_COLORINDICATOR,"CColorIndicator",WS_GROUP,7,191,16,14
+    PUSHBUTTON      "C&hoose color...",IDC_CHOOSECOLOR,29,191,90,14,WS_GROUP
+    CONTROL         "Miscellaneous",IDC_CATEGORY10,"CCategory",WS_GROUP,131,174,228,15
+    LTEXT           "Rating:",IDC_STATIC,132,194,31,8
+    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,167,192,40,13
+    LTEXT           "Seat:",IDC_STATIC,275,194,25,8
+    EDITTEXT        IDC_SEAT,304,192,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+END
+
+IDD_EDITFLIGHT_ATTACHMENTS DIALOGEX 0, 0, 366, 218
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Attached files"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_FILEVIEW,"CFileView",WS_BORDER | WS_GROUP | WS_TABSTOP,2,3,375,287,WS_EX_CONTROLPARENT
-    LTEXT           "X",IDC_FILESTATUS,2,292,375,8,SS_NOPREFIX | SS_ENDELLIPSIS
+    CONTROL         "ZZ",IDC_FILEVIEW,"CFileView",WS_GROUP | WS_TABSTOP,0,0,366,217,WS_EX_CONTROLPARENT
 END
 
-IDD_EDITFLIGHT_OTHER DIALOGEX 0, 0, 379, 303
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
-CAPTION "Additional data"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    GROUPBOX        "Flight",IDC_STATIC,3,3,182,71
-    GROUPBOX        "Aircraft",IDC_STATIC,193,3,182,71
-    GROUPBOX        "Booking",IDC_STATIC,3,79,246,92
-    GROUPBOX        "Frequent flyers",IDC_STATIC,258,79,117,92
-    GROUPBOX        "Color",IDC_STATIC,3,176,127,32
-    GROUPBOX        "Miscellaneous",IDC_STATIC,138,176,237,32
-    LTEXT           "Carrier:",IDC_STATIC,10,16,50,8
-    COMBOBOX        IDC_CARRIER,63,14,115,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Flight number:",IDC_STATIC,10,36,50,8
-    EDITTEXT        IDC_FLIGHTNO,63,34,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Codeshares:",IDC_STATIC,10,56,50,8
-    EDITTEXT        IDC_CODESHARES,63,54,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Equipment:",IDC_STATIC,200,16,50,8
-    COMBOBOX        IDC_EQUIPMENT,253,14,115,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Registration:",IDC_STATIC,200,36,50,8
-    EDITTEXT        IDC_REGISTRATION,253,34,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Name:",IDC_STATIC,200,56,50,8
-    EDITTEXT        IDC_AIRCRAFTNAME,253,54,115,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,10,90,120,10
-    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,10,103,120,10
-    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,10,116,120,10
-    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,10,129,120,10
-    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,10,142,120,10
-    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,10,155,120,10
-    LTEXT           "Etix code:",IDC_STATIC,148,92,49,8
-    EDITTEXT        IDC_ETIXCODE,201,90,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Fare:",IDC_STATIC,148,109,49,8
-    EDITTEXT        IDC_FARE,201,107,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    CONTROL         "&Business trip",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,148,130,93,10
-    CONTROL         "&Leisure trip",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,143,51,10
-    CONTROL         "Flight &cancelled",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,156,93,10
-    LTEXT           "Award miles:",IDC_STATIC,265,92,60,8
-    EDITTEXT        IDC_AWARDMILES,328,90,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    LTEXT           "Status miles:",IDC_STATIC,265,109,60,8
-    EDITTEXT        IDC_STATUSMILES,328,107,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    LTEXT           "Voucher:",IDC_STATIC,265,126,60,8
-    EDITTEXT        IDC_UPGRADEVOUCHER,328,124,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    CONTROL         "&Award flight",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,143,103,10
-    CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,265,156,103,10
-    PUSHBUTTON      "C&hoose color...",IDC_CHOOSECOLOR,9,187,114,14,WS_GROUP
-    LTEXT           "Rating:",IDC_STATIC,145,190,50,8
-    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,198,188,40,13
-    LTEXT           "Seat:",IDC_STATIC,294,190,29,8
-    EDITTEXT        IDC_SEAT,328,188,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-END
-
-IDD_ADDROUTE DIALOGEX 0, 0, 240, 226
+IDD_ADDROUTE DIALOGEX 0, 0, 228, 215
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add route"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Flights",IDC_STATIC,7,7,226,92
-    GROUPBOX        "Booking",IDC_STATIC,7,105,226,93
-    LTEXT           "Route:",IDC_STATIC,14,20,50,8
-    EDITTEXT        IDC_ROUTE,67,18,159,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Carrier:",IDC_STATIC,14,40,50,8
-    COMBOBOX        IDC_CARRIER,67,38,159,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Comments:",IDC_STATIC,14,60,50,8
-    EDITTEXT        IDC_COMMENT,67,58,159,13,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Rating:",IDC_STATIC,14,80,50,8
-    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,67,78,40,13
-    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,117,100,10
-    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,14,130,100,10
-    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,14,143,100,10
-    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,14,156,100,10
-    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,14,169,100,10
-    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,14,182,100,10
-    LTEXT           "Etix code:",IDC_STATIC,132,118,50,8
-    EDITTEXT        IDC_ETIXCODE,186,116,40,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    CONTROL         "&Award flight",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,132,158,94,10
-    CONTROL         "&Business trip",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,170,94,10
-    CONTROL         "&Leisure trip",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,182,94,10
-    DEFPUSHBUTTON   "OK",IDOK,125,204,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,183,204,50,14
+    CONTROL         "Flights",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,214,15
+    LTEXT           "Route:",IDC_STATIC,7,26,50,8
+    EDITTEXT        IDC_ROUTE,61,24,160,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Carrier:",IDC_STATIC,7,43,50,8
+    COMBOBOX        IDC_CARRIER,61,41,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Comments:",IDC_STATIC,7,60,50,8
+    EDITTEXT        IDC_COMMENT,61,58,160,13,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Rating:",IDC_STATIC,7,77,50,8
+    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,61,75,40,13
+    CONTROL         "Booking & ticket",IDC_CATEGORY2,"CCategory",WS_GROUP,7,97,214,15
+    CONTROL         "&Y (Economy)",IDC_CLASS_Y,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,114,100,10
+    CONTROL         "Y+ (&Premium Economy)",IDC_CLASS_YP,"Button",BS_AUTORADIOBUTTON,7,125,100,10
+    CONTROL         "&J (Business)",IDC_CLASS_J,"Button",BS_AUTORADIOBUTTON,7,136,100,10
+    CONTROL         "&F (First)",IDC_CLASS_F,"Button",BS_AUTORADIOBUTTON,7,147,100,10
+    CONTROL         "&Crew/DCM",IDC_CLASS_C,"Button",BS_AUTORADIOBUTTON,7,158,100,10
+    CONTROL         "C&harter",IDC_CLASS_H,"Button",BS_AUTORADIOBUTTON,7,169,100,10
+    LTEXT           "Etix code:",IDC_STATIC,121,116,41,8
+    EDITTEXT        IDC_ETIXCODE,166,114,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Award flight",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,121,133,100,10
+    CONTROL         "&Business trip",IDC_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,145,100,10
+    CONTROL         "&Leisure trip",IDC_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,157,100,10
+    CONTROL         "Flights &cancelled",IDC_CANCELLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,169,100,10
+    DEFPUSHBUTTON   "OK",IDOK,114,193,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,171,193,50,14
 END
 
 IDD_ATTACHMENTS DIALOGEX 0, 0, 403, 351
@@ -1031,31 +1482,344 @@ BEGIN
     DEFPUSHBUTTON   "Close",IDOK,347,330,50,14
 END
 
-IDD_REPLACE DIALOGEX 0, 0, 219, 89
+IDD_REPLACE DIALOGEX 0, 0, 228, 118
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
 CAPTION "Replace"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "Find what:",IDC_STATIC,3,5,50,8
-    COMBOBOX        IDC_SEARCHTERM,57,3,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Replace with:",IDC_STATIC,3,21,50,8
-    COMBOBOX        IDC_REPLACETERM,57,19,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Match &case",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,40,214,10
-    CONTROL         "Match entire cell c&ontents",IDC_MATCHENTIRECELL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,52,214,10
-    CONTROL         "Match c&urrent column only",IDC_MATCHCOLUMNONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,64,214,10
-    CONTROL         "Replace &all",IDC_REPLACEALL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,76,214,10
+    CONTROL         "Replace",IDC_CATEGORY2,"CCategory",WS_GROUP,7,7,214,15
+    LTEXT           "Find what:",IDC_STATIC,7,26,60,8
+    COMBOBOX        IDC_SEARCHTERM,70,24,151,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Replace with:",IDC_REPLACECAPTION,7,43,60,8
+    COMBOBOX        IDC_REPLACETERM,70,41,151,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Match &case",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,62,214,10
+    CONTROL         "Match entire cell c&ontents",IDC_MATCHENTIRECELL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,75,214,10
+    CONTROL         "Match c&urrent column only",IDC_MATCHCOLUMNONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,88,214,10
+    CONTROL         "Replace &all",IDC_REPLACEALL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,101,214,10
 END
 
-IDD_FIND DIALOGEX 0, 0, 219, 78
+IDD_FIND DIALOGEX 0, 0, 221, 30
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_CAPTION
 CAPTION "Find"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    LTEXT           "Find what:",-1,3,5,50,8
-    COMBOBOX        IDC_SEARCHTERM,57,3,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Match &case",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,3,40,214,10
-    CONTROL         "Match entire cell c&ontents",IDC_MATCHENTIRECELL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,52,214,10
-    CONTROL         "Match c&urrent column only",IDC_MATCHCOLUMNONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,64,214,10
+    CONTROL         "Find",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,207,15
+END
+
+IDD_STATISTICS DIALOGEX 0, 0, 600, 358
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Statistics"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,543,337,50,14
+    GROUPBOX        "Filter",IDC_STATIC,7,7,586,54
+    LTEXT           "Airport:",IDC_STATIC,14,16,60,8
+    EDITTEXT        IDC_FILTER_AIRPORT,14,26,60,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "&Select...",IDD_SELECTIATA,13,41,61,13,WS_GROUP
+    LTEXT           "Carrier:",IDC_STATIC,105,16,100,8
+    COMBOBOX        IDC_FILTER_CARRIER,105,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Equipment:",IDC_STATIC,240,16,100,8
+    COMBOBOX        IDC_FILTER_EQUIPMENT,240,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Business trips only",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,375,17,100,10
+    CONTROL         "&Leisure trips only",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,375,29,100,10
+    LTEXT           "Minimum rating:",IDC_STATIC,494,16,92,8
+    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,494,26,40,13
+    GROUPBOX        "Distance and miles",IDC_STATIC,7,66,210,95
+    LTEXT           "Count:",IDC_STATIC,14,76,80,8
+    CONTROL         "X",IDC_FLIGHTCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,76,110,8
+    LTEXT           "Total distance:",IDC_STATIC,14,86,80,8
+    CONTROL         "X",IDC_TOTALDISTANCE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,86,110,8
+    LTEXT           "Total flight time:",IDC_STATIC,14,96,80,8
+    CONTROL         "X",IDC_TOTALFLIGHTTIME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,96,110,8
+    LTEXT           "Longest flight:",IDC_STATIC,14,106,80,8
+    CONTROL         "X",IDC_LONGESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,106,110,8
+    LTEXT           "Shortest flight:",IDC_STATIC,14,116,80,8
+    CONTROL         "X",IDC_SHORTESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,116,110,8
+    LTEXT           "Total money spent:",IDC_STATIC,14,126,80,8
+    CONTROL         "X",IDC_TOTALMONEYSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,126,110,8
+    LTEXT           "Total miles earned:",IDC_STATIC,14,136,80,8
+    CONTROL         "X",IDC_TOTALMILESEARNED,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,136,110,8
+    LTEXT           "Total miles spent:",IDC_STATIC,14,146,80,8
+    CONTROL         "X",IDC_TOTALMILESSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,146,110,8
+    GROUPBOX        "Classes",IDC_STATIC,7,166,210,164
+    CONTROL         "",IDC_LIST_CLASS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,177,197,146
+    GROUPBOX        "Routes",IDC_STATIC,225,66,97,130
+    CONTROL         "",IDC_LIST_ROUTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,77,83,111
+    GROUPBOX        "Airports",IDC_STATIC,331,66,262,130
+    CONTROL         "",IDC_LIST_AIRPORT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,338,77,248,111
+    GROUPBOX        "Carriers",IDC_STATIC,225,201,223,130
+    CONTROL         "",IDC_LIST_CARRIER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,212,209,111
+    GROUPBOX        "Equipment",IDC_STATIC,457,201,136,130
+    CONTROL         "",IDC_LIST_EQUIPMENT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,464,212,122,111
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 400, 281
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Flightmap"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,285,259,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,343,259,50,14,WS_GROUP
+    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,386,80
+    CONTROL         "Measuring units",IDC_CATEGORY1,"CCategory",WS_GROUP,7,91,189,15
+    LTEXT           "Distances are always displayed in kilometers (km), and additionally in miles:",IDC_STATIC,7,107,189,17
+    CONTROL         "&Nautical miles (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,7,128,189,10
+    CONTROL         "&Statute miles (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,141,189,10
+    CONTROL         "3D settings (OpenGL)",IDC_CATEGORY2,"CCategory",WS_GROUP,204,91,189,15
+    LTEXT           "3D model:",IDC_STATIC,204,110,54,8
+    COMBOBOX        IDC_MODELQUALITY,261,108,132,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texture size:",IDC_STATIC,204,127,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,261,125,132,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Compress",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,261,141,132,10
+    CONTROL         "License",IDC_CATEGORY3,"CCategory",WS_GROUP,7,159,189,15
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,176,189,66,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,7,175,184,8
+    LTEXT           "X",IDC_REGNAME,7,185,189,8
+    LTEXT           "Purchase date:",IDC_STATIC,7,198,125,8
+    LTEXT           "X",IDC_PURCHASEDATE,7,208,125,8
+    LTEXT           "ID:",IDC_STATIC,145,198,51,8
+    LTEXT           "X",IDC_PURCHASEID,145,208,51,8
+    LTEXT           "Product:",IDC_STATIC,7,223,125,8
+    LTEXT           "X",IDC_PRODUCT,7,233,125,8
+    LTEXT           "Quantity:",IDC_QUANTITYTITLE,145,223,51,8
+    LTEXT           "X",IDC_QUANTITY,145,233,51,8
+    CONTROL         "Updates",IDC_CATEGORY4,"CCategory",WS_GROUP,204,159,189,15
+    CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,204,176,189,10
+    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,214,188,179,10
+    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,199,179,10
+    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,214,210,179,10
+    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,204,228,189,14,WS_GROUP
+END
+
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 196, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose details"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CONTROL         "Details",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,182,15
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,24,118,213
+    PUSHBUTTON      "Move &up",IDC_MOVEUP,131,24,58,14,WS_GROUP
+    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,131,43,58,14,WS_GROUP
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,131,67,58,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,131,86,58,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,81,254,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,139,254,50,14,WS_GROUP
+END
+
+IDD_FILTER DIALOGEX 0, 0, 264, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Filtering creates a new itinerary containing all matching flights in a new order. The source itinerary will not be modified.",IDC_INSTRUCTIONS,7,7,250,35
+    CONTROL         "Filter",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,140,15
+    LTEXT           "Airport:",IDC_STATIC,7,62,140,8
+    EDITTEXT        IDC_FILTER_AIRPORT,7,72,73,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "&Select...",IDD_SELECTIATA,87,72,60,13,WS_GROUP
+    LTEXT           "Carrier:",IDC_STATIC,7,92,140,8
+    COMBOBOX        IDC_FILTER_CARRIER,7,102,140,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Equipment:",IDC_STATIC,7,121,140,8
+    COMBOBOX        IDC_FILTER_EQUIPMENT,7,132,140,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Business trips only",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,152,140,10
+    CONTROL         "&Leisure trips only",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,164,140,10
+    LTEXT           "Minimum rating:",IDC_STATIC,7,182,140,8
+    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,192,40,13
+    LTEXT           "Month of departure:",IDC_STATIC,7,214,93,8
+    COMBOBOX        IDC_FILTER_MONTH,7,224,93,12,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Year:",IDC_STATIC,107,214,38,8
+    EDITTEXT        IDC_FILTER_YEAR,107,224,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "Sort result",IDC_CATEGORY2,"CCategory",WS_GROUP,159,45,98,15
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,159,62,98,144
+    LTEXT           "Sort direction:",IDC_STATIC,159,214,98,8
+    COMBOBOX        IDC_SORTDIRECTION,159,224,98,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,150,254,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,207,254,50,14,WS_GROUP
+END
+
+IDD_INSPECT DIALOGEX 0, 0, 364, 106
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Inspect itinerary"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Metadata",IDC_STATIC,7,7,350,34
+    LTEXT           "X\nX",IDC_METADATA_STATUS,14,18,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Edit...",IDC_METADATA_SHOW,224,18,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "&Remove",IDC_METADATA_DELETE,290,18,60,14,WS_DISABLED | WS_GROUP
+    GROUPBOX        "Attached files",IDC_STATIC,7,45,350,34
+    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,56,200,16,SS_NOPREFIX
+    DEFPUSHBUTTON   "&Show...",IDC_ATTACHMENTS_SHOW,224,56,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "&Delete all",IDC_ATTACHMENTS_DELETE,290,56,60,14,WS_DISABLED | WS_GROUP
+    DEFPUSHBUTTON   "Close",IDOK,307,85,50,14,WS_GROUP
+END
+
+IDD_PROPERTIES DIALOGEX 0, 0, 351, 145
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Properties of %s"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Properties\nThere properties will be stored within the file.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,337,25
+    LTEXT           "Title:",IDC_STATIC,7,37,55,8
+    EDITTEXT        IDC_TITLE,65,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Author:",IDC_STATIC,7,56,55,8
+    EDITTEXT        IDC_AUTHOR,65,54,279,14,ES_AUTOHSCROLL
+    LTEXT           "Keywords:",IDC_STATIC,7,75,55,8
+    EDITTEXT        IDC_KEYWORDS,65,73,279,14,ES_AUTOHSCROLL
+    LTEXT           "Comments:",IDC_STATIC,7,94,55,8
+    EDITTEXT        IDC_COMMENTS,65,92,279,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,237,123,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,294,123,50,14,WS_GROUP
+END
+
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 160, 228
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globe settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,45,206,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,103,206,50,14
+    CONTROL         "3D settings (OpenGL)",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,146,15
+    LTEXT           "3D model:",IDC_STATIC,7,26,54,8
+    COMBOBOX        IDC_MODELQUALITY,64,24,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "Texture size:",IDC_STATIC,7,43,54,8
+    COMBOBOX        IDC_TEXTUREQUALITY,64,41,89,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Compress",IDC_TEXTURECOMPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,57,89,10
+    CONTROL         "Airports",IDC_CATEGORY2,"CCategory",WS_GROUP,7,76,146,15
+    CONTROL         "Mark &locations",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,93,146,10
+    CONTROL         "Show &IATA codes",IDC_AIRPORTIATA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,106,146,10
+    CONTROL         "Show &airport names",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,119,146,10
+    CONTROL         "Show &GPS coordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,132,146,10
+    CONTROL         "Show &movement count",IDC_MOVEMENTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,145,146,10
+    CONTROL         "Miscellaneous",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,146,15
+    CONTROL         "&Dark background",IDC_DARKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,181,146,10
+END
+
+IDD_GOOGLEEARTHSETTINGS DIALOGEX 0, 0, 187, 265
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Google Earth settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Airports\nThis setting affects only Google Earth.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    CONTROL         "Flight paths",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "Draw frequent routes &wider",IDC_USECOUNT_WIDTH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
+    CONTROL         "Use &colors",IDC_USECOLORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
+    CONTROL         "&True flight levels",IDC_CLAMPHEIGHT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,218,173,10
+    DEFPUSHBUTTON   "OK",IDOK,72,243,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,243,50,14
+END
+
+IDD_STATISTICSSETTINGS DIALOGEX 0, 0, 187, 265
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Statistics settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Airports\nThis setting affects only statistics.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    CONTROL         "Kategorien",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "&Ignore route directions",IDC_MERGEDIRECTIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
+    CONTROL         "Count &award flights as regular flights",IDC_MERGEAWARDS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
+    CONTROL         "Count &Y+, Y and charter flights as Y",IDC_MERGECLASSES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,218,173,10
+    DEFPUSHBUTTON   "OK",IDOK,72,243,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,243,50,14
+END
+
+IDD_MAPSETTINGS_LOCATIONS DIALOGEX 0, 0, 187, 320
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Airports"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Airports\nThis setting affects only maps.",IDC_CATEGORY7,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,35,173,10
+    CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
+    CONTROL         "Locations",IDC_CATEGORY8,"CCategory",WS_GROUP,7,176,173,15
+    CONTROL         "Show &locations",IDC_SHOWLOCATIONS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,194,173,10
+    CONTROL         "",IDC_LOCATIONS_INNER_INDICATOR,"CColorIndicator",WS_GROUP,17,207,16,14
+    PUSHBUTTON      "Choose &fill color...",IDC_LOCATIONS_INNER_CHOOSE,37,207,100,14,WS_GROUP
+    CONTROL         "",IDC_LOCATIONS_OUTER_INDICATOR,"CColorIndicator",WS_GROUP,17,226,16,14
+    PUSHBUTTON      "Choose &border color...",IDC_LOCATIONS_OUTER_CHOOSE,37,226,100,14,WS_GROUP
+    CONTROL         "Labeling",IDC_CATEGORY9,"CCategory",WS_GROUP,7,249,173,15
+    CONTROL         "Show IATA &codes",IDC_SHOWIATACODES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,266,173,10
+    CONTROL         "",IDC_IATACODES_INNER_INDICATOR,"CColorIndicator",WS_GROUP,17,279,16,14
+    PUSHBUTTON      "Choose &font color...",IDC_IATACODES_INNER_CHOOSE,37,279,100,14,WS_GROUP
+    CONTROL         "",IDC_IATACODES_OUTER_INDICATOR,"CColorIndicator",WS_GROUP,17,298,16,14
+    PUSHBUTTON      "Choose bo&rder color...",IDC_IATACODES_OUTER_CHOOSE,37,298,100,14,WS_GROUP
+END
+
+IDD_MAPSETTINGS_ROUTES DIALOGEX 0, 0, 187, 298
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Routes"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Routes",IDC_CATEGORY10,"CCategory",WS_GROUP,7,7,173,15
+    CONTROL         "Show &routes",IDC_SHOWROUTES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,25,173,10
+    CONTROL         "Style",IDC_CATEGORY11,"CCategory",WS_GROUP,7,76,173,15
+    CONTROL         "&Use colors",IDC_USECOLORS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,17,57,163,10
+    CONTROL         "",IDC_ROUTECOLOR_INDICATOR,"CColorIndicator",WS_GROUP,17,38,16,14
+    PUSHBUTTON      "Choose default &color...",IDC_ROUTECOLOR_CHOOSE,37,38,110,14,WS_GROUP
+    CONTROL         "Annotations",IDC_CATEGORY12,"CCategory",WS_GROUP,7,152,173,15
+    CONTROL         "Draw &arrows",IDC_ARROWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,107,173,10
+    CONTROL         "Draw frequent routes &wider",IDC_USECOUNT_WIDTH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,120,173,10
+    CONTROL         "Draw frequent routes more &opaque",IDC_USECOUNT_OPACITY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,133,173,10
+    CONTROL         "&Straight lines",IDC_STRAIGHTLINES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,94,173,10
+    CONTROL         "Use s&maller font for annotations",IDC_NOTES_SMALLFONT,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,280,173,10
+    CONTROL         "",IDC_NOTECOLOR_INNER_INDICATOR,"CColorIndicator",WS_GROUP,7,242,16,14
+    PUSHBUTTON      "Choose &font color...",IDC_NOTECOLOR_INNER_CHOOSE,27,242,100,14,WS_GROUP
+    CONTROL         "",IDC_NOTECOLOR_OUTER_INDICATOR,"CColorIndicator",WS_GROUP,7,261,16,14
+    PUSHBUTTON      "Choose &border color...",IDC_NOTECOLOR_OUTER_CHOOSE,27,261,100,14,WS_GROUP
+    CONTROL         "&Distance",IDC_NOTES_DISTANCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,170,173,10
+    CONTROL         "Flight &time",IDC_NOTES_FLIGHTTIME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,183,173,10
+    CONTROL         "Fli&ght count",IDC_NOTES_FLIGHTCOUNT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,196,173,10
+    CONTROL         "Carr&ier",IDC_NOTES_CARRIER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,209,173,10
+    CONTROL         "&Equipment",IDC_NOTES_EQUIPMENT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,222,173,10
+END
+
+IDD_MAPSETTINGS_RESOLUTION DIALOGEX 0, 0, 187, 320
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Auflösung"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Resolution\nThe true map size may vary.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,173,25
+    CONTROL         "",IDC_RESOLUTIONPRESETS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,35,173,241
+    CONTROL         "&User-defined resolution:",IDC_USERDEFINEDRESOLUTION,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
+    LTEXT           "Width:",IDC_STATIC,7,301,30,8
+    EDITTEXT        IDC_WIDTH,40,299,40,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Höhe:",IDC_STATIC,107,301,30,8
+    EDITTEXT        IDC_HEIGHT,140,299,40,14,ES_AUTOHSCROLL | WS_GROUP
+END
+
+IDD_MAPSETTINGS_BACKGROUND DIALOGEX 0, 0, 187, 234
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Background"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Background",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,173,15
+    COMBOBOX        IDC_BACKGROUND,7,25,173,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_BACKGROUNDCOLOR_INDICATOR,"CColorIndicator",WS_GROUP,7,43,16,14
+    PUSHBUTTON      "Choose &background color...",IDC_BACKGROUNDCOLOR_CHOOSE,27,43,120,14,WS_GROUP
+    CONTROL         "",IDC_BACKGROUND_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,62,173,81
+    CONTROL         "Map center",IDC_CATEGORY5,"CCategory",WS_GROUP,7,151,173,15
+    CONTROL         "&Atlantic Ocean",IDC_BACKGROUNDCENTER_ATLANTIC,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,168,173,10
+    CONTROL         "&Pacific Ocean",IDC_BACKGROUNDCENTER_PACIFIC,"Button",BS_AUTORADIOBUTTON,7,180,173,10
+    CONTROL         "Border",IDC_CATEGORY6,"CCategory",WS_GROUP,7,199,173,15
+    CONTROL         "&Wide border (e.g. for picture frames)",IDC_WIDEBORDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,216,173,10
 END
 
 
@@ -1067,36 +1831,41 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_EDITFLIGHT_ROUTE, DIALOG
+    IDD_GLOBESETTINGS, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 375
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 299
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
     END
 
-    IDD_EDITFLIGHT_ATTACHMENTS, DIALOG
+    IDD_EDITFLIGHT_ROUTE, DIALOG
     BEGIN
-        LEFTMARGIN, 2
-        RIGHTMARGIN, 377
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 300
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 359
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 211
     END
 
     IDD_EDITFLIGHT_OTHER, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 375
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 299
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 359
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
+    END
+
+    IDD_EDITFLIGHT_ATTACHMENTS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 217
     END
 
     IDD_ADDROUTE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 233
+        RIGHTMARGIN, 221
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 207
     END
 
     IDD_ATTACHMENTS, DIALOG
@@ -1109,18 +1878,122 @@ BEGIN
 
     IDD_REPLACE, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 217
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 86
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
     END
 
     IDD_FIND, DIALOG
     BEGIN
-        LEFTMARGIN, 3
-        RIGHTMARGIN, 217
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 75
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 214
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 23
+    END
+
+    IDD_STATISTICS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 593
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 351
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 393
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 273
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 189
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 268
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 257
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 268
+    END
+
+    IDD_INSPECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 357
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 99
+    END
+
+    IDD_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 344
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 137
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 153
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 220
+    END
+
+    IDD_GOOGLEEARTHSETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 257
+    END
+
+    IDD_STATISTICSSETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 257
+    END
+
+    IDD_MAPSETTINGS_LOCATIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_MAPSETTINGS_ROUTES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 290
+    END
+
+    IDD_MAPSETTINGS_RESOLUTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 313
+    END
+
+    IDD_MAPSETTINGS_BACKGROUND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 226
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1130,6 +2003,81 @@ END
 //
 // Menu
 //
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&New",                        IDM_FILE_NEW
+        MENUITEM "&Open...",                    IDM_FILE_OPEN
+        POPUP "Samples and recent files"
+        BEGIN
+            MENUITEM "&Atlantic crossing",          IDM_FILE_NEWSAMPLE1
+            MENUITEM "&Pacific crossing",           IDM_FILE_NEWSAMPLE2
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Save",                       IDM_FILE_SAVE
+        MENUITEM "&Save as...",                 IDM_FILE_SAVEAS
+        MENUITEM SEPARATOR
+        POPUP "Print"
+        BEGIN
+            MENUITEM "&Print...",                   IDM_FILE_PRINT
+            MENUITEM "&Quick print",                IDM_FILE_PRINT_QUICK
+        END
+        POPUP "Prepare"
+        BEGIN
+            MENUITEM "&Properties...",              IDM_FILE_PREPARE_PROPERTIES
+            MENUITEM "&Inspect...",                 IDM_FILE_PREPARE_INSPECT
+            MENUITEM "&Attachments...",             IDM_FILE_PREPARE_ATTACHMENTS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      IDM_FILE_CLOSE
+    END
+END
+
+IDM_MAPWND MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Save &as...",                 IDM_MAPWND_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print",                      IDM_MAPWND_PRINT
+        MENUITEM "&Copy",                       IDM_MAPWND_COPY
+    END
+END
+
+IDM_GLOBEWND MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Jump to &location...\tCtrl+L", IDM_GLOBEWND_JUMPTOLOCATION
+        MENUITEM "Size globe to &fit\tHome",    IDM_GLOBEWND_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Save &as...",                 IDM_GLOBEWND_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "Globus &settings...",         IDM_GLOBEWND_SETTINGS
+    END
+END
+
+IDM_GLOBEWND_ITEM MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Open in &Google Earth",       IDM_GLOBEWND_GOOGLEEARTH
+        MENUITEM "Open in &liquidFOLDERS",      IDM_GLOBEWND_LIQUIDFOLDERS
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Size all &columns to fit",    IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "Size column to &fit",         IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Choose &details...",          IDM_DETAILS_CHOOSE
+    END
+END
 
 IDM_FILEVIEW_ITEM MENU 
 BEGIN
@@ -1152,6 +2100,68 @@ BEGIN
     END
 END
 
+IDM_DATAGRID MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Cu&t",                        IDM_DATAGRID_CUT
+        MENUITEM "&Copy",                       IDM_DATAGRID_COPY
+        MENUITEM "&Paste",                      IDM_DATAGRID_PASTE
+        MENUITEM "De&lete",                     IDM_DATAGRID_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Edit flight...",             IDM_DATAGRID_EDITFLIGHT
+        MENUITEM "Add &route...",               IDM_DATAGRID_ADDROUTE
+        MENUITEM SEPARATOR
+        MENUITEM "&Find and replace...",        IDM_DATAGRID_FINDREPLACE
+        MENUITEM "F&ilter...",                  IDM_DATAGRID_FILTER
+        MENUITEM SEPARATOR
+        MENUITEM "I&nsert row",                 IDM_DATAGRID_INSERTROW
+        MENUITEM SEPARATOR
+        MENUITEM "Select &all\tCtrl+A",         IDM_DATAGRID_SELECTALL
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_FILTER DLGINIT
+BEGIN
+    IDC_FILTER_MONTH, 0x403, 2, 0
+0x0020, 
+    IDC_FILTER_MONTH, 0x403, 8, 0
+0x614a, 0x756e, 0x7261, 0x0079, 
+    IDC_FILTER_MONTH, 0x403, 9, 0
+0x6546, 0x7262, 0x6175, 0x7972, "\000" 
+    IDC_FILTER_MONTH, 0x403, 6, 0
+0x614d, 0x6372, 0x0068, 
+    IDC_FILTER_MONTH, 0x403, 6, 0
+0x7041, 0x6972, 0x006c, 
+    IDC_FILTER_MONTH, 0x403, 4, 0
+0x614d, 0x0079, 
+    IDC_FILTER_MONTH, 0x403, 5, 0
+0x754a, 0x656e, "\000" 
+    IDC_FILTER_MONTH, 0x403, 5, 0
+0x754a, 0x796c, "\000" 
+    IDC_FILTER_MONTH, 0x403, 7, 0
+0x7541, 0x7567, 0x7473, "\000" 
+    IDC_FILTER_MONTH, 0x403, 10, 0
+0x6553, 0x7470, 0x6d65, 0x6562, 0x0072, 
+    IDC_FILTER_MONTH, 0x403, 8, 0
+0x634f, 0x6f74, 0x6562, 0x0072, 
+    IDC_FILTER_MONTH, 0x403, 9, 0
+0x6f4e, 0x6576, 0x626d, 0x7265, "\000" 
+    IDC_FILTER_MONTH, 0x403, 9, 0
+0x6544, 0x6563, 0x626d, 0x7265, "\000" 
+    IDC_SORTDIRECTION, 0x403, 10, 0
+0x7341, 0x6563, 0x646e, 0x6e69, 0x0067, 
+    IDC_SORTDIRECTION, 0x403, 11, 0
+0x6544, 0x6373, 0x6e65, 0x6964, 0x676e, "\000" 
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1160,21 +2170,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_RECENTFILES         "Recently used itineraries"
-    IDS_SAMPLEITINERARIES   "Sample itineraries"
-    IDS_SAVECOPY            "Save a copy of the itinerary"
-    IDS_EXPORT              "Export the itinerary"
-    IDS_PRINT               "Print the itinerary"
-    IDS_PREPAREDISTRIBUTION "Prepare the itinerary for distribution"
-    IDS_BACKGROUND          "Background"
-    IDS_FLIGHTROUTES        "Flight routes"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_LOCATIONS           "Locations"
-    IDS_IATACODES           "IATA codes"
-    IDS_YOULOOKAT           "You look at %s"
     IDS_DRIVENOTREADY       "The drive is not ready!"
     IDS_ILLEGALFORMAT       "The file is corrupt, damaged or has a wrong extension!"
     IDS_FLIGHTCOUNT_SINGULAR "%u movement"
@@ -1183,37 +2178,37 @@ BEGIN
     IDS_BACKGROUND_NIGHT    "City lights"
     IDS_BACKGROUND_ABSTRACT "Abstract"
     IDS_BACKGROUND_COLOR    "Solid color"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EMPTYITINERARY      "(New itinerary)"
     IDS_FILTEREDITINERARY   " (filtered)"
     IDS_SAMPLEITINERARY     "(Sample itinerary)"
     IDS_NOTSAVED            "The itinerary has been modified. Save?"
     IDS_ATTACHMENTS         "Attached files\nClick on the icon to view the\nfiles attached to this flight."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_AWARDFLIGHT         "Award flight"
     IDS_GROUNDTRANSPORTATION "Ground transportation\n(cruise ship, bus etc.)"
     IDS_BUSINESSTRIP        "Business trip"
     IDS_LEISURETRIP         "Leisure trip"
     IDS_UPGRADE             "Upgrade"
-    IDS_CANCELLED           "Flight cancelled\nThis flight will be neither\nvisualized nor exported"
+    IDS_CANCELLED           "Flight cancelled\nThis flight will be neither\nvisualized nor exported."
     IDS_EDITFLIGHT          "Edit flight"
     IDS_CUEBANNER_DATETIME  " YYYY-MM-DD HH:MM"
     IDS_CUEBANNER_TIME      " HH:MM"
     IDS_CUEBANNER_ROUTE     " e.g. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
     IDS_PRINTED_UNREGISTERED 
                             "Printed with an unregistered version of Flightmap—http://flightmap.net/"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PRINTED_REGISTERED  "Current as of %s, %s"
     IDS_METADATA_COMMENTS   "Sample itinerary"
     IDS_METADATA_TITLE_ATLANTIC "Atlantic crossing"
     IDS_METADATA_TITLE_PACIFIC "Pacific crossing"
     IDS_METADATA_KEYWORDS_ATLANTIC 
                             "Flightmap Sample Itinerary Atlantic Crossing"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_METADATA_KEYWORDS_PACIFIC 
                             "Flightmap Sample Itinerary Pacific Crossing"
     IDS_SUBITEM_NAME        "Name"
@@ -1227,6 +2222,10 @@ BEGIN
     IDS_INSPECT_METADATA_NONE "The itinerary contains no hidden metadata."
     IDS_INSPECT_METADATA_PRESENT 
                             "The itinerary contains hidden metadata like author or title that could reveal personal information."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_INSPECT_ATTACHMENTS_NONE "The itinerary contains no attached files."
     IDS_INSPECT_ATTACHMENTS_SINGULAR 
                             "The itinerary contains %u file which occupies %s of memory."
@@ -1234,10 +2233,6 @@ BEGIN
                             "The itinerary contains %u files which occupy %s of memory."
     IDS_DELETE_CAPTION      "Delete"
     IDS_DELETE_FILE         "Are you sure you want to delete the file?"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
@@ -1249,16 +2244,14 @@ BEGIN
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
     IDS_MILES               "%u (%u status miles)"
-    IDS_FLIGHTS             "Flights"
-    IDS_ROUTE               "Route"
-    IDS_FLIGHTS_SINGULAR    "%u flight"
-    IDS_FLIGHTS_PLURAL      "%u flights"
-    IDS_ROUTESTYLE          "Route style"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_ANNOTATIONS         "Annotations"
+    IDS_FLIGHTS             "Flights"
+    IDS_ROUTE               "Route"
+    IDS_FLIGHTS_SINGULAR    "%u flight"
+    IDS_FLIGHTS_PLURAL      "%u flights"
     IDS_RESOLUTION          "\nResolution: %u×%u"
     IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nAverage: %.2lf"
     IDS_TOOLTIP_TIME        "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
@@ -1270,6 +2263,20 @@ BEGIN
     IDS_ALLREPLACED         "All terms have been replaced."
     IDS_SEARCHTERMNOTFOUND  "The search term has not been found!"
     IDS_REPLACEQUESTION     "Do you want to replace this occurence?"
+    IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_QUALITY_LOW         "Low"
+    IDS_QUALITY_MEDIUM      "Medium"
+    IDS_QUALITY_HIGH        "High"
+    IDS_QUALITY_ULTRA       "Ultra"
+    IDS_GOOGLEEARTH         "Google Earth"
+    IDS_STATISTICS          "Statistics"
+    IDS_MAPSETTINGS         "Map settings"
+    IDS_COLUMN_RESOLUTION   "Resolution"
+    IDS_COLUMN_APPLICATION  "Application"
 END
 
 STRINGTABLE 
@@ -1332,141 +2339,14 @@ BEGIN
     IDM_FILE_SAVE           "&Save"
     IDM_FILE_SAVEAS         "Save &as"
     IDM_FILE_SAVEAS_AIRX    "Save the itinerary in the default file\nformat.\n&Flightmap Itinerary"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_EDIT                "&Edit"
-    IDM_EDIT_CUT            "Cu&t"
-    IDM_EDIT_COPY           "&Copy"
-    IDM_EDIT_PASTE          "&Paste"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_EDIT_INSERTROW      "Insert ro&w"
-    IDM_EDIT_DELETE         "&Delete"
-    IDM_EDIT_EDITFLIGHT     "&Edit flight..."
-    IDM_EDIT_ADDROUTE       "Add &route..."
-    IDM_EDIT_FIND           "&Find..."
-    IDM_EDIT_REPLACE        "&Replace..."
-    IDM_EDIT_FILTER         "F&ilter..."
-    IDM_EDIT_SELECTALL      "Select &all"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP                 "&Map"
-    IDM_MAP_OPEN            "Visualize the itinerary\non a 2D map.\n&Open map"
-    IDM_MAP_EXPORT_BMP      "Export the itinerary\nas Windows Bitmap file.\nWindows &Bitmap"
-    IDM_MAP_EXPORT_JPEG     "Export the itinerary\nas JPEG image.\n&JPEG"
-    IDM_MAP_EXPORT_PNG      "Export the itinerary\nas Portable Network Graphics.\n&Portable Network Graphics"
-    IDM_MAP_EXPORT_TIFF     "Export the itinerary\nas TIFF file.\n&TIFF"
-    IDM_MAP_MERGEMETRO      "&Merge metropolitan areas"
-    IDM_MAP_BACKGROUNDCOLOR "&Background color"
-    IDM_MAP_CENTERATLANTIC  "Center &Atlantic Ocean"
-    IDM_MAP_CENTERPACIFIC   "Center &Pacific Ocean"
-    IDM_MAP_RESOLUTION      "&Resolution"
-    IDM_MAP_WIDEBORDER      "W&ide border"
-    IDM_MAP_SHOWFLIGHTROUTES "Show &flight routes"
-    IDM_MAP_ROUTESTYLE      "Route s&tyle"
-    IDM_MAP_STRAIGHTLINES   "&Straight lines"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP_ARROWS          "Arro&ws"
-    IDM_MAP_USECOUNT_WIDTH  "Draw frequent routes &wider"
-    IDM_MAP_USECOUNT_OPACITY "Draw frequent routes more &opaque"
-    IDM_MAP_ANNOTATIONS     "A&nnotations"
-    IDM_MAP_DISTANCE        "&Distance"
-    IDM_MAP_FLIGHTTIME      "Flight &time"
-    IDM_MAP_FLIGHTCOUNT     "Flight c&ount"
-    IDM_MAP_CARRIER         "C&arrier"
-    IDM_MAP_EQUIPMENT       "&Equipment"
-    IDM_MAP_SMALLFONT       "&Small font"
-    IDM_MAP_NOTEINNERCOLOR  "&Color"
-    IDM_MAP_NOTEOUTERCOLOR  "&Border"
-    IDM_MAP_USECOLORS       "Use flight colo&rs"
-    IDM_MAP_ROUTECOLOR      "&Default color"
-    IDM_MAP_SHOWLOCATIONS   "Show loca&tions"
-    IDM_MAP_LOCATIONINNERCOLOR "&Color"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAP_LOCATIONOUTERCOLOR "&Border"
-    IDM_MAP_SHOWIATACODES   "Show &IATA codes"
-    IDM_MAP_IATAINNERCOLOR  "&Color"
-    IDM_MAP_IATAOUTERCOLOR  "&Border"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBE               "&Globe"
-    IDM_GLOBE_OPEN          "Visualize the itinerary\non a 3D globe.\n&Open globe"
-    IDM_GLOBE_MERGEMETRO    "&Merge metropolitan areas"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GOOGLEEARTH         "Google &Earth"
-    IDM_GOOGLEEARTH_OPEN    "Open the itinerary\nin Google Earth.\n&Open in Google Earth"
-    IDM_GOOGLEEARTH_EXPORT  "Export the itinerary\nas Google Earth overlay.\nE&xport"
-    IDM_GOOGLEEARTH_MERGEMETRO "&Merge metropolitan areas"
-    IDM_GOOGLEEARTH_USECOUNT "Draw frequent routes &wider"
-    IDM_GOOGLEEARTH_COLORS  "Use colo&rs"
-    IDM_GOOGLEEARTH_CLAMP   "&True flight levels"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STATISTICS          "&Statistics"
-    IDM_STATISTICS_OPEN     "Open a statistic analysis\nof the itinerary.\n&Open statistics"
-    IDM_STATISTICS_MERGE_DIRECTIONS "Merge route &directions"
-    IDM_STATISTICS_MERGE_AWARDS "Merge &award and revenue flights"
-    IDM_STATISTICS_MERGE_CLASSES "Merge &Y+, Y and charter flights"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAPWND              "&Map"
-    IDM_MAPWND_COPY         "&Copy"
-    IDM_MAPWND_SAVEAS       "Save &as"
-    IDM_MAPWND_PRINT        "Select a printer, number of copies, and\nother printing options before printing.\n&Print"
-    IDM_MAPWND_PRINT_QUICK  "Send the map directly to the default\nprinter without making changes.\n&Quick print"
-    IDM_MAPWND_CLOSE        "&Close"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_MAPVIEW             "&View"
-    IDM_MAPVIEW_ZOOMIN      "Zoom &in"
-    IDM_MAPVIEW_ZOOMOUT     "Zoom &out"
-    IDM_MAPVIEW_AUTOSIZE    "Size to f&it"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBEWND            "&Globe"
-    IDM_GLOBEWND_CLOSE      "&Close"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBEVIEW           "&View"
-    IDM_GLOBEVIEW_SAVEAS    "Save &as"
-    IDM_GLOBEVIEW_JUMPTOLOCATION 
-                            "Center the globe on\na specific location.\nJump to &location..."
-    IDM_GLOBEVIEW_ZOOMIN    "Zoom &in"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_SAVEAS_ICS     "Export the itinerary to Microsoft\nOutlook and other applications.\n&Calendar items"
     IDM_FILE_SAVEAS_CSV     "Export the itinerary to Microsoft\nExcel and other applications.\nComma Separated &Values"
     IDM_FILE_SAVEAS_TXT     "Export the itinerary as\nplain text file.\n&Text document"
     IDM_FILE_SAVEAS_OTHER   "Open the “Save as” dialog box to\nselect from all possible file types.\n&Other formats"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_PRINT          "Select a printer, number of copies, and\nother printing options before printing.\n&Print"
     IDM_FILE_PRINT_QUICK    "Send the itinerary directly to the default\nprinter without making changes.\n&Quick print"
     IDM_FILE_PREPARE        "Pr&epare"
@@ -1477,39 +2357,61 @@ BEGIN
     IDM_FILE_PREPARE_ATTACHMENTS 
                             "View and edit attached files,\nsuch as photos or GPS tracks.\n&Attachments"
     IDM_FILE_CLOSE          "&Close"
-    IDM_FILE_QUIT           "&Quit"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_GLOBEVIEW_ZOOMOUT   "Zoom &out"
-    IDM_GLOBEVIEW_AUTOSIZE  "Size to f&it"
-    IDM_GLOBEVIEW_FULLSCREEN "&Full screen"
-    IDM_GLOBEVIEW_COLORS    "Use colo&rs"
-    IDM_GLOBEVIEW_CLAMP     "&True flight levels"
-    IDM_GLOBEVIEW_SPOTS     "Show loca&tions"
-    IDM_GLOBEVIEW_AIRPORTIATA "Show &IATA codes"
-    IDM_GLOBEVIEW_AIRPORTNAMES "Show &airport names"
-    IDM_GLOBEVIEW_GPS       "Show &GPS coordinates"
-    IDM_GLOBEVIEW_FLIGHTCOUNT "Show &movement count"
-    IDM_GLOBEVIEW_VIEWPORT  "Show &camera viewport"
-    IDM_GLOBEVIEW_CROSSHAIRS "Show cross&hairs"
-    IDM_GLOBEVIEW_3DSETTINGS "3&D settings..."
+    IDM_SIDEBAR_ITINERARY   "Shows file commands, such as “Open”, „“Save” oder “Print”.\nItinerary"
+    IDM_SIDEBAR_MAP_OPEN    "Creates a map of the selected flights or the entire itinerary.\nCreate map"
+    IDM_SIDEBAR_MAP_SETTINGS "Displays a dialog with map settings.\nSettings"
+    IDM_SIDEBAR_GLOBE_OPEN  "Displays the selected flights or the entire itinerary on a 3D globe.\nOpen globe"
+    IDM_SIDEBAR_GLOBE_SETTINGS 
+                            "Displays a dialog with globe settings.\nSettings"
+    IDM_SIDEBAR_GOOGLEEARTH_OPEN 
+                            "Imports the selected flights or the entire itinerary to Google Earth.\nOpen Google Earth"
+    IDM_SIDEBAR_GOOGLEEARTH_SETTINGS 
+                            "Displays a dialog with Google Earth settings.\nSettings"
+    IDM_SIDEBAR_STATISTICS_OPEN 
+                            "Shows statistics on the selected flights or the entire itinerary.\nOpen statistics"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_GLOBEITEM_OPENGOOGLEEARTH 
-                            "Open the location\nin Google Earth.\nOpen in &Google Earth"
-    IDM_GLOBEITEM_OPENLIQUIDFOLDERS 
-                            "Open the location in liquidFOLDERS\nand browse all tagged files.\nOpen in &liquidFOLDERS"
+    IDM_SIDEBAR_STATISTICS_SETTINGS 
+                            "Displays a dialog with statistics settings.\nSettings"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_DETAILS_AUTOSIZEALL "Size all &columns to fit"
-    IDM_DETAILS_AUTOSIZE    "Size column to &fit"
-    IDM_DETAILS_CHOOSE      "Choose &details..."
+    IDM_DATAGRID_EDITFLIGHT "Opens a dialog to edit the information of the selected flight.\nEdit flight"
+    IDM_DATAGRID_ADDROUTE   "Adds a multi-flight route to the itinerary.\nAdd route"
+    IDM_DATAGRID_FINDREPLACE 
+                            "Opens the “Find and replace” dialog.\nFind and replace"
+    IDM_DATAGRID_FILTER     "Creates a new itinerary with certain flights from the current document.\nFilter"
+    IDM_DATAGRID_INSERTROW  "Inserts an empty row.\nInsert row"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_MAPWND_ZOOMIN       "Zooms into the map.\nZoom in"
+    IDM_MAPWND_ZOOMOUT      "Zooms out of the map.\nZoom out"
+    IDM_MAPWND_SAVEAS       "Saves the map into an image file. You can choose between multiple file formats.\nSave as"
+    IDM_MAPWND_PRINT        "Print the map. You can select a printer, number of copies, and other options before printing.\n&Print"
+    IDM_MAPWND_COPY         "Copies the map to the clipboard as an image.\nCopy"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBEWND_JUMPTOLOCATION 
+                            "Centers the globe on a specific location.\nJump to location..."
+    IDM_GLOBEWND_ZOOMIN     "Zooms into the globe.\nZoom in"
+    IDM_GLOBEWND_ZOOMOUT    "Zooms out of the globe.\nZoom out"
+    IDM_GLOBEWND_AUTOSIZE   "Resizes the globe to touch the edges of the window.\nSize to fit"
+    IDM_GLOBEWND_SAVEAS     "Saves the flights as Google Earth overlay.\nSave as"
+    IDM_GLOBEWND_GOOGLEEARTH 
+                            "Opens the flights in Google Earth.\nOpen in Google Earth"
+    IDM_GLOBEWND_LIQUIDFOLDERS 
+                            "Opens the selected location in liquidFOLDERS and shows all tagged files.\nOpen in liquidFOLDERS"
 END
 
 STRINGTABLE 

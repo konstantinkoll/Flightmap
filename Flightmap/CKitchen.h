@@ -68,6 +68,7 @@ public:
 	CFlightCounts m_FlightAirportCounts;
 	CFlightRoutes m_FlightRoutes;
 	UINT m_MaxRouteCount;
+	UINT m_MinRouteCount;
 
 protected:
 	BOOL m_MergeMetro;

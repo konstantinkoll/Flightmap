@@ -4,6 +4,7 @@
 
 #pragma once
 #include "FMCommDlg.h"
+#include "CDataGrid.h"
 #include "CItinerary.h"
 #include "CKitchen.h"
 
@@ -14,27 +15,30 @@
 #define LOUNGEVIEW     1
 #define DATAGRID       2
 
-class CMainWnd : public CMainWindow
+class CMainWnd : public CBackstageWnd
 {
 public:
 	CMainWnd();
 	virtual ~CMainWnd();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
-	virtual void AdjustLayout();
+	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
 
 	BOOL Create(CItinerary* pItinerary);
 
 protected:
-	void UpdateWindowStatus(BOOL AllowLoungeView=FALSE);
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
+
+	void UpdateWindowStatus();
+	void SetItinerary(CItinerary* pItinerary);
 	void Open(const CString& FileName);
-	BOOL CloseFile(BOOL AllowLoungeView=FALSE);
+	BOOL CloseFile();
 	CKitchen* GetKitchen(BOOL Limit, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportMap(const CString& FileName, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportExcel(const CString& FileName);
 	void ExportCalendar(const CString& FileName);
-	BOOL ExportGoogleEarth(const CString& FileName, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL Clamp=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	BOOL ExportGoogleEarth(const CString& FileName, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL ClampHeight=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void ExportText(const CString& FileName);
 	void ExportMap(DWORD FilterIndex=3, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
 	void SaveAs(DWORD FilterIndex=1);
@@ -44,9 +48,7 @@ protected:
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnGalleryChanged(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnUseBgImagesChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnDistanceSettingChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnFileNew();
@@ -66,58 +68,28 @@ protected:
 	afx_msg void OnFileInspect();
 	afx_msg void OnFileAttachments();
 	afx_msg void OnFileClose();
-	afx_msg void OnFileQuit();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnItinerary();
 	afx_msg void OnMapOpen();
-	afx_msg void OnMapMergeMetro();
-	afx_msg void OnMapCenterAtlantic();
-	afx_msg void OnMapCenterPacific();
-	afx_msg void OnMapWideBorder();
-	afx_msg void OnMapShowFlightRoutes();
-	afx_msg void OnMapStraightLines();
-	afx_msg void OnMapArrows();
-	afx_msg void OnMapUseCountWidth();
-	afx_msg void OnMapUseCountOpacity();
-	afx_msg void OnMapDistance();
-	afx_msg void OnMapFlightTime();
-	afx_msg void OnMapFlightCount();
-	afx_msg void OnMapCarrier();
-	afx_msg void OnMapEquipment();
-	afx_msg void OnMapSmallFont();
-	afx_msg void OnMapUseColors();
-	afx_msg void OnMapShowLocations();
-	afx_msg void OnMapShowIATACodes();
-	afx_msg void OnUpdateMapCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnMapExportBMP();
-	afx_msg void OnMapExportJPEG();
-	afx_msg void OnMapExportPNG();
-	afx_msg void OnMapExportTIFF();
-
+	afx_msg void OnMapSettings();
 	afx_msg void OnGlobeOpen();
-	afx_msg void OnGlobeMergeMetro();
-	afx_msg void OnUpdateGlobeCommands(CCmdUI* pCmdUI);
-
+	afx_msg void OnGlobeSettings();
 	afx_msg void OnGoogleEarthOpen();
-	afx_msg void OnGoogleEarthMergeMetro();
-	afx_msg void OnGoogleEarthUseCount();
-	afx_msg void OnGoogleEarthColors();
-	afx_msg void OnGoogleEarthClamp();
-	afx_msg void OnUpdateGoogleEarthCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnGoogleEarthExport();
-
+	afx_msg void OnGoogleEarthSettings();
 	afx_msg void OnStatisticsOpen();
-	afx_msg void OnStatisticsMergeDirections();
-	afx_msg void OnStatisticsMergeAwards();
-	afx_msg void OnStatisticsMergeClasses();
-	afx_msg void OnUpdateStatisticsCommands(CCmdUI* pCmdUI);
+	afx_msg void OnStatisticsSettings();
+	afx_msg void OnUpdateSidebarCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	static CIcons m_LargeIconsSidebar;
+	static CIcons m_SmallIconsSidebar;
+	static CIcons m_LargeIconsTaskbar;
+	static CIcons m_SmallIconsTaskbar;
+	CBackstageSidebar m_wndSidebar;
+	CTaskbar m_wndTaskbar;
 	CItinerary* m_pItinerary;
 
 private:
-	CWnd* m_pWndMainView;
-	UINT m_CurrentMainView;
+	CDataGrid* m_pDataGridWnd;
 };

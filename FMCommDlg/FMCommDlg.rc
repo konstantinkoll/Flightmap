@@ -40,9 +40,7 @@ IDB_RATING7             BITMAP                  "res\\Rating7.bmp"
 IDB_RATING8             BITMAP                  "res\\Rating8.bmp"
 IDB_RATING9             BITMAP                  "res\\Rating9.bmp"
 IDB_RATING10            BITMAP                  "res\\Rating10.bmp"
-IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
-IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
-//IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
+IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -54,33 +52,94 @@ IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDR_APPLICATION         ICON                    "res\\Flightmap.ico"
 IDR_MAP                 ICON                    "res\\Map_Small.ico"
 IDR_GLOBE               ICON                    "res\\Globe_Small.ico"
-//IDI_MINIMIZE            ICON                    "res\\Minimize.ico"
-//IDI_MAXIMIZE            ICON                    "res\\Maximize.ico"
-//IDI_RESTORE             ICON                    "res\\Restore.ico"
-//IDI_CLOSE               ICON                    "res\\Close.ico"
+IDR_STATISTICS          ICON                    "res\\Statistics_Small.ico"
+IDI_MINIMIZE            ICON                    "res\\Minimize.ico"
+IDI_MAXIMIZE            ICON                    "res\\Maximize.ico"
+IDI_RESTORE             ICON                    "res\\Restore.ico"
+IDI_CLOSE               ICON                    "res\\Close.ico"
+32513                   ICON                    "res\\Error.ico"
+32514                   ICON                    "res\\Question.ico"
+32515                   ICON                    "res\\Warning.ico"
+32516                   ICON                    "res\\Info.ico"
+32518                   ICON                    "res\\Shield_7.ico"
+IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
+IDI_READY               ICON                    "res\\Ready.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // RCDATA
 //
 
-IDB_EARTHMAP            RCDATA                  "res\\Earthmap.jpg"
 IDB_DIVDOWN             RCDATA                  "res\\DivDown.png"
 IDB_DIVUP               RCDATA                  "res\\DivUp.png"
-IDB_LOCATIONINDICATOR_8 RCDATA                  "res\\LocationIndicator_8.png"
-IDB_LOCATIONINDICATOR_16 RCDATA                  "res\\LocationIndicator_16.png"
+IDB_NRT_UNREGISTERED    RCDATA                  "res\\NRT_Unregistered.png"
+IDB_NRT_REGISTERED      RCDATA                  "res\\NRT_Registered.png"
 IDB_SORTINDICATORS      RCDATA                  "res\\SortIndicators.png"
-IDB_SANTA               RCDATA                  "res\\Santa.png"
 IDB_FLIGHTMAP_64        RCDATA                  "res\\Flightmap_64.png"
 IDB_FLIGHTMAP_128       RCDATA                  "res\\Flightmap_128.png"
 IDB_FLIGHTMAP_256       RCDATA                  "res\\Flightmap_128.png"
+IDB_SANTA               RCDATA                  "res\\Santa.png"
+IDB_STPATRICK           RCDATA                  "res\\StPatrick.png"
 IDB_UPDATEICONS_16      RCDATA                  "res\\UpdateIcons_16.png"
+IDB_UPDATEICONS_24      RCDATA                  "res\\UpdateIcons_24.png"
 IDB_UPDATEICONS_32      RCDATA                  "res\\UpdateIcons_32.png"
-//IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
+IDB_UPDATEICONS_48      RCDATA                  "res\\UpdateIcons_48.png"
+IDB_UPDATEICONS_64      RCDATA                  "res\\UpdateIcons_64.png"
+IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
 IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
 IDB_RESOLUTIONICONS     RCDATA                  "res\\ResolutionIcons.png"
-IDB_BACKDROP            RCDATA                  "res\\Backdrop.png"
+IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
 IDF_LETTERGOTHIC        RCDATA                  "res\\Letter_Gothic.ttf"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MESSAGEBOX DIALOGEX 0, 0, 180, 55
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "X",IDC_BUTTON3,123,33,50,14,WS_GROUP
+    PUSHBUTTON      "X",IDC_BUTTON1,7,33,50,14,WS_GROUP
+    PUSHBUTTON      "X",IDC_BUTTON2,65,33,50,14,WS_GROUP
+END
+
+IDD_TABBEDDIALOG DIALOGEX 0, 0, 122, 30
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "X",IDOK,7,8,50,14,WS_GROUP
+    PUSHBUTTON      "X",IDCANCEL,65,8,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_MESSAGEBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 173
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+
+    IDD_TABBEDDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 22
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -99,310 +158,86 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 402, 282
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Über Flightmap"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,288,261,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,345,261,50,14,WS_GROUP
-    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt am %s Uhr.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,388,80
-    CONTROL         "Maßeinheiten",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,190,66
-    LTEXT           "Entfernungsangaben werden immer in Kilometern (km) angezeigt, und zusätzlich in Meilen:",IDC_STATIC,14,103,177,25
-    CONTROL         "&Nautische Meilen (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,177,10
-    CONTROL         "Land&meilen (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,177,10
-    CONTROL         "Effekte",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,205,93,190,66
-    CONTROL         "&Hintergrundbilder benutzen",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,211,103,177,10
-    PUSHBUTTON      "3D-&Einstellungen...",IDD_3DSETTINGS,211,139,177,14
-    CONTROL         "Lizenz",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,190,81
-    LTEXT           "Name:",IDC_STATIC,15,174,174,8
-    LTEXT           "X",IDC_REGNAME,15,184,174,8
-    LTEXT           "Kaufdatum:",IDC_STATIC,15,197,117,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,207,117,8
-    LTEXT           "ID:",IDC_STATIC,139,197,50,8
-    LTEXT           "X",IDC_PURCHASEID,139,207,50,8
-    LTEXT           "Produkt:",IDC_STATIC,15,222,117,8
-    LTEXT           "X",IDC_PRODUCT,15,232,174,8
-    LTEXT           "Menge:",IDC_QUANTITYTITLE,139,222,50,8
-    LTEXT           "X",IDC_QUANTITY,139,232,50,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,13,174,178,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX4,"CGroupBox",WS_GROUP,205,164,190,81
-    CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,211,174,177,10
-    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,221,186,167,10
-    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,221,197,167,10
-    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,221,208,167,10
-    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,211,226,177,14
-END
-
-IDD_SELECTGPS DIALOGEX 0, 0, 444, 305
+IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "GPS-Koordinaten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,14,18,416,192
-    EDITTEXT        IDC_LATITUDE,46,237,60,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_LONGITUDE,46,255,60,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,329,284,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,387,284,50,14,WS_GROUP
-    GROUPBOX        "Karte",IDC_STATIC,7,7,430,211,WS_GROUP
-    GROUPBOX        "Koordinaten",IDC_STATIC,7,226,430,50,WS_GROUP
-    LTEXT           "Breite:",IDC_STATIC,14,239,32,8
-    LTEXT           "Länge:",IDC_STATIC,14,257,31,9
+    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,416,192
+    LTEXT           "Breite:",IDC_STATIC,7,254,32,8
+    EDITTEXT        IDC_LATITUDE,40,252,60,14,ES_AUTOHSCROLL
+    LTEXT           "Länge:",IDC_STATIC,7,272,31,9
+    EDITTEXT        IDC_LONGITUDE,40,270,60,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,315,300,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,373,300,50,14,WS_GROUP
+    CONTROL         "Karte\nKlicken Sie auf die Karte, um einen Ort festzulegen.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,416,25
+    CONTROL         "Koordinaten",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
-IDD_SELECTIATA DIALOGEX 0, 0, 203, 306
+IDD_SELECTIATA DIALOGEX 0, 0, 189, 312
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "IATA-Code"
+CAPTION "IATA Flughafen-Code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    COMBOBOX        IDC_COUNTRY,14,18,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
-    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,175,210
-    DEFPUSHBUTTON   "OK",IDOK,89,285,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,146,285,50,14,WS_GROUP
-    GROUPBOX        "Land/Gebiet",IDC_STATIC,7,7,189,33,WS_GROUP
-    GROUPBOX        "Flughäfen (Metropolitan-Codes sind grün dargestellt)",IDC_STATIC,7,47,189,230,WS_GROUP
+    COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    DEFPUSHBUTTON   "OK",IDOK,75,290,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,132,290,50,14,WS_GROUP
+    CONTROL         "Land/Gebiet",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
+    CONTROL         "Flughäfen\nMetropolitan-Codes sind grün dargestellt.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,47,175,25
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 194
+IDD_LICENSE DIALOGEX 0, 0, 350, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,151
-    LTEXT           "Unser Partner share*it sendet Ihnen eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_STATIC,14,17,322,34
-    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
-    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,321,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,61,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,173,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,293,173,50,14,WS_GROUP
+    LTEXT           "Unser Partner share*it sendet Ihnen eine EMail, an die die Datei „Flightmap.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_INSTRUCTIONS,7,7,336,35
+    CONTROL         "Lizenzschlüssel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
+    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,293,161,50,14,WS_GROUP
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 360, 116
+IDD_REGISTER DIALOGEX 0, 0, 300, 44
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Unregistrierte Version"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,7,96,50,14
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,64,96,100,14
-    DEFPUSHBUTTON   "Fortsetzen",IDOK,303,96,50,14
-    LTEXT           "Dies ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile:",IDC_STATIC,7,7,346,8
-    LTEXT           "- Die von Flightmap erzeugten Karten haben keine pinken Balken mehr",IDC_STATIC,7,22,346,8
-    LTEXT           "- Der Dateiexport in die Formate .csv, .ics, .kml oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt",IDC_STATIC,7,32,346,8
-    LTEXT           "- Statistiken sind nicht mehr auf 10 Flüge begrenzt",IDC_STATIC,7,42,346,8
-    LTEXT           "- Auf Ausdrucken und in PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“",IDC_STATIC,7,52,346,8
-    LTEXT           "- Dieses Erinnerungsfenster erscheint nicht mehr",IDC_STATIC,7,62,346,8
-    LTEXT           "- Und zuletzt ermöglichen Sie es uns, Flightmap weiterzuentwickeln und noch besser zu machen!",IDC_STATIC,7,72,346,8
+    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,186,22,50,14
+    DEFPUSHBUTTON   "Fortsetzen",IDOK,243,22,50,14
+    CONTROL         "<a>&Lizenzschlüssel eingeben...</a>",IDC_ENTERLICENSEKEY,
+                    "SysLink",WS_TABSTOP,7,25,171,9
 END
 
-IDD_3DSETTINGS DIALOGEX 0, 0, 178, 106
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "3D-Einstellungen"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,85,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,121,85,50,14
-    GROUPBOX        "OpenGL",IDC_STATIC,7,7,164,71
-    LTEXT           "Texturgröße:",IDC_STATIC,14,19,54,8
-    COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Kantenglättung",IDC_ANTIALISING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,36,150,10
-    CONTROL         "&Beleuchtung",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
-    CONTROL         "&Atmosphäre",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
-END
-
-IDD_CHOOSECOLOR DIALOGEX 2, 0, 378, 228
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Farbe auswählen"
-FONT 8, "MS Shell Dlg", 0, 0, 0x0
-BEGIN
-    CONTROL         "",IDC_COLOR_BOX1,"Static",SS_SIMPLE | WS_GROUP | WS_TABSTOP,12,18,162,105
-    CONTROL         "",IDC_COLOR_CUSTOM1,"Static",SS_SIMPLE | WS_GROUP | WS_TABSTOP,12,139,162,28
-    GROUPBOX        "Grundfarben",IDC_STATIC,7,7,165,115
-    GROUPBOX        "Benutzerdefinierte Farben",IDC_STATIC,7,129,165,71
-    GROUPBOX        "Farben definieren",IDC_STATIC,183,7,188,193
-    PUSHBUTTON      "Farben &definieren...",IDC_COLOR_MIX,14,178,151,14,WS_GROUP
-    PUSHBUTTON      "&Help",1038,7,207,50,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,65,207,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,123,207,50,14,WS_GROUP
-    CONTROL         "",IDC_COLOR_RAINBOW,"Static",SS_SIMPLE,191,20,147,102,WS_EX_CLIENTEDGE
-    CONTROL         "",IDC_COLOR_LUMSCROLL,"Static",SS_SIMPLE,346,20,8,102,WS_EX_CLIENTEDGE
-    CONTROL         "",IDC_COLOR_CURRENT,"Static",SS_SIMPLE,191,130,40,29,WS_EX_CLIENTEDGE
-    PUSHBUTTON      "&c",IDC_COLOR_SOLID,325,300,46,14,WS_GROUP
-    CTEXT           "Farbe",IDC_COLOR_SOLID_LEFT,191,160,39,9
-    LTEXT           "|De&ckend",IDC_COLOR_SOLID_RIGHT,211,160,20,9,NOT WS_VISIBLE
-    RTEXT           "Farb&ton:",IDC_COLOR_HUEACCEL,238,133,40,9
-    RTEXT           "&Sättigung:",IDC_COLOR_SATACCEL,238,146,40,9
-    EDITTEXT        IDC_COLOR_SAT,282,144,23,12,WS_GROUP
-    RTEXT           "H&elligkeit:",IDC_COLOR_LUMACCEL,238,160,40,9
-    EDITTEXT        IDC_COLOR_LUM,282,159,23,12,WS_GROUP
-    RTEXT           "&Rot:",IDC_COLOR_REDACCEL,309,133,29,9
-    EDITTEXT        IDC_COLOR_RED,340,130,23,12,WS_GROUP
-    RTEXT           "&Grün:",IDC_COLOR_GREENACCEL,309,146,29,9
-    EDITTEXT        IDC_COLOR_GREEN,340,144,23,12,WS_GROUP
-    RTEXT           "Bla&u:",IDC_COLOR_BLUEACCEL,309,160,29,10
-    EDITTEXT        IDC_COLOR_BLUE,340,159,23,12,WS_GROUP
-    PUSHBUTTON      "Zu benutzerdefinierten Farben &hinzufügen",IDC_COLOR_ADD,190,178,174,14,WS_GROUP
-    EDITTEXT        IDC_COLOR_HUE,282,130,23,12,WS_GROUP
-END
-
-IDD_RESOLUTION DIALOGEX 0, 0, 400, 270
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Auflösung"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,14,18,372,162
-    CONTROL         "Benutzer&definierte Auflösung",IDC_USERDEFINEDRES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,186,371,10
-    EDITTEXT        IDC_WIDTH,51,201,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    EDITTEXT        IDC_HEIGHT,51,222,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    DEFPUSHBUTTON   "OK",IDOK,285,249,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,343,249,50,14
-    GROUPBOX        "Kartenauflösung",IDC_STATIC,7,7,386,236
-    LTEXT           "Breite:",IDC_STATIC,14,204,35,8
-    LTEXT           "Höhe:",IDC_STATIC,14,225,35,8
-END
-
-IDD_PROPERTIES DIALOGEX 0, 0, 365, 129
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Eigenschaften von %s"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,351,93
-    LTEXT           "Titel:",IDC_STATIC,14,20,45,8
-    EDITTEXT        IDC_TITLE,72,18,279,13,ES_AUTOHSCROLL
-    LTEXT           "Autor:",IDC_STATIC,14,40,45,8
-    EDITTEXT        IDC_AUTHOR,72,38,279,13,ES_AUTOHSCROLL
-    LTEXT           "Schlüsselworte:",IDC_STATIC,14,60,55,8
-    EDITTEXT        IDC_KEYWORDS,72,58,279,13,ES_AUTOHSCROLL
-    LTEXT           "Kommentar:",IDC_STATIC,14,80,45,8
-    EDITTEXT        IDC_COMMENTS,72,78,279,13,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,251,107,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,308,107,50,14,WS_GROUP
-END
-
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Details auswählen"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
-    LTEXT           "Wählen Sie die anzuzeigenden Spalten aus:",IDC_STATIC,14,17,183,9
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
-    PUSHBUTTON      "Nach &oben",IDC_MOVEUP,137,27,58,14,WS_GROUP
-    PUSHBUTTON      "Nach &unten",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
-    PUSHBUTTON      "&Alle wählen",IDC_CHECKALL,137,70,58,14,WS_GROUP
-    PUSHBUTTON      "&Keine wählen",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,93,255,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,151,255,50,14,WS_GROUP
-END
-
-IDD_INSPECT DIALOGEX 0, 0, 364, 106
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Flugplan prüfen"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Metadaten",IDC_STATIC,7,7,350,34
-    LTEXT           "X\nX",IDC_METADATA_STATUS,14,18,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Bearbeiten...",IDC_METADATA_SHOW,224,18,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "&Entfernen",IDC_METADATA_DELETE,290,18,60,14,WS_DISABLED | WS_GROUP
-    GROUPBOX        "Angehängte Dateien",IDC_STATIC,7,45,350,34
-    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,56,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Anzeigen...",IDC_ATTACHMENTS_SHOW,224,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "Alle &löschen",IDC_ATTACHMENTS_DELETE,290,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "Schließen",IDOK,307,85,50,14,WS_GROUP
-END
-
-IDD_STATISTICS DIALOGEX 0, 0, 600, 358
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Statistik"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Schließen",IDOK,543,337,50,14
-    GROUPBOX        "Filter",IDC_STATIC,7,7,586,54
-    LTEXT           "Flughafen:",IDC_STATIC,14,16,60,8
-    EDITTEXT        IDC_FILTER_AIRPORT,14,26,60,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Auswählen...",IDD_SELECTIATA,13,41,61,13,WS_GROUP
-    LTEXT           "Fluglinie:",IDC_STATIC,105,16,100,8
-    COMBOBOX        IDC_FILTER_CARRIER,105,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Muster:",IDC_STATIC,240,16,100,8
-    COMBOBOX        IDC_FILTER_EQUIPMENT,240,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Nur &Geschäftsreisen",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,375,17,100,10
-    CONTROL         "Nur &private Reisen",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,375,29,100,10
-    LTEXT           "Mindestbewertung:",IDC_STATIC,494,16,92,8
-    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,494,26,40,13
-    GROUPBOX        "Entfernung und Meilen",IDC_STATIC,7,66,210,95
-    LTEXT           "Anzahl:",IDC_STATIC,14,76,80,8
-    CONTROL         "X",IDC_FLIGHTCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,76,110,8
-    LTEXT           "Gesamte Entfernung:",IDC_STATIC,14,86,80,8
-    CONTROL         "X",IDC_TOTALDISTANCE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,86,110,8
-    LTEXT           "Gesamte Flugzeit:",IDC_STATIC,14,96,80,8
-    CONTROL         "X",IDC_TOTALFLIGHTTIME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,96,110,8
-    LTEXT           "Längster Flug:",IDC_STATIC,14,106,80,8
-    CONTROL         "X",IDC_LONGESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,106,110,8
-    LTEXT           "Kürzester Flug:",IDC_STATIC,14,116,80,8
-    CONTROL         "X",IDC_SHORTESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,116,110,8
-    LTEXT           "Gesamtpreis:",IDC_STATIC,14,126,80,8
-    CONTROL         "X",IDC_TOTALMONEYSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,126,110,8
-    LTEXT           "Gesammelte Meilen:",IDC_STATIC,14,136,80,8
-    CONTROL         "X",IDC_TOTALMILESEARNED,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,136,110,8
-    LTEXT           "Ausgegebene Meilen:",IDC_STATIC,14,146,80,8
-    CONTROL         "X",IDC_TOTALMILESSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,146,110,8
-    GROUPBOX        "Klassen",IDC_STATIC,7,166,210,164
-    CONTROL         "",IDC_LIST_CLASS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,177,197,146
-    GROUPBOX        "Routen",IDC_STATIC,225,66,97,130
-    CONTROL         "",IDC_LIST_ROUTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,77,83,111
-    GROUPBOX        "Flughäfen",IDC_STATIC,331,66,262,130
-    CONTROL         "",IDC_LIST_AIRPORT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,338,77,248,111
-    GROUPBOX        "Fluglinien",IDC_STATIC,225,201,223,130
-    CONTROL         "",IDC_LIST_CARRIER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,212,209,111
-    GROUPBOX        "Muster",IDC_STATIC,457,201,136,130
-    CONTROL         "",IDC_LIST_EQUIPMENT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,464,212,122,111
-END
-
-IDD_FILTER DIALOGEX 0, 0, 321, 250
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Filtern"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Filter",IDC_STATIC,7,28,150,195
-    LTEXT           "Flughafen:",IDC_STATIC,14,37,136,8
-    EDITTEXT        IDC_FILTER_AIRPORT,14,47,70,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Auswählen...",IDD_SELECTIATA,90,47,61,13,WS_GROUP
-    LTEXT           "Fluglinie:",IDC_STATIC,14,67,136,8
-    COMBOBOX        IDC_FILTER_CARRIER,14,77,136,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Muster:",IDC_STATIC,14,97,136,8
-    COMBOBOX        IDC_FILTER_EQUIPMENT,14,107,136,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Nur &Geschäftsreisen",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,131,136,10
-    CONTROL         "Nur &private Reisen",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,143,136,10
-    LTEXT           "Mindestbewertung:",IDC_STATIC,14,161,136,8
-    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,14,171,40,13
-    LTEXT           "Abflugmonat:",IDC_STATIC,14,192,90,8
-    COMBOBOX        IDC_FILTER_MONTH,14,202,90,12,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Jahr:",IDC_STATIC,111,192,38,8
-    EDITTEXT        IDC_FILTER_YEAR,110,202,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,206,230,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,264,230,50,14,WS_GROUP
-    GROUPBOX        "Sortierung",IDC_STATIC,164,28,150,195
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,171,39,136,148
-    CONTROL         "&Aufsteigend",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,187,193,119,10
-    CONTROL         "A&bsteigend",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,187,206,119,10
-    CONTROL         IDB_ASCENDING,IDC_STATIC,"Static",SS_BITMAP,171,193,11,10
-    CONTROL         IDB_DESCENDING,IDC_STATIC,"Static",SS_BITMAP,171,206,11,10
-    LTEXT           "„Filtern“ erzeugt einen neuen Flugplan, der nur die passenden Flüge in neuer Sortierreihenfolge enthält. Der ursprüngliche Flugplan wird nicht verändert.",IDC_STATIC,7,7,307,20,SS_NOPREFIX
-END
-
-IDD_UPDATE DIALOGEX 0, 0, 210, 118
+IDD_UPDATE DIALOGEX 0, 0, 220, 118
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update verfügbar"
-CLASS "UpdateDlg"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,103,96,100,14,WS_GROUP
-    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
-    LTEXT           "Eine neue Version von Flightmap steht zum Herunterladen bereit:",IDC_STATIC,7,50,196,16
-    CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,196,10
-    CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,90,9
+    DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,113,96,100,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
+    LTEXT           "Eine neue Version von Flightmap steht zum Herunterladen bereit:",IDC_STATIC,7,50,206,16
+    CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,206,10
+    CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,99,100,9
+END
+
+IDD_CHOOSECOLOR DIALOGEX 0, 0, 277, 207
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Farbe auswählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Grundfarbe",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,118,15
+    CONTROL         "Abtönung",IDC_CATEGORY2,"CCategory",WS_GROUP,135,7,135,15
+    CONTROL         "",IDC_COLORPICKER,"CColorPicker",WS_GROUP | WS_TABSTOP,7,24,263,108
+    CONTROL         "Zuletzt gewählte Farben",IDC_CATEGORY3,"CCategory",WS_GROUP,7,141,263,15
+    CONTROL         "",IDC_COLORHISTORY,"CColorPicker",WS_GROUP | WS_TABSTOP,7,158,263,11
+    CONTROL         "<a>Farbe zurücksetzen</a>",IDC_RESETCOLOR,"SysLink",WS_TABSTOP,7,188,151,9
+    DEFPUSHBUTTON   "OK",IDOK,162,185,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,220,185,50,14,WS_GROUP
 END
 
 
@@ -414,28 +249,20 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_ABOUT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 395
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
     IDD_SELECTGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 437
+        RIGHTMARGIN, 423
         TOPMARGIN, 7
-        BOTTOMMARGIN, 298
+        BOTTOMMARGIN, 314
     END
 
     IDD_SELECTIATA, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 196
+        RIGHTMARGIN, 182
         TOPMARGIN, 7
-        BOTTOMMARGIN, 299
+        BOTTOMMARGIN, 304
     END
 
     IDD_LICENSE, DIALOG
@@ -443,127 +270,34 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 187
+        BOTTOMMARGIN, 175
     END
 
     IDD_REGISTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 353
+        RIGHTMARGIN, 293
         TOPMARGIN, 7
-        BOTTOMMARGIN, 110
-    END
-
-    IDD_3DSETTINGS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 171
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-
-    IDD_CHOOSECOLOR, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 371
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 221
-    END
-
-    IDD_RESOLUTION, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 393
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 263
-    END
-
-    IDD_PROPERTIES, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 358
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 122
-    END
-
-    IDD_CHOOSEDETAILS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 201
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 269
-    END
-
-    IDD_INSPECT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 357
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-
-    IDD_STATISTICS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 593
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 351
-    END
-
-    IDD_FILTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 314
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 244
+        BOTTOMMARGIN, 36
     END
 
     IDD_UPDATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 203
+        RIGHTMARGIN, 213
         TOPMARGIN, 7
         BOTTOMMARGIN, 110
     END
+
+    IDD_CHOOSECOLOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 199
+    END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_FILTER DLGINIT
-BEGIN
-    IDC_FILTER_MONTH, 0x403, 2, 0
-0x0020, 
-    IDC_FILTER_MONTH, 0x403, 7, 0
-0x614a, 0x756e, 0x7261, "\000" 
-    IDC_FILTER_MONTH, 0x403, 8, 0
-0x6546, 0x7262, 0x6175, 0x0072, 
-    IDC_FILTER_MONTH, 0x403, 5, 0
-0xe44d, 0x7a72, "\000" 
-    IDC_FILTER_MONTH, 0x403, 6, 0
-0x7041, 0x6972, 0x006c, 
-    IDC_FILTER_MONTH, 0x403, 4, 0
-0x614d, 0x0069, 
-    IDC_FILTER_MONTH, 0x403, 5, 0
-0x754a, 0x696e, "\000" 
-    IDC_FILTER_MONTH, 0x403, 5, 0
-0x754a, 0x696c, "\000" 
-    IDC_FILTER_MONTH, 0x403, 7, 0
-0x7541, 0x7567, 0x7473, "\000" 
-    IDC_FILTER_MONTH, 0x403, 10, 0
-0x6553, 0x7470, 0x6d65, 0x6562, 0x0072, 
-    IDC_FILTER_MONTH, 0x403, 8, 0
-0x6b4f, 0x6f74, 0x6562, 0x0072, 
-    IDC_FILTER_MONTH, 0x403, 9, 0
-0x6f4e, 0x6576, 0x626d, 0x7265, "\000" 
-    IDC_FILTER_MONTH, 0x403, 9, 0
-0x6544, 0x657a, 0x626d, 0x7265, "\000" 
-    0
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -600,6 +334,7 @@ BEGIN
     IDR_APPLICATION         "Flightmap"
     IDR_MAP                 "Karte"
     IDR_GLOBE               "Globus"
+    IDR_STATISTICS          "Statistik"
 END
 
 STRINGTABLE 
@@ -616,21 +351,35 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
+    IDS_EXPIRECAPTION       "Unregistrierte Kopie – bitte erwerben Sie eine Lizenz!"
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
     IDS_UPDATENOTAVAILABLE  "Ihr Flightmap ist auf dem neuesten Stand."
     IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
-    IDS_AUTOMATIC           "Automatisch wählen"
     IDS_AIRPORT_NAME        "Name"
     IDS_AIRPORT_COUNTRY     "Land"
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
+    IDS_REGISTER_CAPTION    "Dies ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile:"
+    IDS_REGISTER_ITEM1      "Die von Flightmap erzeugten Karten haben keine pinken Balken mehr:"
+    IDS_REGISTER_ITEM2      "Der Dateiexport in die Formate .csv, .ics, .kml oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt"
+    IDS_REGISTER_ITEM3      "Statistiken sind nicht mehr auf 10 Flüge begrenzt"
+    IDS_REGISTER_ITEM4      "Auf Ausdrucken und in PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Behebt kritische Sicherheitslücken"
+    IDS_REGISTER_ITEM5      "Dieses Erinnerungsfenster erscheint nicht mehr"
+    IDS_REGISTER_ITEM6      "Und zuletzt ermöglichen Sie es uns, Flightmap weiterzuentwickeln und noch besser zu machen!"
+    IDS_UNREGISTERED        "Unregistrierte Version"
+    IDS_REGISTERED          "Mit Lizenzschlüssel\nHochaufgelöste Karten bis 32 Megapixel"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECURITYPATCH "Behebt kritische Sicherheitslücken"
     IDS_UPDATE_IMPORTANTBUGFIX "Wichtige Fehlerbehebungen"
     IDS_UPDATE_NETWORKAPI   "Aktualisierter Zugriff auf Cloud-Dienste"
     IDS_UPDATE_NEWFEATURE   "Neue Funktionen"
@@ -647,14 +396,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber Flightmap"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
-    ID_APP_PURCHASE         "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
-    ID_APP_ENTERLICENSEKEY  "Öffnet ein Fenster zum Freischalten von Flightmap.\nLizenzschlüssel eingeben"
+    IDM_BACKSTAGE_TOGGLESIDEBAR 
+                            "Blendet die Seitenleiste ein oder aus.\nSeitenleiste"
+    IDM_BACKSTAGE_PURCHASE  "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
+    IDM_BACKSTAGE_ENTERLICENSEKEY 
+                            "Öffnet ein Fenster zum Freischalten von Flightmap.\nLizenzschlüssel eingeben"
+    IDM_BACKSTAGE_SUPPORT   "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
+    IDM_BACKSTAGE_ABOUT     "Zeigt Informationen und globale Einstellungen an.\nÜber Flightmap"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -715,84 +463,48 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 402, 282
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About Flightmap"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,288,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,345,261,50,14,WS_GROUP
-    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,388,80
-    CONTROL         "Distance units",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,190,66
-    LTEXT           "Distances are always displayed in kilometers (km), and additionally in miles:",IDC_STATIC,14,103,177,25
-    CONTROL         "&Nautical miles (nm)",IDC_NAUTICALMILES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,131,177,10
-    CONTROL         "&Statute miles (mi)",IDC_STATUTEMILES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,142,177,10
-    CONTROL         "Effects",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,205,93,190,66
-    CONTROL         "Use &background images",IDC_BGIMAGES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,211,103,177,10
-    PUSHBUTTON      "3&D settings...",IDD_3DSETTINGS,211,139,177,14
-    CONTROL         "License",IDC_GROUPBOX3,"CGroupBox",WS_GROUP,7,164,190,81
-    LTEXT           "Name:",IDC_STATIC,15,174,174,8
-    LTEXT           "X",IDC_REGNAME,15,184,174,8
-    LTEXT           "Purchase date:",IDC_STATIC,15,197,117,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,207,117,8
-    LTEXT           "ID:",IDC_STATIC,139,197,50,8
-    LTEXT           "X",IDC_PURCHASEID,139,207,50,8
-    LTEXT           "Product:",IDC_STATIC,15,222,117,8
-    LTEXT           "X",IDC_PRODUCT,15,232,174,8
-    LTEXT           "Quantity:",IDC_QUANTITYTITLE,139,222,50,8
-    LTEXT           "X",IDC_QUANTITY,139,232,50,8
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,13,174,178,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX4,"CGroupBox",WS_GROUP,205,164,190,81
-    CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,211,174,177,10
-    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,221,186,167,10
-    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,221,197,167,10
-    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,221,208,167,10
-    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,211,226,177,14
-END
-
-IDD_SELECTGPS DIALOGEX 0, 0, 444, 305
+IDD_SELECTGPS DIALOGEX 0, 0, 430, 322
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "GPS location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,14,18,416,192
-    EDITTEXT        IDC_LATITUDE,56,237,60,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_LONGITUDE,56,255,60,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,329,284,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,387,284,50,14,WS_GROUP
-    GROUPBOX        "Map",IDC_STATIC,7,7,430,211,WS_GROUP
-    GROUPBOX        "Coordinates",IDC_STATIC,7,226,430,50,WS_GROUP
-    LTEXT           "Latitude:",IDC_STATIC,14,239,41,8
-    LTEXT           "Longitude:",IDC_STATIC,14,257,41,9
+    CONTROL         "",IDC_MAP,"CMapCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,7,34,416,192
+    LTEXT           "Latitude:",IDC_STATIC,7,254,42,8
+    EDITTEXT        IDC_LATITUDE,50,252,60,14,ES_AUTOHSCROLL
+    LTEXT           "Longitude:",IDC_STATIC,7,272,41,9
+    EDITTEXT        IDC_LONGITUDE,50,270,60,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,315,300,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,373,300,50,14,WS_GROUP
+    CONTROL         "Map\nClick on the map to select a location.",IDC_CATEGORY1,
+                    "CCategory",WS_GROUP,7,7,416,25
+    CONTROL         "Coordinates",IDC_CATEGORY2,"CCategory",WS_GROUP,7,235,416,15
 END
 
-IDD_SELECTIATA DIALOGEX 0, 0, 203, 306
+IDD_SELECTIATA DIALOGEX 0, 0, 189, 312
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "IATA code"
+CAPTION "IATA airport code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    COMBOBOX        IDC_COUNTRY,14,18,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
-    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,175,210
-    DEFPUSHBUTTON   "OK",IDOK,89,285,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,146,285,50,14,WS_GROUP
-    GROUPBOX        "Territory",IDC_STATIC,7,7,189,33,WS_GROUP
-    GROUPBOX        "Airports (metropolitan codes are displayed green)",IDC_STATIC,7,47,189,230,WS_GROUP
+    COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    DEFPUSHBUTTON   "OK",IDOK,75,290,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,132,290,50,14,WS_GROUP
+    CONTROL         "Territory",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
+    CONTROL         "Airports\nMetropolitan codes are displayed green.",IDC_CATEGORY2,
+                    "CCategory",WS_GROUP,7,47,175,25
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 194
+IDD_LICENSE DIALOGEX 0, 0, 350, 183
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Enter license key"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,151
-    LTEXT           "Our partner share*it will send you an email that has the file “liquidFOLDERS.lic” attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,17,322,34
-    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
-    LTEXT           "License key:",IDC_STATIC,14,79,322,8
-    EDITTEXT        IDC_LICENSEKEY,14,89,322,61,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,173,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,293,173,50,14,WS_GROUP
+    LTEXT           "Our partner share*it will send you an email that has the file “Flightmap.lic” attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_INSTRUCTIONS,7,7,336,35
+    CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
+    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
+    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,161,50,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,293,161,50,14,WS_GROUP
 END
 
 IDD_REGISTER DIALOGEX 0, 0, 360, 116
@@ -803,221 +515,33 @@ BEGIN
     PUSHBUTTON      "&Purchase",IDC_PURCHASE,7,96,50,14
     PUSHBUTTON      "&Enter license key...",IDC_ENTERLICENSEKEY,64,96,100,14
     DEFPUSHBUTTON   "Continue",IDOK,303,96,50,14
-    LTEXT           "This is an unregistered version of Flightmap. Registering gives you many benefits:",IDC_STATIC,7,7,346,8
-    LTEXT           "- Maps created by Flightmap will not defaced with magenta bars",IDC_STATIC,7,22,346,8
-    LTEXT           "- Saving as .csv, .ics, .kml oder .txt is not limited to the first 10 flights",IDC_STATIC,7,32,346,8
-    LTEXT           "- Statistics aren't limited to 10 flights",IDC_STATIC,7,42,346,8
-    LTEXT           "- You won't see the text “Unregistered version” on your printed itineraries and PDFs",IDC_STATIC,7,52,346,8
-    LTEXT           "- This nag screen will be gone",IDC_STATIC,7,62,346,8
-    LTEXT           "- And one more thing: you're helping to make Flightmap even better!",IDC_STATIC,7,72,346,8
 END
 
-IDD_3DSETTINGS DIALOGEX 0, 0, 178, 106
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "3D settings"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,85,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,121,85,50,14
-    GROUPBOX        "OpenGL",IDC_STATIC,7,7,164,71
-    LTEXT           "Texture size:",IDC_STATIC,14,19,54,8
-    COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Antialising",IDC_ANTIALISING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,36,150,10
-    CONTROL         "&Lighting",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
-    CONTROL         "&Atmosphere",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
-END
-
-IDD_CHOOSECOLOR DIALOGEX 2, 0, 378, 228
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Farbe auswählen"
-FONT 8, "MS Shell Dlg", 0, 0, 0x0
-BEGIN
-    CONTROL         "",IDC_COLOR_BOX1,"Static",SS_SIMPLE | WS_GROUP | WS_TABSTOP,12,18,162,105
-    CONTROL         "",IDC_COLOR_CUSTOM1,"Static",SS_SIMPLE | WS_GROUP | WS_TABSTOP,12,139,162,28
-    GROUPBOX        "Basic colors",IDC_STATIC,7,7,165,115
-    GROUPBOX        "Custom colors",IDC_STATIC,7,129,165,71
-    GROUPBOX        "Define custom colors",IDC_STATIC,183,7,188,193
-    PUSHBUTTON      "&Define custom colors...",IDC_COLOR_MIX,14,178,151,14,WS_GROUP
-    PUSHBUTTON      "&Help",1038,7,207,50,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,65,207,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,123,207,50,14,WS_GROUP
-    CONTROL         "",IDC_COLOR_RAINBOW,"Static",SS_SIMPLE,191,20,147,102,WS_EX_CLIENTEDGE
-    CONTROL         "",IDC_COLOR_LUMSCROLL,"Static",SS_SIMPLE,346,20,8,102,WS_EX_CLIENTEDGE
-    CONTROL         "",IDC_COLOR_CURRENT,"Static",SS_SIMPLE,191,130,40,29,WS_EX_CLIENTEDGE
-    PUSHBUTTON      "&o",IDC_COLOR_SOLID,325,300,46,14,WS_GROUP
-    CTEXT           "Color",IDC_COLOR_SOLID_LEFT,191,160,39,9
-    LTEXT           "|S&olid",IDC_COLOR_SOLID_RIGHT,211,160,20,9,NOT WS_VISIBLE
-    RTEXT           "Hu&e:",IDC_COLOR_HUEACCEL,238,133,40,9
-    RTEXT           "&Saturation:",IDC_COLOR_SATACCEL,238,146,40,9
-    EDITTEXT        IDC_COLOR_SAT,282,144,23,12,WS_GROUP
-    RTEXT           "&Luminance:",IDC_COLOR_LUMACCEL,238,160,40,9
-    EDITTEXT        IDC_COLOR_LUM,282,159,23,12,WS_GROUP
-    RTEXT           "&Red:",IDC_COLOR_REDACCEL,309,133,29,9
-    EDITTEXT        IDC_COLOR_RED,340,130,23,12,WS_GROUP
-    RTEXT           "&Green:",IDC_COLOR_GREENACCEL,309,146,29,9
-    EDITTEXT        IDC_COLOR_GREEN,340,144,23,12,WS_GROUP
-    RTEXT           "Bl&ue:",IDC_COLOR_BLUEACCEL,309,160,29,10
-    EDITTEXT        IDC_COLOR_BLUE,340,159,23,12,WS_GROUP
-    PUSHBUTTON      "&Add to custom colors",IDC_COLOR_ADD,190,178,174,14,WS_GROUP
-    EDITTEXT        IDC_COLOR_HUE,282,130,23,12,WS_GROUP
-END
-
-IDD_RESOLUTION DIALOGEX 0, 0, 400, 270
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Resolution"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_RESLIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,14,18,372,162
-    CONTROL         "User &defined resolution",IDC_USERDEFINEDRES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,186,372,10
-    EDITTEXT        IDC_WIDTH,51,201,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    EDITTEXT        IDC_HEIGHT,51,222,40,14,ES_AUTOHSCROLL | WS_DISABLED
-    DEFPUSHBUTTON   "OK",IDOK,285,249,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,343,249,50,14
-    GROUPBOX        "Map resolution",IDC_STATIC,7,7,386,236
-    LTEXT           "Width:",IDC_STATIC,14,204,35,8
-    LTEXT           "Height:",IDC_STATIC,14,225,35,8
-END
-
-IDD_PROPERTIES DIALOGEX 0, 0, 355, 129
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Properties of %s"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Properties",IDC_STATIC,7,7,341,93
-    LTEXT           "Title:",IDC_STATIC,14,20,45,8
-    EDITTEXT        IDC_TITLE,62,18,279,13,ES_AUTOHSCROLL
-    LTEXT           "Author:",IDC_STATIC,14,40,45,8
-    EDITTEXT        IDC_AUTHOR,62,38,279,13,ES_AUTOHSCROLL
-    LTEXT           "Keywords:",IDC_STATIC,14,60,45,8
-    EDITTEXT        IDC_KEYWORDS,62,58,279,13,ES_AUTOHSCROLL
-    LTEXT           "Comments:",IDC_STATIC,14,80,45,8
-    EDITTEXT        IDC_COMMENTS,62,78,279,13,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,241,107,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,298,107,50,14,WS_GROUP
-END
-
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Choose details"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
-    LTEXT           "Choose the columns to display:",IDC_STATIC,14,17,183,9
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
-    PUSHBUTTON      "Move &up",IDC_MOVEUP,137,27,58,14,WS_GROUP
-    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
-    PUSHBUTTON      "Check &all",IDC_CHECKALL,137,70,58,14,WS_GROUP
-    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,93,255,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,151,255,50,14,WS_GROUP
-END
-
-IDD_INSPECT DIALOGEX 0, 0, 364, 106
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspect itinerary"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Metadata",IDC_STATIC,7,7,350,34
-    LTEXT           "X\nX",IDC_METADATA_STATUS,14,18,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Edit...",IDC_METADATA_SHOW,224,18,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "&Remove",IDC_METADATA_DELETE,290,18,60,14,WS_DISABLED | WS_GROUP
-    GROUPBOX        "Attached files",IDC_STATIC,7,45,350,34
-    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,56,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Show...",IDC_ATTACHMENTS_SHOW,224,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "&Delete all",IDC_ATTACHMENTS_DELETE,290,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "Close",IDOK,307,85,50,14,WS_GROUP
-END
-
-IDD_STATISTICS DIALOGEX 0, 0, 600, 358
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Statistics"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,543,337,50,14
-    GROUPBOX        "Filter",IDC_STATIC,7,7,586,54
-    LTEXT           "Airport:",IDC_STATIC,14,16,60,8
-    EDITTEXT        IDC_FILTER_AIRPORT,14,26,60,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Select...",IDD_SELECTIATA,13,41,61,13,WS_GROUP
-    LTEXT           "Carrier:",IDC_STATIC,105,16,100,8
-    COMBOBOX        IDC_FILTER_CARRIER,105,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Equipment:",IDC_STATIC,240,16,100,8
-    COMBOBOX        IDC_FILTER_EQUIPMENT,240,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Business trips only",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,375,17,100,10
-    CONTROL         "&Leisure trips only",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,375,29,100,10
-    LTEXT           "Minimum rating:",IDC_STATIC,494,16,92,8
-    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,494,26,40,13
-    GROUPBOX        "Distance and miles",IDC_STATIC,7,66,210,95
-    LTEXT           "Count:",IDC_STATIC,14,76,80,8
-    CONTROL         "X",IDC_FLIGHTCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,76,110,8
-    LTEXT           "Total distance:",IDC_STATIC,14,86,80,8
-    CONTROL         "X",IDC_TOTALDISTANCE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,86,110,8
-    LTEXT           "Total flight time:",IDC_STATIC,14,96,80,8
-    CONTROL         "X",IDC_TOTALFLIGHTTIME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,96,110,8
-    LTEXT           "Longest flight:",IDC_STATIC,14,106,80,8
-    CONTROL         "X",IDC_LONGESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,106,110,8
-    LTEXT           "Shortest flight:",IDC_STATIC,14,116,80,8
-    CONTROL         "X",IDC_SHORTESTFLIGHT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,116,110,8
-    LTEXT           "Total money spent:",IDC_STATIC,14,126,80,8
-    CONTROL         "X",IDC_TOTALMONEYSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,126,110,8
-    LTEXT           "Total miles earned:",IDC_STATIC,14,136,80,8
-    CONTROL         "X",IDC_TOTALMILESEARNED,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,136,110,8
-    LTEXT           "Total miles spent:",IDC_STATIC,14,146,80,8
-    CONTROL         "X",IDC_TOTALMILESSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,146,110,8
-    GROUPBOX        "Classes",IDC_STATIC,7,166,210,164
-    CONTROL         "",IDC_LIST_CLASS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,177,197,146
-    GROUPBOX        "Routes",IDC_STATIC,225,66,97,130
-    CONTROL         "",IDC_LIST_ROUTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,77,83,111
-    GROUPBOX        "Airports",IDC_STATIC,331,66,262,130
-    CONTROL         "",IDC_LIST_AIRPORT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,338,77,248,111
-    GROUPBOX        "Carriers",IDC_STATIC,225,201,223,130
-    CONTROL         "",IDC_LIST_CARRIER,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,212,209,111
-    GROUPBOX        "Equipment",IDC_STATIC,457,201,136,130
-    CONTROL         "",IDC_LIST_EQUIPMENT,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,464,212,122,111
-END
-
-IDD_FILTER DIALOGEX 0, 0, 321, 250
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Filter"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Filter",IDC_STATIC,7,28,150,195
-    LTEXT           "Airport:",IDC_STATIC,14,37,137,8
-    EDITTEXT        IDC_FILTER_AIRPORT,14,47,70,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Select...",IDD_SELECTIATA,90,47,61,13,WS_GROUP
-    LTEXT           "Carrier:",IDC_STATIC,14,67,136,8
-    COMBOBOX        IDC_FILTER_CARRIER,14,77,136,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Equipment:",IDC_STATIC,14,97,136,8
-    COMBOBOX        IDC_FILTER_EQUIPMENT,14,107,136,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&Business trips only",IDC_FILTER_BUSINESSTRIP,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,131,136,10
-    CONTROL         "&Leisure trips only",IDC_FILTER_LEISURETRIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,143,136,10
-    LTEXT           "Minimum rating:",IDC_STATIC,14,161,136,8
-    CONTROL         "",IDC_FILTER_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,14,171,40,13
-    LTEXT           "Month of departure:",IDC_STATIC,14,192,90,8
-    COMBOBOX        IDC_FILTER_MONTH,14,202,90,12,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Year:",IDC_STATIC,111,192,38,8
-    EDITTEXT        IDC_FILTER_YEAR,110,202,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,206,230,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,264,230,50,14,WS_GROUP
-    GROUPBOX        "Sort",IDC_STATIC,164,28,150,195
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,171,39,136,148
-    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,187,192,119,10
-    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,187,205,119,10
-    CONTROL         IDB_ASCENDING,IDC_STATIC,"Static",SS_BITMAP,171,192,11,10
-    CONTROL         IDB_DESCENDING,IDC_STATIC,"Static",SS_BITMAP,171,205,11,10
-    LTEXT           "Filtering creates a new itinerary containing all matching flights in a new order. The source itinerary will not be modified.",IDC_STATIC,7,7,307,20,SS_NOPREFIX
-END
-
-IDD_UPDATE DIALOGEX 0, 0, 210, 110
+IDD_UPDATE DIALOGEX 0, 0, 220, 110
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update available"
-CLASS "UpdateDlg"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Download now",IDOK,123,88,80,14,WS_GROUP
-    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,196,39
-    LTEXT           "A new version of Flightmap is available for download:",IDC_STATIC,7,50,196,8
-    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,196,10
-    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,93,110,9
+    DEFPUSHBUTTON   "Download now",IDOK,133,88,80,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
+    LTEXT           "A new version of Flightmap is available for download:",IDC_STATIC,7,50,206,8
+    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,206,10
+    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,91,120,9
+END
+
+IDD_CHOOSECOLOR DIALOGEX 0, 0, 277, 207
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose color"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Hue",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,118,15
+    CONTROL         "Gradation",IDC_CATEGORY2,"CCategory",WS_GROUP,135,7,135,15
+    CONTROL         "",IDC_COLORPICKER,"CColorPicker",WS_GROUP | WS_TABSTOP,7,24,263,108
+    CONTROL         "Color history",IDC_CATEGORY3,"CCategory",WS_GROUP,7,141,263,15
+    CONTROL         "",IDC_COLORHISTORY,"CColorPicker",WS_GROUP | WS_TABSTOP,7,158,263,11
+    CONTROL         "<a>Reset color</a>",IDC_RESETCOLOR,"SysLink",WS_TABSTOP,7,188,151,9
+    DEFPUSHBUTTON   "OK",IDOK,162,185,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,185,50,14,WS_GROUP
 END
 
 
@@ -1029,28 +553,20 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_ABOUT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 395
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
     IDD_SELECTGPS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 437
+        RIGHTMARGIN, 423
         TOPMARGIN, 7
-        BOTTOMMARGIN, 298
+        BOTTOMMARGIN, 314
     END
 
     IDD_SELECTIATA, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 196
+        RIGHTMARGIN, 182
         TOPMARGIN, 7
-        BOTTOMMARGIN, 299
+        BOTTOMMARGIN, 304
     END
 
     IDD_LICENSE, DIALOG
@@ -1058,7 +574,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 187
+        BOTTOMMARGIN, 175
     END
 
     IDD_REGISTER, DIALOG
@@ -1069,116 +585,23 @@ BEGIN
         BOTTOMMARGIN, 110
     END
 
-    IDD_3DSETTINGS, DIALOG
+    IDD_UPDATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 171
+        RIGHTMARGIN, 213
         TOPMARGIN, 7
-        BOTTOMMARGIN, 99
+        BOTTOMMARGIN, 102
     END
 
     IDD_CHOOSECOLOR, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 371
+        RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 221
-    END
-
-    IDD_RESOLUTION, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 393
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 263
-    END
-
-    IDD_PROPERTIES, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 348
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 122
-    END
-
-    IDD_CHOOSEDETAILS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 201
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 269
-    END
-
-    IDD_INSPECT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 357
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-
-    IDD_STATISTICS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 593
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 351
-    END
-
-    IDD_FILTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 314
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 244
-    END
-
-    IDD_UPDATE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 203
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 102
+        BOTTOMMARGIN, 199
     END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_FILTER DLGINIT
-BEGIN
-    IDC_FILTER_MONTH, 0x403, 2, 0
-0x0020, 
-    IDC_FILTER_MONTH, 0x403, 8, 0
-0x614a, 0x756e, 0x7261, 0x0079, 
-    IDC_FILTER_MONTH, 0x403, 9, 0
-0x6546, 0x7262, 0x6175, 0x7972, "\000" 
-    IDC_FILTER_MONTH, 0x403, 6, 0
-0x614d, 0x6372, 0x0068, 
-    IDC_FILTER_MONTH, 0x403, 6, 0
-0x7041, 0x6972, 0x006c, 
-    IDC_FILTER_MONTH, 0x403, 4, 0
-0x614d, 0x0079, 
-    IDC_FILTER_MONTH, 0x403, 5, 0
-0x754a, 0x656e, "\000" 
-    IDC_FILTER_MONTH, 0x403, 5, 0
-0x754a, 0x796c, "\000" 
-    IDC_FILTER_MONTH, 0x403, 7, 0
-0x7541, 0x7567, 0x7473, "\000" 
-    IDC_FILTER_MONTH, 0x403, 10, 0
-0x6553, 0x7470, 0x6d65, 0x6562, 0x0072, 
-    IDC_FILTER_MONTH, 0x403, 8, 0
-0x634f, 0x6f74, 0x6562, 0x0072, 
-    IDC_FILTER_MONTH, 0x403, 9, 0
-0x6f4e, 0x6576, 0x626d, 0x7265, "\000" 
-    IDC_FILTER_MONTH, 0x403, 9, 0
-0x6544, 0x6563, 0x626d, 0x7265, "\000" 
-    0
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1190,9 +613,9 @@ IDM_SELECTGPS MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Código de &IATA...",          IDM_SELECTGPS_IATA
+        MENUITEM "&IATA code...",               IDM_SELECTGPS_IATA
         MENUITEM SEPARATOR
-        MENUITEM "&Restaurar",                  IDM_SELECTGPS_RESET
+        MENUITEM "&Reset",                      IDM_SELECTGPS_RESET
     END
 END
 
@@ -1215,6 +638,7 @@ BEGIN
     IDR_APPLICATION         "Flightmap"
     IDR_MAP                 "Map"
     IDR_GLOBE               "Globe"
+    IDR_STATISTICS          "Statistics"
 END
 
 STRINGTABLE 
@@ -1231,21 +655,35 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_UACMESSAGE          "Flightmap needs your permission"
+    IDS_EXPIRECAPTION       "Unregistered copy—please purchase a license!"
     IDS_XOFY_SINGULAR       "%u of %u"
     IDS_XOFY_PLURAL         "%u of %u"
     IDS_UPDATE              "Update"
     IDS_UPDATENOTAVAILABLE  "Your Flightmap is up to date."
     IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
-    IDS_AUTOMATIC           "Choose automatically"
     IDS_AIRPORT_NAME        "Name"
     IDS_AIRPORT_COUNTRY     "Country"
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
+    IDS_REGISTER_CAPTION    "This is an unregistered version of Flightmap. Registering gives you many benefits:"
+    IDS_REGISTER_ITEM1      "Maps created by Flightmap will not defaced with magenta bars:"
+    IDS_REGISTER_ITEM2      "Saving as .csv, .ics, .kml oder .txt is not limited to the first 10 flights"
+    IDS_REGISTER_ITEM3      "Statistics aren't limited to 10 flights"
+    IDS_REGISTER_ITEM4      "You won't see the text “Unregistered version” on your printed itineraries and PDFs"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATE_SECUTIRYPATCH "Important security patches"
+    IDS_REGISTER_ITEM5      "This nag screen will be gone"
+    IDS_REGISTER_ITEM6      "And one more thing: you'll help to make Flightmap even better!"
+    IDS_UNREGISTERED        "Unregistered version"
+    IDS_REGISTERED          "With license key\nHigh resolution maps up to 32 megapixel"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_SECURITYPATCH "Important security patches"
     IDS_UPDATE_IMPORTANTBUGFIX "Important bugfixes"
     IDS_UPDATE_NETWORKAPI   "Updated access to cloud services"
     IDS_UPDATE_NEWFEATURE   "New features"
@@ -1262,14 +700,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Shows Flightmap information and settings.\nAbout Flightmap"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
-    ID_APP_PURCHASE         "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
-    ID_APP_ENTERLICENSEKEY  "Opens a window to enter your license key.\nEnter license key"
+    IDM_BACKSTAGE_TOGGLESIDEBAR "Toggles the sidebar.\nSidebar"
+    IDM_BACKSTAGE_PURCHASE  "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
+    IDM_BACKSTAGE_ENTERLICENSEKEY 
+                            "Opens a window to enter your license key.\nEnter license key"
+    IDM_BACKSTAGE_SUPPORT   "Opens your standard mail software to contact customer support.\nContact support"
+    IDM_BACKSTAGE_ABOUT     "Shows Flightmap information and settings.\nAbout Flightmap"
 END
 
 #endif    // Englisch (USA) resources

@@ -11,24 +11,23 @@
 // CGlobeWnd
 //
 
-class CGlobeWnd : public CMainWindow
+class CGlobeWnd : public CBackstageWnd
 {
 public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
-	virtual void AdjustLayout();
+	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 
 	BOOL Create();
 	void SetFlights(CKitchen* pKitchen);
 
 protected:
-	CGlobeView m_wndGlobeView;
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg LRESULT OnRequestSubmenu(WPARAM wParam, LPARAM lParam);
 	afx_msg void On3DSettingsChanged();
-
-	afx_msg void OnGlobeWndClose();
-	afx_msg void OnUpdateGlobeWndCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
+	CTaskbar m_wndTaskbar;
+	CGlobeView m_wndGlobeView;
 };

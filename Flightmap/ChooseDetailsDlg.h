@@ -10,15 +10,15 @@
 // ChooseDetailsDlg
 //
 
-class ChooseDetailsDlg : public CDialog
+class ChooseDetailsDlg : public FMDialog
 {
 public:
 	ChooseDetailsDlg(ViewParameters* pViewParameters, CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 protected:
-	afx_msg BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnMoveUp();
 	afx_msg void OnMoveDown();
@@ -26,7 +26,7 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
-	CExplorerList m_ShowAttributes;
+	CExplorerList m_wndAttributes;
 	ViewParameters* p_ViewParameters;
 
 private:

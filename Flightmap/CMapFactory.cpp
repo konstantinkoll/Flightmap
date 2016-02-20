@@ -8,30 +8,6 @@
 #include <math.h>
 
 
-void AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
-{
-	if (!Buf.IsEmpty())
-		Buf.Append(_T("\n"));
-
-	if (MaxLines>1)
-	{
-		CString tmpStr((LPCSTR)nID);
-
-		Buf.Append(tmpStr);
-		Buf.Append(_T(": "));
-	}
-}
-
-
-// CColor
-//
-
-CColor::CColor(COLORREF clr, BYTE Alpha)
-	: Color(Alpha, clr & 0xFF, (clr>>8) & 0xFF, (clr>>16) & 0xFF)
-{
-}
-
-
 // CMapFactory
 //
 
@@ -51,6 +27,20 @@ struct FactoryAirportData
 CMapFactory::CMapFactory(MapSettings* pSettings)
 {
 	m_Settings = *pSettings;
+}
+
+void CMapFactory::AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
+{
+	if (MaxLines>1)
+	{
+		if (!Buf.IsEmpty())
+			Buf.Append(_T("\n"));
+
+		CString tmpStr((LPCSTR)nID);
+
+		Buf.Append(tmpStr);
+		Buf.Append(_T(": "));
+	}
 }
 
 CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
@@ -104,6 +94,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 
 		VERIFY(pKitchen->m_FlightAirports.Lookup(pPair2->value.pFrom->Code, Airport));
 		pPair2->value.lpFrom = Airport.lpAirport;
+
 		VERIFY(pKitchen->m_FlightAirports.Lookup(pPair2->value.pTo->Code, Airport));
 		pPair2->value.lpTo = Airport.lpAirport;
 
@@ -111,7 +102,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	}
 
 	// Tesselate routes if neccessary, and check for wrap-arounds of routes
-	if ((m_Settings.ShowFlightRoutes) && (RouteCount>0))
+	if ((m_Settings.ShowRoutes) && (RouteCount>0))
 	{
 		BOOL WrapAround = FALSE;
 
@@ -176,10 +167,10 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	// Compute true boundaries and scale
 	if (((m_Settings.Width<BGWIDTH) || (m_Settings.Height<BGHEIGHT)) && (MaxZ>0))
 	{
-		INT S = (MinS+MaxS)/2;
-		INT Z = (MinZ+MaxZ)/2;
-		DOUBLE L = MaxS-MinS+1;
-		DOUBLE H = MaxZ-MinZ+1;
+		const INT S = (MinS+MaxS)/2;
+		const INT Z = (MinZ+MaxZ)/2;
+		const DOUBLE L = MaxS-MinS+1;
+		const DOUBLE H = MaxZ-MinZ+1;
 		const DOUBLE ScX = L/m_Settings.Width;
 		const DOUBLE ScY = H/m_Settings.Height;
 
@@ -197,6 +188,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			MaxS += -MinS;
 			MinS = 0;
 		}
+
 		if (MinZ<0)
 		{
 			MaxZ += -MinZ;
@@ -207,12 +199,15 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 		{
 			if (MinS>MaxS-BGWIDTH+1)
 				MinS -= MaxS-BGWIDTH+1;
+
 			MaxZ = BGHEIGHT-1;
 		}
+
 		if (MaxZ>BGHEIGHT-1)
 		{
 			if (MinZ>MaxZ-BGHEIGHT+1)
 				MinZ -= MaxZ-BGHEIGHT+1;
+
 			MaxZ = BGHEIGHT-1;
 		}
 	}
@@ -230,33 +225,28 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	Scale = min(1.0, Scale);
 
 	// Compute upscale
-	CSize sz = pBitmap->GetBitmapDimension();
-	const DOUBLE FinalScale = max((DOUBLE)m_Settings.Width/(DOUBLE)sz.cx, (DOUBLE)m_Settings.Height/(DOUBLE)sz.cy);
+	CSize Size = pBitmap->GetBitmapDimension();
+	const DOUBLE FinalScale = max((DOUBLE)m_Settings.Width/(DOUBLE)Size.cx, (DOUBLE)m_Settings.Height/(DOUBLE)Size.cy);
 	const DOUBLE Upscale = max(1.0, 1.0+((1.0/FinalScale)-1.0)*0.75);
 
 	// Obtain device context and graphics surface
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
+
 	CBitmap* pOldBitmap = dc.SelectObject(pBitmap);
 
 	Graphics g(dc);
-	g.SetPixelOffsetMode(PixelOffsetModeHighQuality);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+	g.SetPixelOffsetMode(PixelOffsetModeHighQuality);
+	g.SetSmoothingMode(FMGetApp()->m_SmoothingModeAntiAlias8x8);
 
 	// Draw routes
-	if (m_Settings.ShowFlightRoutes)
+	if (m_Settings.ShowRoutes)
 	{
-		UINT MinRouteCount = pKitchen->m_MaxRouteCount;
-
-		for (UINT a=0; a<RouteCount; a++)
-			if (RouteData[a]->Route.Count<MinRouteCount)
-				MinRouteCount = RouteData[a]->Route.Count;
-
 #define PreparePen(Route) \
-	const BYTE Alpha = (m_Settings.UseCountOpacity && (pKitchen->m_MaxRouteCount!=0)) ? 0x60+(BYTE)(159.0*((DOUBLE)(Route.Count-MinRouteCount))/((DOUBLE)(pKitchen->m_MaxRouteCount-MinRouteCount+1))) : 0xFF; \
-	CColor col(((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : Route.Color, Alpha); \
-	const DOUBLE Width = (m_Settings.UseCountWidth && (pKitchen->m_MaxRouteCount!=0)) ? (0.2+(3.0*((DOUBLE)(Route.Count-MinRouteCount))/((DOUBLE)(pKitchen->m_MaxRouteCount-MinRouteCount+1)))) : 3.2; \
+	const BYTE Alpha = (m_Settings.UseCountOpacity && (pKitchen->m_MaxRouteCount!=0)) ? 0x60+(BYTE)(159.0*((DOUBLE)(Route.Count-pKitchen->m_MinRouteCount))/((DOUBLE)(pKitchen->m_MaxRouteCount-pKitchen->m_MinRouteCount+1))) : 0xFF; \
+	Color col(COLORREF2ARGB((((Route.Color==(COLORREF)-1) || !m_Settings.UseColors) ? m_Settings.RouteColor : Route.Color), Alpha)); \
+	const DOUBLE Width = (m_Settings.UseCountWidth && (pKitchen->m_MaxRouteCount!=0)) ? (0.2+(3.0*((DOUBLE)(Route.Count-pKitchen->m_MinRouteCount))/((DOUBLE)(pKitchen->m_MaxRouteCount-pKitchen->m_MinRouteCount+1)))) : 3.2; \
 	Pen pen(col, (REAL)(Width*Upscale));
 
 		if (!m_Settings.StraightLines)
@@ -285,6 +275,7 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 							CompS(pSegments->Points[pSegments->PointCount-1][1]), CompZ(pSegments->Points[pSegments->PointCount-1][0]),
 							CompS(pSegments->Points[pSegments->PointCount-2][1]), CompZ(pSegments->Points[pSegments->PointCount-2][0]),
 							MinS, MinZ, Scale, Upscale);
+
 					if (pSegments->Route.Arrows & ARROW_TF)
 						DrawArrow(g, brush,
 							CompS(pSegments->Points[0][1]), CompZ(pSegments->Points[0][0]),
@@ -372,8 +363,8 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	const DOUBLE Radius = 5.5*Upscale;
 	if (m_Settings.ShowLocations)
 	{
-		SolidBrush brush(CColor(m_Settings.LocationInnerColor));
-		Pen pen(CColor(m_Settings.LocationOuterColor), (REAL)(2.0*Upscale));
+		SolidBrush brush(Color(COLORREF2RGB(m_Settings.LocationsInnerColor)));
+		Pen pen(Color(COLORREF2RGB(m_Settings.LocationsOuterColor)), (REAL)(2.0*Upscale));
 
 		for (UINT a=0; a<AirportCount; a++)
 		{
@@ -386,7 +377,9 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 			AirportData[a].Spot.bottom = (INT)(Z+Radius);
 
 			g.FillEllipse(&brush, (REAL)(S-Radius), (REAL)(Z-Radius), (REAL)(Radius*2.0-1.0), (REAL)(Radius*2.0-1.0));
-			g.DrawEllipse(&pen, (REAL)(S-Radius), (REAL)(Z-Radius), (REAL)(Radius*2.0), (REAL)(Radius*2.0));
+
+			if (m_Settings.LocationsOuterColor!=(COLORREF)-1)
+				g.DrawEllipse(&pen, (REAL)(S-Radius), (REAL)(Z-Radius), (REAL)(Radius*2.0), (REAL)(Radius*2.0));
 		}
 	}
 
@@ -394,8 +387,8 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 	if (m_Settings.ShowIATACodes)
 	{
 		FontFamily font(_T("Arial"));
-		Pen pen(CColor(m_Settings.IATAOuterColor), (REAL)(2.0*Upscale+0.5));
-		SolidBrush brush(CColor(m_Settings.IATAInnerColor));
+		Pen pen(Color(COLORREF2RGB(m_Settings.IATACodesOuterColor)), (REAL)(2.0*Upscale+0.5));
+		SolidBrush brush(Color(COLORREF2RGB(m_Settings.IATACodesInnerColor)));
 
 		pen.SetLineJoin(LineJoinRound);
 
@@ -519,7 +512,9 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen, BOOL DeleteKitchen)
 					TextPath.Transform(&m);
 				}
 
-				g.DrawPath(&pen, &TextPath);
+				if (m_Settings.IATACodesOuterColor!=(COLORREF)-1)
+					g.DrawPath(&pen, &TextPath);
+
 				g.FillPath(&brush, &TextPath);
 
 				pData->IATA = rectLabel;
@@ -533,7 +528,7 @@ Skip:
 	}
 
 	// Draw annotations
-	if ((m_Settings.ShowFlightRoutes) && ((m_Settings.NoteDistance || m_Settings.NoteFlightCount || m_Settings.NoteFlightTime || m_Settings.NoteCarrier || m_Settings.NoteEquipment)))
+	if ((m_Settings.ShowRoutes) && ((m_Settings.NoteDistance || m_Settings.NoteFlightCount || m_Settings.NoteFlightTime || m_Settings.NoteCarrier || m_Settings.NoteEquipment)))
 	{
 		const UINT MaxLines = (m_Settings.NoteDistance ? 1 : 0)+(m_Settings.NoteFlightCount ? 1 : 0)+(m_Settings.NoteFlightTime ? 1 : 0)+(m_Settings.NoteCarrier ? 1 : 0)+(m_Settings.NoteEquipment ? 1 : 0);
 
@@ -541,8 +536,8 @@ Skip:
 		ZeroMemory(RouteLabel, sizeof(RECT)*RouteCount);
 
 		FontFamily font(_T("Tahoma"));
-		Pen pen(CColor(m_Settings.NoteOuterColor), (REAL)((m_Settings.NoteSmallFont ? 1.75 : 2.0)*Upscale+0.5));
-		SolidBrush brush(CColor(m_Settings.NoteInnerColor));
+		Pen pen(Color(COLORREF2RGB(m_Settings.NoteOuterColor)), (REAL)((m_Settings.NoteSmallFont ? 1.75 : 2.0)*Upscale+0.5));
+		SolidBrush brush(Color(COLORREF2RGB(m_Settings.NoteInnerColor)));
 
 		pen.SetLineJoin(LineJoinRound);
 
@@ -572,6 +567,7 @@ Skip:
 				{
 					if (!Buf.IsEmpty())
 						Buf.Append(_T("\n"));
+
 					ENSURE(tmpMask.LoadString(pPair2->value.Count==1 ? IDS_FLIGHTS_SINGULAR : IDS_FLIGHTS_PLURAL));
 				}
 				CString tmpStr;
@@ -637,7 +633,9 @@ Skip:
 				TextPath.Transform(&m);
 			}
 
-			g.DrawPath(&pen, &TextPath);
+			if (m_Settings.NoteOuterColor!=(COLORREF)-1)
+				g.DrawPath(&pen, &TextPath);
+
 			g.FillPath(&brush, &TextPath);
 
 			RouteLabel[CurRoute++] = rectLabel;
@@ -654,10 +652,10 @@ SkipNote:
 	// Final scale
 	if (FinalScale<1.0)
 	{
-		INT L = (INT)(Width*FinalScale);
-		INT H = (INT)(Height*FinalScale);
+		const LONG L = (LONG)(Width*FinalScale);
+		const LONG H = (LONG)(Height*FinalScale);
 
-		CBitmap* pBitmap2 = CreateBitmap(L, H);
+		CBitmap* pBitmap2 = CreateTruecolorBitmapObject(L, H);
 		pOldBitmap = dc.SelectObject(pBitmap2);
 
 		Graphics g(dc);
@@ -675,8 +673,8 @@ SkipNote:
 	// Deface
 #ifndef _DEBUG
 	if (!FMIsLicensed())
-		Deface(pBitmap);
 #endif
+		Deface(pBitmap);
 
 	// Finish
 	if (DeleteKitchen)
@@ -694,25 +692,6 @@ SkipNote:
 	return pBitmap;
 }
 
-CBitmap* CMapFactory::CreateBitmap(INT Width, INT Height)
-{
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = Width;
-	dib.bmiHeader.biHeight = -Height;
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 24;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBitmap = CreateDIBSection(GetDC(NULL), &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-
-	CBitmap* pBitmap = new CBitmap();
-	pBitmap->Attach(hBitmap);
-	pBitmap->SetBitmapDimension(Width, Height);
-
-	return pBitmap;
-}
-
 CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, INT Width, INT Height, INT MapOffset)
 {
 	ASSERT(Left>=0);
@@ -722,10 +701,11 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 	ASSERT(Left+Width<=BGWIDTH);
 	ASSERT(Top+Height<=BGHEIGHT);
 
-	CBitmap* pBitmap = CreateBitmap(Width, Height);
+	CBitmap* pBitmap = CreateTruecolorBitmapObject(Width, Height);
 
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
+
 	CBitmap* pOldBitmap = dc.SelectObject(pBitmap);
 
 	if (m_Settings.Background>=3)
@@ -734,13 +714,13 @@ CBitmap* CMapFactory::LoadBackground(INT Left, INT Top, INT Right, INT Bottom, I
 	}
 	else
 	{
-		const UINT ResID[3] = { IDB_BLUEMARBLE_8192, IDB_NIGHT_8192, IDB_GRAY_8192 };
+		Graphics g(dc);
 
 		ImageAttributes ImgAttr;
 		ImgAttr.SetWrapMode(WrapModeTile);
 
-		Graphics g(dc);
-		g.DrawImage(theApp.GetCachedResourceImage(ResID[m_Settings.Background]), Rect(0, 0, Width, Height), Left-MapOffset, Top, Right-Left, Bottom-Top, UnitPixel, &ImgAttr);
+		static const UINT ResID[3] = { IDB_BLUEMARBLE_8192, IDB_NIGHT_8192, IDB_ABSTRACT_8192 };
+		g.DrawImage(theApp.GetCachedResourceImage(ResID[m_Settings.Background]), Rect(0, 0, Width, Height), Left-MapOffset, Top, Right-Left+1, Bottom-Top+1, UnitPixel, &ImgAttr);
 	}
 
 	dc.SelectObject(pOldBitmap);
@@ -770,6 +750,7 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 
 		if (MidS)
 			*MidS = -1.0;
+
 		if (MidZ)
 			*MidZ = -1.0;
 	}
@@ -781,6 +762,7 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 
 			if (MidS)
 				*MidS = -1.0;
+
 			if (MidZ)
 				*MidZ = -1.0;
 		}
@@ -790,6 +772,7 @@ void CMapFactory::DrawLine(Graphics& g, Pen& pen, DOUBLE x1, DOUBLE y1, DOUBLE x
 
 			if (MidS)
 				*MidS = (x1+x2)/(2.0*Scale);
+
 			if (MidZ)
 				*MidZ = (y1+y2)/(2.0*Scale);
 		}

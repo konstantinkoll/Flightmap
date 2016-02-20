@@ -77,7 +77,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -165,7 +165,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -259,7 +259,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -355,7 +355,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
+				AdditionalDependencies="version.lib winmm.lib winhttp.lib ..\Temp\FMCommDlg.res"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -450,10 +450,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CLoungeView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CMainWnd.cpp"
 				>
 			</File>
@@ -470,19 +466,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EditFlightAttachmentsPage.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\EditFlightDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EditFlightOtherPage.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EditFlightRoutePage.cpp"
 				>
 			</File>
 			<File
@@ -494,23 +478,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FindReplacePage.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Flightmap.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GLFont.cpp"
+				RelativePath=".\GlobeOptionsDlg.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GLTexture.cpp"
+				RelativePath=".\GlobeSettingsDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GoogleEarthSettingsDlg.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\InspectDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MapSettingsDlg.cpp"
 				>
 			</File>
 			<File
@@ -519,6 +507,10 @@
 			</File>
 			<File
 				RelativePath=".\StatisticsDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StatisticsSettingsDlg.cpp"
 				>
 			</File>
 			<File
@@ -556,10 +548,6 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\ThreeDSettingsDlg.cpp"
-				>
 			</File>
 		</Filter>
 		<Filter
@@ -620,10 +608,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CLoungeView.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CMainWnd.h"
 				>
 			</File>
@@ -644,19 +628,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EditFlightAttachmentsPage.h"
-				>
-			</File>
-			<File
 				RelativePath=".\EditFlightDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EditFlightOtherPage.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EditFlightRoutePage.h"
 				>
 			</File>
 			<File
@@ -668,27 +640,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FindReplacePage.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Flightmap.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GLFont.h"
+				RelativePath=".\GlobeOptionsDlg.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Globe.h"
+				RelativePath=".\GlobeSettingsDlg.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GLTexture.h"
+				RelativePath=".\GoogleEarthSettingsDlg.h"
 				>
 			</File>
 			<File
 				RelativePath=".\InspectDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MapSettingsDlg.h"
 				>
 			</File>
 			<File
@@ -708,15 +680,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StatisticsSettingsDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\targetver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ThreeDSettingsDlg.h"
 				>
 			</File>
 		</Filter>
@@ -726,6 +698,14 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\Abstract_512.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Abstract_8192.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Backgrounds.png"
 				>
 			</File>
@@ -734,11 +714,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\BlueMarble_2048.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\BlueMarble_4096.jpg"
+				RelativePath=".\res\BlueMarble_512.jpg"
 				>
 			</File>
 			<File
@@ -746,15 +722,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Docked.jpg"
+				RelativePath=".\res\Clouds_1024.jpg"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Flags_16.bmp"
+				RelativePath=".\res\Clouds_2048.jpg"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Flags_16i.bmp"
+				RelativePath=".\res\Clouds_4096.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_16i.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_24i.png"
 				>
 			</File>
 			<File
@@ -762,123 +754,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Flags_32i.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_64.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Flightmap.rc"
 				>
 			</File>
 			<File
-				RelativePath=".\res\GlobeIcons_Alpha.png"
+				RelativePath=".\res\MetropolitanDistinct.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\GlobeIcons_RGB.png"
+				RelativePath=".\res\MetropolitanMerged.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Gray_8192.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenubarIcons_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenubarIcons_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuDetails_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuDetails_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuEdit_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuEdit_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuFile_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuFile_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobe_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobe_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobeItem_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobeItem_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobeView_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobeView_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobeWnd_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGlobeWnd_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGoogleEarth_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuGoogleEarth_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuMap_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuMap_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuMapView_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuMapView_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuMapWnd_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuMapWnd_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuStatistics_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MenuStatistics_32.png"
+				RelativePath=".\res\Night_512.jpg"
 				>
 			</File>
 			<File
@@ -886,19 +786,119 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\ResolutionPresets_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ResolutionPresets_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ResolutionPresets_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\SeatIcons.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Slogan.png"
+				RelativePath=".\res\Sidebar_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\TasksFile_16.png"
+				RelativePath=".\res\Sidebar_24.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\TasksFile_32.png"
+				RelativePath=".\res\Sidebar_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Sidebar_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Sidebar_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksAttachments_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksAttachments_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksAttachments_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksAttachments_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksAttachments_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksGlobe_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksGlobe_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksGlobe_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksGlobe_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksGlobe_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksItinerary_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksItinerary_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksItinerary_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksItinerary_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksItinerary_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksMap_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksMap_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksMap_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksMap_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TasksMap_64.png"
 				>
 			</File>
 		</Filter>

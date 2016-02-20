@@ -5,11 +5,9 @@
 #pragma once
 #include "CKitchen.h"
 #include "FMCommDlg.h"
-#include "GLFont.h"
-#include "GLTexture.h"
 
 
-// Item data
+// Item Data
 
 struct GlobeParameters
 {
@@ -18,7 +16,7 @@ struct GlobeParameters
 	INT Zoom;
 };
 
-struct GlobeAirport
+struct GlobeItemData
 {
 	RECT Rect;
 	GLfloat World[3];
@@ -35,11 +33,10 @@ struct GlobeAirport
 // CGlobeView
 //
 
-class CGlobeView : public CWnd
+class CGlobeView : public CFrontstageWnd
 {
 public:
 	CGlobeView();
-	~CGlobeView();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -48,26 +45,17 @@ public:
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
-	INT ItemAtPosition(CPoint point);
+	INT ItemAtPosition(CPoint point) const;
 	void InvalidateItem(INT Index);
 	void SelectItem(INT Index, BOOL Select);
-	void PrepareModel();
-	void PrepareRoutes();
-	void PrepareTexture();
-	void Normalize();
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeAirport* ga, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
-	void DrawStatusBar(INT Height);
-	void DrawScene(BOOL InternalCall=FALSE);
+	void DrawLabel(GlobeItemData* pData, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnSysColorChange();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
@@ -79,74 +67,65 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 
-	afx_msg void OnSaveAs();
 	afx_msg void OnJumpToLocation();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
-	afx_msg void OnFullScreen();
-	afx_msg void OnColors();
-	afx_msg void OnClamp();
-	afx_msg void OnSpots();
-	afx_msg void OnAirportIATA();
-	afx_msg void OnAirportNames();
-	afx_msg void OnGPS();
-	afx_msg void OnFlightCount();
-	afx_msg void OnViewport();
-	afx_msg void OnCrosshairs();
-	afx_msg void On3DSettings();
-	afx_msg void OnOpenGoogleEarth();
-	afx_msg void OnOpenLiquidFolders();
+	afx_msg void OnSaveAs();
+	afx_msg void OnGoogleEarth();
+	afx_msg void OnLiquidFolders();
+	afx_msg void OnSettings();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	GlobeParameters m_GlobeTarget;
-	GlobeParameters m_GlobeCurrent;
-	BOOL m_ShowSpots;
-	BOOL m_ShowAirportIATA;
-	BOOL m_ShowAirportNames;
-	BOOL m_ShowGPS;
-	BOOL m_ShowFlightCount;
-	BOOL m_ShowViewport;
-	BOOL m_ShowCrosshairs;
-	BOOL m_UseColors;
-	BOOL m_Clamp;
-
-	FMDynArray<GlobeAirport, 64, 64> m_Airports;
+	FMDynArray<GlobeItemData, 64, 64> m_Airports;
 	FMDynArray<FlightSegments*, 128, 128> m_Routes;
+	UINT m_MinRouteCount;
+	UINT m_MaxRouteCount;
 
-	CClientDC* m_pDC;
-	HGLRC hRC;
 	INT m_FocusItem;
 	INT m_HotItem;
-	INT m_Width;
-	INT m_Height;
 	BOOL m_IsSelected;
 	BOOL m_Hover;
-	GLTexture* m_pTextureGlobe;
-	GLTexture* m_pTextureIcons;
+
+	GlobeParameters m_GlobeTarget;
+	GlobeParameters m_GlobeCurrent;
+	GLRenderContext m_RenderContext;
+
+	GLuint m_nHaloModel;
+	GLuint m_nGlobeModel;
+	GLuint m_nRouteModel;
+	GLuint m_nTextureBlueMarble;
+	GLuint m_nTextureClouds;
+	GLuint m_nTextureLocationIndicator;
+
 	GLFont m_Fonts[2];
+
+	GLcolor m_AttrColor;
+	GLcolor m_BottomColorHot;
+	GLcolor m_BottomColorSelected;
+	GLcolor m_CaptionColor;
+	GLcolor m_SelectedColor;
+	GLcolor m_TextColor;
+	GLcolor m_TopColorHot;
+	GLcolor m_TopColorSelected;
 
 private:
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
+	void RenderScene(BOOL Themed);
+
+	CString m_DisplayName;
+	static CString m_strFlightCountSingular;
+	static CString m_FlightCount_Plural;
 
 	LPCTSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
 
-	GLint m_GlobeModel;
-	GLint m_GlobeRoutes;
-	INT m_CurrentGlobeTexture;
-
-	GLfloat m_Scale;
-	GLfloat m_Radius;
-	GLfloat m_FogStart;
-	GLfloat m_FogEnd;
+	GLfloat m_GlobeRadius;
 	UINT m_AnimCounter;
 	GLfloat m_AnimStartLatitude;
 	GLfloat m_AnimStartLongitude;
@@ -156,9 +135,4 @@ private:
 
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
-	BOOL m_LockUpdate;
-	CString m_YouLookAt;
-	CString m_FlightCount_Singular;
-	CString m_FlightCount_Plural;
-	CString m_DisplayName;
 };

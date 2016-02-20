@@ -63,7 +63,7 @@ BOOL CExplorerList::PreTranslateMessage(MSG* pMsg)
 void CExplorerList::Init()
 {
 	ModifyStyle(0, WS_CLIPCHILDREN | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL);
-	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+	SetExtendedStyle((GetExtendedStyle() & ~LVS_EX_AUTOCHECKSELECT) | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS);
 
 	CHeaderCtrl* pHeader = GetHeaderCtrl();
 	if (pHeader)
@@ -253,7 +253,6 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 	ZeroMemory(&Item, sizeof(Item));
 
 	Item.iItem = nID;
-	Item.iSubItem = 0;
 	Item.pszText = Text;
 	Item.cchTextMax = sizeof(Text)/sizeof(WCHAR);
 	Item.puColumns = Columns;
@@ -420,6 +419,7 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_NCHITTEST()
 	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -446,6 +446,21 @@ void CExplorerList::OnDestroy()
 		FMGetApp()->zCloseThemeData(hThemeButton);
 
 	CListCtrl::OnDestroy();
+}
+
+LRESULT CExplorerList::OnNcHitTest(CPoint point)
+{
+	CRect rectWindow;
+	GetAncestor(GA_ROOT)->GetWindowRect(rectWindow);
+
+	if (!rectWindow.PtInRect(point))
+		return HTNOWHERE;
+
+	if ((point.x<rectWindow.left+BACKSTAGEGRIPPER) || (point.x>=rectWindow.right-BACKSTAGEGRIPPER) ||
+		(point.y<rectWindow.top+BACKSTAGEGRIPPER) || (point.y>=rectWindow.bottom-BACKSTAGEGRIPPER))
+		return HTTRANSPARENT;
+
+	return CListCtrl::OnNcHitTest(point);
 }
 
 LRESULT CExplorerList::OnThemeChanged()
@@ -523,10 +538,8 @@ void CExplorerList::OnMouseHover(UINT nFlags, CPoint point)
 				tag.hdr.idFrom = GetDlgCtrlID();
 				tag.Item = m_TooltipItem;
 
-				GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
-
-				if (tag.Show)
-					FMGetApp()->ShowTooltip(this, point, GetItemText(m_TooltipItem, 0), tag.Text, tag.hIcon, tag.hBitmap);
+				if (GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
+					FMGetApp()->ShowTooltip(this, point, tag.Caption[0] ? tag.Caption : GetItemText(m_TooltipItem, 0), tag.Hint, tag.hIcon, tag.hBitmap);
 			}
 	}
 	else

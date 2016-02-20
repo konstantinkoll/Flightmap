@@ -1,42 +1,16 @@
 
-// FMSelectLocationIATADlg.cpp: Implementierung der Klasse LFSelectLocationIATA
+// FMSelectLocationIATADlg.cpp: Implementierung der Klasse FMSelectLocationIATA
 //
 
 #include "stdafx.h"
 #include "FMCommDlg.h"
 
 
-__forceinline void Swap(FMAirport*& Eins, FMAirport*& Zwei)
-{
-	FMAirport* Temp = Eins;
-	Eins = Zwei;
-	Zwei = Temp;
-}
-
-void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
-{
-	if (!Value.IsEmpty())
-	{
-		CString Name((LPCSTR)ResID);
-
-		wcscat_s(pStr, cCount, Name);
-		wcscat_s(pStr, cCount, L": ");
-		wcscat_s(pStr, cCount, Value);
-		wcscat_s(pStr, cCount, L"\n");
-	}
-}
-
-void AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
-{
-	AppendAttribute(pStr, cCount, ResID, CString(pValue));
-}
-
-
 // FMSelectLocationIATADlg
 //
 
 FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, const CHAR* pAirport)
-	: CDialog(IDD_SELECTIATA, pParentWnd)
+	: FMDialog(IDD_SELECTIATA, pParentWnd)
 {
 	m_LastCountrySelected = FMGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
 	m_LastSortColumn = FMGetApp()->GetInt(_T("IATALastSortColumn"), 0);
@@ -48,7 +22,7 @@ FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, const CHAR* p
 
 void FMSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	FMDialog::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_AIRPORTS, m_wndAirportList);
 
@@ -93,6 +67,7 @@ void FMSelectLocationIATADlg::Heap(INT Wurzel, INT Anzahl)
 		if (Index+1<Anzahl)
 			if (Compare(Index, Index+1)<0)
 				Index++;
+
 		if (Compare(Wurzel, Index)<0)
 		{
 			Swap(p_Airports[Wurzel], p_Airports[Index]);
@@ -111,6 +86,7 @@ void FMSelectLocationIATADlg::Sort()
 	{
 		for (INT a=m_AirportCount/2-1; a>=0; a--)
 			Heap(a, m_AirportCount);
+
 		for (INT a=m_AirportCount-1; a>0; a--)
 		{
 			Swap(p_Airports[0], p_Airports[a]);
@@ -167,20 +143,8 @@ void FMSelectLocationIATADlg::LoadCountry(UINT Country)
 	m_wndAirportList.SetColumnWidth(1, rect.Width()-m_wndAirportList.GetColumnWidth(0));
 }
 
-
-BEGIN_MESSAGE_MAP(FMSelectLocationIATADlg, CDialog)
-	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
-	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
-	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
-	ON_NOTIFY(REQUEST_TEXTCOLOR, IDC_AIRPORTS, OnRequestTextColor)
-	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_AIRPORTS, OnRequestTooltipData)
-	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
-END_MESSAGE_MAP()
-
-BOOL FMSelectLocationIATADlg::OnInitDialog()
+BOOL FMSelectLocationIATADlg::InitDialog()
 {
-	CDialog::OnInitDialog();
-
 	// Combobox füllen
 	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);
 
@@ -207,8 +171,18 @@ BOOL FMSelectLocationIATADlg::OnInitDialog()
 	if (p_Airport)
 		m_wndAirportList.SetFocus();
 
-	return FALSE;
+	return p_Airport!=NULL;
 }
+
+
+BEGIN_MESSAGE_MAP(FMSelectLocationIATADlg, FMDialog)
+	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
+	ON_NOTIFY(NM_DBLCLK, IDC_AIRPORTS, OnDoubleClick)
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_AIRPORTS, OnGetDispInfo)
+	ON_NOTIFY(REQUEST_TEXTCOLOR, IDC_AIRPORTS, OnRequestTextColor)
+	ON_NOTIFY(REQUEST_TOOLTIP_DATA, IDC_AIRPORTS, OnRequestTooltipData)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
+END_MESSAGE_MAP()
 
 void FMSelectLocationIATADlg::OnSelectCountry()
 {
@@ -259,18 +233,21 @@ void FMSelectLocationIATADlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResu
 	{
 		FMAirport* pAirport = p_Airports[pTooltipData->Item];
 
-		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_NAME, pAirport->Name);
-		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, pAirport->Name);
+		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
 
 		CString tmpStr;
 		FMGeoCoordinatesToString(pAirport->Location, tmpStr, FALSE);
-		AppendAttribute(pTooltipData->Text, 4096, IDS_AIRPORT_LOCATION, tmpStr);
+		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, tmpStr);
 
 		pTooltipData->hBitmap = FMIATACreateAirportMap(pAirport, 192, 192);
-		pTooltipData->Show = TRUE;
-	}
 
-	*pResult = 0;
+		*pResult = TRUE;
+	}
+	else
+	{
+		*pResult = FALSE;
+	}
 }
 
 void FMSelectLocationIATADlg::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)

@@ -13,7 +13,7 @@
 CKitchen::CKitchen(const CString& DisplayName, BOOL MergeMetro)
 {
 	m_DisplayName = DisplayName;
-	m_MaxRouteCount = m_WaypointCount = 0;
+	m_MaxRouteCount = m_MinRouteCount = m_WaypointCount = 0;
 	m_MergeMetro = MergeMetro;
 
 	m_FlightAirports.InitHashTable(2048);
@@ -28,7 +28,7 @@ FMAirport* CKitchen::AddAirport(const CHAR* Code)
 	if (strlen(Code)!=3)
 		return NULL;
 
-	FMAirport* pAirport = NULL;
+	FMAirport* pAirport;
 	if (!FMIATAGetAirportByCode(Code, &pAirport))
 		return NULL;
 
@@ -40,14 +40,15 @@ FMAirport* CKitchen::AddAirport(const CHAR* Code)
 	if (m_FlightAirports.Lookup(pAirport->Code, Airport))
 	{
 		m_FlightAirportCounts[pAirport->Code]++;
-		return Airport.pAirport;
 	}
+	else
+	{
+		ZeroMemory(&Airport, sizeof(Airport));
+		Airport.pAirport = pAirport;
 
-	ZeroMemory(&Airport, sizeof(Airport));
-	Airport.pAirport = pAirport;
-
-	m_FlightAirports[pAirport->Code] = Airport;
-	m_FlightAirportCounts[pAirport->Code] = 1;
+		m_FlightAirports[pAirport->Code] = Airport;
+		m_FlightAirportCounts[pAirport->Code] = 1;
+	}
 
 	return pAirport;
 }
@@ -58,7 +59,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 	FMAirport* pTo = AddAirport(Flight.To.Code);
 	BYTE Arrow = ARROW_FT;
 
-	if ((pFrom!=NULL) && (pTo!=NULL))
+	if (pFrom && pTo)
 	{
 		if (pFrom>pTo)
 		{
@@ -82,13 +83,16 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 		{
 			Route.Count++;
 			Route.Arrows |= Arrow;
+
 			if (Flight.Color!=Route.Color)
 				Route.Color = (COLORREF)-1;
+
 			if (Flight.FlightTime)
 			{
 				Route.FlightTime += Flight.FlightTime;
 				Route.FlightTimeCount++;
 			}
+
 			if ((!Route.CarrierMultiple) && (Flight.Carrier[0]!=L'\0'))
 				if (Route.Carrier[0]==L'\0')
 				{
@@ -98,6 +102,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 				{
 					Route.CarrierMultiple = (_wcsicmp(Route.Carrier, Flight.Carrier)!=0);
 				}
+
 			if ((!Route.EquipmentMultiple) && (Flight.Equipment[0]!=L'\0'))
 				if (Route.Equipment[0]==L'\0')
 				{
@@ -107,6 +112,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 				{
 					Route.EquipmentMultiple = (_wcsicmp(Route.Equipment, Flight.Equipment)!=0);
 				}
+
 			if (!Route.GPSPathMultiple && pGPSPath)
 				if (!Route.pGPSPath)
 				{
@@ -128,15 +134,19 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 			Route.Arrows = Arrow;
 			Route.LabelS = Route.LabelZ = -1.0;
 			Route.DistanceNM = 0.0;
+
 			if (Flight.FlightTime)
 			{
 				Route.FlightTime = Flight.FlightTime;
 				Route.FlightTimeCount = 1;
 			}
+
 			if (Flight.Carrier[0]!=L'\0')
 				wcscpy_s(Route.Carrier, 256, Flight.Carrier);
+
 			if (Flight.Equipment[0]!=L'\0')
 				wcscpy_s(Route.Equipment, 256, Flight.Equipment);
+
 			Route.pGPSPath = pGPSPath;
 		}
 
@@ -147,6 +157,9 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 
 		if (Route.Count>m_MaxRouteCount)
 			m_MaxRouteCount = Route.Count;
+
+		if ((Route.Count<m_MinRouteCount) || (m_MinRouteCount==0))
+			m_MinRouteCount = Route.Count;
 	}
 }
 
@@ -186,6 +199,7 @@ FlightSegments* CKitchen::ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile)
 				{
 					xml_attribute<>* pAttributeLat = pTrkPtNode->first_attribute("lat");
 					xml_attribute<>* pAttributeLon = pTrkPtNode->first_attribute("lon");
+
 					if (pAttributeLat && pAttributeLon)
 					{
 						DOUBLE Latitude = 0.0;

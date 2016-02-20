@@ -12,22 +12,20 @@
 
 #define MaxAirportsPerCountry   2500
 
-class FMSelectLocationIATADlg : public CDialog
+class FMSelectLocationIATADlg : public FMDialog
 {
 public:
 	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, const CHAR* pAirport=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	FMAirport* p_Airport;
-	BOOL m_OverwriteName;
-	BOOL m_OverwriteGPS;
 
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL InitDialog();
+
 	void Sort();
 	void LoadCountry(UINT Country);
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSelectCountry();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
@@ -36,7 +34,6 @@ protected:
 	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	BOOL m_IsPropertyDialog;
 	UINT m_LastCountrySelected;
 	UINT m_LastSortColumn;
 	BOOL m_LastSortDirection;
@@ -47,5 +44,13 @@ protected:
 
 private:
 	INT Compare(INT n1, INT n2);
+	static void Swap(FMAirport*& Eins, FMAirport*& Zwei);
 	void Heap(INT Wurzel, INT Anzahl);
 };
+
+inline void FMSelectLocationIATADlg::Swap(FMAirport*& Eins, FMAirport*& Zwei)
+{
+	FMAirport* Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}

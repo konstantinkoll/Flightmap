@@ -11,7 +11,7 @@
 //
 
 AddRouteDlg::AddRouteDlg(CItinerary* pItinerary, CWnd* pParentWnd)
-	: CDialog(IDD_ADDROUTE, pParentWnd)
+	: FMDialog(IDD_ADDROUTE, pParentWnd)
 {
 	p_Itinerary = pItinerary;
 	ResetFlight(m_FlightTemplate);
@@ -19,6 +19,8 @@ AddRouteDlg::AddRouteDlg(CItinerary* pItinerary, CWnd* pParentWnd)
 
 void AddRouteDlg::DoDataExchange(CDataExchange* pDX)
 {
+	FMDialog::DoDataExchange(pDX);
+
 	DDX_Control(pDX, IDC_CARRIER, m_wndCarrier);
 	DDX_Control(pDX, IDC_ROUTE, m_wndRoute);
 	DDX_MaskedText(pDX, IDC_COMMENT, m_wndComment, 22, &m_FlightTemplate);
@@ -37,26 +39,25 @@ void AddRouteDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 		m_FlightTemplate.Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : (Class==5) ? AIRX_Charter : AIRX_Unknown;
 
-		m_FlightTemplate.Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_AwardFlight);
+		m_FlightTemplate.Flags &= ~((0xF<<FMAttributes[21].DataParameter) | AIRX_AwardFlight | AIRX_LeisureTrip | AIRX_BusinessTrip | AIRX_Cancelled);
 		m_FlightTemplate.Flags |= m_wndRating.GetRating()<<FMAttributes[21].DataParameter;
+
+		if (((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->GetCheck())
+			m_FlightTemplate.Flags |= AIRX_AwardFlight;
 
 		if (((CButton*)GetDlgItem(IDC_LEISURETRIP))->GetCheck())
 			m_FlightTemplate.Flags |= AIRX_LeisureTrip;
+
 		if (((CButton*)GetDlgItem(IDC_BUSINESSTRIP))->GetCheck())
 			m_FlightTemplate.Flags |= AIRX_BusinessTrip;
-		if (((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->GetCheck())
-			m_FlightTemplate.Flags |= AIRX_AwardFlight;
+
+		if (((CButton*)GetDlgItem(IDC_CANCELLED))->GetCheck())
+			m_FlightTemplate.Flags |= AIRX_Cancelled;
 	}
 }
 
-
-BEGIN_MESSAGE_MAP(AddRouteDlg, CDialog)
-END_MESSAGE_MAP()
-
-BOOL AddRouteDlg::OnInitDialog()
+BOOL AddRouteDlg::InitDialog()
 {
-	CDialog::OnInitDialog();
-
 	// Route
 	CString tmpStr((LPCSTR)IDS_CUEBANNER_ROUTE);
 	m_wndRoute.SetCueBanner(tmpStr);

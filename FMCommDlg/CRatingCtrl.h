@@ -21,8 +21,9 @@ public:
 protected:
 	void SendChangeMessage() const;
 
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg void OnNcPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

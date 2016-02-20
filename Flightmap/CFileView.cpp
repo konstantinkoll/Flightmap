@@ -6,14 +6,6 @@
 #include "CFileView.h"
 
 
-__forceinline void Swap(UINT& Eins, UINT& Zwei)
-{
-	UINT Temp = Eins;
-	Eins = Zwei;
-	Zwei = Temp;
-}
-
-
 // CFileView
 //
 
@@ -30,11 +22,7 @@ CFileView::CFileView()
 	ZeroMemory(&wndcls, sizeof(wndcls));
 	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-	wndcls.hIcon = NULL;
 	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
-	wndcls.hbrBackground = NULL;
-	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CFileView";
 
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CFileView", &wndcls)))
@@ -45,7 +33,6 @@ CFileView::CFileView()
 			AfxThrowResourceException();
 	}
 
-	p_Status = NULL;
 	p_Itinerary = NULL;
 	p_Flight = NULL;
 	m_pSortArray = NULL;
@@ -66,6 +53,7 @@ void CFileView::AdjustLayout()
 {
 	if (!IsWindow(m_wndTaskbar))
 		return;
+
 	if (!IsWindow(m_wndExplorerList))
 		return;
 
@@ -77,9 +65,8 @@ void CFileView::AdjustLayout()
 	m_wndExplorerList.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFileView::SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFlight)
+void CFileView::SetData(CItinerary* pItinerary, AIRX_Flight* pFlight)
 {
-	p_Status = pStatus;
 	p_Itinerary = pItinerary;
 	p_Flight = pFlight;
 
@@ -116,33 +103,18 @@ void CFileView::Reload()
 	m_wndExplorerList.Invalidate();
 
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
-
-	// Status
-	if (p_Status)
-	{
-		INT64 FileSize = 0;
-		for (UINT a=0; a<m_Count; a++)
-			FileSize += GetAttachment(a)->Size;
-
-		WCHAR tmpBuf[256];
-		StrFormatByteSize(FileSize, tmpBuf, 256);
-
-		CString tmpStr;
-		tmpStr.Format(m_Count==1 ? IDS_FILESTATUS_SINGULAR : IDS_FILESTATUS_PLURAL, m_Count, tmpBuf);
-		p_Status->SetWindowText(tmpStr);
-	}
 }
 
 AIRX_Attachment* CFileView::GetAttachment(INT Index)
 {
-	return Index==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments.m_Items[p_Flight->Attachments[m_pSortArray[Index]]] : &p_Itinerary->m_Attachments.m_Items[m_pSortArray[Index]];
+	return Index==-1 ? NULL : p_Flight ? &p_Itinerary->m_Attachments[p_Flight->Attachments[m_pSortArray[Index]]] : &p_Itinerary->m_Attachments[m_pSortArray[Index]];
 }
 
 void CFileView::Init()
 {
 	ModifyStyle(0, WS_BORDER);
 
-	m_wndTaskbar.Create(this, m_LargeIcons, IDB_TASKS_FILE_32, m_SmallIcons, IDB_TASKS_FILE_16, 1);
+	m_wndTaskbar.Create(this, m_LargeIcons, m_SmallIcons, IDB_TASKS_ATTACHMENTS_16, 1);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_OPEN, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_SAVEAS, 2);
@@ -166,7 +138,10 @@ void CFileView::Init()
 
 	CHeaderCtrl* pHeaderCtrl = m_wndExplorerList.GetHeaderCtrl();
 	if (pHeaderCtrl)
+	{
 		m_wndHeader.SubclassWindow(pHeaderCtrl->GetSafeHwnd());
+		m_wndHeader.SetShadow(TRUE);
+	}
 
 	AdjustLayout();
 }
@@ -262,7 +237,6 @@ void CFileView::Sort()
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_NCPAINT()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_INITMENUPOPUP()
@@ -301,11 +275,6 @@ void CFileView::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-void CFileView::OnNcPaint()
-{
-	DrawControlBorder(this);
-}
-
 void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
@@ -315,7 +284,14 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 
 void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndExplorerList.SetFocus();
+	if (m_Count)
+	{
+		m_wndExplorerList.SetFocus();
+	}
+	else
+	{
+		m_wndTaskbar.SetFocus();
+	}
 }
 
 void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
@@ -510,31 +486,31 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 		for (UINT a=1; a<4; a++)
 			ENSURE(SubitemNames[a-1].LoadString(IDS_SUBITEM_NAME+a));
 
-		swprintf_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndExplorerList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndExplorerList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndExplorerList.GetItemText(pTooltipData->Item, 3));
+		swprintf_s(pTooltipData->Hint, 4096, L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndExplorerList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndExplorerList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndExplorerList.GetItemText(pTooltipData->Item, 3));
 
 		Bitmap* pBitmap = p_Itinerary->DecodePictureAttachment(*pAttachment);
 		if (pBitmap)
 		{
-			INT l = pBitmap->GetWidth();
-			INT h = pBitmap->GetHeight();
-			if ((l<16) || (h<16))
+			INT L = pBitmap->GetWidth();
+			INT H = pBitmap->GetHeight();
+			if ((L<16) || (H<16))
 				goto UseIcon;
 
 			// Resolution
 			CString tmpStr;
-			tmpStr.Format(IDS_RESOLUTION, l, h);
+			tmpStr.Format(IDS_RESOLUTION, L, H);
 
-			wcscat_s(pTooltipData->Text, sizeof(pTooltipData->Text)/sizeof(WCHAR), tmpStr);
+			wcscat_s(pTooltipData->Hint, 4096, tmpStr);
 
 			// Scaling
-			DOUBLE ScaleX = 256.0/(DOUBLE)l;
-			DOUBLE ScaleY = 256.0/(DOUBLE)h;
+			DOUBLE ScaleX = 256.0/(DOUBLE)L;
+			DOUBLE ScaleY = 256.0/(DOUBLE)H;
 			DOUBLE Scale = min(ScaleX, ScaleY);
 			if (Scale>1.0)
 				Scale = 1.0;
 
-			INT Width = (INT)(Scale*(DOUBLE)l);
-			INT Height = (INT)(Scale*(DOUBLE)h);
+			INT Width = (INT)(Scale*(DOUBLE)L);
+			INT Height = (INT)(Scale*(DOUBLE)H);
 
 			// Create bitmap
 			CDC dc;
@@ -568,21 +544,24 @@ UseIcon:
 			pTooltipData->hIcon = FMGetApp()->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
 		}
 
-		pTooltipData->Show = TRUE;
 		delete pBitmap;
-	}
 
-	*pResult = 0;
+		*pResult = TRUE;
+	}
+	else
+	{
+		*pResult = FALSE;
+	}
 }
 
 void CFileView::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
-	INT col = pLV->iItem;
+	INT Column = pLV->iItem;
 
-	if (col!=(INT)m_LastSortColumn)
+	if (Column!=(INT)m_LastSortColumn)
 	{
-		m_LastSortColumn = col;
+		m_LastSortColumn = Column;
 		m_LastSortDirection = FALSE;
 	}
 	else
@@ -639,7 +618,7 @@ void CFileView::OnOpen()
 		CFile f;
 		if (!f.Open(szTempName, CFile::modeWrite | CFile::modeCreate))
 		{
-			FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+			FMErrorBox(this, IDS_DRIVENOTREADY);
 		}
 		else
 		{
@@ -652,7 +631,7 @@ void CFileView::OnOpen()
 			}
 			catch(CFileException ex)
 			{
-				FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+				FMErrorBox(this, IDS_DRIVENOTREADY);
 				f.Close();
 			}
 		}
@@ -676,7 +655,7 @@ void CFileView::OnSaveAs()
 			CFile f;
 			if (!f.Open(dlg.GetPathName(), CFile::modeWrite | CFile::modeCreate))
 			{
-				FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+				FMErrorBox(this, IDS_DRIVENOTREADY);
 			}
 			else
 			{
@@ -687,7 +666,7 @@ void CFileView::OnSaveAs()
 				}
 				catch(CFileException ex)
 				{
-					FMErrorBox(IDS_DRIVENOTREADY, GetSafeHwnd());
+					FMErrorBox(this, IDS_DRIVENOTREADY);
 					f.Close();
 				}
 			}
@@ -702,7 +681,7 @@ void CFileView::OnDelete()
 	{
 		CString Message((LPCSTR)IDS_DELETE_FILE);
 
-		if (MessageBox(Message, GetAttachment(Index)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
+		if (FMMessageBox(this, Message, GetAttachment(Index)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
 			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_pSortArray[Index]] : m_pSortArray[Index], p_Flight);
 			Reload();

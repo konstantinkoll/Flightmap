@@ -22,30 +22,61 @@ BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, con
 	m_ForceSmall = ForceSmall;
 	m_HideIcon = HideIcon;
 
-	return CHoverButton::Create(Caption, WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CHoverButton::Create(Caption, pParentWnd, nID);
 }
 
-BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
+void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
-	switch (pMsg->message)
+	CRect rect(lpDrawItemStruct->rcItem);
+
+	CDC dc;
+	dc.Attach(CreateCompatibleDC(lpDrawItemStruct->hDC));
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.Attach(CreateCompatibleBitmap(lpDrawItemStruct->hDC, rect.Width(), rect.Height()));
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	// State
+	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
+	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
+
+	// Background
+	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
+
+	// Button
+	BOOL Themed = IsCtrlThemed();
+
+	DrawLightButtonBackground(dc, rect, Themed, Focused, Selected, m_Hover);
+
+	// Content
+	CRect rectText(rect);
+	rectText.DeflateRect(BORDER+2, BORDER);
+	if (Selected)
+		rectText.OffsetRect(1, 1);
+
+	// Icon
+	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		FMGetApp()->HideTooltip();
-		break;
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 1 : 0), m_IconID, m_Hover);
+		rectText.left += m_IconSize+BORDER;
 	}
 
-	return CHoverButton::PreTranslateMessage(pMsg);
+	// Text
+	if (!m_Small)
+	{
+		dc.SetTextColor(Themed ? m_Hover ? 0x333333 : 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+
+		CFont* pOldFont = dc.SelectObject(&FMGetApp()->m_DefaultFont);
+		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX);
+		dc.SelectObject(pOldFont);
+	}
+
+	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldBitmap);
+	DeleteDC(dc.Detach());
+	DeleteObject(MemBitmap.Detach());
 }
 
 void CTaskButton::SetIconID(INT IconID)
@@ -77,77 +108,16 @@ INT CTaskButton::GetPreferredWidth(BOOL Small)
 
 
 BEGIN_MESSAGE_MAP(CTaskButton, CHoverButton)
-	ON_WM_PAINT()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
+	ON_NOTIFY_REFLECT(REQUEST_TOOLTIP_DATA, OnRequestTooltipData)
 END_MESSAGE_MAP()
 
-void CTaskButton::OnPaint()
+void CTaskButton::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	CPaintDC pDC(this);
+	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
-	CRect rect;
-	GetClientRect(rect);
+	wcscpy_s(pTooltipData->Caption, 256, m_Caption);
+	wcscpy_s(pTooltipData->Hint, 4096, m_Hint);
+	pTooltipData->hIcon = p_TooltipIcons->ExtractIcon(m_IconID, IsCtrlThemed());
 
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	// Background
-	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
-
-	// Button
-	BOOL Themed = IsCtrlThemed();
-	BOOL Selected = (GetState() & 4);
-
-	DrawLightButtonBackground(dc, rect, Themed, GetState() & 8, Selected, m_Hover);
-
-	// Content
-	CRect rectText(rect);
-	rectText.DeflateRect(BORDER+2, BORDER);
-	if (Selected)
-		rectText.OffsetRect(1, 1);
-
-	// Icon
-	if (p_ButtonIcons && (!m_HideIcon || m_Small))
-	{
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 2 : 1), m_IconID);
-		rectText.left += m_IconSize+BORDER;
-	}
-
-	// Text
-	if (!m_Small)
-	{
-		dc.SetTextColor(Themed ? m_Hover ? 0x404040 : 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
-
-		CFont* pOldFont = dc.SelectObject(&FMGetApp()->m_DefaultFont);
-		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX);
-		dc.SelectObject(pOldFont);
-	}
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
-}
-
-void CTaskButton::OnMouseLeave()
-{
-	FMGetApp()->HideTooltip();
-
-	CHoverButton::OnMouseLeave();
-}
-
-void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		FMGetApp()->ShowTooltip(this, point, m_Caption, m_Hint, p_TooltipIcons->ExtractIcon(m_IconID));
-	}
-	else
-	{
-		FMGetApp()->HideTooltip();
-	}
+	*pResult = TRUE;
 }

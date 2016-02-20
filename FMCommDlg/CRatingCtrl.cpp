@@ -24,11 +24,7 @@ CRatingCtrl::CRatingCtrl()
 	ZeroMemory(&wndcls, sizeof(wndcls));
 	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-	wndcls.hIcon = NULL;
 	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
-	wndcls.hbrBackground = NULL;
-	wndcls.lpszMenuName = NULL;
 	wndcls.lpszClassName = L"CRatingCtrl";
 
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CRatingCtrl", &wndcls)))
@@ -72,8 +68,9 @@ void CRatingCtrl::SendChangeMessage() const
 
 
 BEGIN_MESSAGE_MAP(CRatingCtrl, CWnd)
-	ON_WM_ERASEBKGND()
+	ON_WM_NCCALCSIZE()
 	ON_WM_NCPAINT()
+	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
@@ -83,14 +80,22 @@ BEGIN_MESSAGE_MAP(CRatingCtrl, CWnd)
 	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
-BOOL CRatingCtrl::OnEraseBkgnd(CDC* /*pDC*/)
+void CRatingCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
 {
-	return TRUE;
+	lpncsp->rgrc[0].top += 2;
+	lpncsp->rgrc[0].left += 2;
+	lpncsp->rgrc[0].bottom -= 2;
+	lpncsp->rgrc[0].right -= 2;
 }
 
 void CRatingCtrl::OnNcPaint()
 {
 	DrawControlBorder(this);
+}
+
+BOOL CRatingCtrl::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
 }
 
 void CRatingCtrl::OnPaint()
@@ -110,7 +115,7 @@ void CRatingCtrl::OnPaint()
 	dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_WINDOW));
 
 	PrepareBlend();
-	Blend(dc, rect, m_Rating, FMGetApp()->m_RatingBitmaps);
+	Blend(dc, rect, m_Rating, FMGetApp()->hRatingBitmaps);
 
 	if (GetFocus()==this)
 	{

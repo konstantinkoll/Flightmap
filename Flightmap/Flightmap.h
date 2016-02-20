@@ -29,13 +29,24 @@
 
 struct MapSettings
 {
-	INT Background;
-	COLORREF BackgroundColor;
 	UINT Width;
 	UINT Height;
+
+	INT Background;
+	COLORREF BackgroundColor;
 	BOOL CenterPacific;
 	BOOL WideBorder;
-	BOOL ShowFlightRoutes;
+
+	BOOL ShowLocations;
+	COLORREF LocationsInnerColor;
+	COLORREF LocationsOuterColor;
+	BOOL ShowIATACodes;
+	COLORREF IATACodesInnerColor;
+	COLORREF IATACodesOuterColor;
+
+	BOOL ShowRoutes;
+	COLORREF RouteColor;
+	BOOL UseColors;
 	BOOL StraightLines;
 	BOOL Arrows;
 	BOOL UseCountWidth;
@@ -48,14 +59,6 @@ struct MapSettings
 	BOOL NoteSmallFont;
 	COLORREF NoteInnerColor;
 	COLORREF NoteOuterColor;
-	BOOL UseColors;
-	COLORREF RouteColor;
-	BOOL ShowLocations;
-	COLORREF LocationInnerColor;
-	COLORREF LocationOuterColor;
-	BOOL ShowIATACodes;
-	COLORREF IATAInnerColor;
-	COLORREF IATAOuterColor;
 };
 
 class CFlightmapApp : public FMApplication
@@ -67,10 +70,12 @@ public:
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
-	void Quit();
 	void Broadcast(UINT Message);
-	void AddToRecentList(const CString& FileName);
-	void AddRecentList(CDialogMenuPopup* pPopup);
+	static void AddStringToList(CList<CString>& List, const CString& Str);
+	void AddToRecentFiles(const CString& FileName);
+	void AddToRecentSearchTerms(const CString& Str);
+	void AddToRecentReplaceTerms(const CString& Str);
+	void AddRecentList(CMenu* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
 	void OpenAirportLiquidFolders(CHAR* Code);
@@ -80,16 +85,9 @@ public:
 	CString m_PathGoogleEarth;
 	CString m_PathLiquidFolders;
 
-	HBITMAP hFlagIcons[2];
-
 	CLIPFORMAT CF_FLIGHTS;
 
 	BOOL m_UseStatuteMiles;
-
-	UINT m_nTextureSize;
-	UINT m_nMaxTextureSize;
-
-	MapSettings m_MapSettings;
 
 	FindReplaceSettings m_FindReplaceSettings;
 	CList<CString> m_RecentSearchTerms;
@@ -97,45 +95,66 @@ public:
 
 	// Spreadsheet
 	ViewParameters m_ViewParameters;
+
 	// Map
+	MapSettings m_MapSettings;
 	BOOL m_MapMergeMetro;
+
 	// Map view
 	INT m_MapZoomFactor;
-	BOOL m_MapAutosize;
-	// Viewport
+
+	// Globe view
+	BOOL m_GlobeMergeMetro;
+
 	INT m_GlobeLatitude;
 	INT m_GlobeLongitude;
 	INT m_GlobeZoom;
-	// 3D settings
-	BOOL m_GlobeAntialising;
-	BOOL m_GlobeLighting;
-	BOOL m_GlobeAtmosphere;
-	// User view settings
-	BOOL m_GlobeMergeMetro;
-	BOOL m_GlobeUseColors;
-	BOOL m_GlobeClamp;
+
 	BOOL m_GlobeShowSpots;
 	BOOL m_GlobeShowAirportIATA;
 	BOOL m_GlobeShowAirportNames;
 	BOOL m_GlobeShowGPS;
-	BOOL m_GlobeShowFlightCount;
-	BOOL m_GlobeShowViewport;
-	BOOL m_GlobeShowCrosshairs;
+	BOOL m_GlobeShowMovements;
+	BOOL m_GlobeDarkBackground;
+
 	// Google Earth
 	BOOL m_GoogleEarthMergeMetro;
 	BOOL m_GoogleEarthUseCount;
 	BOOL m_GoogleEarthUseColors;
-	BOOL m_GoogleEarthClamp;
+	BOOL m_GoogleEarthClampHeight;
+
 	// Statistics
-	BOOL m_MergeDirections;
-	BOOL m_MergeAwards;
-	BOOL m_MergeClasses;
+	BOOL m_StatisticsMergeMetro;
+	BOOL m_StatisticsMergeDirections;
+	BOOL m_StatisticsMergeAwards;
+	BOOL m_StatisticsMergeClasses;
 
 protected:
-	afx_msg void OnAppAbout();
+	afx_msg void OnBackstageAbout();
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_AppInitialized;
 };
 
 extern CFlightmapApp theApp;
+
+inline void CFlightmapApp::AddToRecentFiles(const CString& FileName)
+{
+	ASSERT(!FileName.IsEmpty());
+
+	theApp.AddStringToList(m_RecentFiles, FileName);
+}
+
+inline void CFlightmapApp::AddToRecentSearchTerms(const CString& Str)
+{
+	ASSERT(!Str.IsEmpty());
+
+	theApp.AddStringToList(m_RecentSearchTerms, Str);
+}
+
+inline void CFlightmapApp::AddToRecentReplaceTerms(const CString& Str)
+{
+	ASSERT(!Str.IsEmpty());
+
+	theApp.AddStringToList(m_RecentReplaceTerms, Str);
+}

@@ -9,43 +9,6 @@
 #include <mmsystem.h>
 
 
-void AppendAttribute(CString& dst, UINT ResID, const CString& Value)
-{
-	if (!Value.IsEmpty())
-	{
-		CString Name((LPCSTR)ResID);
-
-		dst.Append(Name);
-		dst.Append(_T(": "));
-		dst.Append(Value);
-		dst.Append(_T("\n"));
-	}
-}
-
-void AppendAttribute(CString& dst, UINT ResID, LPCSTR pValue)
-{
-	AppendAttribute(dst, ResID, CString(pValue));
-}
-
-void PlayRegSound(CString Identifier)
-{
-	CString strKey;
-	strKey.Format(_T("AppEvents\\Schemes\\%s\\.Current"), Identifier);
-
-	CSettingsStoreSP regSP;
-	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
-
-	if (reg.Open(strKey))
-	{
-		CString strFile;
-
-		if (reg.Read(_T(""), strFile))
-			if (!strFile.IsEmpty())
-				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
-	}
-}
-
-
 // FMApplication
 //
 
@@ -62,20 +25,24 @@ FMApplication::FMApplication(GUID& AppID)
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
-	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==1)) ? OS_Seven : OS_Eight;
+	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
+
+	// GdiPlus
+	m_SmoothingModeAntiAlias8x8 = OSVersion>=OS_Vista ? (SmoothingMode)(SmoothingModeAntiAlias+1) : SmoothingModeAntiAlias;
 
 	// DLL-Hijacking verhindern
 	SetDllDirectory(_T(""));
 
 	// Messages
-	m_LicenseActivatedMsg = RegisterWindowMessage(_T("Flightmap.LicenseActivated"));
-	m_WakeupMsg = RegisterWindowMessage(_T("Flightmap.NewWindow"));
-	m_UseBgImagesChangedMsg = RegisterWindowMessageA("Flightmap.UseBgImagesChanged");
 	m_DistanceSettingChangedMsg = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
-	m_TaskbarButtonCreated = RegisterWindowMessageA("TaskbarButtonCreated");
+	m_TaskbarButtonCreated = RegisterWindowMessage(_T("TaskbarButtonCreated"));
+	m_LicenseActivatedMsg = RegisterWindowMessage(_T("Flightmap.LicenseActivated"));
+	m_SetProgressMsg = RegisterWindowMessage(_T("Flightmap.SetProgress"));
+	m_WakeupMsg = RegisterWindowMessage(_T("Flightmap.NewWindow"));
 
-	// Custom colors
-	ZeroMemory(&m_CustomColors, sizeof(m_CustomColors));
+	// Color history
+	for (UINT a=0; a<16; a++)
+		m_ColorHistory[a] = (COLORREF)-1;
 
 	// Themes
 	hModThemes = LoadLibrary(_T("UXTHEME.DLL"));
@@ -85,15 +52,10 @@ FMApplication::FMApplication(GUID& AppID)
 		zOpenThemeData = (PFNOPENTHEMEDATA)GetProcAddress(hModThemes, "OpenThemeData");
 		zCloseThemeData = (PFNCLOSETHEMEDATA)GetProcAddress(hModThemes, "CloseThemeData");
 		zDrawThemeBackground = (PFNDRAWTHEMEBACKGROUND)GetProcAddress(hModThemes, "DrawThemeBackground");
-		zDrawThemeText = (PFNDRAWTHEMETEXT)GetProcAddress(hModThemes, "DrawThemeText");
-		zDrawThemeTextEx = (PFNDRAWTHEMETEXTEX)GetProcAddress(hModThemes, "DrawThemeTextEx");
-		zGetThemeSysFont = (PFNGETTHEMESYSFONT)GetProcAddress(hModThemes, "GetThemeSysFont");
-		zGetThemeSysColor = (PFNGETTHEMESYSCOLOR)GetProcAddress(hModThemes, "GetThemeSysColor");
 		zGetThemePartSize = (PFNGETTHEMEPARTSIZE)GetProcAddress(hModThemes, "GetThemePartSize");
-		zSetWindowThemeAttribute = (PFNSETWINDOWTHEMEATTRIBUTE)GetProcAddress(hModThemes, "SetWindowThemeAttribute");
 		zIsAppThemed = (PFNISAPPTHEMED)GetProcAddress(hModThemes, "IsAppThemed");
 
-		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zDrawThemeText && zGetThemeSysFont && zGetThemeSysColor && zGetThemePartSize && zIsAppThemed);
+		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zGetThemePartSize && zIsAppThemed);
 		if (m_ThemeLibLoaded)
 		{
 			FreeLibrary(hModThemes);
@@ -106,26 +68,20 @@ FMApplication::FMApplication(GUID& AppID)
 		zOpenThemeData = NULL;
 		zCloseThemeData = NULL;
 		zDrawThemeBackground = NULL;
-		zDrawThemeText = NULL;
-		zDrawThemeTextEx = NULL;
-		zGetThemeSysFont = NULL;
-		zGetThemeSysColor = NULL;
 		zGetThemePartSize = NULL;
-		zSetWindowThemeAttribute = NULL;
 		zIsAppThemed = NULL;
 
 		m_ThemeLibLoaded = FALSE;
 	}
 
-	// Aero
+	// DWM
 	hModDwm = LoadLibrary(_T("DWMAPI.DLL"));
 	if (hModDwm)
 	{
 		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModDwm, "DwmIsCompositionEnabled");
-		zDwmExtendFrameIntoClientArea = (PFNDWMEXTENDFRAMEINTOCLIENTAREA)GetProcAddress(hModDwm, "DwmExtendFrameIntoClientArea");
-		zDwmDefWindowProc = (PFNDWMDEFWINDOWPROC)GetProcAddress(hModDwm, "DwmDefWindowProc");
+		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModDwm, "DwmSetWindowAttribute");
 
-		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea && zDwmDefWindowProc);
+		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmSetWindowAttribute);
 		if (!m_DwmLibLoaded)
 		{
 			FreeLibrary(hModDwm);
@@ -135,8 +91,7 @@ FMApplication::FMApplication(GUID& AppID)
 	else
 	{
 		zDwmIsCompositionEnabled = NULL;
-		zDwmExtendFrameIntoClientArea = NULL;
-		zDwmDefWindowProc = NULL;
+		zDwmSetWindowAttribute = NULL;
 
 		m_DwmLibLoaded = FALSE;
 	}
@@ -181,6 +136,26 @@ FMApplication::FMApplication(GUID& AppID)
 		m_KernelLibLoaded = FALSE;
 	}
 
+	// User
+	hModUser = LoadLibrary(_T("USER32.DLL"));
+	if (hModUser)
+	{
+		zChangeWindowMessageFilter = (PFNCHANGEWINDOWMESSAGEFILTER)GetProcAddress(hModKernel, "ChangeWindowMessageFilter");
+
+		m_UserLibLoaded = (zChangeWindowMessageFilter!=NULL);
+		if (!m_UserLibLoaded)
+		{
+			FreeLibrary(hModUser);
+			hModUser = NULL;
+		}
+	}
+	else
+	{
+		zChangeWindowMessageFilter = NULL;
+
+		m_UserLibLoaded = FALSE;
+	}
+
 	// System image lists
 	IImageList* il;
 	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&il)))
@@ -207,8 +182,14 @@ FMApplication::~FMApplication()
 	if (hModKernel)
 		FreeLibrary(hModKernel);
 
+	if (hModUser)
+		FreeLibrary(hModUser);
+
 	if (hFontLetterGothic)
 		RemoveFontMemResourceEx(hFontLetterGothic);
+
+	for (UINT a=0; a<=MaxRating; a++)
+		DeleteObject(hRatingBitmaps[a]);
 }
 
 
@@ -218,7 +199,7 @@ BOOL FMApplication::InitInstance()
 {
 	// GDI+ initalisieren
 	GdiplusStartupInput gdiplusStartupInput;
-	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+	GdiplusStartup(&m_GdiPlusToken, &gdiplusStartupInput, NULL);
 
 	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
 	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
@@ -233,18 +214,12 @@ BOOL FMApplication::InitInstance()
 	if (!CWinAppEx::InitInstance())
 		return FALSE;
 
-	// OLE Initialisieren
+	// OLE initialisieren
 	ENSURE(AfxOleInit());
-
-	// Dialog classes
-	WNDCLASS wc;
-	GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);
-	wc.lpszClassName = _T("UpdateDlg");
-	AfxRegisterClass(&wc);
 
 	// Rating bitmaps
 	for (UINT a=0; a<=MaxRating; a++)
-		m_RatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
+		hRatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
 
 	// Eingebettete Schrift
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
@@ -255,14 +230,13 @@ BOOL FMApplication::InitInstance()
 	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &LogFont, 0))
 		Size = max(abs(LogFont.lfHeight), 11);
 
-	afxGlobalData.fontTooltip.GetLogFont(&LogFont);
-
 	m_DefaultFont.CreateFont(-Size);
 	m_ItalicFont.CreateFont(-Size, CLEARTYPE_QUALITY, FW_NORMAL, 1);
-	m_SmallFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
-	m_SmallBoldFont.CreateFont(-(Size*5/6+1), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
+	m_SmallFont.CreateFont(-(Size*2/3+3), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
+	m_SmallBoldFont.CreateFont(-(Size*2/3+3), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
 	m_LargeFont.CreateFont(-Size*7/6);
 	m_CaptionFont.CreateFont(-Size*2, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_UACFont.CreateFont(-Size*3/2);
 
 	CFont* pDialogFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	ASSERT_VALID(pDialogFont);
@@ -292,18 +266,15 @@ CWnd* FMApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 INT FMApplication::ExitInstance()
 {
+	m_wndTooltip.DestroyWindow();
+
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
-		delete m_ResourceCache.m_Items[a].pImage;
+		delete m_ResourceCache[a].pImage;
+
+	GdiplusShutdown(m_GdiPlusToken);
 
 	for (UINT a=0; a<=MaxRating; a++)
-		DeleteObject(m_RatingBitmaps[a]);
-
-	GdiplusShutdown(m_gdiplusToken);
-
-	if (hModThemes)
-		FreeLibrary(hModThemes);
-	if (hModDwm)
-		FreeLibrary(hModDwm);
+		DeleteObject(hRatingBitmaps[a]);
 
 	return CWinAppEx::ExitInstance();
 }
@@ -348,14 +319,34 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 	return FALSE;
 }
 
-BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, const CString& Caption) const
+BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, BOOL AllowReset)
 {
-	ASSERT(pColor);
+	FMColorDlg dlg(pColor, pParentWnd, AllowReset);
 
-	FMColorDlg dlg(pParentWnd, *pColor, CC_RGBINIT, Caption);
 	if (dlg.DoModal()==IDOK)
 	{
-		*pColor = dlg.m_cc.rgbResult;
+		if (*pColor!=(COLORREF)-1)
+		{
+			COLORREF Colors[16];
+			memcpy_s(Colors, sizeof(Colors), m_ColorHistory, sizeof(m_ColorHistory));
+
+			m_ColorHistory[0] = *pColor;
+
+			UINT PtrSrc = 0;
+			UINT PtrDst = 1;
+
+			while ((PtrSrc<16) && (PtrDst<16))
+			{
+				if (Colors[PtrSrc]!=*pColor)
+					m_ColorHistory[PtrDst++] = Colors[PtrSrc];
+
+				PtrSrc++;
+			}
+
+			while (PtrDst<16)
+				m_ColorHistory[PtrDst++] = (COLORREF)-1;
+		}
+
 		return TRUE;
 	}
 
@@ -403,8 +394,8 @@ Bitmap* FMApplication::GetResourceImage(UINT nID) const
 Bitmap* FMApplication::GetCachedResourceImage(UINT nID)
 {
 	for (UINT a=0; a<m_ResourceCache.m_ItemCount; a++)
-		if (m_ResourceCache.m_Items[a].nID==nID)
-			return m_ResourceCache.m_Items[a].pImage;
+		if (m_ResourceCache[a].nID==nID)
+			return m_ResourceCache[a].pImage;
 
 	Bitmap* pBitmap = GetResourceImage(nID);;
 	if (pBitmap)
@@ -466,10 +457,10 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirp
 	CString Text(_T(""));
 	CString tmpStr;
 
-	AppendAttribute(Text, IDS_AIRPORT_NAME, pAirport->Name);
-	AppendAttribute(Text, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_NAME, pAirport->Name);
+	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
 	FMGeoCoordinatesToString(pAirport->Location, tmpStr);
-	AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
+	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
 
 	if (!Hint.IsEmpty())
 		Text.Append(Hint);
@@ -484,20 +475,24 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CHAR* Code
 		ShowTooltip(pCallerWnd, point, pAirport, Hint);
 }
 
-BOOL FMApplication::IsTooltipVisible() const
+
+void FMApplication::PlayRegSound(const CString& Identifier)
 {
-	ASSERT(IsWindow(m_wndTooltip));
+	CString strKey;
+	strKey.Format(_T("AppEvents\\Schemes\\%s\\.Current"), Identifier);
 
-	return m_wndTooltip.IsWindowVisible();
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
+
+	if (reg.Open(strKey))
+	{
+		CString strFile;
+
+		if (reg.Read(_T(""), strFile))
+			if (!strFile.IsEmpty())
+				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+	}
 }
-
-void FMApplication::HideTooltip()
-{
-	ASSERT(IsWindow(m_wndTooltip));
-
-	m_wndTooltip.HideTooltip();
-}
-
 
 void FMApplication::PlayAsteriskSound()
 {
@@ -651,37 +646,36 @@ void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
 
 
 BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
-	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
-	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
-	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
+	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
+	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
+	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
 END_MESSAGE_MAP()
 
-void FMApplication::OnAppSupport()
-{
-	SendMail();
-}
-
-void FMApplication::OnAppPurchase()
+void FMApplication::OnBackstagePurchase()
 {
 	CString URL((LPCSTR)IDS_PURCHASEURL);
 
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 }
 
-void FMApplication::OnAppEnterLicenseKey()
+void FMApplication::OnBackstageEnterLicenseKey()
 {
 	FMLicenseDlg dlg(m_pActiveWnd);
 	dlg.DoModal();
 }
 
-void FMApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
+void FMApplication::OnBackstageSupport()
+{
+	SendMail();
+}
+
+void FMApplication::OnUpdateBackstageCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
-	case ID_APP_PURCHASE:
-	case ID_APP_ENTERLICENSEKEY:
+	case IDM_BACKSTAGE_PURCHASE:
+	case IDM_BACKSTAGE_ENTERLICENSEKEY:
 		pCmdUI->Enable(!FMIsLicensed());
 		break;
 

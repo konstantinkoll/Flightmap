@@ -14,8 +14,15 @@ CIcons CTooltipHeader::m_SortIndicators;
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
-	m_Hover = FALSE;
+	m_Hover = m_Shadow = FALSE;
 	m_HoverItem = m_PressedItem = m_TrackItem = m_TooltipItem = -1;
+}
+
+BOOL CTooltipHeader::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
+{
+	m_Shadow = Shadow;
+
+	return CHeaderCtrl::Create(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CTooltipHeader::PreSubclassWindow()
@@ -57,6 +64,14 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 void CTooltipHeader::Init()
 {
 	m_SortIndicators.Load(IDB_SORTINDICATORS, CSize(7, 4));
+
+	SetFont(&FMGetApp()->m_DefaultFont);
+}
+
+void CTooltipHeader::SetShadow(BOOL Shadow)
+{
+	m_Shadow = Shadow;
+	Invalidate();
 }
 
 
@@ -124,10 +139,10 @@ void CTooltipHeader::OnPaint()
 	}
 
 	const INT Line = rect.Height()*2/5;
-	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00, 0x00, 0x00, 0x00), Color(0x40, 0x00, 0x00, 0x00));
-	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40, 0x00, 0x00, 0x00), Color(0x00, 0x00, 0x00, 0x00));
+	LinearGradientBrush brush1(Point(0, 0), Point(0, Line), Color(0x00000000), Color(0x40000000));
+	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(0x40000000), Color(0x00000000));
 
-	Pen pen(Color(0x80, 0xFF, 0xFF, 0xFF));
+	Pen pen(Color(0x80FFFFFF));
 
 	for (INT a=0; a<GetItemCount(); a++)
 	{
@@ -170,6 +185,9 @@ void CTooltipHeader::OnPaint()
 
 						if (rectBounds.left<0)
 							rectBounds.left = 0;
+
+						if (m_Shadow)
+							rectBounds.top--;
 					}
 
 					DrawSubitemBackground(dc, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
@@ -231,9 +249,12 @@ void CTooltipHeader::OnPaint()
 		}
 	}
 
-	dc.SelectObject(pOldFont);
+	if (m_Shadow && Themed)
+		CTaskbar::DrawTaskbarShadow(g, rect);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
 }
 

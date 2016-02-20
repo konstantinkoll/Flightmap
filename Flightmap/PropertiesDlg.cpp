@@ -11,7 +11,7 @@
 //
 
 PropertiesDlg::PropertiesDlg(CItinerary* pItinerary, CWnd* pParentWnd)
-	: CDialog(IDD_PROPERTIES, pParentWnd)
+	: FMDialog(IDD_PROPERTIES, pParentWnd)
 {
 	ASSERT(pItinerary);
 
@@ -20,6 +20,8 @@ PropertiesDlg::PropertiesDlg(CItinerary* pItinerary, CWnd* pParentWnd)
 
 void PropertiesDlg::DoDataExchange(CDataExchange* pDX)
 {
+	FMDialog::DoDataExchange(pDX);
+
 	DDX_Text(pDX, IDC_TITLE, p_Itinerary->m_Metadata.Title, 256);
 	DDX_Text(pDX, IDC_AUTHOR, p_Itinerary->m_Metadata.Author, 256);
 	DDX_Text(pDX, IDC_KEYWORDS, p_Itinerary->m_Metadata.Keywords, 256);
@@ -29,20 +31,15 @@ void PropertiesDlg::DoDataExchange(CDataExchange* pDX)
 		p_Itinerary->m_IsModified = TRUE;
 }
 
-
-BEGIN_MESSAGE_MAP(PropertiesDlg, CDialog)
-END_MESSAGE_MAP()
-
-BOOL PropertiesDlg::OnInitDialog()
+BOOL PropertiesDlg::InitDialog()
 {
-	CDialog::OnInitDialog();
-
 	// Titel
 	CString Mask;
-	CString Caption;
 	GetWindowText(Mask);
+
+	CString Caption;
 	Caption.Format(Mask, p_Itinerary->m_DisplayName);
 	SetWindowText(Caption);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;
 }

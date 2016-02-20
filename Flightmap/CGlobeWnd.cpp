@@ -4,12 +4,14 @@
 
 #include "stdafx.h"
 #include "CGlobeWnd.h"
-#include "CLoungeView.h"
 #include "Flightmap.h"
 
 
 // CGlobeWnd
 //
+
+CIcons CGlobeWnd::m_LargeIcons;
+CIcons CGlobeWnd::m_SmallIcons;
 
 BOOL CGlobeWnd::Create()
 {
@@ -17,29 +19,24 @@ BOOL CGlobeWnd::Create()
 
 	CString Caption((LPCSTR)IDR_GLOBE);
 
-	return CMainWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Globe"));
+	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Globe"), CSize(0, 0), TRUE);
 }
 
 BOOL CGlobeWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	// The main view gets the command first
+	// The map view gets the command first
 	if (m_wndGlobeView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return CMainWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CBackstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CGlobeWnd::AdjustLayout()
+void CGlobeWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	CMainWindow::AdjustLayout();
+	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
+	m_wndTaskbar.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), TaskHeight, nFlags);
 
-	CRect rect;
-	GetClientRect(rect);
-
-	if (m_pDialogMenuBar && (GetStyle() & WS_OVERLAPPEDWINDOW))
-		rect.top += m_pDialogMenuBar->GetPreferredHeight();
-
-	m_wndGlobeView.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndGlobeView.SetWindowPos(NULL, rectLayout.left, rectLayout.top+TaskHeight, rectLayout.Width(), rectLayout.Height()-TaskHeight, nFlags);
 }
 
 void CGlobeWnd::SetFlights(CKitchen* pKitchen)
@@ -58,35 +55,41 @@ void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 }
 
 
-BEGIN_MESSAGE_MAP(CGlobeWnd, CMainWindow)
+BEGIN_MESSAGE_MAP(CGlobeWnd, CBackstageWnd)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
-	ON_MESSAGE(WM_REQUESTSUBMENU, OnRequestSubmenu)
 	ON_MESSAGE_VOID(WM_3DSETTINGSCHANGED, On3DSettingsChanged)
-
-	ON_COMMAND(IDM_GLOBEWND_CLOSE, OnGlobeWndClose)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEWND_CLOSE, IDM_GLOBEWND_CLOSE, OnUpdateGlobeWndCommands)
 END_MESSAGE_MAP()
 
 INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CMainWindow::OnCreate(lpCreateStruct)==-1)
+	if (CBackstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	hAccelerator = LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR_GLOBE));
+	hAccelerator = LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDA_ACCELERATOR_GLOBE));
 
-	m_pDialogMenuBar = new CDialogMenuBar();
-	m_pDialogMenuBar->Create(this, IDB_MENUBARICONS_32, IDB_MENUBARICONS_16, 1);
+	// Taskbar
+	if (!m_wndTaskbar.Create(this, m_LargeIcons, m_SmallIcons, IDB_TASKS_GLOBE_16, 1))
+		return -1;
 
-	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBEWND);
-	m_pDialogMenuBar->AddMenuLeft(IDM_GLOBEVIEW);
+	m_wndTaskbar.SetOwner(GetOwner());
 
-	m_pDialogMenuBar->AddMenuRight(ID_APP_PURCHASE, 1);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ENTERLICENSEKEY, 2);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_SUPPORT, 3);
-	m_pDialogMenuBar->AddMenuRight(ID_APP_ABOUT, 4);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_JUMPTOLOCATION, 0, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_ZOOMIN, 1);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_ZOOMOUT, 2);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_AUTOSIZE, 3);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_SAVEAS, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_GOOGLEEARTH, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBEWND_LIQUIDFOLDERS, 6, TRUE);
 
-	m_wndGlobeView.Create(this, 2);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 10, TRUE, TRUE);
+
+	// Globe view
+	if (!m_wndGlobeView.Create(this, 2))
+		return -1;
 
 	return 0;
 }
@@ -99,66 +102,7 @@ void CGlobeWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 	m_wndGlobeView.SetFocus();
 }
 
-LRESULT CGlobeWnd::OnRequestSubmenu(WPARAM wParam, LPARAM /*lParam*/)
-{
-	CDialogMenuPopup* pPopup = new CDialogMenuPopup();
-
-	switch ((UINT)wParam)
-	{
-	case IDM_GLOBEWND:
-		pPopup->Create(this, IDB_MENUGLOBEWND_32, IDB_MENUGLOBEWND_16);
-		pPopup->AddCommand(IDM_GLOBEVIEW_SAVEAS, 0, CDMB_MEDIUM);
-		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_GLOBEWND_CLOSE, 1, CDMB_MEDIUM);
-		break;
-	case IDM_GLOBEVIEW:
-		pPopup->Create(this, IDB_MENUGLOBEVIEW_32, IDB_MENUGLOBEVIEW_16);
-		pPopup->AddCommand(IDM_GLOBEVIEW_JUMPTOLOCATION, 0, CDMB_LARGE);
-		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMIN, 1, CDMB_SMALL, FALSE);
-		pPopup->AddCommand(IDM_GLOBEVIEW_ZOOMOUT, 2, CDMB_SMALL, FALSE);
-		pPopup->AddCommand(IDM_GLOBEVIEW_AUTOSIZE, 3, CDMB_SMALL);
-		pPopup->AddSeparator();
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_FULLSCREEN, FALSE, TRUE);
-		pPopup->AddSeparator(TRUE);
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_COLORS);
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_CLAMP);
-		pPopup->AddSeparator();
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_SPOTS);
-		pPopup->AddSeparator();
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_AIRPORTIATA);
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_AIRPORTNAMES);
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_GPS);
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_FLIGHTCOUNT);
-		pPopup->AddSeparator();
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_VIEWPORT);
-		pPopup->AddCheckbox(IDM_GLOBEVIEW_CROSSHAIRS);
-		pPopup->AddSeparator();
-		pPopup->AddCommand(IDM_GLOBEVIEW_3DSETTINGS, 4, CDMB_SMALL);
-		break;
-	}
-
-	if (!pPopup->HasItems())
-	{
-		delete pPopup;
-		pPopup = NULL;
-	}
-
-	return (LRESULT)pPopup;
-}
-
 void CGlobeWnd::On3DSettingsChanged()
 {
 	m_wndGlobeView.UpdateViewOptions();
-}
-
-
-void CGlobeWnd::OnGlobeWndClose()
-{
-	SendMessage(WM_CLOSE);
-}
-
-void CGlobeWnd::OnUpdateGlobeWndCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(TRUE);
 }

@@ -183,7 +183,7 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 			GraphicsPath path;
 			CreateRoundRectangle(rect, SHADOWSIZE+5-a, path);
 
-			Pen pen(Color((BYTE)(((a+2)*(a+2)*(a+2)/6)), 0x00, 0x00, 0x00));
+			Pen pen(Color(((a+2)*(a+2)*(a+2)/6)<<24));
 			g.DrawPath(&pen, &path);
 
 			rect.DeflateRect(1, 1);
@@ -197,17 +197,17 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 		const INT y1 = 6;
 		const INT y2 = (rect.Height()-y1)*2/5;
 
-		LinearGradientBrush brush1(Point(0, rect.top), Point(0, rect.bottom-y2), Color(0x32, 0x32, 0x32), Color(0x2C, 0x2C, 0x2C));
+		LinearGradientBrush brush1(Point(0, rect.top), Point(0, rect.bottom-y2), Color(0xFF323232), Color(0xFF2C2C2C));
 		g.FillRectangle(&brush1, rect.left+2, rect.top, rect.Width()-4, 1);
 		g.FillRectangle(&brush1, rect.left+1, rect.top+1, rect.Width()-2, 1);
 		g.FillRectangle(&brush1, rect.left, rect.top+2, rect.Width(), rect.Height()-y2-2);
 
-		LinearGradientBrush brush2(Point(0, rect.bottom-y2), Point(0, rect.bottom), Color(0x2C, 0x2C, 0x2C), Color(0x0C, 0x0C, 0x0C));
+		LinearGradientBrush brush2(Point(0, rect.bottom-y2), Point(0, rect.bottom), Color(0xFF2C2C2C), Color(0xFF0C0C0C));
 		g.FillRectangle(&brush2, rect.left, rect.bottom-y2, rect.Width(), y2-2);
 		g.FillRectangle(&brush2, rect.left+1, rect.bottom-2, rect.Width()-2, 1);
 		g.FillRectangle(&brush2, rect.left+2, rect.bottom-1, rect.Width()-4, 1);
 
-		LinearGradientBrush brush3(Point(0, rect.top), Point(0, rect.top+y1), Color(0x30, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush3(Point(0, rect.top), Point(0, rect.top+y1), Color(0x30FFFFFF), Color(0x00FFFFFF));
 		g.FillRectangle(&brush3, rect.left+2, rect.top, rect.Width()-4, 1);
 		g.FillRectangle(&brush3, rect.left+1, rect.top+1, rect.Width()-2, 1);
 		g.FillRectangle(&brush3, rect.left, rect.top+2, rect.Width(), y1-2);
@@ -224,10 +224,10 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 		GraphicsPath pathOuter;
 		CreateRoundRectangle(rect, 5, pathOuter);
 
-		Pen pen(Color(0x00, 0x00, 0x00));
+		Pen pen(Color(0xFF000000));
 		g.DrawPath(&pen, &pathOuter);
 
-		LinearGradientBrush brush5(Point(0, rect.top), Point(0, rect.bottom), Color(0x28, 0xFF, 0xFF, 0xFF), Color(0x18, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush5(Point(0, rect.top), Point(0, rect.bottom), Color(0x28FFFFFF), Color(0x18FFFFFF));
 
 		pen.SetBrush(&brush5);
 		g.DrawPath(&pen, &pathInner);
@@ -270,7 +270,7 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 			{
 				dc.BitBlt(rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, &dcBitmap, 0, 0, SRCCOPY);
 
-				Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
+				Pen pen(Color(0x40FFFFFF));
 				g.DrawRectangle(&pen, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight);
 			}
 
@@ -341,6 +341,73 @@ void FMTooltip::HideTooltip()
 
 	if (IsWindow(m_hWnd))
 		ShowWindow(SW_HIDE);
+}
+
+void FMTooltip::AppendAttribute(CString& Str, const CString& Name, const CString& Value)
+{
+	if (!Value.IsEmpty())
+	{
+		if (!Str.IsEmpty())
+			Str.Append(_T("\n"));
+
+		if (!Name.IsEmpty())
+		{
+			Str.Append(Name);
+			Str.Append(_T(": "));
+		}
+
+		Str.Append(Value);
+	}
+}
+
+void FMTooltip::AppendAttribute(CString& Str, UINT ResID, const CString& Value)
+{
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(Str, Name, Value);
+}
+
+void FMTooltip::AppendAttribute(CString& Str, UINT ResID, LPCSTR pValue)
+{
+	ASSERT(pValue);
+
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(Str, Name, CString(pValue));
+}
+
+void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, const CString& Name, const CString& Value)
+{
+	ASSERT(pStr);
+
+	if (!Value.IsEmpty())
+	{
+		if (*pStr)
+			wcscat_s(pStr, cCount, L"\n");
+
+		if (!Name.IsEmpty())
+		{
+			wcscat_s(pStr, cCount, Name);
+			wcscat_s(pStr, cCount, L": ");
+		}
+
+		wcscat_s(pStr, cCount, Value);
+	}
+}
+
+void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
+{
+	ASSERT(pStr);
+
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(pStr, cCount, Name, Value);
+}
+
+void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
+{
+	ASSERT(pStr);
+	ASSERT(pValue);
+
+	CString Name((LPCSTR)ResID);
+	AppendAttribute(pStr, cCount, Name, CString(pValue));
 }
 
 

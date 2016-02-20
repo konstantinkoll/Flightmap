@@ -18,10 +18,9 @@ public:
 	virtual void PreSubclassWindow();
 	virtual void AdjustLayout();
 
-	void SetData(CWnd* pStatus, CItinerary* pItinerary, AIRX_Flight* pFlight=NULL);
+	void SetData(CItinerary* pItinerary, AIRX_Flight* pFlight=NULL);
 
 protected:
-	CWnd* p_Status;
 	CItinerary* p_Itinerary;
 	AIRX_Flight* p_Flight;
 	static CIcons m_LargeIcons;
@@ -37,7 +36,6 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
-	afx_msg void OnNcPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
@@ -65,6 +63,14 @@ private:
 
 	void Init();
 	INT Compare(INT n1, INT n2);
+	static void Swap(UINT& Eins, UINT& Zwei);
 	void Heap(INT Wurzel, INT Anzahl);
 	void Sort();
 };
+
+inline void CFileView::Swap(UINT& Eins, UINT& Zwei)
+{
+	UINT Temp = Eins;
+	Eins = Zwei;
+	Zwei = Temp;
+}

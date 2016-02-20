@@ -29,8 +29,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Flightmap", "Flightmap\Flig
 		{5D7B1ED7-3067-410E-8C24-64D73EAAF241} = {5D7B1ED7-3067-410E-8C24-64D73EAAF241}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConvertGlobe", "ConvertGlobe\ConvertGlobe.vcproj", "{68FBA521-2143-68B1-35AB-42987BAC24FF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -95,14 +93,6 @@ Global
 		{A177AF89-CA3B-4E93-9785-7F45AB6A379E}.Release|Win32.Build.0 = Release|Win32
 		{A177AF89-CA3B-4E93-9785-7F45AB6A379E}.Release|x64.ActiveCfg = Release|x64
 		{A177AF89-CA3B-4E93-9785-7F45AB6A379E}.Release|x64.Build.0 = Release|x64
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Debug|Win32.ActiveCfg = Debug|Win32
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Debug|Win32.Build.0 = Debug|Win32
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Debug|x64.ActiveCfg = Debug|x64
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Debug|x64.Build.0 = Debug|x64
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Release|Win32.ActiveCfg = Release|Win32
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Release|Win32.Build.0 = Release|Win32
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Release|x64.ActiveCfg = Release|x64
-		{68FBA521-2143-68B1-35AB-42987BAC24FF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -343,7 +343,43 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CDialogMenuBar.cpp"
+				RelativePath=".\CBackstageBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageShadow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageSidebar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWidgets.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWnd.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CCategory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CColorHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CColorIndicator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CColorPicker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CDesktopDimmer.cpp"
 				>
 			</File>
 			<File
@@ -355,10 +391,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGroupBox.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CHoverButton.cpp"
 				>
 			</File>
@@ -367,11 +399,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMainWindow.cpp"
+				RelativePath=".\CMapCtrl.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CMapCtrl.cpp"
+				RelativePath=".\CPictureCtrl.cpp"
 				>
 			</File>
 			<File
@@ -388,6 +420,10 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CWhiteButton.cpp"
 				>
 			</File>
 			<File
@@ -415,11 +451,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FMRegisterDlg.cpp"
+				RelativePath=".\FMMessageBoxDlg.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FMResolutionDlg.cpp"
+				RelativePath=".\FMRegisterDlg.cpp"
 				>
 			</File>
 			<File
@@ -431,11 +467,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMTabbedDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMTooltip.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\FMUpdateDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLRenderer.cpp"
 				>
 			</File>
 			<File
@@ -481,6 +529,46 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CBackstageBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageShadow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageSidebar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWidgets.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBackstageWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CCategory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CColorHistory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CColorIndicator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CColorPicker.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CDesktopDimmer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CDialogMenuBar.h"
 				>
 			</File>
@@ -493,10 +581,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGroupBox.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CHoverButton.h"
 				>
 			</File>
@@ -505,11 +589,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CMainWindow.h"
+				RelativePath=".\CMapCtrl.h"
 				>
 			</File>
 			<File
-				RelativePath=".\CMapCtrl.h"
+				RelativePath=".\CPictureCtrl.h"
 				>
 			</File>
 			<File
@@ -526,6 +610,10 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CWhiteButton.h"
 				>
 			</File>
 			<File
@@ -557,11 +645,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FMRegisterDlg.h"
+				RelativePath=".\FMMessageBoxDlg.h"
 				>
 			</File>
 			<File
-				RelativePath=".\FMResolutionDlg.h"
+				RelativePath=".\FMRegisterDlg.h"
 				>
 			</File>
 			<File
@@ -573,11 +661,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMTabbedDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FMTooltip.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FMUpdateDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLFont.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLRenderer.h"
 				>
 			</File>
 			<File
@@ -619,14 +719,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\Ascending_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Backdrop.png"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Background_DarkLinen.png"
 				>
 			</File>
@@ -635,11 +727,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Close.ico"
+				RelativePath=".\res\BlueMarble_2048.jpg"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Descending_16.bmp"
+				RelativePath=".\res\Close.ico"
 				>
 			</File>
 			<File
@@ -655,7 +747,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Earthmap.jpg"
+				RelativePath=".\res\Error.ico"
 				>
 			</File>
 			<File
@@ -683,15 +775,11 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Info.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Letter_Gothic.ttf"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LocationIndicator_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LocationIndicator_8.png"
 				>
 			</File>
 			<File
@@ -704,6 +792,18 @@
 			</File>
 			<File
 				RelativePath=".\res\Minimize.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\NRT_Registered.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\NRT_Unregistered.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Question.ico"
 				>
 			</File>
 			<File
@@ -751,6 +851,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Ready.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\ResolutionIcons.png"
 				>
 			</File>
@@ -763,6 +867,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Shield_7.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Shield_Vista.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\SidebarShadow.bmp"
 				>
 			</File>
@@ -771,11 +883,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Statistics_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StPatrick.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\UpdateIcons_16.png"
 				>
 			</File>
 			<File
+				RelativePath=".\res\UpdateIcons_24.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\UpdateIcons_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\UpdateIcons_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Warning.ico"
 				>
 			</File>
 		</Filter>

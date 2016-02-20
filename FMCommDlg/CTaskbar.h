@@ -18,10 +18,11 @@ public:
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, UINT LargeResID, CIcons& SmallIcons, UINT SmallResID, UINT nID);
+	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID);
 	UINT GetPreferredHeight() const;
 	CTaskButton* AddButton(UINT nID, INT IconID, BOOL ForceIcon=FALSE, BOOL AddRight=FALSE, BOOL ForceSmall=FALSE);
 	void AdjustLayout();
+	static void DrawTaskbarShadow(Graphics& g, const CRect& rectClient);
 
 protected:
 	afx_msg void OnDestroy();
@@ -31,6 +32,7 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()

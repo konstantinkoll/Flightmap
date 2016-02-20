@@ -6,45 +6,18 @@
 #include "FMCommDlg.h"
 
 
-DOUBLE StringToCoord(CString str)
-{
-	INT Deg;
-	INT Min;
-	INT Sec;
-	WCHAR Ch;
-	DOUBLE Result = 0.0;
-
-	INT Scanned = swscanf_s(str.GetBuffer(), L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
-
-	if (Scanned>=1)
-		Result += Deg;
-	if (Scanned>=2)
-		Result += abs(Min)/60.0;
-	if (Scanned>=3)
-		Result += abs(Sec)/3600.0;
-	if (Scanned>=4)
-		if ((Ch==L'N') || (Ch==L'W'))
-			Result = -Result;
-
-	if ((Result<-180.0) || (Result>180.0))
-		Result = 0.0;
-
-	return Result;
-}
-
-
 // FMSelectLocationGPSDlg
 //
 
 FMSelectLocationGPSDlg::FMSelectLocationGPSDlg(const FMGeoCoordinates& Location, CWnd* pParentWnd)
-	: CDialog(IDD_SELECTGPS, pParentWnd)
+	: FMDialog(IDD_SELECTGPS, pParentWnd)
 {
 	m_Location = Location;
 }
 
 void FMSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	FMDialog::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_MAP, m_wndMap);
 
@@ -60,8 +33,45 @@ void FMSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+BOOL FMSelectLocationGPSDlg::InitDialog()
+{
+	m_wndMap.SetLocation(m_Location);
+	m_wndMap.SetMenu(IDM_SELECTGPS);
 
-BEGIN_MESSAGE_MAP(FMSelectLocationGPSDlg, CDialog)
+	return TRUE;
+}
+
+DOUBLE FMSelectLocationGPSDlg::StringToCoord(LPCWSTR Str)
+{
+	INT Deg;
+	INT Min;
+	INT Sec;
+	WCHAR Ch;
+	DOUBLE Result = 0.0;
+
+	INT Scanned = swscanf_s(Str, L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
+
+	if (Scanned>=1)
+		Result += Deg;
+
+	if (Scanned>=2)
+		Result += abs(Min)/60.0;
+
+	if (Scanned>=3)
+		Result += abs(Sec)/3600.0;
+
+	if (Scanned>=4)
+		if ((Ch==L'N') || (Ch==L'W'))
+			Result = -Result;
+
+	if ((Result<-180.0) || (Result>180.0))
+		Result = 0.0;
+
+	return Result;
+}
+
+
+BEGIN_MESSAGE_MAP(FMSelectLocationGPSDlg, FMDialog)
 	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP, OnUpdateEdit)
 	ON_EN_KILLFOCUS(IDC_LATITUDE, OnLatitudeChanged)
 	ON_EN_KILLFOCUS(IDC_LONGITUDE, OnLongitudeChanged)
@@ -70,16 +80,6 @@ BEGIN_MESSAGE_MAP(FMSelectLocationGPSDlg, CDialog)
 	ON_COMMAND(IDM_SELECTGPS_RESET, OnReset)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTGPS_IATA, IDM_SELECTGPS_RESET, OnUpdateCommands)
 END_MESSAGE_MAP()
-
-BOOL FMSelectLocationGPSDlg::OnInitDialog()
-{
-	CDialog::OnInitDialog();
-
-	m_wndMap.SetLocation(m_Location);
-	m_wndMap.SetMenu(IDM_SELECTGPS);
-
-	return TRUE;
-}
 
 void FMSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {

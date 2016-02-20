@@ -18,7 +18,7 @@ static const GUID TrayIcon = { 0xFD604358, 0x411B, 0x4D4C, { 0x88, 0xF9, 0xD5, 0
 #define MARGIN          4
 
 FMUpdateDlg::FMUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd)
-	: FMDialog(IDD_UPDATE, pParentWnd)
+	: FMDialog(IDD_UPDATE, pParentWnd, TRUE)
 {
 	m_NotificationWindow = (pParentWnd==NULL);
 	m_CaptionTop = m_IconTop = m_FeaturesTop = m_FeaturesLeft = m_FeatureItemHeight = 0;
@@ -41,6 +41,49 @@ void FMUpdateDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_IGNOREUPDATE, m_wndIgnoreUpdate);
 }
 
+void FMUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
+{
+	FMDialog::PaintOnBackground(dc, g, rectLayout);
+
+	// Logo
+	g.DrawImage(p_Logo, rectLayout.left+9, rectLayout.top+m_IconTop);
+
+	// Caption
+	BOOL Themed = IsCtrlThemed();
+
+	CRect rectText(rectLayout);
+	rectText.left = rectLayout.left+80;
+	rectText.top = rectLayout.top+m_CaptionTop;
+
+	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
+
+	dc.SetTextColor(Themed ? 0xCC3300 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.DrawText(m_AppName, rectText, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
+
+	// Features
+	rectText.SetRect(rectLayout.left+m_FeaturesLeft, rectLayout.top+m_FeaturesTop, rectLayout.right-m_FeaturesLeft, rectLayout.top+m_FeaturesTop+m_FeatureItemHeight);
+	dc.SelectStockObject(DEFAULT_GUI_FONT);
+
+	for (UINT a=0; a<=31; a++)
+		if (m_Features & (1<<a))
+		{
+			const INT Index = a ? a+1 : FMGetApp()->OSVersion==OS_Vista ? 1 : 0;
+			m_UpdateIcons.Draw(dc, rectText.left, rectText.top, Index);
+
+			CRect rectLine(rectText);
+			rectLine.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
+
+			CString Text((LPCSTR)IDS_UPDATE_FIRST+a);
+
+			dc.SetTextColor(a<3 ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			dc.DrawText(Text, rectLine, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
+
+			rectText.OffsetRect(0, m_FeatureItemHeight+MARGIN);
+		}
+
+	dc.SelectObject(pOldFont);
+}
+
 void FMUpdateDlg::UpdateDownloadButton()
 {
 	GetDlgItem(IDOK)->EnableWindow(m_Connected && !m_wndIgnoreUpdate.GetCheck());
@@ -54,70 +97,28 @@ void FMUpdateDlg::CheckInternetConnection()
 	UpdateDownloadButton();
 }
 
-void FMUpdateDlg::UpdateFrame(BOOL bMove)
+void FMUpdateDlg::UpdatePosition()
 {
 	if (!m_NotificationWindow)
 		return;
 
-	// Client rectangle
-	CRect rectClient;
-	GetClientRect(rectClient);
+	MONITORINFO MonitorInfo;
+	MonitorInfo.cbSize = sizeof(MONITORINFO);
 
-	// Shadow
-	BOOL bDropShadow;
-	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
-
-	// Glass frame
-	BOOL IsCompositionEnabled = FALSE;
-	if (FMGetApp()->m_DwmLibLoaded)
-		FMGetApp()->zDwmIsCompositionEnabled(&IsCompositionEnabled);
-
-	// Settings
-	LONG ClassStyle = GetClassLong(GetSafeHwnd(), GCL_STYLE);
-	ClassStyle &= ~CS_DROPSHADOW;
-	if (!IsCompositionEnabled && bDropShadow)
-		ClassStyle |= CS_DROPSHADOW;
-	SetClassLong(GetSafeHwnd(), GCL_STYLE, ClassStyle);
-
-	LONG WindowStyle = GetWindowLong(GetSafeHwnd(), GWL_STYLE);
-	WindowStyle &= ~(WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
-	WindowStyle |= WS_POPUPWINDOW;
-	if (IsCompositionEnabled)
-		WindowStyle |= WS_THICKFRAME;
-	SetWindowLong(GetSafeHwnd(), GWL_STYLE, WindowStyle);
-
-	LONG ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
-	ExtendedStyle &= ~WS_EX_DLGMODALFRAME;
-	ExtendedStyle |= WS_EX_TOOLWINDOW;
-	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle);
-
-	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOACTIVATE);
-
-	AdjustWindowRectEx(rectClient, WindowStyle, FALSE, ExtendedStyle);
-
-	if (bMove)
+	CRect rectScreen;
+	if (GetMonitorInfo(MonitorFromPoint(CPoint(0, 0), MONITOR_DEFAULTTONEAREST), &MonitorInfo))
 	{
-		MONITORINFO MonitorInfo;
-		MonitorInfo.cbSize = sizeof(MONITORINFO);
-
-		CRect rectScreen;
-		if (GetMonitorInfo(MonitorFromPoint(CPoint(0, 0), MONITOR_DEFAULTTONEAREST), &MonitorInfo))
-		{
-			rectScreen = MonitorInfo.rcWork;
-		}
-		else
-		{
-			SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
-		}
-
-		const INT PosX = rectScreen.right-rectClient.Width()+1;
-		const INT PosY = rectScreen.bottom-rectClient.Height()+1;
-		SetWindowPos(&wndTopMost, PosX, PosY, rectClient.Width(), rectClient.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+		rectScreen = MonitorInfo.rcWork;
 	}
 	else
 	{
-		SetWindowPos(&wndTopMost, 0, 0, rectClient.Width(), rectClient.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
 	}
+
+	CRect rectWindow;
+	GetWindowRect(rectWindow);
+
+	SetWindowPos(&wndTopMost, rectScreen.right-rectWindow.Width()-1, rectScreen.bottom-rectWindow.Height()-1, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 }
 
 BOOL FMUpdateDlg::AddTrayIcon()
@@ -168,50 +169,14 @@ void FMUpdateDlg::ShowMenu()
 	pPopup->SetMenuItemInfo(0, &mii, TRUE);
 	pPopup->SetDefaultItem(0, TRUE);
 
-	POINT pos;
-	GetCursorPos(&pos);
+	CPoint pt;
+	GetCursorPos(&pt);
 
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, this);
 }
 
-void FMUpdateDlg::EndDialog(INT nResult)
+BOOL FMUpdateDlg::InitDialog()
 {
-	if (m_NotificationWindow)
-	{
-		if (m_wndIgnoreUpdate.GetCheck())
-			FMGetApp()->WriteString(_T("IgnoreUpdateMSN"), m_MSN);
-
-		DestroyWindow();
-	}
-	else
-	{
-		FMDialog::EndDialog(nResult);
-	}
-}
-
-
-BEGIN_MESSAGE_MAP(FMUpdateDlg, FMDialog)
-	ON_WM_DESTROY()
-	ON_WM_NCDESTROY()
-	ON_WM_TIMER()
-	ON_WM_NCHITTEST()
-	ON_WM_THEMECHANGED()
-	ON_WM_DWMCOMPOSITIONCHANGED()
-	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
-	ON_BN_CLICKED(IDC_IGNOREUPDATE, OnIgnoreUpdate)
-	ON_NOTIFY(NM_CLICK, IDC_HIDE, OnHide)
-	ON_BN_CLICKED(IDOK, OnDownload)
-	ON_BN_CLICKED(IDCANCEL, OnCancel)
-	ON_MESSAGE(WM_TRAYMENU, OnTrayMenu)
-	ON_COMMAND(IDM_UPDATE_RESTORE, OnRestore)
-	ON_REGISTERED_MESSAGE(FMGetApp()->m_WakeupMsg, OnWakeup)
-	ON_WM_COPYDATA()
-END_MESSAGE_MAP()
-
-BOOL FMUpdateDlg::OnInitDialog()
-{
-	FMDialog::OnInitDialog();
-
 	AddBottomRightControl(IDC_HIDE);
 	AddBottomRightControl(&m_wndIgnoreUpdate);
 
@@ -239,15 +204,18 @@ BOOL FMUpdateDlg::OnInitDialog()
 	const INT HeightCaption = 4*LineGap;
 	const INT HeightVersion = 2*LineGap;
 
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
 	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
 	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-HeightVersion)/2-9;
-	m_IconTop = rectWnd.top+(rectWnd.bottom-62)/2-8;
+	m_CaptionTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-HeightCaption-HeightVersion)/2-4;
+	m_IconTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-62)/2-3;
 
-	rectWnd.left = 82;
-	rectWnd.top = m_CaptionTop+HeightCaption;
+	rectWnd.left = rectLayout.left+82;
+	rectWnd.top = rectLayout.top+m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Feature-Liste
@@ -256,16 +224,16 @@ BOOL FMUpdateDlg::OnInitDialog()
 
 	if (m_Features)
 	{
-		m_FeaturesTop = rectWnd.top;
-		m_FeaturesLeft = rectWnd.left;
+		m_FeaturesTop = rectWnd.top-rectLayout.top;
+		m_FeaturesLeft = rectWnd.left-rectLayout.left;
 
 		UINT Count = 0;
 		for (DWORD Features=m_Features; Features; Features>>=1)
 			if (Features & 1)
 				Count++;
 
-		m_FeatureItemHeight = FMGetApp()->m_DialogFont.GetFontHeight()>14 ? 32 : Count<=3 ? 32 : 16;
-		m_UpdateIcons.Load(m_FeatureItemHeight==32 ? IDB_UPDATEICONS_32 : IDB_UPDATEICONS_16, m_FeatureItemHeight);
+		const INT IconSize = m_UpdateIcons.Load(IDB_UPDATEICONS_16, (Count<=3) ? LI_FORTOOLTIPS : LI_SLIGHTLYLARGER);
+		m_FeatureItemHeight = max(FMGetApp()->m_DialogFont.GetFontHeight(), IconSize);
 
 		DynamicHeight += Count*(m_FeatureItemHeight+MARGIN)+m_FeaturesLeft;
 	}
@@ -280,17 +248,16 @@ BOOL FMUpdateDlg::OnInitDialog()
 		SetWindowPos(NULL, 0, 0, rectWnd.Width(), rectWnd.Height()+DynamicHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 
+	// Audio
+	FMGetApp()->PlayNotificationSound();
+
 	// Stil
 	if (m_NotificationWindow)
 	{
-		FMGetApp()->PlayNotificationSound();
-
-		UpdateFrame(TRUE);
+		UpdatePosition();
 	}
 	else
 	{
-		FMGetApp()->PlayAsteriskSound();
-
 		GetDlgItem(IDC_IGNOREUPDATE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_HIDE)->ShowWindow(SW_HIDE);
 	}
@@ -299,8 +266,37 @@ BOOL FMUpdateDlg::OnInitDialog()
 	CheckInternetConnection();
 	SetTimer(1, 1000, NULL);
 
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;
 }
+
+void FMUpdateDlg::EndDialog(INT nResult)
+{
+	if (m_NotificationWindow)
+	{
+		if (m_wndIgnoreUpdate.GetCheck())
+			FMGetApp()->WriteString(_T("IgnoreUpdateMSN"), m_MSN);
+
+		DestroyWindow();
+	}
+	else
+	{
+		FMDialog::EndDialog(nResult);
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(FMUpdateDlg, FMDialog)
+	ON_WM_DESTROY()
+	ON_WM_NCDESTROY()
+	ON_WM_TIMER()
+	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
+	ON_BN_CLICKED(IDC_IGNOREUPDATE, OnIgnoreUpdate)
+	ON_NOTIFY(NM_CLICK, IDC_HIDE, OnHide)
+	ON_BN_CLICKED(IDOK, OnDownload)
+	ON_BN_CLICKED(IDCANCEL, OnCancel)
+	ON_MESSAGE(WM_TRAYMENU, OnTrayMenu)
+	ON_COMMAND(IDM_UPDATE_RESTORE, OnRestore)
+END_MESSAGE_MAP()
 
 void FMUpdateDlg::OnDestroy()
 {
@@ -334,74 +330,9 @@ void FMUpdateDlg::OnTimer(UINT_PTR nIDEvent)
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
-void FMUpdateDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
-{
-	FMDialog::OnEraseBkgnd(dc, g, rect);
-
-	// Logo
-	g.DrawImage(p_Logo, 9, m_IconTop);
-
-	CRect rectLine(rect);
-	rectLine.top = m_CaptionTop;
-	rectLine.left = 82-2;
-
-	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
-
-	dc.SetTextColor(IsCtrlThemed() ? 0xCB3300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(m_AppName, rectLine, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
-
-	// Features
-	rectLine.top = m_FeaturesTop;
-	rectLine.bottom = m_FeaturesTop+m_FeatureItemHeight;
-	rectLine.left = m_FeaturesLeft;
-	rectLine.right -= m_FeaturesLeft;
-
-	dc.SelectStockObject(DEFAULT_GUI_FONT);
-
-	for (UINT a=0; a<=31; a++)
-		if (m_Features & (1<<a))
-		{
-			INT Index = a ? a+1 : FMGetApp()->OSVersion==OS_Vista ? 1 : 0;
-
-			m_UpdateIcons.Draw(dc, rectLine.left, rectLine.top, Index);
-
-			CRect rectText(rectLine);
-			rectText.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
-
-			CString Text((LPCSTR)IDS_UPDATE_FIRST+a);
-
-			dc.SetTextColor(a<3 ? 0x0000FF : GetSysColor(COLOR_WINDOWTEXT));
-			dc.DrawText(Text, rectText, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
-
-			rectLine.OffsetRect(0, m_FeatureItemHeight+MARGIN);
-		}
-
-	dc.SelectObject(pOldFont);
-}
-
-LRESULT FMUpdateDlg::OnNcHitTest(CPoint point)
-{
-	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
-	LRESULT uHitTest = FMDialog::OnNcHitTest(point);
-
-	return m_NotificationWindow ? ((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest : uHitTest;
-}
-
-LRESULT FMUpdateDlg::OnThemeChanged()
-{
-	UpdateFrame();
-
-	return FMDialog::OnThemeChanged();
-}
-
-void FMUpdateDlg::OnCompositionChanged()
-{
-	UpdateFrame();
-}
-
 LRESULT FMUpdateDlg::OnDisplayChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	UpdateFrame(TRUE);
+	UpdatePosition();
 
 	return NULL;
 }
@@ -434,10 +365,11 @@ void FMUpdateDlg::OnCancel()
 		EndDialog(IDCANCEL);
 	}
 	else
-	{
 		if (AddTrayIcon())
+		{
 			ShowWindow(SW_HIDE);
-	}
+			m_wndShadow.Update(this);
+		}
 }
 
 LRESULT FMUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)
@@ -447,11 +379,13 @@ LRESULT FMUpdateDlg::OnTrayMenu(WPARAM /*wParam*/, LPARAM lParam)
 	case WM_LBUTTONUP:
 	case WM_LBUTTONDBLCLK:
 		OnRestore();
+
 		break;
 
 	case WM_RBUTTONUP:
 		SetForegroundWindow();
 		ShowMenu();
+
 		break;
 	}
 
@@ -462,23 +396,4 @@ void FMUpdateDlg::OnRestore()
 {
 	RemoveTrayIcon();
 	ShowWindow(SW_SHOW);
-}
-
-LRESULT FMUpdateDlg::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	return 24878;
-}
-
-BOOL FMUpdateDlg::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
-{
-	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
-		return FALSE;
-
-	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
-	if (cds.AppID!=FMGetApp()->m_AppID)
-		return FALSE;
-
-	FMGetApp()->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
-
-	return TRUE;
 }

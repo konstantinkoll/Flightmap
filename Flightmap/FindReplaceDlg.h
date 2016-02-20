@@ -3,22 +3,34 @@
 //
 
 #pragma once
-#include "FindReplacePage.h"
+#include "CDataGrid.h"
+#include "FMCommDlg.h"
 
 
 // FindReplaceDlg
 //
 
-class FindReplaceDlg : public CPropertySheet
+class FindReplaceDlg : public FMTabbedDialog
 {
 public:
-	FindReplaceDlg(INT iSelectPage, UINT Attr, CWnd* pParentWnd=NULL);
+	FindReplaceDlg(UINT Attr, CWnd* pParentWnd=NULL, INT SelectTab=-1);
 
 	FindReplaceSettings m_FindReplaceSettings;
 
 protected:
-	afx_msg void OnDestroy();
-	DECLARE_MESSAGE_MAP()
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void ShowTab(UINT Index);
+	virtual BOOL InitSidebar(LPSIZE pszTabArea);
 
-	FindReplacePage* m_pPages[2];
+	static UINT m_LastTab;
+
+	CComboBox m_wndSearchTerm;
+	CComboBox m_wndReplaceTerm;
+	CButton m_wndMatchCase;
+	CButton m_wndMatchEntireCell;
+	CButton m_wndMatchColumnOnly;
+	CButton m_wndReplaceAll;
+
+private:
+	BOOL m_AllowColumnOnly[2];
 };

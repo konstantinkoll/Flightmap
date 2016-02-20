@@ -1,5 +1,5 @@
 
-// AboutDlg.h: Schnittstelle der Klasse AboutDlg
+// AboutDlg.h: Schnittstelle der Klasse LFAboutDlg
 //
 
 #pragma once
@@ -14,19 +14,16 @@ class AboutDlg : public FMDialog
 public:
 	AboutDlg(CWnd* pParentWnd=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-
 	BOOL m_UseStatuteMiles;
-	BOOL m_UseBgImages;
 
 protected:
-	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout);
+	virtual BOOL InitDialog();
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnEnableAutoUpdate();
-	afx_msg void On3DSettings();
 	afx_msg void OnUpdateNow();
 	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnterLicenseKey();
@@ -35,16 +32,19 @@ protected:
 private:
 	void CheckLicenseKey();
 	void CheckInternetConnection();
+	static void AddQuality(CComboBox& wndCombobox, UINT nResID);
 
-	Bitmap* p_Logo;
 	Bitmap* p_Santa;
+	Bitmap* p_Logo;
 	FMFont m_CaptionFont;
 	FMFont m_VersionFont;
-	INT m_CaptionTop;
 	INT m_IconTop;
+	INT m_CaptionTop;
 	CString m_Version;
 	CString m_Copyright;
 	CString m_AppName;
 	WCHAR m_Build[256];
 	CWnd m_wndVersionInfo;
+	CComboBox m_wndModelQuality;
+	CComboBox m_wndTextureQuality;
 };
