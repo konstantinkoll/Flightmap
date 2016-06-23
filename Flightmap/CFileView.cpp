@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CFileView.h"
+#include "Flightmap.h"
 
 
 // CFileView
@@ -16,7 +17,7 @@ CIcons CFileView::m_LargeIcons;
 CIcons CFileView::m_SmallIcons;
 
 CFileView::CFileView()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	WNDCLASS wndcls;
 	ZeroMemory(&wndcls, sizeof(wndcls));
@@ -42,7 +43,7 @@ CFileView::CFileView()
 
 void CFileView::PreSubclassWindow()
 {
-	CWnd::PreSubclassWindow();
+	CFrontstageWnd::PreSubclassWindow();
 
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	if (!pThreadState->m_pWndInit)
@@ -51,21 +52,17 @@ void CFileView::PreSubclassWindow()
 
 void CFileView::AdjustLayout()
 {
-	if (!IsWindow(m_wndTaskbar))
-		return;
-
-	if (!IsWindow(m_wndExplorerList))
-		return;
-
 	CRect rect;
 	GetClientRect(rect);
 
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndExplorerList.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	const INT Indent = (m_wndExplorerList.GetView()!=LV_VIEW_TILE) ? BACKSTAGEBORDER-1 : 0;
+	m_wndExplorerList.SetWindowPos(NULL, rect.left+Indent, rect.top+TaskHeight, rect.Width()-Indent, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFileView::SetData(CItinerary* pItinerary, AIRX_Flight* pFlight)
+void CFileView::SetItinerary(CItinerary* pItinerary, AIRX_Flight* pFlight)
 {
 	p_Itinerary = pItinerary;
 	p_Flight = pFlight;
@@ -112,8 +109,7 @@ AIRX_Attachment* CFileView::GetAttachment(INT Index)
 
 void CFileView::Init()
 {
-	ModifyStyle(0, WS_BORDER);
-
+	// Taskbar
 	m_wndTaskbar.Create(this, m_LargeIcons, m_SmallIcons, IDB_TASKS_ATTACHMENTS_16, 1);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_ADD, 0);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_OPEN, 1, TRUE);
@@ -121,6 +117,7 @@ void CFileView::Init()
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_DELETE, 3);
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_RENAME, 4);
 
+	// ExplorerList
 	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_EDITLABELS, CRect(0, 0, 0, 0), this, 2);
 
 	m_wndExplorerList.SetImageList(&FMGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
@@ -136,6 +133,7 @@ void CFileView::Init()
 	m_wndExplorerList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
 	m_wndExplorerList.SetFocus();
 
+	// Header
 	CHeaderCtrl* pHeaderCtrl = m_wndExplorerList.GetHeaderCtrl();
 	if (pHeaderCtrl)
 	{
@@ -234,12 +232,14 @@ void CFileView::Sort()
 }
 
 
-BEGIN_MESSAGE_MAP(CFileView, CWnd)
+BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_INITMENUPOPUP()
+	ON_WM_CONTEXTMENU()
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
 	ON_NOTIFY(NM_DBLCLK, 2, OnDoubleClick)
 	ON_NOTIFY(LVN_ITEMCHANGED, 2, OnItemChanged)
@@ -259,7 +259,7 @@ END_MESSAGE_MAP()
 
 INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	Init();
@@ -272,12 +272,66 @@ void CFileView::OnDestroy()
 	if (m_pSortArray)
 		delete[] m_pSortArray;
 
-	CWnd::OnDestroy();
+	CFrontstageWnd::OnDestroy();
+}
+
+void CFileView::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap MemBitmap;
+	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
+
+	BOOL Themed = IsCtrlThemed();
+
+	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+	if (IsWindow(m_wndHeader))
+	{
+		const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
+
+		CRect rectWindow;
+		m_wndExplorerList.GetWindowRect(rectWindow);
+
+		WINDOWPOS wp;
+		HDLAYOUT HdLayout;
+		HdLayout.prc = &rectWindow;
+		HdLayout.pwpos = &wp;
+		m_wndHeader.Layout(&HdLayout);
+
+		ScreenToClient(rectWindow);
+
+		if (Themed)
+		{
+			Bitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP);
+
+			Graphics g(dc);
+			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+BACKSTAGEBORDER-1, wp.cy+TaskHeight-(INT)pDivider->GetHeight());
+		}
+		else
+		{
+			dc.FillSolidRect(0, TaskHeight, rect.Width(), wp.cy, GetSysColor(COLOR_3DFACE));
+		}
+	}
+
+	DrawWindowEdge(dc, Themed);
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+
+	dc.SelectObject(pOldBitmap);
 }
 
 void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CFrontstageWnd::OnSize(nType, cx, cy);
 
 	AdjustLayout();
 }
@@ -311,6 +365,18 @@ void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysM
 		if ((state.m_nID) && (state.m_nID!=(UINT)-1))
 			state.DoUpdate(this, FALSE);
 	}
+}
+
+void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+{
+	CMenu Menu;
+	Menu.LoadMenu(IDM_FILEVIEW_BACKGROUND);
+	ASSERT_VALID(&Menu);
+
+	CMenu* pPopup = Menu.GetSubMenu(0);
+	ASSERT_VALID(pPopup);
+
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
 
 void CFileView::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
@@ -576,6 +642,10 @@ void CFileView::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
+
+// File commands
+//
+
 void CFileView::OnAdd()
 {
 	CFileDialog dlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_ALLOWMULTISELECT, NULL, this);
@@ -710,7 +780,9 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_FILEVIEW_ADD:
 		if (p_Flight)
 			b = (p_Flight->AttachmentCount<AIRX_MaxAttachmentCount);
+
 		break;
+
 	default:
 		if (m_Count)
 			b = (GetSelectedFile()!=-1);

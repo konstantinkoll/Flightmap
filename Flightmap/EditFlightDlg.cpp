@@ -231,7 +231,7 @@ BOOL EditFlightDlg::InitDialog()
 	m_wndRating.SetRating((m_Flight.Flags>>FMAttributes[21].DataParameter) & 0xF);
 
 	// Attachments
-	m_wndFileView.SetData(p_Itinerary, &m_Flight);
+	m_wndFileView.SetItinerary(p_Itinerary, &m_Flight);
 
 	return Result;
 }

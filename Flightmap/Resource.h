@@ -273,7 +273,6 @@
 #define IDC_SEAT                        2826
 #define IDD_EDITFLIGHT_ATTACHMENTS      2900
 #define IDC_FILEVIEW                    2901
-#define IDC_FILESTATUS                  2902
 #define IDD_ADDROUTE                    3000
 #define IDC_ROUTE                       3001
 #define IDD_ATTACHMENTS                 3100

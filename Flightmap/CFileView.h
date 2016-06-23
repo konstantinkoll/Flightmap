@@ -10,7 +10,7 @@
 // CFileView
 //
 
-class CFileView : public CWnd
+class CFileView : public CFrontstageWnd
 {
 public:
 	CFileView();
@@ -18,24 +18,15 @@ public:
 	virtual void PreSubclassWindow();
 	virtual void AdjustLayout();
 
-	void SetData(CItinerary* pItinerary, AIRX_Flight* pFlight=NULL);
+	void SetItinerary(CItinerary* pItinerary, AIRX_Flight* pFlight=NULL);
 
 protected:
-	CItinerary* p_Itinerary;
-	AIRX_Flight* p_Flight;
-	static CIcons m_LargeIcons;
-	static CIcons m_SmallIcons;
-	CTaskbar m_wndTaskbar;
-	CExplorerList m_wndExplorerList;
-	CTooltipHeader m_wndHeader;
-	UINT m_LastSortColumn;
-	BOOL m_LastSortDirection;
-
 	void Reload();
 	AIRX_Attachment* GetAttachment(INT Index);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
@@ -57,15 +48,25 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-private:
-	UINT* m_pSortArray;
-	UINT m_Count;
+	CItinerary* p_Itinerary;
+	AIRX_Flight* p_Flight;
+	static CIcons m_LargeIcons;
+	static CIcons m_SmallIcons;
+	CTaskbar m_wndTaskbar;
+	CExplorerList m_wndExplorerList;
+	CTooltipHeader m_wndHeader;
+	UINT m_LastSortColumn;
+	BOOL m_LastSortDirection;
 
+private:
 	void Init();
 	INT Compare(INT n1, INT n2);
 	static void Swap(UINT& Eins, UINT& Zwei);
 	void Heap(INT Wurzel, INT Anzahl);
 	void Sort();
+
+	UINT* m_pSortArray;
+	UINT m_Count;
 };
 
 inline void CFileView::Swap(UINT& Eins, UINT& Zwei)
