@@ -42,7 +42,7 @@ const ResolutionPreset ResolutionPresets[] =
 	{ 8192, 4096, L"", 1 }
 };
 
-UINT MapSettingsDlg::m_LastTab = 1;
+UINT MapSettingsDlg::m_LastTab = 0;
 CIcons MapSettingsDlg::m_ResolutionPresetIcons;
 
 MapSettingsDlg::MapSettingsDlg(CWnd* pParentWnd)
@@ -65,6 +65,7 @@ void MapSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BACKGROUNDCOLOR_INDICATOR, m_wndColorIndicatorBackground);
 	DDX_Radio(pDX, IDC_BACKGROUNDCENTER_ATLANTIC, theApp.m_MapSettings.CenterPacific);
 	DDX_Check(pDX, IDC_WIDEBORDER, theApp.m_MapSettings.WideBorder);
+	DDX_Radio(pDX, IDC_SCALE_ALLOWSMALLER, theApp.m_MapSettings.ForegroundScale);
 
 	// Tab 2
 	DDX_Check(pDX, IDC_METROPOLITAN_MERGE, theApp.m_MapMergeMetro);
@@ -91,6 +92,7 @@ void MapSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_NOTES_EQUIPMENT, theApp.m_MapSettings.NoteEquipment);
 	DDX_Control(pDX, IDC_NOTECOLOR_INNER_INDICATOR, m_wndColorIndicatorNoteInner);
 	DDX_Control(pDX, IDC_NOTECOLOR_OUTER_INDICATOR, m_wndColorIndicatorNoteOuter);
+	DDX_Check(pDX, IDC_NOTES_SMALLFONT, theApp.m_MapSettings.NoteSmallFont);
 
 	if (pDX->m_bSaveAndValidate)
 	{

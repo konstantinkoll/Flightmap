@@ -132,7 +132,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 			Route.Count = 1;
 			Route.Color = Flight.Color;
 			Route.Arrows = Arrow;
-			Route.LabelS = Route.LabelZ = -1.0;
+			Route.LabelZ = Route.LabelS = -1.0f;
 			Route.DistanceNM = 0.0;
 
 			if (Flight.FlightTime)

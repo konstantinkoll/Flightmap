@@ -87,8 +87,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,90,0
- PRODUCTVERSION 2,1,90,0
+ FILEVERSION 2,1,91,0
+ PRODUCTVERSION 2,1,91,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -105,13 +105,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.90"
+            VALUE "FileVersion", "2.1.91"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.90"
+            VALUE "ProductVersion", "2.1.91"
         END
     END
     BLOCK "VarFileInfo"
@@ -667,23 +667,31 @@ BEGIN
     CONTROL         "Flugzeug&muster",IDC_NOTES_EQUIPMENT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,222,173,10
 END
 
-IDD_MAPSETTINGS_BACKGROUND DIALOGEX 0, 0, 187, 234
+IDD_MAPSETTINGS_BACKGROUND DIALOGEX 0, 0, 187, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Hintergrund"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Hintergrund",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,173,15
+    CONTROL         "Hintergrund",IDC_CATEGORY2,"CCategory",WS_GROUP,7,7,173,15
     COMBOBOX        IDC_BACKGROUND,7,25,173,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "",IDC_BACKGROUNDCOLOR_INDICATOR,"CColorIndicator",WS_GROUP,7,43,16,14
     PUSHBUTTON      "&Hintergrundfarbe auswählen...",IDC_BACKGROUNDCOLOR_CHOOSE,27,43,120,14,WS_GROUP
     CONTROL         "",IDC_BACKGROUND_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,62,173,81
-    CONTROL         "Zentrierung",IDC_CATEGORY5,"CCategory",WS_GROUP,7,151,173,15
+    CONTROL         "Zentrierung",IDC_CATEGORY3,"CCategory",WS_GROUP,7,151,173,15
     CONTROL         "&Atlantischer Ozean",IDC_BACKGROUNDCENTER_ATLANTIC,
                     "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,168,173,10
     CONTROL         "&Pazifischer Ozean",IDC_BACKGROUNDCENTER_PACIFIC,"Button",BS_AUTORADIOBUTTON,7,180,173,10
-    CONTROL         "Rand",IDC_CATEGORY6,"CCategory",WS_GROUP,7,199,173,15
+    CONTROL         "Rand",IDC_CATEGORY4,"CCategory",WS_GROUP,7,199,173,15
     CONTROL         "&Breiter Rand (z.B. für Bilderrahmen)",IDC_WIDEBORDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,216,173,10
+    CONTROL         "Skalierung von Grafik und Schrift",IDC_CATEGORY5,
+                    "CCategory",WS_GROUP,7,235,173,15
+    CONTROL         "&Verkleinern zulassen falls sinnvoll",IDC_SCALE_ALLOWSMALLER,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,253,173,10
+    CONTROL         "Immer &Standardgröße verwenden",IDC_SCALE_ALWAYSDEFAULT,
+                    "Button",BS_AUTORADIOBUTTON,7,265,173,10
+    CONTROL         "Immer &doppelte Größe verwenden",IDC_SCALE_ALWAYSDOUBLE,
+                    "Button",BS_AUTORADIOBUTTON,7,277,173,10
 END
 
 
@@ -854,7 +862,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 180
         TOPMARGIN, 7
-        BOTTOMMARGIN, 226
+        BOTTOMMARGIN, 287
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1788,22 +1796,28 @@ BEGIN
     EDITTEXT        IDC_HEIGHT,140,299,40,14,ES_AUTOHSCROLL | WS_GROUP
 END
 
-IDD_MAPSETTINGS_BACKGROUND DIALOGEX 0, 0, 187, 234
+IDD_MAPSETTINGS_BACKGROUND DIALOGEX 0, 0, 187, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Background"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Background",IDC_CATEGORY4,"CCategory",WS_GROUP,7,7,173,15
+    CONTROL         "Background",IDC_CATEGORY2,"CCategory",WS_GROUP,7,7,173,15
     COMBOBOX        IDC_BACKGROUND,7,25,173,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "",IDC_BACKGROUNDCOLOR_INDICATOR,"CColorIndicator",WS_GROUP,7,43,16,14
     PUSHBUTTON      "Choose &background color...",IDC_BACKGROUNDCOLOR_CHOOSE,27,43,120,14,WS_GROUP
     CONTROL         "",IDC_BACKGROUND_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,62,173,81
-    CONTROL         "Map center",IDC_CATEGORY5,"CCategory",WS_GROUP,7,151,173,15
+    CONTROL         "Map center",IDC_CATEGORY3,"CCategory",WS_GROUP,7,151,173,15
     CONTROL         "&Atlantic Ocean",IDC_BACKGROUNDCENTER_ATLANTIC,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,168,173,10
     CONTROL         "&Pacific Ocean",IDC_BACKGROUNDCENTER_PACIFIC,"Button",BS_AUTORADIOBUTTON,7,180,173,10
-    CONTROL         "Border",IDC_CATEGORY6,"CCategory",WS_GROUP,7,199,173,15
+    CONTROL         "Border",IDC_CATEGORY4,"CCategory",WS_GROUP,7,199,173,15
     CONTROL         "&Wide border (e.g. for picture frames)",IDC_WIDEBORDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,216,173,10
+    CONTROL         "Graphics and font scaling",IDC_CATEGORY5,"CCategory",WS_GROUP,7,235,173,15
+    CONTROL         "Allow do&wnscale when appropriate",IDC_SCALE_ALLOWSMALLER,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,253,173,10
+    CONTROL         "Always use &default size",IDC_SCALE_ALWAYSDEFAULT,
+                    "Button",BS_AUTORADIOBUTTON,7,265,173,10
+    CONTROL         "Always use d&ouble size",IDC_SCALE_ALWAYSDOUBLE,"Button",BS_AUTORADIOBUTTON,7,277,173,10
 END
 
 IDD_ATTACHMENTS DIALOGEX 0, 0, 388, 322
@@ -1978,7 +1992,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 180
         TOPMARGIN, 7
-        BOTTOMMARGIN, 226
+        BOTTOMMARGIN, 287
     END
 
     IDD_ATTACHMENTS, DIALOG

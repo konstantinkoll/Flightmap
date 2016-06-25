@@ -15,24 +15,24 @@
 
 struct FlightAirport
 {
-	FMAirport* pAirport;
-	LPVOID lpAirport;
+	FMAirport* pAirport;	// Airport
+	LPVOID lpAirport;		// Additonal data, e.g. from map factory
 };
 
 struct FlightRoute
 {
-	FMAirport* pFrom;
-	FMAirport* pTo;
-	LPVOID lpFrom;
-	LPVOID lpTo;
+	FMAirport* pFrom;		// Airport
+	FMAirport* pTo;			// Airport
+	LPVOID lpFrom;			// Additonal data, e.g. from map factory
+	LPVOID lpTo;			// Additonal data, e.g. from map factory
 	FMGeoCoordinates Waypoint;
 	COLORREF Color;
 	UINT Count;
 	BYTE Arrows;
 
 	// Annotations
-	DOUBLE LabelS;
-	DOUBLE LabelZ;
+	REAL LabelZ;
+	REAL LabelS;
 	DOUBLE DistanceNM;
 	ULONG FlightTime;
 	UINT FlightTimeCount;

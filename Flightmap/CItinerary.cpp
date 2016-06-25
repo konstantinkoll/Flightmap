@@ -267,17 +267,17 @@ void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
 {
 	if (theApp.m_UseStatuteMiles)
 	{
-		swprintf(pBuffer, cCount, L"%u mi (%u km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
+		swprintf_s(pBuffer, cCount, L"%u mi (%u km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
 	}
 	else
 	{
-		swprintf(pBuffer, cCount, L"%u nm (%u km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
+		swprintf_s(pBuffer, cCount, L"%u nm (%u km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
 	}
 }
 
 void TimeToString(WCHAR* pBuffer, SIZE_T cCount, UINT Time)
 {
-	swprintf(pBuffer, cCount, L"%02d:%02d", Time/60, Time%60);
+	swprintf_s(pBuffer, cCount, L"%02d:%02d", Time/60, Time%60);
 }
 
 void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft)
@@ -287,11 +287,11 @@ void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft)
 
 	if ((st.wHour!=0) || (st.wMinute!=0))
 	{
-		swprintf(pBuffer, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
+		swprintf_s(pBuffer, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
 	}
 	else
 	{
-		swprintf(pBuffer, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
+		swprintf_s(pBuffer, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
 	}
 }
 
@@ -333,7 +333,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 
 	case FMTypeUINT:
 		if (*((UINT*)pData))
-			swprintf(pBuffer, cCount, L"%u", *((UINT*)pData));
+			swprintf_s(pBuffer, cCount, L"%u", *((UINT*)pData));
 
 		break;
 
@@ -408,7 +408,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 
 	case FMTypeColor:
 		if (*((COLORREF*)pData)!=(COLORREF)-1)
-			swprintf(pBuffer, cCount, L"#%06X", _byteswap_ulong(*((COLORREF*)pData)) >> 8);
+			swprintf_s(pBuffer, cCount, L"#%06X", _byteswap_ulong(*((COLORREF*)pData)) >> 8);
 
 		break;
 	}

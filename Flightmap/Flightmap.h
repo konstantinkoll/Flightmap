@@ -36,6 +36,7 @@ struct MapSettings
 	COLORREF BackgroundColor;
 	BOOL CenterPacific;
 	BOOL WideBorder;
+	INT ForegroundScale;
 
 	BOOL ShowLocations;
 	COLORREF LocationsInnerColor;

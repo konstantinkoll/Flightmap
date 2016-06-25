@@ -508,7 +508,7 @@ void CMapView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 void CMapView::OnZoomIn()
 {
-	if (m_ZoomFactor<ZOOMFACTORS)
+	if (m_ZoomFactor<ZOOMFACTORS-1)
 	{
 		theApp.m_MapZoomFactor = ++m_ZoomFactor;
 

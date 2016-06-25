@@ -321,7 +321,7 @@ void StatisticsDlg::UpdateStatistics()
 	DistanceToString(tmpBuf, 256, DistanceNM);
 	GetDlgItem(IDC_TOTALDISTANCE)->SetWindowText(tmpBuf);
 
-	swprintf(tmpBuf, 256, L"%ud %02u:%02u", FlightTime/1440, (FlightTime/60)%24 ,FlightTime%60);
+	swprintf_s(tmpBuf, 256, L"%ud %02u:%02u", FlightTime/1440, (FlightTime/60)%24 ,FlightTime%60);
 	GetDlgItem(IDC_TOTALFLIGHTTIME)->SetWindowText(FlightTime ? tmpBuf : L"—");
 
 	RouteToString(tmpBuf, 256, Longest);
@@ -330,7 +330,7 @@ void StatisticsDlg::UpdateStatistics()
 	RouteToString(tmpBuf, 256, Shortest);
 	GetDlgItem(IDC_SHORTESTFLIGHT)->SetWindowText(tmpBuf);
 
-	swprintf(tmpBuf, 256, L"%lu", Spent);
+	swprintf_s(tmpBuf, 256, L"%lu", Spent);
 	GetDlgItem(IDC_TOTALMONEYSPENT)->SetWindowText(Spent ? tmpBuf : L"—");
 
 	MilesToString(tmpStr, Miles[0][0], Miles[0][1]);
