@@ -42,6 +42,7 @@ public:
 	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE) const;
 	BOOL IsSelected(UINT Index) const;
 	UINT GetCurrentRow() const;
+	void EnsureVisible();
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -50,7 +51,7 @@ protected:
 	void AdjustHeader();
 	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint Item=CPoint(-1, -1));
 	void EditFlight(CPoint Item=CPoint(-1, -1), INT SelectTab=-1);
-	void EnsureVisible(CPoint Item=CPoint(-1, -1));
+	void EnsureVisible(CPoint Item);
 	BOOL HitTest(CPoint point, CPoint* Item, INT* pSubitem=NULL);
 	void InvalidateItem(const CPoint& Item);
 	void InvalidateItem(UINT Row, UINT Attr);
@@ -148,3 +149,8 @@ private:
 	INT m_HScrollPos;
 	INT m_VScrollPos;
 };
+
+inline void CDataGrid::EnsureVisible()
+{
+	EnsureVisible(CPoint(-1, -1));
+}

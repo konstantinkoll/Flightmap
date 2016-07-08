@@ -294,7 +294,7 @@ void CFileView::OnPaint()
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
-	if (IsWindow(m_wndHeader))
+	if (m_wndExplorerList.GetView()==LV_VIEW_DETAILS)
 	{
 		const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 
@@ -315,6 +315,8 @@ void CFileView::OnPaint()
 
 			Graphics g(dc);
 			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+BACKSTAGEBORDER-1, wp.cy+TaskHeight-(INT)pDivider->GetHeight());
+
+			CTaskbar::DrawTaskbarShadow(g, CRect(0, TaskHeight, rect.right, rect.bottom));
 		}
 		else
 		{

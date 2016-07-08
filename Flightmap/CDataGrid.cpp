@@ -135,14 +135,17 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 
 void CDataGrid::SetItinerary(CItinerary* pItinerary)
 {
-	p_Itinerary = pItinerary;
+	if (p_Itinerary!=pItinerary)
+	{
+		p_Itinerary = pItinerary;
 
-	m_FocusItem.x = 0;
-	m_FocusItem.y = pItinerary->m_Metadata.CurrentRow;
-	m_SelectionAnchor = -1;
+		m_FocusItem.x = 0;
+		m_FocusItem.y = pItinerary->m_Metadata.CurrentRow;
+		m_SelectionAnchor = -1;
 
-	AdjustLayout();
-	EnsureVisible();
+		AdjustLayout();
+		EnsureVisible();
+	}
 }
 
 BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected) const
@@ -272,7 +275,6 @@ void CDataGrid::AdjustLayout()
 	m_HeaderHeight = wp.cy;
 
 	AdjustScrollbars();
-	//EnsureVisible();
 	Invalidate();
 
 	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);

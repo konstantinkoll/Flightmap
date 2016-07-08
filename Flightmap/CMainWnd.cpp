@@ -88,6 +88,17 @@ void CMainWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 void CMainWnd::UpdateWindowStatus()
 {
+	// Set window caption
+	CString Caption((LPCSTR)IDR_APPLICATION);
+	if (m_pItinerary)
+		if (!m_pItinerary->m_DisplayName.IsEmpty())
+		{
+			Caption.Insert(0, _T(" - "));
+			Caption.Insert(0, m_pItinerary->m_DisplayName);
+		}
+
+	SetWindowText(Caption);
+
 	// Handle data grid
 	if (m_pItinerary)
 	{
@@ -101,6 +112,11 @@ void CMainWnd::UpdateWindowStatus()
 			m_pDataGridWnd->Create(m_pItinerary, this, 3);
 
 			InvalidateCaption(TRUE);
+
+			// Adjust layout
+			CBackstageWnd::AdjustLayout();
+
+			m_pDataGridWnd->EnsureVisible();
 		}
 
 		m_ShowSidebar = FALSE;
@@ -114,23 +130,13 @@ void CMainWnd::UpdateWindowStatus()
 			m_pDataGridWnd = NULL;
 
 			InvalidateCaption(TRUE);
+
+			// Adjust layout
+			CBackstageWnd::AdjustLayout();
 		}
 	}
 
-	// Set window caption
-	CString Caption((LPCSTR)IDR_APPLICATION);
-	if (m_pItinerary)
-		if (!m_pItinerary->m_DisplayName.IsEmpty())
-		{
-			Caption.Insert(0, _T(" - "));
-			Caption.Insert(0, m_pItinerary->m_DisplayName);
-		}
-
-	SetWindowText(Caption);
-
-	// Adjust layout
-	CBackstageWnd::AdjustLayout();
-
+	// Set focus
 	SetFocus();
 }
 

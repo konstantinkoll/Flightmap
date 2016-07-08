@@ -40,49 +40,67 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 	m_ShowCaption = ShowCaption;
 	m_ShowExpireCaption = FMIsSharewareExpired();
 
+	// Get size of work area
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
-	rect.DeflateRect(32, 32);
 
-	if ((Size.cx<0) || (Size.cy<0))
-	{
-		rect.left = rect.right-rect.Width()/3;
-		rect.top = rect.bottom-rect.Height()/2;
-
-		rect.OffsetRect(16, 16);
-	}
-	else
-		if ((Size.cx>0) && (Size.cy>0))
-		{
-			rect.left = (rect.left+rect.right)/2-Size.cx;
-			rect.right = rect.left+Size.cx;
-
-			rect.top = (rect.top+rect.bottom)/2-Size.cy;
-			rect.bottom = rect.top+Size.cy;
-		}
-
-	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
-		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
-		return FALSE;
-
-	// Placement
+	// Window placement
 	WINDOWPLACEMENT WindowPlacement;
 	FMGetApp()->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &WindowPlacement, sizeof(WindowPlacement));
 
 	if (WindowPlacement.length==sizeof(WindowPlacement))
 	{
-		WindowPlacement.showCmd = SW_HIDE;
-
 		if ((Size.cx>0) && (Size.cy>0))
 		{
+			if (WindowPlacement.rcNormalPosition.left+Size.cx>rect.right)
+				WindowPlacement.rcNormalPosition.left = rect.right-Size.cx;
+
+			if (WindowPlacement.rcNormalPosition.top+Size.cy>rect.bottom)
+				WindowPlacement.rcNormalPosition.top = rect.bottom-Size.cy;
+
 			WindowPlacement.rcNormalPosition.right = WindowPlacement.rcNormalPosition.left+Size.cx;
 			WindowPlacement.rcNormalPosition.bottom = WindowPlacement.rcNormalPosition.top+Size.cy;
 		}
 
-		SetWindowPlacement(&WindowPlacement);
+		if (WindowPlacement.showCmd!=SW_MAXIMIZE)
+		{
+			rect.SetRect(WindowPlacement.rcNormalPosition.left, WindowPlacement.rcNormalPosition.top, WindowPlacement.rcNormalPosition.right, WindowPlacement.rcNormalPosition.bottom);
+
+			WindowPlacement.showCmd = SW_HIDE;
+		}
+	}
+	else
+	{
+		// Adjust work area
+		rect.DeflateRect(32, 32);
+
+		if ((Size.cx<0) || (Size.cy<0))
+		{
+			rect.left = rect.right-rect.Width()/3;
+			rect.top = rect.bottom-rect.Height()/2;
+
+			rect.OffsetRect(16, 16);
+		}
+		else
+			if ((Size.cx>0) && (Size.cy>0))
+			{
+				rect.left = (rect.left+rect.right)/2-Size.cx;
+				rect.right = rect.left+Size.cx;
+
+				rect.top = (rect.top+rect.bottom)/2-Size.cy;
+				rect.bottom = rect.top+Size.cy;
+			}
 	}
 
-	// Layout
+	// Create window
+	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT | WS_EX_OVERLAPPEDWINDOW, lpszClassName, lpszWindowName,
+		dwStyle | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
+		return FALSE;
+
+	if (WindowPlacement.length==sizeof(WindowPlacement))
+		SetWindowPlacement(&WindowPlacement);
+
+	// Adjust layout
 	AdjustLayout();
 
 	return TRUE;
