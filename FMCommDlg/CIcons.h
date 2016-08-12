@@ -21,25 +21,31 @@ public:
 	void Load(UINT nID, CSize Size);
 	void Load(UINT nID, INT Size);
 	INT Load(UINT nID, UINT Flags=LI_SLIGHTLYLARGER, FMFont* pFont=NULL);
+	INT LoadSmall(UINT nID);
 	void Create(const CSize& Size, UINT MaxIcons);
 	void Create(const CImageList& ImageList, UINT MaxIcons);
 	INT GetIconSize() const;
 	INT AddIcon(HICON hIcon);
 	INT AddIcon(CImageList& ImageList, INT nImage);
 	void SetGammaMode(BOOL UseDarkBackgroundGamma);
-	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot=FALSE, BOOL Shadow=FALSE);
+	void Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot=FALSE, BOOL Disabled=FALSE, BOOL Shadow=FALSE);
 	HICON ExtractIcon(INT nImage, BOOL Shadow=FALSE);
 	HIMAGELIST ExtractImageList() const;
+
+	static const INT m_IconSizes[5];
 
 protected:
 	HBITMAP hBitmapNormal;
 	HBITMAP hBitmapShadow;
 	HBITMAP hBitmapHot;
+	HBITMAP hBitmapDisabled;
 	CSize m_Size;
 
 private:
 	HBITMAP CreateCopy();
-	void Finish();
+	void CreateIconsShadow();
+	void CreateIconsHot();
+	void CreateIconsDisabled();
 
 	UINT m_IconCount;
 	UINT m_MaxIcons;

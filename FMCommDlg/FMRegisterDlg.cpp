@@ -41,7 +41,7 @@ void FMRegisterDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLay
 		{
 			static const WCHAR Bullet = 0x25BA;
 
-			dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetTextColor(Themed ? 0xC0C0C0 : GetSysColor(COLOR_WINDOWTEXT));
 			dc.DrawText(&Bullet, 1, rectText, DT_SINGLELINE | DT_LEFT);
 
 			rectText.left += m_Indent;
@@ -56,7 +56,7 @@ void FMRegisterDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLay
 	// Arrow
 	dc.SelectObject(&m_ArrowFont);
 
-	dc.SetTextColor(Themed ? 0x404040 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(Themed ? 0xC0C0C0 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(ARROW, m_ArrowRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 
 	dc.SelectObject(pOldFont);

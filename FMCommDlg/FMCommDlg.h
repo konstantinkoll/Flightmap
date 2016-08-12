@@ -11,6 +11,8 @@
 #include "CColorPicker.h"
 #include "CDesktopDimmer.h"
 #include "CExplorerList.h"
+#include "CFloatButtons.h"
+#include "CFrontstagePane.h"
 #include "CFrontstageWnd.h"
 #include "CHeaderArea.h"
 #include "CHeaderButton.h"
@@ -21,7 +23,6 @@
 #include "CTaskBar.h"
 #include "CTaskButton.h"
 #include "CTooltipHeader.h"
-#include "CWhiteButton.h"
 #include "FMDynArray.h"
 #include "FMApplication.h"
 #include "FMColorDlg.h"
@@ -122,7 +123,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 void DrawLightButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover);
 void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom=TRUE);
 void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled=FALSE, BOOL DrawBorder=FALSE);
-void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL Selected, BOOL ShowKeyboardCues=FALSE);
+void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL ShowKeyboardCues=FALSE);
 void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TRUE, BOOL Focused=FALSE, BOOL Hover=FALSE);
 
 

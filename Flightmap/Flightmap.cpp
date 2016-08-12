@@ -179,7 +179,7 @@ BOOL CFlightmapApp::InitInstance()
 		if (((m_ViewParameters.ColumnWidth[a]!=0) && ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor)) || (FMAttributes[a].Type==FMTypeFlags)) || ((m_ViewParameters.ColumnWidth[a]==0) && ((a==0) || (a==3))))
 			m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
 
-	for (UINT a=0; a<10; a++)
+	for (UINT a=0; a<20; a++)
 	{
 		CString tmpName;
 		CString tmpValue;
@@ -303,23 +303,29 @@ INT CFlightmapApp::ExitInstance()
 		UINT a;
 
 		a = 0;
-		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<10); a++)
+		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<20); )
 		{
-			tmpName.Format(_T("RecentFile%u"), a);
+			tmpName.Format(_T("RecentFile%u"), a++);
 			WriteString(tmpName, m_RecentFiles.GetNext(p));
 		}
 
-		a = 0;
-		for (POSITION p=m_RecentSearchTerms.GetHeadPosition(); p && (a<10); a++)
+		while (a<20)
 		{
-			tmpName.Format(_T("RecentSearchTerm%u"), a);
+			tmpName.Format(_T("RecentFile%u"), a++);
+			WriteString(tmpName, _T(""));
+		}
+
+		a = 0;
+		for (POSITION p=m_RecentSearchTerms.GetHeadPosition(); p && (a<20); )
+		{
+			tmpName.Format(_T("RecentSearchTerm%u"), a++);
 			WriteString(tmpName, m_RecentSearchTerms.GetNext(p));
 		}
 
 		a = 0;
-		for (POSITION p=m_RecentReplaceTerms.GetHeadPosition(); p && (a<10); a++)
+		for (POSITION p=m_RecentReplaceTerms.GetHeadPosition(); p && (a<20); )
 		{
-			tmpName.Format(_T("RecentReplaceTerm%u"), a);
+			tmpName.Format(_T("RecentReplaceTerm%u"), a++);
 			WriteString(tmpName, m_RecentReplaceTerms.GetNext(p));
 		}
 	}
@@ -344,19 +350,6 @@ void CFlightmapApp::AddStringToList(CList<CString>& List, const CString& Str)
 	}
 
 	List.AddHead(Str);
-}
-
-void CFlightmapApp::AddRecentList(CMenu* pPopup)
-{
-	if (!m_RecentFiles.IsEmpty())
-	{
-		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-
-		INT a = (INT)m_RecentFiles.GetCount()-1;
-
-		for (POSITION p=m_RecentFiles.GetTailPosition(); p; a--)
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_RECENT+a, m_RecentFiles.GetPrev(p));
-	}
 }
 
 void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)

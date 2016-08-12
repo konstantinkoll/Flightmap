@@ -118,10 +118,10 @@ void CFileView::Init()
 	m_wndTaskbar.AddButton(IDM_FILEVIEW_RENAME, 4);
 
 	// ExplorerList
-	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_EDITLABELS, CRect(0, 0, 0, 0), this, 2);
+	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_EDITLABELS | LVS_SHAREIMAGELISTS, CRect(0, 0, 0, 0), this, 2);
 
-	m_wndExplorerList.SetImageList(&FMGetApp()->m_SystemImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&FMGetApp()->m_SystemImageListLarge, LVSIL_NORMAL);
+	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListSmall, LVSIL_SMALL);
+	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
 
 	for (UINT a=0; a<4; a++)
 	{
@@ -238,7 +238,6 @@ BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
-	ON_WM_INITMENUPOPUP()
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY(LVN_GETDISPINFO, 2, OnGetDispInfo)
 	ON_NOTIFY(NM_DBLCLK, 2, OnDoubleClick)
@@ -347,25 +346,6 @@ void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
 	else
 	{
 		m_wndTaskbar.SetFocus();
-	}
-}
-
-void CFileView::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
-{
-	ASSERT(pPopupMenu);
-
-	CCmdUI state;
-	state.m_pMenu = state.m_pParentMenu = pPopupMenu;
-	state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
-
-	ASSERT(!state.m_pOther);
-	ASSERT(state.m_pMenu);
-
-	for (state.m_nIndex=0; state.m_nIndex<state.m_nIndexMax; state.m_nIndex++)
-	{
-		state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
-		if ((state.m_nID) && (state.m_nID!=(UINT)-1))
-			state.DoUpdate(this, FALSE);
 	}
 }
 
@@ -775,20 +755,20 @@ void CFileView::OnRename()
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL bEnable = FALSE;
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_FILEVIEW_ADD:
 		if (p_Flight)
-			b = (p_Flight->AttachmentCount<AIRX_MaxAttachmentCount);
+			bEnable = (p_Flight->AttachmentCount<AIRX_MaxAttachmentCount);
 
 		break;
 
 	default:
 		if (m_Count)
-			b = (GetSelectedFile()!=-1);
+			bEnable = (GetSelectedFile()!=-1);
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

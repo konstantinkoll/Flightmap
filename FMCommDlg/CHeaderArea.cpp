@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFCommDlg.h"
+#include "FMCommDlg.h"
 
 
 // CHeaderArea
@@ -23,7 +23,7 @@ BOOL CHeaderArea::Create(CWnd* pParentWnd, UINT nID, BOOL Shadow)
 {
 	m_Shadow = Shadow;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LFGetApp()->LoadStandardCursor(IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
@@ -65,9 +65,9 @@ void CHeaderArea::SetText(LPCWSTR Caption, LPCWSTR Hint, BOOL Repaint)
 
 UINT CHeaderArea::GetPreferredHeight()
 {
-	UINT Height = 2*BORDER+MARGIN+LFGetApp()->m_CaptionFont.GetFontHeight()+LFGetApp()->m_DefaultFont.GetFontHeight();
+	UINT Height = 2*BORDER+MARGIN+FMGetApp()->m_CaptionFont.GetFontHeight()+FMGetApp()->m_DefaultFont.GetFontHeight();
 
-	return max(Height, max(60, (UINT)m_Buttons.m_ItemCount*(LFGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN+MARGIN/2));
+	return max(Height, max(60, (UINT)m_Buttons.m_ItemCount*(FMGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN+MARGIN/2));
 }
 
 CHeaderButton* CHeaderArea::AddButton(UINT nID)
@@ -108,18 +108,21 @@ void CHeaderArea::AdjustLayout()
 	GetClientRect(rect);
 
 	m_RightEdge = rect.right;
-	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.m_ItemCount*(LFGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN/2)/2);
+	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.m_ItemCount*(FMGetApp()->m_DefaultFont.GetFontHeight()+8+MARGIN/2)+MARGIN/2)/2);
 
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
-		CHeaderButton* pHeaderButton = m_Buttons[a];
-
 		CSize Size;
 		INT CaptionWidth;
-		pHeaderButton->GetPreferredSize(&Size, CaptionWidth);
-		pHeaderButton->SetWindowPos(NULL, rect.right-Size.cx-BORDER+6, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+		m_Buttons[a]->GetPreferredSize(&Size, CaptionWidth);
 
-		m_RightEdge = min(m_RightEdge, rect.right-Size.cx-(INT)CaptionWidth-2*BORDER-MARGIN+6);
+		INT RightEdge = rect.right-Size.cx-BORDER+6;
+		m_Buttons[a]->SetWindowPos(NULL, RightEdge, Row, Size.cx, Size.cy, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+
+		if (CaptionWidth)
+			RightEdge -= CaptionWidth+MARGIN;
+
+		m_RightEdge = min(m_RightEdge, RightEdge-BORDER);
 
 		Row += Size.cy+MARGIN/2;
 	}
@@ -138,6 +141,7 @@ BEGIN_MESSAGE_MAP(CHeaderArea, CFrontstageWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONUP()
 	ON_WM_SIZE()
+	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 END_MESSAGE_MAP()
 
@@ -189,7 +193,7 @@ void CHeaderArea::OnPaint()
 		{
 			dc.FillSolidRect(rect, 0xFFFFFF);
 
-			Bitmap* pDivider = LFGetApp()->GetCachedResourceImage(IDB_DIVUP);
+			Bitmap* pDivider = FMGetApp()->GetCachedResourceImage(IDB_DIVUP);
 			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2, rect.Height()-(INT)pDivider->GetHeight());
 
 			if (m_Shadow)
@@ -212,7 +216,7 @@ void CHeaderArea::OnPaint()
 			dc.FillSolidRect(rectFill, GetSysColor(COLOR_3DFACE));
 		}
 
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+		CFont* pOldFont = dc.SelectObject(&FMGetApp()->m_DefaultFont);
 
 		dc.SetTextColor(Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT));
 
@@ -228,8 +232,11 @@ void CHeaderArea::OnPaint()
 			INT CaptionWidth;
 			pHeaderButton->GetCaption(Caption, CaptionWidth);
 
-			CRect rectCaption(rect.left-CaptionWidth-MARGIN, rect.top, rect.left, rect.bottom);
-			dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			if (CaptionWidth)
+			{
+				CRect rectCaption(rect.left-CaptionWidth-MARGIN, rect.top, rect.left, rect.bottom);
+				dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			}
 		}
 
 		if (m_RightEdge-BORDER>=32)
@@ -239,7 +246,7 @@ void CHeaderArea::OnPaint()
 			CRect rectText(BORDER, rect.bottom-dc.GetTextExtent(m_Hint).cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
 			dc.DrawText(m_Hint, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-			dc.SelectObject(&LFGetApp()->m_CaptionFont);
+			dc.SelectObject(&FMGetApp()->m_CaptionFont);
 			rectText.top = BORDER;
 			dc.DrawText(m_Caption, rectText, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
@@ -298,7 +305,29 @@ void CHeaderArea::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFrontstageWnd::OnSize(nType, cx, cy);
 
+	OnIdleUpdateCmdUI();
 	AdjustLayout();
+}
+
+void CHeaderArea::OnIdleUpdateCmdUI()
+{
+	BOOL Update = FALSE;
+
+	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
+	{
+		CHeaderButton* pHeaderButton = m_Buttons[a];
+		BOOL Enabled = pHeaderButton->IsWindowEnabled();
+
+		CCmdUI cmdUI;
+		cmdUI.m_nID = pHeaderButton->GetDlgCtrlID();
+		cmdUI.m_pOther = pHeaderButton;
+		cmdUI.DoUpdate(GetOwner(), TRUE);
+
+		Update |= (pHeaderButton->IsWindowEnabled()!=Enabled);
+	}
+
+	if (Update)
+		AdjustLayout();
 }
 
 void CHeaderArea::OnAdjustLayout()

@@ -387,7 +387,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFloatButtons.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrontstagePane.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFrontstageWnd.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderButton.cpp"
 				>
 			</File>
 			<File
@@ -420,10 +436,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CWhiteButton.cpp"
 				>
 			</File>
 			<File
@@ -577,7 +589,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFloatButtons.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrontstagePane.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFrontstageWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderArea.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderButton.h"
 				>
 			</File>
 			<File
@@ -610,10 +638,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CWhiteButton.h"
 				>
 			</File>
 			<File

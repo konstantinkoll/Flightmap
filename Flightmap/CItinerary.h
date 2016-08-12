@@ -187,13 +187,13 @@ class CGPXFile : public xml_document<>
 class CItinerary
 {
 public:
-	CItinerary(const CString& FileName=_T(""));
+	CItinerary(const CString& Filename=_T(""));
 	CItinerary(CItinerary* pItinerary);
 	~CItinerary();
 
 	void NewSampleAtlantic();
 	void NewSamplePacific();
-	void SaveAIRX(CString FileName);
+	void SaveAIRX(CString Filename);
 
 	static CString Flight2Text(AIRX_Flight& Flight);
 	CString Flight2Text(UINT Index);
@@ -208,7 +208,7 @@ public:
 	void DeleteFlight(UINT Row);
 	void DeleteSelectedFlights();
 
-	BOOL AddAttachment(AIRX_Flight& Flight, CString FileName);
+	BOOL AddAttachment(AIRX_Flight& Flight, CString Filename);
 	UINT AddAttachment(CItinerary* pItinerary, UINT Index);
 	Bitmap* DecodePictureAttachment(UINT Index) const;
 	static Bitmap* DecodePictureAttachment(const AIRX_Attachment& Attachment);
@@ -227,14 +227,14 @@ public:
 
 private:
 	static void Swap(AIRX_Flight& Eins, AIRX_Flight& Zwei);
-	void OpenAIRX(const CString& FileName);
-	void OpenAIR(const CString& FileName);
-	void OpenCSV(const CString& FileName);
+	void OpenAIRX(const CString& Filename);
+	void OpenAIR(const CString& Filename);
+	void OpenCSV(const CString& Filename);
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	static INT Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending);
 	void Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending);
 	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
-	void SetDisplayName(const CString& FileName);
+	void SetDisplayName(const CString& Filename);
 	static void RemoveAttachment(UINT Index, AIRX_Flight* pFlight);
 	static void FreeAttachment(AIRX_Attachment& Attachment);
 

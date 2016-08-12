@@ -29,6 +29,7 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	hAccelerator = NULL;
 	m_pSidebarWnd = NULL;
 	m_ShowExpireCaption = m_ShowSidebar = m_SidebarAlwaysVisible = FALSE;
+	m_ForceSidebarAlwaysVisible = IsDialog;
 	m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
 	hBackgroundBrush = NULL;
 	m_pTaskbarList3 = NULL;
@@ -174,6 +175,7 @@ BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 
+	// Accelerators
 	if (hAccelerator)
 		if ((pMsg->message>=WM_KEYFIRST) && (pMsg->message<=WM_KEYLAST))
 			if (TranslateAccelerator(m_hWnd, hAccelerator, pMsg))
@@ -272,7 +274,7 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 
 	if (m_pSidebarWnd)
 	{
-		if ((m_SidebarAlwaysVisible=(m_IsDialog || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
+		if ((m_SidebarAlwaysVisible=(m_ForceSidebarAlwaysVisible || (m_pSidebarWnd->GetPreferredWidth()<=rectClient.Width()/5)))==TRUE)
 			m_ShowSidebar = FALSE;
 
 		const BOOL HasDocumentSheet = GetLayoutRect(rectLayout);
@@ -883,19 +885,13 @@ LRESULT CBackstageWnd::OnNcHitTest(CPoint point)
 
 		HitTest = HTCLIENT;
 		if (GetAsyncKeyState(VK_LBUTTON))
-			if (m_IsDialog)
-			{
-				CRect rectLayout;
-				GetLayoutRect(rectLayout);
-				ClientToScreen(rectLayout);
+		{
+			ScreenToClient(&point);
 
-				if ((point.x<rectLayout.left) || (point.y<rectLayout.top))
-					HitTest = HTCAPTION;
-			}
-			else
-			{
+			CRect rectLayout;
+			if (!GetLayoutRect(rectLayout) || (point.x<rectLayout.left) || (point.y<rectLayout.top))
 				HitTest = HTCAPTION;
-			}
+		}
 	}
 
 	return HitTest;
@@ -1109,6 +1105,12 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
+	// Do not show context menu on document sheet
+	CRect rectLayout;
+	if (GetLayoutRect(rectLayout))
+		if ((point.x>=rectLayout.left) && (point.y>=rectLayout.top))
+			return;
+
 	ClientToScreen(&point);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);

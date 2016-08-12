@@ -6,6 +6,7 @@
 #include "CItinerary.h"
 #include "Flightmap.h"
 #include <math.h>
+#include <winioctl.h>
 
 
 void ResetFlight(AIRX_Flight& Flight)
@@ -252,6 +253,27 @@ CString ExportLocation(AIRX_Flight& Flight, UINT AttrBase)
 	}
 
 	return tmpStr+_T("\n");
+}
+
+void CompressFile(HANDLE hFile, WCHAR cDrive, BOOL bCompress)
+{
+	BY_HANDLE_FILE_INFORMATION FileInformation;
+	if (GetFileInformationByHandle(hFile, &FileInformation))
+		if ((FileInformation.dwFileAttributes & FILE_ATTRIBUTE_ENCRYPTED)==0)
+		{
+			WCHAR Root[4] = L" :\\";
+			Root[0] = cDrive;
+
+			DWORD Flags;
+			if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
+				if (Flags & FS_FILE_COMPRESSION)
+				{
+					USHORT Mode = bCompress ? COMPRESSION_FORMAT_LZNT1 : COMPRESSION_FORMAT_NONE;
+					DWORD Returned;
+
+					DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
+				}
+		}
 }
 
 
@@ -762,7 +784,7 @@ BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
 
 #define AttachmentEndBuffer     1
 
-CItinerary::CItinerary(const CString& FileName)
+CItinerary::CItinerary(const CString& Filename)
 {
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
 
@@ -788,25 +810,21 @@ CItinerary::CItinerary(const CString& FileName)
 	}
 
 	// File
-	if (!FileName.IsEmpty())
+	if (!Filename.IsEmpty())
 	{
-		CString Ext = FileName;
+		CString Ext = Filename;
+		Ext.Delete(0, Ext.ReverseFind(L'\\')+1);
+		Ext.Delete(0, Ext.ReverseFind(L'.')+1);
 		Ext.MakeLower();
 
-		INT Pos = Ext.ReverseFind(L'\\');
-		if (Pos!=-1)
-			Ext.Delete(0, Pos+1);
-
-		Pos = Ext.ReverseFind(L'.');
-		if (Pos!=-1)
-			Ext.Delete(0, Pos+1);
-
 		if (Ext==_T("airx"))
-			OpenAIRX(FileName);
+			OpenAIRX(Filename);
+
 		if (Ext==_T("air"))
-			OpenAIR(FileName);
+			OpenAIR(Filename);
+
 		if (Ext==_T("csv"))
-			OpenCSV(FileName);
+			OpenCSV(Filename);
 	}
 }
 
@@ -877,19 +895,19 @@ void CItinerary::NewSamplePacific()
 	AddFlight("DFW", "YVR", L"American Airlines", L"Boeing 737", "AA 887", AIRX_Economy, "22B", "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 23, 18, 25));
 }
 
-void CItinerary::OpenAIRX(const CString& FileName)
+void CItinerary::OpenAIRX(const CString& Filename)
 {
 	ASSERT(!m_IsOpen);
 
 	LPVOID pData = NULL;
 
 	CFile f;
-	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
+	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
 	{
-		m_FileName = FileName;
-		SetDisplayName(FileName);
-		theApp.AddToRecentFiles(FileName);
-		SHAddToRecentDocs(SHARD_PATHW, FileName);
+		m_FileName = Filename;
+		SetDisplayName(Filename);
+		theApp.AddToRecentFiles(Filename);
+		SHAddToRecentDocs(SHARD_PATHW, Filename);
 
 		SYSTEMTIME st;
 		GetLocalTime(&st);
@@ -972,16 +990,16 @@ void CItinerary::OpenAIRX(const CString& FileName)
 		free(pData);
 }
 
-void CItinerary::OpenAIR(const CString& FileName)
+void CItinerary::OpenAIR(const CString& Filename)
 {
 	ASSERT(!m_IsOpen);
 
 	CFile f;
-	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
+	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
 	{
-		SetDisplayName(FileName);
-		theApp.AddToRecentFiles(FileName);
-		SHAddToRecentDocs(SHARD_PATHW, FileName);
+		SetDisplayName(Filename);
+		theApp.AddToRecentFiles(Filename);
+		SHAddToRecentDocs(SHARD_PATHW, Filename);
 
 		SYSTEMTIME st;
 		GetLocalTime(&st);
@@ -1050,16 +1068,16 @@ void CItinerary::OpenAIR(const CString& FileName)
 	}
 }
 
-void CItinerary::OpenCSV(const CString& FileName)
+void CItinerary::OpenCSV(const CString& Filename)
 {
 	ASSERT(!m_IsOpen);
 
 	CStdioFile f;
-	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
+	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
 	{
-		SetDisplayName(FileName);
-		theApp.AddToRecentFiles(FileName);
-		SHAddToRecentDocs(SHARD_PATHW, FileName);
+		SetDisplayName(Filename);
+		theApp.AddToRecentFiles(Filename);
+		SHAddToRecentDocs(SHARD_PATHW, Filename);
 
 		SYSTEMTIME st;
 		GetLocalTime(&st);
@@ -1234,15 +1252,37 @@ void CItinerary::OpenCSV(const CString& FileName)
 	}
 }
 
-void CItinerary::SaveAIRX(CString FileName)
+void CItinerary::SaveAIRX(CString Filename)
 {
 	CFile f;
-	if (f.Open(FileName, CFile::modeCreate | CFile::modeWrite | CFile::osSequentialScan))
+	if (f.Open(Filename, CFile::modeCreate | CFile::modeReadWrite | CFile::osSequentialScan))
 	{
-		m_FileName = FileName;
-		SetDisplayName(FileName);
-		theApp.AddToRecentFiles(FileName);
-		SHAddToRecentDocs(SHARD_PATHW, FileName);
+		// Compression
+		BOOL bCompress = TRUE;
+		for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
+		{
+			CString Ext(m_Attachments[a].Name);
+			INT Pos = Ext.ReverseFind(L'.');
+			if (Pos!=-1)
+			{
+				Ext = Ext.Mid(Pos+1).MakeLower();
+
+				if ((Ext==_T("7z")) || (Ext==_T("avi")) || (Ext==_T("jpeg")) || (Ext==_T("jpg")) || (Ext==_T("mkv")) || (Ext==_T("mov")) || 
+					(Ext==_T("mp3")) || (Ext==_T("mp4")) || (Ext==_T("mpg")) || (Ext==_T("png")) || (Ext==_T("zip")))
+				{
+					bCompress = FALSE;
+					break;
+				}
+			}
+		}
+
+		CompressFile(f.m_hFile, Filename[0], bCompress);
+
+		// Write file
+		m_FileName = Filename;
+		SetDisplayName(Filename);
+		theApp.AddToRecentFiles(Filename);
+		SHAddToRecentDocs(SHARD_PATHW, Filename);
 
 		try
 		{
@@ -1583,14 +1623,14 @@ void CItinerary::DeleteSelectedFlights()
 	}
 }
 
-void CItinerary::SetDisplayName(const CString& FileName)
+void CItinerary::SetDisplayName(const CString& Filename)
 {
-	const WCHAR* pChar = wcsrchr(FileName, L'\\');
+	const WCHAR* pChar = wcsrchr(Filename, L'\\');
 
-	m_DisplayName = pChar ? pChar+1 : FileName;
+	m_DisplayName = pChar ? pChar+1 : Filename;
 }
 
-BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString FileName)
+BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 {
 	if (Flight.AttachmentCount>=AIRX_MaxAttachmentCount)
 	{
@@ -1600,7 +1640,7 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString FileName)
 
 	// FindFirst
 	WIN32_FIND_DATA ffd;
-	HANDLE hFind = FindFirstFile(FileName, &ffd);
+	HANDLE hFind = FindFirstFile(Filename, &ffd);
 
 	if (hFind==INVALID_HANDLE_VALUE)
 		return FALSE;
@@ -1608,8 +1648,7 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString FileName)
 	AIRX_Attachment Attachment;
 	ZeroMemory(&Attachment, sizeof(Attachment));
 
-	INT Pos = FileName.ReverseFind(L'\\');
-	wcscpy_s(Attachment.Name, MAX_PATH, FileName.Mid(Pos==-1 ? 0 : Pos+1));
+	wcscpy_s(Attachment.Name, MAX_PATH, Filename.Mid(Filename.ReverseFind(L'\\')+1));
 	Attachment.Size = (((INT64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
 	Attachment.Created = ffd.ftCreationTime;
 	Attachment.Modified = ffd.ftLastWriteTime;
@@ -1631,7 +1670,7 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString FileName)
 
 	// Read file
 	CFile f;
-	if (f.Open(FileName, CFile::modeRead | CFile::osSequentialScan))
+	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
 	{
 		try
 		{

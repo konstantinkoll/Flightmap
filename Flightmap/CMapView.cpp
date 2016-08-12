@@ -33,7 +33,7 @@ BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CMapView::DeleteScaledBitmap()
@@ -351,13 +351,9 @@ void CMapView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		Invalidate();
+		SetScrollPos(SB_VERT, m_VScrollPos);
 
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
-		SetScrollInfo(SB_VERT, &si);
+		Invalidate();
 	}
 
 	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -403,12 +399,7 @@ void CMapView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_HScrollPos += nInc;
 		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
-
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_POS;
-		si.nPos = m_HScrollPos;
-		SetScrollInfo(SB_HORZ, &si);
+		SetScrollPos(SB_HORZ, m_HScrollPos);
 	}
 
 	CFrontstageWnd::OnHScroll(nSBCode, nPos, pScrollBar);
@@ -528,18 +519,18 @@ void CMapView::OnZoomOut()
 
 void CMapView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_BitmapOriginal!=NULL);
+	BOOL bEnable = (p_BitmapOriginal!=NULL);
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_MAPWND_ZOOMIN:
-		b &= (m_ZoomFactor<ZOOMFACTORS);
+		bEnable &= (m_ZoomFactor<ZOOMFACTORS);
 		break;
 
 	case IDM_MAPWND_ZOOMOUT:
-		b &= (m_ZoomFactor>0);
+		bEnable &= (m_ZoomFactor>0);
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

@@ -33,6 +33,11 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 IDB_RESOLUTIONPRESETICONS_16 RCDATA                  "res\\ResolutionPresets_16.png"
 IDB_RESOLUTIONPRESETICONS_24 RCDATA                  "res\\ResolutionPresets_24.png"
 IDB_RESOLUTIONPRESETICONS_32 RCDATA                  "res\\ResolutionPresets_32.png"
+IDB_FILEMENU_16         RCDATA                  "res\\FileMenu_16.png"
+IDB_FILEMENU_24         RCDATA                  "res\\FileMenu_24.png"
+IDB_FILEMENU_32         RCDATA                  "res\\FileMenu_32.png"
+IDB_FILEMENU_48         RCDATA                  "res\\FileMenu_48.png"
+IDB_FILEMENU_64         RCDATA                  "res\\FileMenu_64.png"
 IDB_SIDEBAR_16          RCDATA                  "res\\Sidebar_16.png"
 IDB_SIDEBAR_24          RCDATA                  "res\\Sidebar_24.png"
 IDB_SIDEBAR_32          RCDATA                  "res\\Sidebar_32.png"
@@ -63,9 +68,6 @@ IDB_FLAGS_24            RCDATA                  "res\\Flags_24.png"
 IDB_FLAGS_32            RCDATA                  "res\\Flags_32.png"
 IDB_FLAGS_48            RCDATA                  "res\\Flags_48.png"
 IDB_FLAGS_64            RCDATA                  "res\\Flags_64.png"
-IDB_FLAGS_16i           RCDATA                  "res\\Flags_16i.png"
-IDB_FLAGS_24i           RCDATA                  "res\\Flags_24i.png"
-IDB_FLAGS_32i           RCDATA                  "res\\Flags_32i.png"
 IDB_METROPOLITAN_DISTINCT RCDATA                  "res\\MetropolitanDistinct.png"
 IDB_METROPOLITAN_MERGED RCDATA                  "res\\MetropolitanMerged.png"
 IDB_SEATICONS           RCDATA                  "res\\SeatIcons.png"
@@ -87,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,91,0
- PRODUCTVERSION 2,1,91,0
+ FILEVERSION 2,2,0,0
+ PRODUCTVERSION 2,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -105,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.1.91"
+            VALUE "FileVersion", "2.2.0"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.1.91"
+            VALUE "ProductVersion", "2.2.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -515,22 +517,6 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,207,254,50,14,WS_GROUP
 END
 
-IDD_INSPECT DIALOGEX 0, 0, 364, 106
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Flugplan prüfen"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Metadaten",IDC_STATIC,7,7,350,34
-    LTEXT           "X\nX",IDC_METADATA_STATUS,14,18,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Bearbeiten...",IDC_METADATA_SHOW,224,18,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "&Entfernen",IDC_METADATA_DELETE,290,18,60,14,WS_DISABLED | WS_GROUP
-    GROUPBOX        "Angehängte Dateien",IDC_STATIC,7,45,350,34
-    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,56,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Anzeigen...",IDC_ATTACHMENTS_SHOW,224,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "Alle &löschen",IDC_ATTACHMENTS_DELETE,290,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "Schließen",IDOK,307,85,50,14,WS_GROUP
-END
-
 IDD_PROPERTIES DIALOGEX 0, 0, 351, 145
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eigenschaften von %s"
@@ -801,14 +787,6 @@ BEGIN
         BOTTOMMARGIN, 268
     END
 
-    IDD_INSPECT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 357
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-
     IDD_PROPERTIES, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -872,6 +850,16 @@ END
 //
 // Menu
 //
+
+IDM_FILE_RECENTPANE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Ö&ffnen",                     IDM_FILE_RECENTPANE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "Aus Liste &entfernen",        IDM_FILE_RECENTPANE_REMOVE
+    END
+END
 
 IDM_DATAGRID MENU 
 BEGIN
@@ -1057,20 +1045,10 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
     IDS_FILESTATUS_SINGULAR "%u Datei (%s)"
     IDS_FILESTATUS_PLURAL   "%u Dateien (%s)"
-    IDS_INSPECT_METADATA_NONE 
-                            "Der Flugplan enthält keine versteckten Metadaten."
-    IDS_INSPECT_METADATA_PRESENT 
-                            "Der Flugplan enthält versteckte Metadaten wie Autor oder Titel, die persönliche Informationen preisgeben könnten."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_INSPECT_ATTACHMENTS_NONE 
-                            "Der Flugplan enthält keine angehängten Dateien."
-    IDS_INSPECT_ATTACHMENTS_SINGULAR 
-                            "Der Flugplan enthält %u angehängte Datei, die einen Speicherplatz von %s belegt."
-    IDS_INSPECT_ATTACHMENTS_PLURAL 
-                            "Der Flugplan enthält %u angehängte Dateien, die einen Speicherplatz von %s belegen."
     IDS_DELETE_CAPTION      "Löschen"
     IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
     IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
@@ -1118,6 +1096,25 @@ BEGIN
     IDS_MAPSETTINGS         "Karten-Einstellungen"
     IDS_COLUMN_RESOLUTION   "Auflösung"
     IDS_COLUMN_APPLICATION  "Einsatzgebiet"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILEMENU_NEW        "Neu"
+    IDS_FILEMENU_TEMPLATES  "Verfügbare Vorlagen:"
+    IDS_FILEMENU_OPEN       "Öffnen"
+    IDS_FILEMENU_SAVE       "Speichern und Konvertieren"
+    IDS_FILEMENU_SAVEAS     "Unter anderem Namen speichern:"
+    IDS_FILEMENU_CONVERT    "In ein anderes Format konvertieren:"
+    IDS_FILEMENU_OTHERFORMATS "Weitere Formate:"
+    IDS_FILEMENU_PRINT      "Drucken"
+    IDS_FILEMENU_DEFAULTPRINTER "Standarddrucker:"
+    IDS_FILEMENU_PREPARE    "Für die Freigabe vorbereiten"
+    IDS_FILEMENU_METADATA   "Diese Datei enthält Folgendes:"
+    IDS_FILEMENU_AUTHOR     "Autor"
+    IDS_FILEMENU_COMMENTS   "Kommentar"
+    IDS_FILEMENU_KEYWORDS   "Schlüsselworte"
+    IDS_FILEMENU_TITLE      "Titel"
 END
 
 STRINGTABLE 
@@ -1172,37 +1169,31 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE                "&Datei"
-    IDM_FILE_NEW            "&Neu"
-    IDM_FILE_NEWSAMPLE1     "Öffnet einen Beispiel-Flugplan\nmit Atlantik-Überquerung.\n&Atlantik-Überquerung"
-    IDM_FILE_NEWSAMPLE2     "Öffnet einen Beispiel-Flugplan\nmit Pazifik-Überquerung.\n&Pazifik-Überquerung"
-    IDM_FILE_OPEN           "Ö&ffnen"
-    IDM_FILE_SAVE           "&Speichern"
-    IDM_FILE_SAVEAS         "Speichern &unter"
-    IDM_FILE_SAVEAS_AIRX    "Speichert den Flugplan als Flightmap-Datei.\n&Flugplan"
-    IDM_FILE_SAVEAS_ICS     "Speichert eine Kopie des Flugplans für\nMicrosoft Outlook und viele andere Programme.\n&Kalendar-Eintrag"
-    IDM_FILE_SAVEAS_CSV     "Speichert eine Kopie des Flugplans für\nMicrosoft Excel und viele andere Programme.\nComma Separated &Values"
-    IDM_FILE_SAVEAS_TXT     "Speichert eine Kopie des Flugplans\nals unformatierte Textdatei.\n&Textdokument"
-    IDM_FILE_SAVEAS_OTHER   "Das Dialogfeld „Speichern unter“ öffnen, um aus den\nmöglichen Dateitypen eine Auswahl zu treffen.\n&Andere Formate"
+    IDM_FILE_PROPERTIES     "Dateieigenschaften wie Titel, Autor und Schlüsselwörter anzeigen und bearbeiten.\nEigenschaften"
+    IDM_FILE_VIEWINFOLDER   "Öffnet den Ordner mit dem Flugplan im Explorer.\nIm Ordner anzeigen"
+    IDM_FILE_PRINT          "Einen Drucker, die Anzahl von Exemplaren und weitere Druckoptionen vor dem Drucken auswählen.\nDrucken"
+    IDM_FILE_PRINTQUICK     "Den Flugplan direkt an den Standarddrucker senden, ohne weitere Änderungen vorzunehmen.\nSchnelldruck"
+    IDM_FILE_ATTACHMENTS 
+                            "Angehängte Dateien anzeigen und bearbeiten.\nAnhänge"
+    IDM_FILE_NEW            "Erzeugt einen leeren Flugplan.\nNeu"
+    IDM_FILE_NEWSAMPLE1     "Öffnet einen Beispiel-Flugplan mit Atlantik-Überquerung.\nAtlantik-Überquerung"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_PRINT          "Einen Drucker, die Anzahl von Exemplaren und weitere\nDruckoptionen vor dem Drucken auswählen.\n&Drucken"
-    IDM_FILE_PRINT_QUICK    "Den Flugplan direkt an den Standarddrucker senden,\nohne weitere Änderungen vorzunehmen.\nSchnelld&ruck"
-    IDM_FILE_PREPARE        "Vorberei&ten"
-    IDM_FILE_PREPARE_PROPERTIES 
-                            "Dateieigenschaften wie Titel, Autor und\nSchlüsselwörter anzeigen und bearbeiten.\n&Eigenschaften"
-    IDM_FILE_PREPARE_INSPECT 
-                            "Den Flugplan auf ausgeblendete Metadaten\noder persönliche Informationen prüfen.\nFlugplan &prüfen"
-    IDM_FILE_PREPARE_ATTACHMENTS 
-                            "Angehängte Dateien anzeigen\nund bearbeiten.\nAn&hänge"
-    IDM_FILE_CLOSE          "S&chließen"
+    IDM_FILE_NEWSAMPLE2     "Öffnet einen Beispiel-Flugplan mit Pazifik-Überquerung.\nPazifik-Überquerung"
+    IDM_FILE_OPEN           "Öffnet einen bereits vorhandenen Flugplan.\nÖffnen"
+    IDM_FILE_SAVE           "Speichert den Flugplan ab.\nSpeichern"
+    IDM_FILE_SAVEAS         "Speichert den Flugplan als neue Flightmap-Datei.\nSpeichern unter"
+    IDM_FILE_SAVEAS_CSV     "Speichert eine Kopie des Flugplans für Microsoft Excel und viele andere Programme.\nComma Separated Values"
+    IDM_FILE_SAVEAS_TXT     "Speichert eine Kopie des Flugplans als unformatierte Textdatei.\nTextdokument"
+    IDM_FILE_SAVEAS_OTHER   "Das Dialogfeld „Speichern unter“ öffnen, um aus den möglichen Dateitypen eine Auswahl zu treffen.\nAndere Formate"
+    IDM_FILE_CLOSE          "Schließt den aktuellen Flugplan.\nSchließen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_SIDEBAR_ITINERARY   "Zeigt Dateibefehle wie „Öffnen“, „Speichern“ oder „Drucken“ an.\nFlugplan"
+    IDM_SIDEBAR_FILEMENU    "Zeigt Dateibefehle wie „Öffnen“, „Speichern“ oder „Drucken“ an.\nDatei"
     IDM_SIDEBAR_MAP_OPEN    "Erstellt eine Karte aus dem Flugplan bzw. den markierten Flügen.\nKarte erstellen"
     IDM_SIDEBAR_MAP_SETTINGS 
                             "Zeigt die Einstellungen für Karten an.\nEinstellungen"
@@ -1630,22 +1621,6 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,207,254,50,14,WS_GROUP
 END
 
-IDD_INSPECT DIALOGEX 0, 0, 364, 106
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspect itinerary"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Metadata",IDC_STATIC,7,7,350,34
-    LTEXT           "X\nX",IDC_METADATA_STATUS,14,18,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Edit...",IDC_METADATA_SHOW,224,18,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "&Remove",IDC_METADATA_DELETE,290,18,60,14,WS_DISABLED | WS_GROUP
-    GROUPBOX        "Attached files",IDC_STATIC,7,45,350,34
-    LTEXT           "X\nX",IDC_ATTACHMENTS_STATUS,14,56,200,16,SS_NOPREFIX
-    DEFPUSHBUTTON   "&Show...",IDC_ATTACHMENTS_SHOW,224,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "&Delete all",IDC_ATTACHMENTS_DELETE,290,56,60,14,WS_DISABLED | WS_GROUP
-    DEFPUSHBUTTON   "Close",IDOK,307,85,50,14,WS_GROUP
-END
-
 IDD_PROPERTIES DIALOGEX 0, 0, 351, 145
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Properties of %s"
@@ -1923,14 +1898,6 @@ BEGIN
         BOTTOMMARGIN, 268
     END
 
-    IDD_INSPECT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 357
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-
     IDD_PROPERTIES, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2008,34 +1975,13 @@ END
 // Menu
 //
 
-IDM_FILE MENU 
+IDM_FILE_RECENTPANE MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&New",                        IDM_FILE_NEW
-        MENUITEM "&Open...",                    IDM_FILE_OPEN
-        POPUP "Samples and recent files"
-        BEGIN
-            MENUITEM "&Atlantic crossing",          IDM_FILE_NEWSAMPLE1
-            MENUITEM "&Pacific crossing",           IDM_FILE_NEWSAMPLE2
-        END
+        MENUITEM "&Open",                       IDM_FILE_RECENTPANE_OPEN
         MENUITEM SEPARATOR
-        MENUITEM "&Save",                       IDM_FILE_SAVE
-        MENUITEM "&Save as...",                 IDM_FILE_SAVEAS
-        MENUITEM SEPARATOR
-        POPUP "Print"
-        BEGIN
-            MENUITEM "&Print...",                   IDM_FILE_PRINT
-            MENUITEM "&Quick print",                IDM_FILE_PRINT_QUICK
-        END
-        POPUP "Prepare"
-        BEGIN
-            MENUITEM "&Properties...",              IDM_FILE_PREPARE_PROPERTIES
-            MENUITEM "&Inspect...",                 IDM_FILE_PREPARE_INSPECT
-            MENUITEM "&Attachments...",             IDM_FILE_PREPARE_ATTACHMENTS
-        END
-        MENUITEM SEPARATOR
-        MENUITEM "&Close",                      IDM_FILE_CLOSE
+        MENUITEM "&Remove from list",           IDM_FILE_RECENTPANE_REMOVE
     END
 END
 
@@ -2223,18 +2169,10 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "The maximum number of attached files is 16 per flight!"
     IDS_FILESTATUS_SINGULAR "%u file (%s)"
     IDS_FILESTATUS_PLURAL   "%u files (%s)"
-    IDS_INSPECT_METADATA_NONE "The itinerary contains no hidden metadata."
-    IDS_INSPECT_METADATA_PRESENT 
-                            "The itinerary contains hidden metadata like author or title that could reveal personal information."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_INSPECT_ATTACHMENTS_NONE "The itinerary contains no attached files."
-    IDS_INSPECT_ATTACHMENTS_SINGULAR 
-                            "The itinerary contains %u file which occupies %s of memory."
-    IDS_INSPECT_ATTACHMENTS_PLURAL 
-                            "The itinerary contains %u files which occupy %s of memory."
     IDS_DELETE_CAPTION      "Delete"
     IDS_DELETE_FILE         "Are you sure you want to delete the file?"
     IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
@@ -2281,6 +2219,25 @@ BEGIN
     IDS_MAPSETTINGS         "Map settings"
     IDS_COLUMN_RESOLUTION   "Resolution"
     IDS_COLUMN_APPLICATION  "Application"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILEMENU_NEW        "New"
+    IDS_FILEMENU_TEMPLATES  "Available templates:"
+    IDS_FILEMENU_OPEN       "Open"
+    IDS_FILEMENU_SAVE       "Save and Convert"
+    IDS_FILEMENU_SAVEAS     "Save with a new name:"
+    IDS_FILEMENU_CONVERT    "Convert to a different format:"
+    IDS_FILEMENU_OTHERFORMATS "Other formats:"
+    IDS_FILEMENU_PRINT      "Print"
+    IDS_FILEMENU_DEFAULTPRINTER "Default printer:"
+    IDS_FILEMENU_PREPARE    "Prepare for Distribution"
+    IDS_FILEMENU_METADATA   "Before distributing this file, beware that it contains:"
+    IDS_FILEMENU_AUTHOR     "Author"
+    IDS_FILEMENU_COMMENTS   "Comments"
+    IDS_FILEMENU_KEYWORDS   "Keywords"
+    IDS_FILEMENU_TITLE      "Title"
 END
 
 STRINGTABLE 
@@ -2335,37 +2292,31 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE                "&File"
-    IDM_FILE_NEW            "&New"
-    IDM_FILE_NEWSAMPLE1     "Open a sample itinerary\ncrossing the Atlantic Ocean.\n&Atlantic crossing"
-    IDM_FILE_NEWSAMPLE2     "Open a sample itinerary\ncrossing the Pacific Ocean.\n&Pacific crossing"
-    IDM_FILE_OPEN           "&Open"
-    IDM_FILE_SAVE           "&Save"
-    IDM_FILE_SAVEAS         "Save &as"
-    IDM_FILE_SAVEAS_AIRX    "Save the itinerary in the default file\nformat.\n&Flightmap Itinerary"
-    IDM_FILE_SAVEAS_ICS     "Export the itinerary to Microsoft\nOutlook and other applications.\n&Calendar items"
-    IDM_FILE_SAVEAS_CSV     "Export the itinerary to Microsoft\nExcel and other applications.\nComma Separated &Values"
-    IDM_FILE_SAVEAS_TXT     "Export the itinerary as\nplain text file.\n&Text document"
-    IDM_FILE_SAVEAS_OTHER   "Open the “Save as” dialog box to\nselect from all possible file types.\n&Other formats"
+    IDM_FILE_PROPERTIES     "View and edit file properties, such as title, author and keywords.\nProperties"
+    IDM_FILE_VIEWINFOLDER   "View the folder containing the itinerary with Windows Explorer.\nView in folder"
+    IDM_FILE_ATTACHMENTS 
+                            "View and edit attached files, such as photos or GPS tracks.\nAttachments"
+    IDM_FILE_PRINT          "Select a printer, number of copies, and other printing options before printing.\nPrint"
+    IDM_FILE_PRINTQUICK     "Send the itinerary directly to the default printer without making any changes.\nQuick print"
+    IDM_FILE_NEW            "Create an empty itinerary.\nNew"
+    IDM_FILE_NEWSAMPLE1     "Open a sample itinerary crossing the Atlantic Ocean.\nAtlantic crossing"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_PRINT          "Select a printer, number of copies, and\nother printing options before printing.\n&Print"
-    IDM_FILE_PRINT_QUICK    "Send the itinerary directly to the default\nprinter without making changes.\n&Quick print"
-    IDM_FILE_PREPARE        "Pr&epare"
-    IDM_FILE_PREPARE_PROPERTIES 
-                            "View and edit file properties, such\nas title, author and keywords.\n&Properties"
-    IDM_FILE_PREPARE_INSPECT 
-                            "Check the itinerary for hidden metadata\nor personal information.\n&Inspect itinerary"
-    IDM_FILE_PREPARE_ATTACHMENTS 
-                            "View and edit attached files,\nsuch as photos or GPS tracks.\n&Attachments"
-    IDM_FILE_CLOSE          "&Close"
+    IDM_FILE_NEWSAMPLE2     "Open a sample itinerary crossing the Pacific Ocean.\nPacific crossing"
+    IDM_FILE_OPEN           "Open an existing itinerary.\nOpen"
+    IDM_FILE_SAVE           "Save the itinerary.\nSave"
+    IDM_FILE_SAVEAS         "Save the itinerary to a new Flightmap file.\nSave as"
+    IDM_FILE_SAVEAS_CSV     "Export the itinerary to Microsoft Excel and other applications.\nComma Separated Values"
+    IDM_FILE_SAVEAS_TXT     "Export the itinerary as plain text file.\nText document"
+    IDM_FILE_SAVEAS_OTHER   "Open the “Save as” dialog box to select from all possible file types.\nOther formats"
+    IDM_FILE_CLOSE          "Close the current itinerary.\nClose"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_SIDEBAR_ITINERARY   "Shows file commands, such as “Open”, „“Save” oder “Print”.\nItinerary"
+    IDM_SIDEBAR_FILEMENU    "Shows file commands, such as “Open”, “Save” or “Print”.\nFile"
     IDM_SIDEBAR_MAP_OPEN    "Creates a map of the selected flights or the entire itinerary.\nCreate map"
     IDM_SIDEBAR_MAP_SETTINGS "Displays a dialog with map settings.\nSettings"
     IDM_SIDEBAR_GLOBE_OPEN  "Displays the selected flights or the entire itinerary on a 3D globe.\nOpen globe"
@@ -2400,7 +2351,7 @@ BEGIN
     IDM_MAPWND_ZOOMIN       "Zooms into the map.\nZoom in"
     IDM_MAPWND_ZOOMOUT      "Zooms out of the map.\nZoom out"
     IDM_MAPWND_SAVEAS       "Saves the map into an image file. You can choose between multiple file formats.\nSave as"
-    IDM_MAPWND_PRINT        "Print the map. You can select a printer, number of copies, and other options before printing.\n&Print"
+    IDM_MAPWND_PRINT        "Print the map. You can select a printer, number of copies, and other options before printing.\nPrint"
     IDM_MAPWND_COPY         "Copies the map to the clipboard as an image.\nCopy"
 END
 

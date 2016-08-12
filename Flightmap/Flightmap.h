@@ -73,10 +73,9 @@ public:
 
 	void Broadcast(UINT Message);
 	static void AddStringToList(CList<CString>& List, const CString& Str);
-	void AddToRecentFiles(const CString& FileName);
+	void AddToRecentFiles(const CString& Filename);
 	void AddToRecentSearchTerms(const CString& Str);
 	void AddToRecentReplaceTerms(const CString& Str);
-	void AddRecentList(CMenu* pPopup);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
 	void OpenAirportGoogleEarth(CHAR* Code);
 	void OpenAirportLiquidFolders(CHAR* Code);
@@ -139,11 +138,11 @@ protected:
 
 extern CFlightmapApp theApp;
 
-inline void CFlightmapApp::AddToRecentFiles(const CString& FileName)
+inline void CFlightmapApp::AddToRecentFiles(const CString& Filename)
 {
-	ASSERT(!FileName.IsEmpty());
+	ASSERT(!Filename.IsEmpty());
 
-	theApp.AddStringToList(m_RecentFiles, FileName);
+	theApp.AddStringToList(m_RecentFiles, Filename);
 }
 
 inline void CFlightmapApp::AddToRecentSearchTerms(const CString& Str)

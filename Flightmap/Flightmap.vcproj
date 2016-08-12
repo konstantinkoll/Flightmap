@@ -422,6 +422,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFileMenu.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileView.cpp"
 				>
 			</File>
@@ -466,6 +470,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CRecentFilesPane.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EditFlightDlg.cpp"
 				>
 			</File>
@@ -491,10 +499,6 @@
 			</File>
 			<File
 				RelativePath=".\GoogleEarthSettingsDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\InspectDlg.cpp"
 				>
 			</File>
 			<File
@@ -580,6 +584,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFileMenu.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileView.h"
 				>
 			</File>
@@ -624,6 +632,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CRecentFilesPane.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Database.h"
 				>
 			</File>
@@ -653,10 +665,6 @@
 			</File>
 			<File
 				RelativePath=".\GoogleEarthSettingsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\InspectDlg.h"
 				>
 			</File>
 			<File
@@ -734,11 +742,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Flags_16.png"
+				RelativePath=".\res\FileMenu_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Flags_16i.png"
+				RelativePath=".\res\FileMenu_24.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FileMenu_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FileMenu_48.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FileMenu_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Flags_16.png"
 				>
 			</File>
 			<File
@@ -746,15 +770,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Flags_24i.png"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Flags_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Flags_32i.png"
 				>
 			</File>
 			<File

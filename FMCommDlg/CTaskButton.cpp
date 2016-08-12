@@ -11,13 +11,12 @@
 
 #define BORDER     4
 
-BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconSize, INT IconID, BOOL ForceSmall, BOOL HideIcon)
+BOOL CTaskButton::Create(CWnd* pParentWnd, UINT nID, const CString& Caption, const CString& Hint, CIcons* pButtonIcons, CIcons* pTooltipIcons, INT IconID, BOOL ForceSmall, BOOL HideIcon)
 {
 	m_Caption = Caption;
 	m_Hint = Hint;
 	p_ButtonIcons = pButtonIcons;
 	p_TooltipIcons = pTooltipIcons;
-	m_IconSize = IconSize;
 	m_IconID = IconID;
 	m_ForceSmall = ForceSmall;
 	m_HideIcon = HideIcon;
@@ -38,6 +37,7 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	// State
+	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
 	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
 	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
 
@@ -58,8 +58,10 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	// Icon
 	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
-		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-m_IconSize)/2+(Selected ? 1 : 0), m_IconID, m_Hover);
-		rectText.left += m_IconSize+BORDER;
+		const INT IconSize = p_ButtonIcons->GetIconSize();
+
+		p_ButtonIcons->Draw(dc, rectText.left, (rect.Height()-IconSize)/2+(Selected ? 1 : 0), m_IconID, m_Hover, Disabled);
+		rectText.left += IconSize+BORDER;
 	}
 
 	// Text
@@ -94,7 +96,7 @@ INT CTaskButton::GetPreferredWidth(BOOL Small)
 
 	if (p_ButtonIcons && (!m_HideIcon || m_Small))
 	{
-		Width += m_IconSize;
+		Width += p_ButtonIcons->GetIconSize();
 
 		if (!m_Small)
 			Width += BORDER;

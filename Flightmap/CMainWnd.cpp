@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "AttachmentsDlg.h"
 #include "CCalendarFile.h"
 #include "CExcelFile.h"
 #include "CGlobeWnd.h"
@@ -15,9 +14,7 @@
 #include "Flightmap.h"
 #include "GlobeSettingsDlg.h"
 #include "GoogleEarthSettingsDlg.h"
-#include "InspectDlg.h"
 #include "MapSettingsDlg.h"
-#include "PropertiesDlg.h"
 #include "StatisticsDlg.h"
 #include "StatisticsSettingsDlg.h"
 #include <winspool.h>
@@ -35,7 +32,8 @@ CMainWnd::CMainWnd()
 	: CBackstageWnd()
 {
 	m_pItinerary = NULL;
-	m_pDataGridWnd = NULL;
+	m_pWndDataGrid = NULL;
+	m_pWndFileMenu = NULL;
 }
 
 CMainWnd::~CMainWnd()
@@ -54,11 +52,24 @@ BOOL CMainWnd::Create(CItinerary* pItinerary)
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Main"), CSize(0, 0), TRUE);
 }
 
+BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
+{
+	// Hide file menu
+	if (m_pWndFileMenu)
+		if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_ESCAPE))
+		{
+			HideFileMenu();
+			return TRUE;
+		}
+
+	return CBackstageWnd::PreTranslateMessage(pMsg);
+}
+
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-	if (m_pDataGridWnd)
-		if (m_pDataGridWnd->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (m_pWndDataGrid)
+		if (m_pWndDataGrid->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
 	return CBackstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
@@ -68,21 +79,55 @@ BOOL CMainWnd::GetLayoutRect(LPRECT lpRect) const
 {
 	CBackstageWnd::GetLayoutRect(lpRect);
 
-	return (m_pItinerary!=NULL);
+	return (m_pItinerary!=NULL) || (m_pWndFileMenu!=NULL);
 }
 
 void CMainWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 {
-	if (m_pDataGridWnd)
+	if (m_pWndFileMenu)
 	{
-		const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
-		m_wndTaskbar.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), TaskHeight, nFlags | SWP_SHOWWINDOW);
+		m_pWndFileMenu->SetWindowPos(&wndTop, rectLayout.left, rectLayout.top, rectLayout.Width(), rectLayout.Height(), nFlags & ~SWP_NOZORDER);
 
-		m_pDataGridWnd->SetWindowPos(NULL, rectLayout.left, rectLayout.top+TaskHeight, rectLayout.Width(), rectLayout.Height()-TaskHeight, nFlags);
+		m_wndTaskbar.ShowWindow(SW_HIDE);
+
+		if (m_pWndDataGrid)
+		{
+			m_pWndDataGrid->ShowWindow(SW_HIDE);
+			m_pWndDataGrid->EnableWindow(FALSE);
+		}
 	}
 	else
+		if (m_pWndDataGrid)
+		{
+			const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
+			m_wndTaskbar.SetWindowPos(NULL, rectLayout.left, rectLayout.top, rectLayout.Width(), TaskHeight, nFlags | SWP_SHOWWINDOW);
+
+			m_pWndDataGrid->SetWindowPos(NULL, rectLayout.left, rectLayout.top+TaskHeight, rectLayout.Width(), rectLayout.Height()-TaskHeight, nFlags | SWP_SHOWWINDOW);
+			m_pWndDataGrid->EnableWindow(TRUE);
+		}
+		else
+		{
+			m_wndTaskbar.ShowWindow(SW_HIDE);
+		}
+}
+
+void CMainWnd::HideFileMenu()
+{
+	if (m_pWndFileMenu)
 	{
-		m_wndTaskbar.SetWindowPos(NULL, 0, 0, 0, 0, SWP_HIDEWINDOW);
+		FMGetApp()->HideTooltip();
+
+		m_ForceSidebarAlwaysVisible = FALSE;
+		m_wndSidebar.SetSelection();
+
+		m_pWndFileMenu->DestroyWindow();
+		delete m_pWndFileMenu;
+		m_pWndFileMenu = NULL;
+
+		CBackstageWnd::AdjustLayout();
+
+		if (m_pWndDataGrid)
+			m_pWndDataGrid->SetFocus();
 	}
 }
 
@@ -102,32 +147,32 @@ void CMainWnd::UpdateWindowStatus()
 	// Handle data grid
 	if (m_pItinerary)
 	{
-		if (m_pDataGridWnd)
+		if (m_pWndDataGrid)
 		{
-			m_pDataGridWnd->SetItinerary(m_pItinerary);
+			m_pWndDataGrid->SetItinerary(m_pItinerary);
 		}
 		else
 		{
-			m_pDataGridWnd = new CDataGrid();
-			m_pDataGridWnd->Create(m_pItinerary, this, 3);
+			m_pWndDataGrid = new CDataGrid();
+			m_pWndDataGrid->Create(m_pItinerary, this, 3);
 
 			InvalidateCaption(TRUE);
 
 			// Adjust layout
 			CBackstageWnd::AdjustLayout();
 
-			m_pDataGridWnd->EnsureVisible();
+			m_pWndDataGrid->EnsureVisible();
 		}
 
 		m_ShowSidebar = FALSE;
 	}
 	else
 	{
-		if (m_pDataGridWnd)
+		if (m_pWndDataGrid)
 		{
-			m_pDataGridWnd->DestroyWindow();
-			delete m_pDataGridWnd;
-			m_pDataGridWnd = NULL;
+			m_pWndDataGrid->DestroyWindow();
+			delete m_pWndDataGrid;
+			m_pWndDataGrid = NULL;
 
 			InvalidateCaption(TRUE);
 
@@ -145,21 +190,22 @@ void CMainWnd::SetItinerary(CItinerary* pItinerary)
 	CItinerary* pVictim = m_pItinerary;
 
 	m_pItinerary = pItinerary;
+
 	UpdateWindowStatus();
+	HideFileMenu();
 
 	delete pVictim;
 }
 
-void CMainWnd::Open(const CString& FileName)
+void CMainWnd::Open(const CString& Path)
 {
 	if (CloseFile())
-		SetItinerary(new CItinerary(FileName));
+		SetItinerary(new CItinerary(Path));
 }
 
 BOOL CMainWnd::CloseFile()
 {
 	if (m_pItinerary)
-	{
 		if (m_pItinerary->m_IsModified)
 		{
 			CString Text((LPCSTR)IDS_NOTSAVED);
@@ -176,7 +222,6 @@ BOOL CMainWnd::CloseFile()
 					return FALSE;
 			}
 		}
-	}
 
 	return TRUE;
 }
@@ -187,7 +232,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro)
 
 	if (m_pItinerary)
 	{
-		Selected &= m_pDataGridWnd->HasSelection();
+		Selected &= m_pWndDataGrid->HasSelection();
 
 		UINT Count = m_pItinerary->m_Flights.m_ItemCount;
 		if (!FMIsLicensed() && Limit)
@@ -196,7 +241,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro)
 		for (UINT a=0; a<Count; a++)
 		{
 			if (Selected)
-				if (!m_pDataGridWnd->IsSelected(a))
+				if (!m_pWndDataGrid->IsSelected(a))
 					continue;
 
 			if (m_pItinerary->m_Flights[a].Flags & AIRX_Cancelled)
@@ -216,14 +261,14 @@ CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro)
 	return f.RenderMap(GetKitchen(FALSE, Selected, MergeMetro));
 }
 
-void CMainWnd::ExportMap(const CString& FileName, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
+void CMainWnd::ExportMap(const CString& Filename, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
 {
 	CWaitCursor csr;
 
-	theApp.SaveBitmap(GetMap(Selected, MergeMetro), FileName, guidFileType);
+	theApp.SaveBitmap(GetMap(Selected, MergeMetro), Filename, guidFileType);
 }
 
-void CMainWnd::ExportExcel(const CString& FileName)
+void CMainWnd::ExportExcel(const CString& Filename)
 {
 	ASSERT(m_pItinerary);
 
@@ -231,7 +276,7 @@ void CMainWnd::ExportExcel(const CString& FileName)
 
 	CExcelFile f;
 
-	if (!f.Open(FileName))
+	if (!f.Open(Filename))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
 	}
@@ -246,7 +291,7 @@ void CMainWnd::ExportExcel(const CString& FileName)
 	}
 }
 
-void CMainWnd::ExportCalendar(const CString& FileName)
+void CMainWnd::ExportCalendar(const CString& Filename)
 {
 	ASSERT(m_pItinerary);
 
@@ -254,7 +299,7 @@ void CMainWnd::ExportCalendar(const CString& FileName)
 
 	CCalendarFile f;
 
-	if (!f.Open(FileName, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
+	if (!f.Open(Filename, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
 	}
@@ -269,13 +314,13 @@ void CMainWnd::ExportCalendar(const CString& FileName)
 	}
 }
 
-BOOL CMainWnd::ExportGoogleEarth(const CString& FileName, BOOL UseCount, BOOL UseColors, BOOL ClampHeight, BOOL Selected, BOOL MergeMetro)
+BOOL CMainWnd::ExportGoogleEarth(const CString& Filename, BOOL UseCount, BOOL UseColors, BOOL ClampHeight, BOOL Selected, BOOL MergeMetro)
 {
 	CGoogleEarthFile f;
 
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
-	if (!f.Open(FileName, m_pItinerary ? m_pItinerary->m_DisplayName : NULL))
+	if (!f.Open(Filename, m_pItinerary ? m_pItinerary->m_DisplayName : NULL))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
 		return FALSE;
@@ -311,14 +356,14 @@ BOOL CMainWnd::ExportGoogleEarth(const CString& FileName, BOOL UseCount, BOOL Us
 	}
 }
 
-void CMainWnd::ExportText(const CString& FileName)
+void CMainWnd::ExportText(const CString& Filename)
 {
 	ASSERT(m_pItinerary);
 
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
 	FILE *fStream;
-	if (_tfopen_s(&fStream, FileName, _T("wt,ccs=UTF-8")))
+	if (_tfopen_s(&fStream, Filename, _T("wt,ccs=UTF-8")))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
 	}
@@ -398,7 +443,7 @@ void CMainWnd::SaveAs(DWORD FilterIndex)
 		CString Ext = dlg.GetFileExt().MakeLower();
 		if (Ext==_T("airx"))
 		{
-			m_pItinerary->m_Metadata.CurrentRow = m_pDataGridWnd->GetCurrentRow();
+			m_pItinerary->m_Metadata.CurrentRow = m_pWndDataGrid->GetCurrentRow();
 
 			m_pItinerary->SaveAIRX(dlg.GetPathName());
 			UpdateWindowStatus();
@@ -427,12 +472,16 @@ void CMainWnd::SaveAs(DWORD FilterIndex)
 
 		if (Ext==_T("txt"))
 			ExportText(dlg.GetPathName());
+
+		HideFileMenu();
 	}
 }
 
 void CMainWnd::Print(PRINTDLGEX pdex)
 {
 	ASSERT(m_pItinerary);
+
+	HideFileMenu();
 
 	// Device Context
 	CDC dc;
@@ -496,7 +545,7 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 			for (UINT a=0; a<m_pItinerary->m_Flights.m_ItemCount; a++)
 			{
 				if (pdex.Flags & PD_SELECTION)
-					if (!m_pDataGridWnd->IsSelected(a))
+					if (!m_pWndDataGrid->IsSelected(a))
 						continue;
 
 				if (rectPage.Height()<LineHeight)
@@ -565,24 +614,17 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE2, OnFileNewSample2)
 	ON_COMMAND(IDM_FILE_OPEN, OnFileOpen)
-	ON_COMMAND_RANGE(IDM_FILE_RECENT, IDM_FILE_RECENT+9, OnFileOpenRecent)
+	ON_COMMAND(IDM_FILE_OPENRECENT, OnFileOpenRecent)
 	ON_COMMAND(IDM_FILE_SAVE, OnFileSave)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
-	ON_COMMAND(IDM_FILE_SAVEAS_AIRX, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_CSV, OnFileSaveCSV)
-	ON_COMMAND(IDM_FILE_SAVEAS_ICS, OnFileSaveICS)
 	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
 	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveOther)
 	ON_COMMAND(IDM_FILE_PRINT, OnFilePrint)
-	ON_COMMAND(IDM_FILE_PRINT_QUICK, OnFilePrintQuick)
-	ON_COMMAND(IDM_FILE_PREPARE_PROPERTIES, OnFileProperties)
-	ON_COMMAND(IDM_FILE_PREPARE_INSPECT, OnFileInspect)
-	ON_COMMAND(IDM_FILE_PREPARE_ATTACHMENTS, OnFileAttachments)
+	ON_COMMAND(IDM_FILE_PRINTQUICK, OnFilePrintQuick)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_NEW, IDM_FILE_CLOSE, OnUpdateFileCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_RECENT, IDM_FILE_RECENT+9, OnUpdateFileCommands)
 
-	ON_COMMAND(IDM_SIDEBAR_ITINERARY, OnItinerary)
+	ON_COMMAND(IDM_SIDEBAR_FILEMENU, OnFileMenu)
 	ON_COMMAND(IDM_SIDEBAR_MAP_OPEN, OnMapOpen)
 	ON_COMMAND(IDM_SIDEBAR_MAP_SETTINGS, OnMapSettings)
 	ON_COMMAND(IDM_SIDEBAR_GLOBE_OPEN, OnGlobeOpen)
@@ -591,7 +633,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(IDM_SIDEBAR_GOOGLEEARTH_SETTINGS, OnGoogleEarthSettings)
 	ON_COMMAND(IDM_SIDEBAR_STATISTICS_OPEN, OnStatisticsOpen)
 	ON_COMMAND(IDM_SIDEBAR_STATISTICS_SETTINGS, OnStatisticsSettings)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_SIDEBAR_ITINERARY, IDM_SIDEBAR_STATISTICS_SETTINGS, OnUpdateSidebarCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_SIDEBAR_FILEMENU, IDM_SIDEBAR_STATISTICS_SETTINGS, OnUpdateSidebarCommands)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -605,7 +647,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndSidebar.Create(this, m_LargeIconsSidebar, m_SmallIconsSidebar, IDB_SIDEBAR_16, 1, FALSE))
 		return -1;
 
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_ITINERARY, 0);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_FILEMENU, 0);
 	m_wndSidebar.AddCaption(IDR_MAP);
 	m_wndSidebar.AddCommand(IDM_SIDEBAR_MAP_OPEN, 1);
 	m_wndSidebar.AddCommand(IDM_SIDEBAR_MAP_SETTINGS, -1);
@@ -655,10 +697,16 @@ void CMainWnd::OnClose()
 
 void CMainWnd::OnDestroy()
 {
-	if (m_pDataGridWnd)
+	if (m_pWndDataGrid)
 	{
-		m_pDataGridWnd->DestroyWindow();
-		delete m_pDataGridWnd;
+		m_pWndDataGrid->DestroyWindow();
+		delete m_pWndDataGrid;
+	}
+
+	if (m_pWndFileMenu)
+	{
+		m_pWndFileMenu->DestroyWindow();
+		delete m_pWndFileMenu;
 	}
 
 	CBackstageWnd::OnDestroy();
@@ -669,16 +717,15 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
 
-	if (m_pDataGridWnd)
-		m_pDataGridWnd->SetFocus();
+	if (m_pWndDataGrid)
+		m_pWndDataGrid->SetFocus();
 }
 
 void CMainWnd::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TOOLTIPDATA* pTooltipData = (NM_TOOLTIPDATA*)pNMHDR;
 
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(pTooltipData->Item));
+	CString tmpStr((LPCSTR)pTooltipData->Item);
 
 	INT Pos = tmpStr.Find(L'\n');
 	if (Pos!=-1)
@@ -702,8 +749,8 @@ LRESULT CMainWnd::OnDistanceSettingChanged(WPARAM wParam, LPARAM /*lParam*/)
 {
 	theApp.m_UseStatuteMiles = (BOOL)wParam;
 
-	if (m_pDataGridWnd)
-		m_pDataGridWnd->Invalidate();
+	if (m_pWndDataGrid)
+		m_pWndDataGrid->Invalidate();
 
 	return NULL;
 }
@@ -750,19 +797,14 @@ void CMainWnd::OnFileOpen()
 		Open(dlg.GetPathName());
 }
 
-void CMainWnd::OnFileOpenRecent(UINT CmdID)
+void CMainWnd::OnFileOpenRecent()
 {
-	ASSERT(CmdID>=IDM_FILE_RECENT);
-
-	CmdID -= IDM_FILE_RECENT;
-
-	UINT Pos=0;
-	for (POSITION p=theApp.m_RecentFiles.GetHeadPosition(); p; Pos++)
+	if (m_pWndFileMenu)
 	{
-		CString FileName = theApp.m_RecentFiles.GetNext(p);
+		CString Path = m_pWndFileMenu->GetSelectedRecentFilePath();
 
-		if (CmdID==Pos)
-			Open(FileName);
+		if (!Path.IsEmpty())
+			Open(Path);
 	}
 }
 
@@ -772,14 +814,16 @@ void CMainWnd::OnFileSave()
 
 	if (m_pItinerary->m_FileName.IsEmpty())
 	{
-		OnFileSaveAs();
+		SaveAs();
 	}
 	else
 	{
-		m_pItinerary->m_Metadata.CurrentRow = m_pDataGridWnd->GetCurrentRow();
+		m_pItinerary->m_Metadata.CurrentRow = m_pWndDataGrid->GetCurrentRow();
 
 		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
 		UpdateWindowStatus();
+
+		HideFileMenu();
 	}
 }
 
@@ -795,13 +839,6 @@ void CMainWnd::OnFileSaveCSV()
 	ASSERT(m_pItinerary);
 
 	SaveAs(3);
-}
-
-void CMainWnd::OnFileSaveICS()
-{
-	ASSERT(m_pItinerary);
-
-	SaveAs(4);
 }
 
 void CMainWnd::OnFileSaveTXT()
@@ -823,7 +860,7 @@ void CMainWnd::OnFilePrint()
 	ASSERT(m_pItinerary);
 
 	DWORD Flags = PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC;
-	if (m_pDataGridWnd->HasSelection())
+	if (m_pWndDataGrid->HasSelection())
 		Flags &= ~PD_NOSELECTION;
 
 	CPrintDialogEx dlg(Flags, this);
@@ -852,93 +889,34 @@ void CMainWnd::OnFilePrintQuick()
 		Print(dlg.m_pdex);
 }
 
-void CMainWnd::OnFileProperties()
-{
-	ASSERT(m_pItinerary);
-
-	PropertiesDlg dlg(m_pItinerary, this);
-	dlg.DoModal();
-}
-
-void CMainWnd::OnFileInspect()
-{
-	ASSERT(m_pItinerary);
-
-	InspectDlg dlg(m_pItinerary, this);
-	if (dlg.DoModal()==IDOK)
-		m_pDataGridWnd->Invalidate();
-}
-
-void CMainWnd::OnFileAttachments()
-{
-	ASSERT(m_pItinerary);
-
-	AttachmentsDlg dlg(m_pItinerary, this);
-	if (dlg.DoModal()==IDOK)
-		m_pDataGridWnd->Invalidate();
-}
-
 void CMainWnd::OnFileClose()
 {
 	if (CloseFile())
 		SetItinerary(NULL);
 }
 
-void CMainWnd::OnUpdateFileCommands(CCmdUI* pCmdUI)
-{
-	TCHAR szPrinterName[256];
-	DWORD cchPrinterName;
-
-	BOOL b = TRUE;
-
-	switch (pCmdUI->m_nID)
-	{
-	case IDM_FILE_SAVE:
-	case IDM_FILE_SAVEAS:
-	case IDM_FILE_SAVEAS_AIRX:
-	case IDM_FILE_SAVEAS_CSV:
-	case IDM_FILE_SAVEAS_ICS:
-	case IDM_FILE_SAVEAS_TXT:
-	case IDM_FILE_SAVEAS_OTHER:
-	case IDM_FILE_PRINT:
-	case IDM_FILE_PREPARE:
-	case IDM_FILE_PREPARE_PROPERTIES:
-	case IDM_FILE_PREPARE_INSPECT:
-	case IDM_FILE_CLOSE:
-		b = (m_pItinerary!=NULL);
-		break;
-
-	case IDM_FILE_PRINT_QUICK:
-		b = (m_pItinerary!=NULL) && GetDefaultPrinter(szPrinterName, &cchPrinterName);
-		break;
-
-	case IDM_FILE_PREPARE_ATTACHMENTS:
-		b = m_pItinerary ? m_pItinerary->m_Attachments.m_ItemCount : FALSE;
-		break;
-	}
-
-	pCmdUI->Enable(b);
-}
-
 
 // Sidebar commands
 
-void CMainWnd::OnItinerary()
+void CMainWnd::OnFileMenu()
 {
-	CMenu menu;
-	menu.LoadMenu(IDM_FILE);
+	if (!m_pWndFileMenu)
+	{
+		m_ForceSidebarAlwaysVisible = TRUE;
+		m_wndSidebar.SetSelection(IDM_SIDEBAR_FILEMENU);
 
-	CMenu* pPopup = menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
+		m_pWndFileMenu = new CFileMenu();
+		m_pWndFileMenu->Create(this, 4, m_pItinerary);
+		m_pWndFileMenu->ShowWindow(SW_SHOW);
 
-	theApp.AddRecentList(pPopup->GetSubMenu(2));
+		CBackstageWnd::AdjustLayout();
 
-	CRect rect;
-	GetWindowRect(rect);
-
-	CPoint pt(rect.TopLeft());
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN, pt.x+25, pt.y+50, this, NULL);
+		m_pWndFileMenu->SetFocus();
+	}
+	else
+	{
+		HideFileMenu();
+	}
 }
 
 void CMainWnd::OnMapOpen()
@@ -957,8 +935,12 @@ void CMainWnd::OnMapOpen()
 
 void CMainWnd::OnMapSettings()
 {
+	m_wndSidebar.SetSelection(IDM_SIDEBAR_MAP_SETTINGS);
+
 	MapSettingsDlg dlg(this);
 	dlg.DoModal();
+
+	m_wndSidebar.SetSelection();
 }
 
 void CMainWnd::OnGlobeOpen()
@@ -977,8 +959,12 @@ void CMainWnd::OnGlobeOpen()
 
 void CMainWnd::OnGlobeSettings()
 {
+	m_wndSidebar.SetSelection(IDM_SIDEBAR_GLOBE_SETTINGS);
+
 	GlobeSettingsDlg dlg(this);
 	dlg.DoModal();
+
+	m_wndSidebar.SetSelection();
 }
 
 void CMainWnd::OnGoogleEarthOpen()
@@ -1000,8 +986,12 @@ void CMainWnd::OnGoogleEarthOpen()
 
 void CMainWnd::OnGoogleEarthSettings()
 {
+	m_wndSidebar.SetSelection(IDM_SIDEBAR_GOOGLEEARTH_SETTINGS);
+
 	GoogleEarthSettingsDlg dlg(this);
 	dlg.DoModal();
+
+	m_wndSidebar.SetSelection();
 }
 
 void CMainWnd::OnStatisticsOpen()
@@ -1016,25 +1006,33 @@ void CMainWnd::OnStatisticsOpen()
 
 void CMainWnd::OnStatisticsSettings()
 {
+	m_wndSidebar.SetSelection(IDM_SIDEBAR_STATISTICS_SETTINGS);
+
 	StatisticsSettingsDlg dlg(this);
 	dlg.DoModal();
+
+	m_wndSidebar.SetSelection();
 }
 
 void CMainWnd::OnUpdateSidebarCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = TRUE;
+	BOOL bEnable = (m_pWndFileMenu==NULL);
 
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_SIDEBAR_FILEMENU:
+		bEnable = TRUE;
+		break;
+
 	case IDM_SIDEBAR_GOOGLEEARTH_OPEN:
-		b &= !theApp.m_PathGoogleEarth.IsEmpty();
+		bEnable &= !theApp.m_PathGoogleEarth.IsEmpty();
 
 	case IDM_SIDEBAR_MAP_OPEN:
 	case IDM_SIDEBAR_GLOBE_OPEN:
 	case IDM_SIDEBAR_STATISTICS_OPEN:
-		b &= (m_pItinerary!=NULL);
+		bEnable &= (m_pItinerary!=NULL);
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }

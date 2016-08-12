@@ -120,7 +120,6 @@ protected:
 	CTooltipHeader m_wndHeader;
 	static CIcons m_LargeIcons;
 	static CIcons m_SmallIcons;
-	static CIcons m_DisabledIcons;
 	ViewParameters m_ViewParameters;
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;

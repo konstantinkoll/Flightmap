@@ -1436,38 +1436,38 @@ void CGlobeView::OnSettings()
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_RenderContext.hRC!=NULL);
+	BOOL bEnable = (m_RenderContext.hRC!=NULL);
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GLOBEWND_ZOOMIN:
-		b &= m_GlobeTarget.Zoom>0;
+		bEnable &= m_GlobeTarget.Zoom>0;
 		break;
 
 	case IDM_GLOBEWND_ZOOMOUT:
-		b &= m_GlobeTarget.Zoom<1000;
+		bEnable &= m_GlobeTarget.Zoom<1000;
 		break;
 
 	case IDM_GLOBEWND_AUTOSIZE:
-		b &= m_GlobeTarget.Zoom!=600;
+		bEnable &= m_GlobeTarget.Zoom!=600;
 		break;
 
 	case IDM_GLOBEWND_SETTINGS:
-		b = TRUE;
+		bEnable = TRUE;
 		break;
 
 	case IDM_GLOBEWND_SAVEAS:
-		b = m_Routes.m_ItemCount>0;
+		bEnable = m_Routes.m_ItemCount>0;
 		break;
 
 	case IDM_GLOBEWND_GOOGLEEARTH:
-		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());
+		bEnable = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());
 		break;
 
 	case IDM_GLOBEWND_LIQUIDFOLDERS:
-		b = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathLiquidFolders.IsEmpty());
+		bEnable = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathLiquidFolders.IsEmpty());
 		break;
 	}
 
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(bEnable);
 }
