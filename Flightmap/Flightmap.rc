@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,0,0
- PRODUCTVERSION 2,2,0,0
+ FILEVERSION 2,2,1,0
+ PRODUCTVERSION 2,2,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.2.0"
+            VALUE "FileVersion", "2.2.1"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2016 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.2.0"
+            VALUE "ProductVersion", "2.2.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -1045,12 +1045,12 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "Sie können maximal 16 Dateien an einen Flug anhängen!"
     IDS_FILESTATUS_SINGULAR "%u Datei (%s)"
     IDS_FILESTATUS_PLURAL   "%u Dateien (%s)"
+    IDS_DELETE_CAPTION      "Löschen"
+    IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETE_CAPTION      "Löschen"
-    IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
     IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
@@ -1062,15 +1062,15 @@ BEGIN
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
     IDS_MILES               "%u (%u Statusmeilen)"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FLIGHTS             "Flüge"
     IDS_ROUTE               "Route"
     IDS_FLIGHTS_SINGULAR    "%u Flug"
     IDS_FLIGHTS_PLURAL      "%u Flüge"
     IDS_RESOLUTION          "\nAuflösung: %u×%u"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nDurchschnitt: %.2lf"
     IDS_TOOLTIP_TIME        "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
     IDS_TOOLTIP_DISTANCE    "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
@@ -1083,15 +1083,15 @@ BEGIN
     IDS_SEARCHTERMNOTFOUND  "Der Suchbegriff ist nicht vorhanden!"
     IDS_REPLACEQUESTION     "Soll dieser Begriff ersetzt werden?"
     IDS_NORENDERINGCONTEXT  "Es kann kein OpenGL-Kontext zur 3D-Darstellung erzeugt werden."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_QUALITY_LOW         "Niedrig"
     IDS_QUALITY_MEDIUM      "Mittel"
     IDS_QUALITY_HIGH        "Hoch"
     IDS_QUALITY_ULTRA       "Ultra"
     IDS_GOOGLEEARTH         "Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STATISTICS          "Statistik"
     IDS_MAPSETTINGS         "Karten-Einstellungen"
     IDS_COLUMN_RESOLUTION   "Auflösung"
@@ -1104,6 +1104,10 @@ BEGIN
     IDS_FILEMENU_TEMPLATES  "Verfügbare Vorlagen:"
     IDS_FILEMENU_OPEN       "Öffnen"
     IDS_FILEMENU_SAVE       "Speichern und Konvertieren"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FILEMENU_SAVEAS     "Unter anderem Namen speichern:"
     IDS_FILEMENU_CONVERT    "In ein anderes Format konvertieren:"
     IDS_FILEMENU_OTHERFORMATS "Weitere Formate:"
@@ -1122,10 +1126,6 @@ BEGIN
     IDS_FILEFILTER_AIRX     "Flugplan"
     IDS_FILEFILTER_BMP      "Windows Bitmap"
     IDS_FILEFILTER_CSV      "Comma Separated Values"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
@@ -1148,14 +1148,14 @@ BEGIN
     IDS_COLUMN9             "Codeshares"
     IDS_COLUMN10            "Flugzeugmuster"
     IDS_COLUMN11            "Registrierung"
-    IDS_COLUMN12            "Flugzeugname"
-    IDS_COLUMN13            "Klasse"
-    IDS_COLUMN14            "Sitz"
-    IDS_COLUMN15            "Farbe"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_COLUMN12            "Flugzeugname"
+    IDS_COLUMN13            "Klasse"
+    IDS_COLUMN14            "Sitz"
+    IDS_COLUMN15            "Farbe"
     IDS_COLUMN16            "Buchungscode"
     IDS_COLUMN17            "Preis"
     IDS_COLUMN18            "Prämienmeilen"
@@ -1169,26 +1169,25 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_PROPERTIES     "Dateieigenschaften wie Titel, Autor und Schlüsselwörter anzeigen und bearbeiten.\nEigenschaften"
-    IDM_FILE_VIEWINFOLDER   "Öffnet den Ordner mit dem Flugplan im Explorer.\nIm Ordner anzeigen"
     IDM_FILE_PRINT          "Einen Drucker, die Anzahl von Exemplaren und weitere Druckoptionen vor dem Drucken auswählen.\nDrucken"
     IDM_FILE_PRINTQUICK     "Den Flugplan direkt an den Standarddrucker senden, ohne weitere Änderungen vorzunehmen.\nSchnelldruck"
-    IDM_FILE_ATTACHMENTS 
-                            "Angehängte Dateien anzeigen und bearbeiten.\nAnhänge"
-    IDM_FILE_NEW            "Erzeugt einen leeren Flugplan.\nNeu"
-    IDM_FILE_NEWSAMPLE1     "Öffnet einen Beispiel-Flugplan mit Atlantik-Überquerung.\nAtlantik-Überquerung"
+    IDM_FILE_PROPERTIES     "Dateieigenschaften wie Titel, Autor und Schlüsselwörter anzeigen und bearbeiten.\nEigenschaften"
+    IDM_FILE_ATTACHMENTS    "Angehängte Dateien anzeigen und bearbeiten.\nAnhänge"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_VIEWINFOLDER   "Öffnet den Ordner mit dem Flugplan im Explorer.\nIm Ordner anzeigen"
+    IDM_FILE_NEW            "Erzeugt einen leeren Flugplan.\nNeu"
+    IDM_FILE_NEWSAMPLE1     "Öffnet einen Beispiel-Flugplan mit Atlantik-Überquerung.\nAtlantik-Überquerung"
     IDM_FILE_NEWSAMPLE2     "Öffnet einen Beispiel-Flugplan mit Pazifik-Überquerung.\nPazifik-Überquerung"
     IDM_FILE_OPEN           "Öffnet einen bereits vorhandenen Flugplan.\nÖffnen"
+    IDM_FILE_CLOSE          "Schließt den aktuellen Flugplan.\nSchließen"
     IDM_FILE_SAVE           "Speichert den Flugplan ab.\nSpeichern"
     IDM_FILE_SAVEAS         "Speichert den Flugplan als neue Flightmap-Datei.\nSpeichern unter"
     IDM_FILE_SAVEAS_CSV     "Speichert eine Kopie des Flugplans für Microsoft Excel und viele andere Programme.\nComma Separated Values"
     IDM_FILE_SAVEAS_TXT     "Speichert eine Kopie des Flugplans als unformatierte Textdatei.\nTextdokument"
     IDM_FILE_SAVEAS_OTHER   "Das Dialogfeld „Speichern unter“ öffnen, um aus den möglichen Dateitypen eine Auswahl zu treffen.\nAndere Formate"
-    IDM_FILE_CLOSE          "Schließt den aktuellen Flugplan.\nSchließen"
 END
 
 STRINGTABLE 
@@ -1206,10 +1205,6 @@ BEGIN
                             "Zeigt die Einstellungen für Google Earth an.\nEinstellungen"
     IDM_SIDEBAR_STATISTICS_OPEN 
                             "Öffnet die Statistik für den Flugplan bzw. die markierten Flüge.\nStatistik öffnen"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_SIDEBAR_STATISTICS_SETTINGS 
                             "Zeigt die Einstellungen für Statistiken an.\nEinstellungen"
 END
@@ -1221,6 +1216,10 @@ BEGIN
     IDM_DATAGRID_FINDREPLACE 
                             "Öffnet den „Suchen und Ersetzen“-Dialog.\nSuchen und Ersetzen"
     IDM_DATAGRID_FILTER     "Erstellt einen neuen Flugplan, der nur bestimmte Flüge des aktuellen Dokuments enthält.\nFiltern"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_DATAGRID_INSERTROW  "Fügt eine Leerzeile ein.\nZeile einfügen"
 END
 
@@ -1239,6 +1238,10 @@ BEGIN
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
     IDM_GLOBEWND_ZOOMIN     "Vergrößert den Globus.\nVergrößern"
     IDM_GLOBEWND_ZOOMOUT    "Verkleinert den Globus.\nVerkleinern"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBEWND_AUTOSIZE   "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBEWND_SAVEAS     "Speichert die Flüge als Overlay für Google Earth ab.\nSpeichern unter"
     IDM_GLOBEWND_GOOGLEEARTH 
@@ -1376,7 +1379,7 @@ END
 
 IDD_EDITFLIGHT_OTHER DIALOGEX 0, 0, 366, 212
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
-CAPTION "Weitere Angaben"
+CAPTION "Further details"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     CONTROL         "Flight",IDC_CATEGORY5,"CCategory",WS_GROUP,7,7,170,15
@@ -1691,7 +1694,7 @@ BEGIN
     CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
     CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
-    CONTROL         "Kategorien",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "Categories",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
     CONTROL         "&Ignore route directions",IDC_MERGEDIRECTIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
     CONTROL         "Count &award flights as regular flights",IDC_MERGEAWARDS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
@@ -1757,7 +1760,7 @@ END
 
 IDD_MAPSETTINGS_RESOLUTION DIALOGEX 0, 0, 187, 320
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Auflösung"
+CAPTION "Resolution"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Resolution\nThe true map size may vary.",IDC_CATEGORY1,
@@ -1767,7 +1770,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
     LTEXT           "Width:",IDC_STATIC,7,301,30,8
     EDITTEXT        IDC_WIDTH,40,299,40,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Höhe:",IDC_STATIC,107,301,30,8
+    LTEXT           "Height:",IDC_STATIC,107,301,24,8
     EDITTEXT        IDC_HEIGHT,140,299,40,14,ES_AUTOHSCROLL | WS_GROUP
 END
 
@@ -2005,7 +2008,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Save &as...",                 IDM_GLOBEWND_SAVEAS
         MENUITEM SEPARATOR
-        MENUITEM "Globus &settings...",         IDM_GLOBEWND_SETTINGS
+        MENUITEM "Globe &settings...",          IDM_GLOBEWND_SETTINGS
     END
 END
 
@@ -2169,12 +2172,12 @@ BEGIN
     IDS_ATTACHMENT_TOOMANY  "The maximum number of attached files is 16 per flight!"
     IDS_FILESTATUS_SINGULAR "%u file (%s)"
     IDS_FILESTATUS_PLURAL   "%u files (%s)"
+    IDS_DELETE_CAPTION      "Delete"
+    IDS_DELETE_FILE         "Are you sure you want to delete the file?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETE_CAPTION      "Delete"
-    IDS_DELETE_FILE         "Are you sure you want to delete the file?"
     IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
@@ -2186,15 +2189,15 @@ BEGIN
     IDS_CLASS_CHARTER       "Charter"
     IDS_CLASS_CREW          "Crew/DCM"
     IDS_MILES               "%u (%u status miles)"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FLIGHTS             "Flights"
     IDS_ROUTE               "Route"
     IDS_FLIGHTS_SINGULAR    "%u flight"
     IDS_FLIGHTS_PLURAL      "%u flights"
     IDS_RESOLUTION          "\nResolution: %u×%u"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nAverage: %.2lf"
     IDS_TOOLTIP_TIME        "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
     IDS_TOOLTIP_DISTANCE    "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
@@ -2206,15 +2209,15 @@ BEGIN
     IDS_SEARCHTERMNOTFOUND  "The search term has not been found!"
     IDS_REPLACEQUESTION     "Do you want to replace this occurence?"
     IDS_NORENDERINGCONTEXT  "Cannot create an OpenGL context for 3D graphics."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_QUALITY_LOW         "Low"
     IDS_QUALITY_MEDIUM      "Medium"
     IDS_QUALITY_HIGH        "High"
     IDS_QUALITY_ULTRA       "Ultra"
     IDS_GOOGLEEARTH         "Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STATISTICS          "Statistics"
     IDS_MAPSETTINGS         "Map settings"
     IDS_COLUMN_RESOLUTION   "Resolution"
@@ -2227,6 +2230,10 @@ BEGIN
     IDS_FILEMENU_TEMPLATES  "Available templates:"
     IDS_FILEMENU_OPEN       "Open"
     IDS_FILEMENU_SAVE       "Save and Convert"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FILEMENU_SAVEAS     "Save with a new name:"
     IDS_FILEMENU_CONVERT    "Convert to a different format:"
     IDS_FILEMENU_OTHERFORMATS "Other formats:"
@@ -2245,10 +2252,6 @@ BEGIN
     IDS_FILEFILTER_AIRX     "Itinerary"
     IDS_FILEFILTER_BMP      "Windows Bitmap"
     IDS_FILEFILTER_CSV      "Comma Separated Values"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FILEFILTER_ICS      "iCalendar"
     IDS_FILEFILTER_JPEG     "JPEG"
     IDS_FILEFILTER_KML      "Google Earth Overlay"
@@ -2271,14 +2274,14 @@ BEGIN
     IDS_COLUMN9             "Codeshares"
     IDS_COLUMN10            "Equipment"
     IDS_COLUMN11            "Registration"
-    IDS_COLUMN12            "Aircraft name"
-    IDS_COLUMN13            "Class"
-    IDS_COLUMN14            "Seat"
-    IDS_COLUMN15            "Color"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_COLUMN12            "Aircraft name"
+    IDS_COLUMN13            "Class"
+    IDS_COLUMN14            "Seat"
+    IDS_COLUMN15            "Color"
     IDS_COLUMN16            "Etix code"
     IDS_COLUMN17            "Fare"
     IDS_COLUMN18            "Award miles"
@@ -2292,26 +2295,25 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_PROPERTIES     "View and edit file properties, such as title, author and keywords.\nProperties"
-    IDM_FILE_VIEWINFOLDER   "View the folder containing the itinerary with Windows Explorer.\nView in folder"
-    IDM_FILE_ATTACHMENTS 
-                            "View and edit attached files, such as photos or GPS tracks.\nAttachments"
     IDM_FILE_PRINT          "Select a printer, number of copies, and other printing options before printing.\nPrint"
     IDM_FILE_PRINTQUICK     "Send the itinerary directly to the default printer without making any changes.\nQuick print"
-    IDM_FILE_NEW            "Create an empty itinerary.\nNew"
-    IDM_FILE_NEWSAMPLE1     "Open a sample itinerary crossing the Atlantic Ocean.\nAtlantic crossing"
+    IDM_FILE_PROPERTIES     "View and edit file properties, such as title, author and keywords.\nProperties"
+    IDM_FILE_ATTACHMENTS    "View and edit attached files, such as photos or GPS tracks.\nAttachments"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_VIEWINFOLDER   "View the folder containing the itinerary with Windows Explorer.\nView in folder"
+    IDM_FILE_NEW            "Create an empty itinerary.\nNew"
+    IDM_FILE_NEWSAMPLE1     "Open a sample itinerary crossing the Atlantic Ocean.\nAtlantic crossing"
     IDM_FILE_NEWSAMPLE2     "Open a sample itinerary crossing the Pacific Ocean.\nPacific crossing"
     IDM_FILE_OPEN           "Open an existing itinerary.\nOpen"
+    IDM_FILE_CLOSE          "Close the current itinerary.\nClose"
     IDM_FILE_SAVE           "Save the itinerary.\nSave"
     IDM_FILE_SAVEAS         "Save the itinerary to a new Flightmap file.\nSave as"
     IDM_FILE_SAVEAS_CSV     "Export the itinerary to Microsoft Excel and other applications.\nComma Separated Values"
     IDM_FILE_SAVEAS_TXT     "Export the itinerary as plain text file.\nText document"
     IDM_FILE_SAVEAS_OTHER   "Open the “Save as” dialog box to select from all possible file types.\nOther formats"
-    IDM_FILE_CLOSE          "Close the current itinerary.\nClose"
 END
 
 STRINGTABLE 
@@ -2328,10 +2330,6 @@ BEGIN
                             "Displays a dialog with Google Earth settings.\nSettings"
     IDM_SIDEBAR_STATISTICS_OPEN 
                             "Shows statistics on the selected flights or the entire itinerary.\nOpen statistics"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_SIDEBAR_STATISTICS_SETTINGS 
                             "Displays a dialog with statistics settings.\nSettings"
 END
@@ -2343,6 +2341,10 @@ BEGIN
     IDM_DATAGRID_FINDREPLACE 
                             "Opens the “Find and replace” dialog.\nFind and replace"
     IDM_DATAGRID_FILTER     "Creates a new itinerary with certain flights from the current document.\nFilter"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_DATAGRID_INSERTROW  "Inserts an empty row.\nInsert row"
 END
 
@@ -2361,6 +2363,10 @@ BEGIN
                             "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBEWND_ZOOMIN     "Zooms into the globe.\nZoom in"
     IDM_GLOBEWND_ZOOMOUT    "Zooms out of the globe.\nZoom out"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBEWND_AUTOSIZE   "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBEWND_SAVEAS     "Saves the flights as Google Earth overlay.\nSave as"
     IDM_GLOBEWND_GOOGLEEARTH 

@@ -651,13 +651,13 @@ Restart:
 
 void CFloatButtons::AdjustScrollbars()
 {
-	// Redraw
-	m_BackBufferL = m_BackBufferH = 0;
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-
 	// Adjust group layout
 	for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
 		m_ButtonGroups[a]->AdjustLayout(m_VScrollPos);
+
+	// Redraw
+	m_BackBufferL = m_BackBufferH = 0;
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 

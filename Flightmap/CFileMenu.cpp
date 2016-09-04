@@ -131,7 +131,7 @@ void CFileMenu::AdjustLayout()
 		m_wndHeaderArea.SetWindowPos(NULL, 0, 0, rect.right, HeaderHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 
-	const INT MaxWidth = min(rect.Width()*2/5, 350);
+	const INT MaxWidth = max(m_wndRecentFilesPane.GetMinWidth(), min(rect.Width()*2/5, 350));
 	const INT RecentFilesWidth = min(MaxWidth, max(m_wndRecentFilesPane.GetMinWidth(), m_wndRecentFilesPane.GetPreferredWidth()));
 
 	m_wndRecentFilesPane.SetMaxWidth(MaxWidth);
