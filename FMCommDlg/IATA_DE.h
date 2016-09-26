@@ -227,7 +227,7 @@ FMCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8652
+#define AirportCount_DE 8653
 FMAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3718,6 +3718,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{  54, "KDJ", "", "N'Djole", { 0.183056, 10.750000 } },
 	{ 209, "KDK", "", "Kodiak (Municipal Airport)", { -57.805833, -152.373889 } },
 	{  47, "KDL", "", "Kardla", { -58.990833, 22.830833 } },
+	{ 114, "KDM", "", "Kaadedhdhoo", { -0.488333, 72.996111 } },
 	{  54, "KDN", "", "N'Dende", { 2.400000, 11.366944 } },
 	{ 114, "KDO", "", "Kadhdhoo", { -1.859167, 73.521944 } },
 	{ 136, "KDP", "", "Kandep", { 5.833056, 143.500000 } },

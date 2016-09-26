@@ -3706,6 +3706,7 @@ KDI     Kendari, Indonesien;4;4*4'54"S, 122*25'6"E
 KDJ     N'Djole, Gabun;4;0*10'59"S, 10*45'0"E
 KDK     Kodiak (Municipal Airport), USA;4;57*48'21"N, 152*22'26"W
 KDL     Kardla, Estland;4;58*59'27"N, 22*49'51"E
+KDM     Kaadedhdhoo, Malediven;5;0*29'18"N, 72*59'46"E
 KDN     N'Dende, Gabun;4;2*24'0"S, 11*22'1"E
 KDO     Kadhdhoo, Malediven;5;1*51'33"N, 73*31'19"E
 KDP     Kandep, Neu-Guinea;4;5*49'59"S, 143*30'0"E
