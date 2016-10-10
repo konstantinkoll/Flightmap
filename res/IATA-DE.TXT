@@ -1200,6 +1200,7 @@ CEA     Wichita (Cessna Airfield), USA;4;37*38'55"N, 97*15'2"W
 CEB     Cebu, Philippinen;4;10*18'27"N, 123*58'46"E
 CEC     Crescent City, USA;4;41*46'49"N, 124*14'12"W
 CED     Ceduna, Australien;4;32*7'50"S, 133*42'35"E
+CEE     Cherepovets, Russland;5;59*16'36"N, 38*1'42"E
 CEF     Springfield/Chicopee, USA;4;42*11'38"N, 72*32'5"W
 CEG     Chester, Groﬂbritannien;4;53*10'41"N, 2*58'40"W
 CEH     Chengteh, China

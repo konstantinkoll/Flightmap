@@ -227,7 +227,7 @@ FMCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8654
+#define AirportCount_EN 8655
 FMAirport Airports_EN[AirportCount_EN] = {
 	{  65, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1388,6 +1388,7 @@ FMAirport Airports_EN[AirportCount_EN] = {
 	{ 155, "CEB", "", "Cebu", { -10.307500, 123.979444 } },
 	{ 211, "CEC", "", "Crescent City", { -41.780278, -124.236667 } },
 	{   8, "CED", "", "Ceduna", { 32.130556, 133.709722 } },
+	{ 162, "CEE", "", "Cherepovets", { -59.276667, 38.028333 } },
 	{ 211, "CEF", "", "Springfield/Chicopee", { -42.193889, -72.534722 } },
 	{ 209, "CEG", "", "Chester", { -53.178056, -2.977778 } },
 	{ 195, "CEI", "", "Chiang Rai", { -19.952222, 99.883056 } },
