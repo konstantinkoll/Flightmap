@@ -2505,6 +2505,7 @@ GCK     Garden City, USA;4;37*55'39"N, 100*43'28"W
 GCM     Grand Cayman, Cayman Islands;4;19*17'34"N, 81*21'28"W
 GCN     Grand Canyon (National Park Airport), USA;4;35*57'8"N, 112*8'49"W
 GCT     Guthrie Center, USA;4;41*41'16"N, 94*26'7"W
+GCW     Grand Canyon West, USA;5;35*59'25"N, 113*48'59"W
 GCY     Greeneville, USA;4;36*11'35"N, 82*48'54"W
 GDA     Gounda, Central African Republic;4;9*19'1"N, 21*10'59"E
 GDC     Greenville (Donaldson Center Airport), USA;4;34*45'30"N, 82*22'35"W

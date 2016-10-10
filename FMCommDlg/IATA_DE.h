@@ -227,7 +227,7 @@ FMCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8654
+#define AirportCount_DE 8655
 FMAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2614,6 +2614,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{  34, "GCM", "", "Grand Cayman", { -19.292778, -81.357778 } },
 	{ 209, "GCN", "", "Grand Canyon (National Park Airport)", { -35.952222, -112.146944 } },
 	{ 209, "GCT", "", "Guthrie Center", { -41.687778, -94.435278 } },
+	{ 209, "GCW", "", "Grand Canyon West", { -35.990278, -113.816389 } },
 	{ 209, "GCY", "", "Greeneville", { -36.193056, -82.815000 } },
 	{ 219, "GDA", "", "Gounda", { -9.316944, 21.183056 } },
 	{ 209, "GDC", "", "Greenville (Donaldson Center Airport)", { -34.758333, -82.376389 } },
