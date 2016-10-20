@@ -103,7 +103,7 @@ INT CRecentFilesPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
+	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListExtraLarge, LVSIL_NORMAL);
 
 	m_wndExplorerList.SetMenus(IDM_FILE_RECENTPANE, TRUE);
 
@@ -217,7 +217,7 @@ void CRecentFilesPane::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			swprintf_s(pTooltipData->Hint, 4096, L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndExplorerList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndExplorerList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndExplorerList.GetItemText(pTooltipData->Item, 3));
 
 			// Icon
-			pTooltipData->hIcon = FMGetApp()->m_SystemImageListLarge.ExtractIcon(m_RecentFiles[pTooltipData->Item].IconID);
+			pTooltipData->hIcon = FMGetApp()->m_SystemImageListExtraLarge.ExtractIcon(m_RecentFiles[pTooltipData->Item].IconID);
 
 			*pResult = TRUE;
 		}
