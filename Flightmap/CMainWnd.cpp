@@ -1025,7 +1025,7 @@ void CMainWnd::OnUpdateSidebarCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_SIDEBAR_GOOGLEEARTH_OPEN:
-		bEnable &= !theApp.m_PathGoogleEarth.IsEmpty();
+		bEnable &= (theApp.m_PathGoogleEarth[0]!=L'\0');
 
 	case IDM_SIDEBAR_MAP_OPEN:
 	case IDM_SIDEBAR_GLOBE_OPEN:

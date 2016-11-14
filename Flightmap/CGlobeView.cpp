@@ -1461,7 +1461,7 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 
 	case IDM_GLOBEWND_GOOGLEEARTH:
-		bEnable = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathGoogleEarth.IsEmpty());
+		bEnable = (m_FocusItem!=-1) && (m_IsSelected) && (theApp.m_PathGoogleEarth[0]!=L'\0');
 		break;
 
 	case IDM_GLOBEWND_LIQUIDFOLDERS:

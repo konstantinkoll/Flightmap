@@ -80,20 +80,12 @@ BOOL CFlightmapApp::InitInstance()
 		zRegisterApplicationRestart(L"", 11);	// RESTART_NO_CRASH | RESTART_NO_HANG | RESTART_NO_REBOOT
 
 	// Pfad zu Google Earth
-	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\Google\\Google Earth Plus"), 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
-	{
-		DWORD dwType = REG_SZ;
-		WCHAR lszValue[256];
-		DWORD dwSize = sizeof(lszValue);
-
-		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
-			m_PathGoogleEarth = lszValue;
-
-		RegCloseKey(hKey);
-	}
+	DWORD dwSize = sizeof(m_PathGoogleEarth)/sizeof(WCHAR);
+	if (FAILED(AssocQueryString(ASSOCF_REMAPRUNDLL | ASSOCF_INIT_IGNOREUNKNOWN, ASSOCSTR_EXECUTABLE, L".kml", NULL, m_PathGoogleEarth, &dwSize)))
+		m_PathGoogleEarth[0] = L'\0';
 
 	// Pfad zu liquidFOLDERS
+	HKEY hKey;
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\liquidFOLDERS"), 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
@@ -356,7 +348,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 {
 	ASSERT(pAirport);
 
-	if (m_PathGoogleEarth.IsEmpty())
+	if (m_PathGoogleEarth[0]==L'\0')
 		return;
 
 	// Dateinamen finden

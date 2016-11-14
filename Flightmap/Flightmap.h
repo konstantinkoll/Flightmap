@@ -82,7 +82,7 @@ public:
 	void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
 
 	CList<CString> m_RecentFiles;
-	CString m_PathGoogleEarth;
+	WCHAR m_PathGoogleEarth[MAX_PATH];
 	CString m_PathLiquidFolders;
 
 	CLIPFORMAT CF_FLIGHTS;

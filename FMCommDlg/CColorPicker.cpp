@@ -944,16 +944,28 @@ void CGradationPyramid::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	switch(nChar)
 	{
 	case VK_LEFT:
-		SetColor(m_FocusItem.y, m_FocusItem.x-1);
+		if (m_FocusItem.x>0)
+			SetColor(m_FocusItem.y, m_FocusItem.x-1);
+
 		break;
 
 	case VK_RIGHT:
-		SetColor(m_FocusItem.y, m_FocusItem.x+1);
+		if (m_FocusItem.x<m_FocusItem.y*2)
+			SetColor(m_FocusItem.y, m_FocusItem.x+1);
+
 		break;
 
 	case VK_UP:
 		if (m_FocusItem.y>0)
-			SetColor(m_FocusItem.y-1, m_FocusItem.x-1);
+		{
+			if (m_FocusItem.x>0)
+				m_FocusItem.x--;
+
+			if (m_FocusItem.x>(m_FocusItem.y-1)*2)
+				m_FocusItem.x = (m_FocusItem.y-1)*2;
+
+			SetColor(m_FocusItem.y-1, m_FocusItem.x);
+		}
 
 		break;
 

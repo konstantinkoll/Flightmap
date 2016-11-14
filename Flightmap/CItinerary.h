@@ -144,7 +144,7 @@ struct FMAttribute
 static const FMAttribute FMAttributes[FMAttributeCount] =
 {
 	{ IDS_COLUMN0, FMTypeAnsiString, offsetof(AIRX_Flight, From.Code), 3, 50, TRUE, TRUE, TRUE, TRUE },					// From
-	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 150, FALSE, TRUE, TRUE, TRUE },					// Departure time
+	{ IDS_COLUMN1, FMTypeDateTime, offsetof(AIRX_Flight, From.Time), 0, 150, TRUE, TRUE, TRUE, TRUE },					// Departure time
 	{ IDS_COLUMN2, FMTypeUnicodeString, offsetof(AIRX_Flight, From.Gate), 7, 50, FALSE, TRUE, TRUE, TRUE },				// Departure gate
 	{ IDS_COLUMN3, FMTypeAnsiString, offsetof(AIRX_Flight, To.Code), 3, 50, TRUE, TRUE, TRUE, TRUE },					// To
 	{ IDS_COLUMN4, FMTypeDateTime, offsetof(AIRX_Flight, To.Time), 0, 150, FALSE, TRUE, TRUE, TRUE },					// Arrival time
@@ -158,9 +158,9 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN12, FMTypeUnicodeString, offsetof(AIRX_Flight, Name), 63, 100, FALSE, TRUE, TRUE, TRUE },				// Name
 	{ IDS_COLUMN13, FMTypeClass, offsetof(AIRX_Flight, Class), 0, 75, TRUE, TRUE, TRUE, FALSE },						// Class
 	{ IDS_COLUMN14, FMTypeAnsiString, offsetof(AIRX_Flight, Seat), 3, 50, TRUE, TRUE, TRUE, TRUE },						// Seat
-	{ IDS_COLUMN15, FMTypeColor, offsetof(AIRX_Flight, Color), 0, 50, TRUE, FALSE, TRUE, FALSE },						// Color
+	{ IDS_COLUMN15, FMTypeColor, offsetof(AIRX_Flight, Color), 0, 50, FALSE, FALSE, TRUE, FALSE },						// Color
 	{ IDS_COLUMN16, FMTypeAnsiString, offsetof(AIRX_Flight, EtixCode), 6, 70, FALSE, TRUE, TRUE, TRUE },				// Etix code
-	{ IDS_COLUMN17, FMTypeUINT, offsetof(AIRX_Flight, Fare), 15, 100, FALSE, TRUE, TRUE, TRUE },						// Fare
+	{ IDS_COLUMN17, FMTypeUINT, offsetof(AIRX_Flight, Fare), 15, 100, FALSE, FALSE, TRUE, TRUE },						// Fare
 	{ IDS_COLUMN18, FMTypeUINT, offsetof(AIRX_Flight, MilesAward), 0 , 70, FALSE, TRUE, TRUE, TRUE },					// Award miles
 	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 70, FALSE, TRUE, TRUE, TRUE },					// Status miles
 	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 132, FALSE, FALSE, TRUE, FALSE },						// Flags
