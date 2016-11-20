@@ -71,10 +71,6 @@ BOOL CFlightmapApp::InitInstance()
 	if (!FMApplication::InitInstance())
 		return FALSE;
 
-	// AppID
-	if (m_ShellLibLoaded)
-		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.Flightmap");
-
 	// RestartManager
 	if (m_KernelLibLoaded)
 		zRegisterApplicationRestart(L"", 11);	// RESTART_NO_CRASH | RESTART_NO_HANG | RESTART_NO_REBOOT
