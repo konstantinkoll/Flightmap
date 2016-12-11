@@ -434,7 +434,7 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& C
 void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint)
 {
 	CString Caption(pAirport->Code);
-	CString Text(_T(""));
+	CString Text;
 	CString tmpStr;
 
 	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_NAME, pAirport->Name);
@@ -443,7 +443,7 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirp
 	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
 
 	if (!Hint.IsEmpty())
-		Text.Append(Hint);
+		Text.Append(_T("\n")+Hint);
 
 	ShowTooltip(pCallerWnd, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
 }
