@@ -227,6 +227,9 @@ BOOL FMApplication::InitInstance()
 
 	m_DialogFont.CreateFontIndirect(&LogFont);
 
+	LogFont.lfWeight = FW_BOLD;
+	m_DialogBoldFont.CreateFontIndirect(&LogFont);
+
 	// Registry
 	SetRegistryKey(_T(""));
 

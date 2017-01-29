@@ -62,7 +62,6 @@ void FMUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayou
 
 	// Features
 	rectText.SetRect(rectLayout.left+m_FeaturesLeft, rectLayout.top+m_FeaturesTop, rectLayout.right-m_FeaturesLeft, rectLayout.top+m_FeaturesTop+m_FeatureItemHeight);
-	dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 	for (UINT a=0; a<=31; a++)
 		if (m_Features & (1<<a))
@@ -75,6 +74,7 @@ void FMUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayou
 
 			CString Text((LPCSTR)IDS_UPDATE_FIRST+a);
 
+			dc.SelectObject(a<3 ? &FMGetApp()->m_DialogBoldFont : &FMGetApp()->m_DialogFont);
 			dc.SetTextColor(a<3 ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 			dc.DrawText(Text, rectLine, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
 
@@ -184,6 +184,10 @@ BOOL FMUpdateDlg::InitDialog()
 		FMGetApp()->AddFrame(this);
 
 	INT DynamicHeight = 0;
+
+	// Icon
+	SetIcon(FMGetApp()->LoadIcon(IDR_APPLICATION), FALSE);
+	SetIcon(FMGetApp()->LoadIcon(IDR_APPLICATION), TRUE);
 
 	// Version
 	CRect rectWnd;

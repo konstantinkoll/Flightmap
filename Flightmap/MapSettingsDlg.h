@@ -13,7 +13,7 @@ struct ResolutionPreset
 {
 	UINT Width;
 	UINT Height;
-	WCHAR Hint[19];
+	WCHAR Hint[24];
 	INT iImage;
 };
 

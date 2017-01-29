@@ -110,6 +110,7 @@ public:
 	FMFont m_CaptionFont;
 	FMFont m_UACFont;
 	FMFont m_DialogFont;
+	FMFont m_DialogBoldFont;
 	UINT OSVersion;
 	SmoothingMode m_SmoothingModeAntiAlias8x8;
 	UINT m_DistanceSettingChangedMsg;

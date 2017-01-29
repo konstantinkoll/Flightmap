@@ -19,11 +19,13 @@ FMDialog::FMDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL WantsBitmap, BOOL UA
 	p_ParentWnd = pParentWnd;
 	m_lpszTemplateName = MAKEINTRESOURCE(nIDTemplate);
 
+#ifndef _DEBUG
 	if (UAC)
 	{
 		m_wndDesktopDimmer.Create(this);
 		p_ParentWnd = &m_wndDesktopDimmer;
 	}
+#endif
 
 	m_UAC = UAC;
 
@@ -444,8 +446,8 @@ LRESULT FMDialog::OnInitDialog(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	SetWindowPos(NULL, 0, 0, rectWnd.Width()+DiffX+BorderSize, rectWnd.Height()+DiffY+BorderSize, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 
 	// Bottom area
-	AddBottomRightControl(IDOK);
 	AddBottomRightControl(IDCANCEL);
+	AddBottomRightControl(IDOK);
 
 	if (szTabArea.cx || szTabArea.cy)
 	{
@@ -476,8 +478,10 @@ void FMDialog::OnDestroy()
 		delete pButton;
 	}
 
+#ifndef _DEBUG
 	if (IsWindow(m_wndDesktopDimmer))
 		m_wndDesktopDimmer.SendMessage(WM_DESTROY);
+#endif
 
 	CBackstageWnd::OnDestroy();
 }
