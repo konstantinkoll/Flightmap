@@ -11,9 +11,7 @@
 // CMapView
 //
 
-#define MARGIN          5
-#define BORDER          3*MARGIN
-#define WHITE           100
+#define BORDER     3*CARDPADDING
 
 CMapView::CMapView()
 {
@@ -204,24 +202,13 @@ void CMapView::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	Graphics g(dc);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Background
 	BOOL Themed = IsCtrlThemed();
 
-	dc.FillSolidRect(rect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
+	DrawCardBackground(dc, g, rect, Themed);
 
-	if (Themed)
-	{
-		g.SetPixelOffsetMode(PixelOffsetModeHalf);
-
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
-		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
-
-		g.SetPixelOffsetMode(PixelOffsetModeNone);
-	}
-
-	// Item
+	// Card
 	if (m_pBitmapScaled)
 	{
 		INT PosX = m_ScrollWidth<rect.Width() ? (rect.Width()-m_ScrollWidth)/2 : -m_HScrollPos;
@@ -229,42 +216,10 @@ void CMapView::OnPaint()
 
 		CRect rectMap(PosX+BORDER, PosY+BORDER, PosX+m_ScrollWidth-BORDER, PosY+m_ScrollHeight-BORDER);
 
-		CRect rectItem(rectMap);
-		rectItem.InflateRect(MARGIN, MARGIN);
+		CRect rectCard(rectMap);
+		rectCard.InflateRect(CARDPADDING, CARDPADDING);
 
-		// Shadow
-		GraphicsPath Path;
-
-		if (Themed)
-		{
-			CRect rectShadow(rectItem);
-			rectShadow.OffsetRect(1, 1);
-
-			CreateRoundRectangle(rectShadow, 3, Path);
-
-			Pen pen(Color(0x0C000000));
-			g.DrawPath(&pen, &Path);
-		}
-
-		// Background
-		CRect rectBorder(rectItem);
-		rectItem.DeflateRect(1, 1);
-
-		dc.FillSolidRect(rectItem, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-		if (Themed)
-		{
-			Matrix m;
-			m.Translate(-1.0, -1.0);
-			Path.Transform(&m);
-
-			Pen pen(Color(0xFFD0D1D5));
-			g.DrawPath(&pen, &Path);
-		}
-		else
-		{
-			dc.Draw3dRect(rectItem, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
-		}
+		DrawCardForeground(dc, g, rectCard, Themed);
 
 		// Map picture (either pre-scaled or streched)
 		CSize Size = m_pBitmapScaled->GetBitmapDimension();
