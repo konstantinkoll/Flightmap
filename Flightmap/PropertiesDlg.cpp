@@ -34,12 +34,13 @@ void PropertiesDlg::DoDataExchange(CDataExchange* pDX)
 BOOL PropertiesDlg::InitDialog()
 {
 	// Titel
-	CString Mask;
-	GetWindowText(Mask);
-
 	CString Caption;
-	Caption.Format(Mask, p_Itinerary->m_DisplayName);
-	SetWindowText(Caption);
+	GetWindowText(Caption);
+
+	CString Text;
+	Text.Format(Caption, p_Itinerary->m_DisplayName);
+
+	SetWindowText(Text);
 
 	return TRUE;
 }

@@ -1533,9 +1533,7 @@ void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
 									break;
 								}
 
-								CString Caption((LPCSTR)IDS_COLUMN0+Attr);
-
-								theApp.ShowTooltip(this, point, Caption, Hint);
+								theApp.ShowTooltip(this, point, CString((LPCSTR)IDS_COLUMN0+Attr), Hint);
 							}
 							break;
 						}
@@ -2137,10 +2135,7 @@ void CDataGrid::OnFindReplaceAgain()
 	if (!m_FindReplaceSettings.FirstAction && (m_FindReplaceSettings.Flags & FRS_MATCHCOLUMNONLY))
 		if (!ColumnValid(m_ViewParameters.ColumnOrder[m_FocusItem.x]))
 		{
-			CString Caption((LPCSTR)IDS_FINDREPLACE);
-			CString Message((LPCSTR)(m_FindReplaceSettings.DoReplace ? IDS_ILLEGALCOLUMN_REPLACE : IDS_ILLEGALCOLUMN_FIND));
-
-			FMMessageBox(this, Message, Caption, MB_ICONERROR | MB_OK);
+			FMMessageBox(this, CString((LPCSTR)(m_FindReplaceSettings.DoReplace ? IDS_ILLEGALCOLUMN_REPLACE : IDS_ILLEGALCOLUMN_FIND)), CString((LPCSTR)IDS_FINDREPLACE), MB_ICONERROR | MB_OK);
 
 			return;
 		}
@@ -2173,10 +2168,7 @@ Again:
 
 			if (StartOver)
 			{
-				CString Caption((LPCSTR)IDS_FINDREPLACE);
-				CString Message((LPCSTR)((m_FindReplaceSettings.DoReplace && Replaced) ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND));
-
-				FMMessageBox(this, Message, Caption, (m_FindReplaceSettings.DoReplace && Replaced) ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
+				FMMessageBox(this, CString((LPCSTR)((m_FindReplaceSettings.DoReplace && Replaced) ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND)), CString((LPCSTR)IDS_FINDREPLACE), (m_FindReplaceSettings.DoReplace && Replaced) ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
 
 				return;
 			}
@@ -2210,10 +2202,7 @@ FoundPosition:
 		{
 			SetFocusItem(Item, FALSE);
 
-			CString Caption((LPCSTR)IDS_FINDREPLACE);
-			CString Message((LPCSTR)IDS_REPLACEQUESTION);
-
-			switch (FMMessageBox(this, Message, Caption, MB_ICONQUESTION | MB_YESNOCANCEL))
+			switch (FMMessageBox(this, CString((LPCSTR)IDS_REPLACEQUESTION), CString((LPCSTR)IDS_FINDREPLACE), MB_ICONQUESTION | MB_YESNOCANCEL))
 			{
 			case IDNO:
 				goto Again;

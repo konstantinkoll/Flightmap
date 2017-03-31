@@ -109,8 +109,7 @@ void CCalendarFile::WriteRoute(AIRX_Flight& Flight)
 
 		if (Flight.FlightNo[0]!='\0')
 		{
-			CString tmpStr(Flight.FlightNo);
-			WriteString(tmpStr);
+			WriteString(CString(Flight.FlightNo));
 			if (Flight.Comments[0]!=L'\0')
 				WriteString(_T(", "));
 		}

@@ -124,11 +124,7 @@ void CFileView::Init()
 	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
 
 	for (UINT a=0; a<4; a++)
-	{
-		CString tmpStr((LPCSTR)IDS_SUBITEM_NAME+a);
-
-		m_wndExplorerList.AddColumn(a, tmpStr.GetBuffer(), 100, a);
-	}
+		m_wndExplorerList.AddColumn(a, CString((LPCSTR)IDS_SUBITEM_NAME+a), 100, a);
 
 	m_wndExplorerList.SetMenus(IDM_FILEVIEW_ITEM, TRUE, IDM_FILEVIEW_BACKGROUND);
 	m_wndExplorerList.SetFocus();
@@ -730,15 +726,11 @@ void CFileView::OnDelete()
 {
 	INT Index = GetSelectedFile();
 	if (Index!=-1)
-	{
-		CString Message((LPCSTR)IDS_DELETE_FILE);
-
-		if (FMMessageBox(this, Message, GetAttachment(Index)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
+		if (FMMessageBox(this, CString((LPCSTR)IDS_DELETE_FILE), GetAttachment(Index)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
 			p_Itinerary->DeleteAttachment(p_Flight ? p_Flight->Attachments[m_pSortArray[Index]] : m_pSortArray[Index], p_Flight);
 			Reload();
 		}
-	}
 }
 
 void CFileView::OnRename()

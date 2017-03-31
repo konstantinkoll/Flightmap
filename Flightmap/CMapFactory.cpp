@@ -730,9 +730,7 @@ void CMapFactory::AppendLabel(CString& Buf, UINT nID, UINT MaxLines)
 		if (!Buf.IsEmpty())
 			Buf.Append(_T("\n"));
 
-		CString tmpStr((LPCSTR)nID);
-
-		Buf.Append(tmpStr);
+		Buf.Append(CString((LPCSTR)nID));
 		Buf.Append(_T(": "));
 	}
 }

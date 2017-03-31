@@ -413,7 +413,7 @@ void CHueWheel::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	BOOL Ctrl = (GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0);
 	INT Hue = (INT)m_Hue;
 
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_PRIOR:
 		Hue += 15-(Hue % 15);
@@ -941,7 +941,7 @@ void CGradationPyramid::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
 	BOOL Ctrl = (GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0);
 
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_LEFT:
 		if (m_FocusItem.x>0)

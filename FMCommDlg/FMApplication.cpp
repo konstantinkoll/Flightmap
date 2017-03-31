@@ -534,9 +534,7 @@ HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, const CString& FileName, con
 
 void FMApplication::AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last)
 {
-	CString tmpStr((LPCSTR)nID);
-
-	Extensions += tmpStr;
+	Extensions += CString((LPCSTR)nID);
 	Extensions += _T(" (*.");
 	Extensions += Extension;
 	Extensions += _T(")|*.");

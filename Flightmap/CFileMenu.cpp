@@ -53,7 +53,7 @@ void CFileMenu::Update()
 	if (p_Itinerary)
 	{
 		// Header
-		m_wndHeaderArea.SetText(p_Itinerary->m_Metadata.Title[0] ? p_Itinerary->m_Metadata.Title : p_Itinerary->m_DisplayName, p_Itinerary->m_FileName);
+		m_wndHeaderArea.SetHeader(p_Itinerary->m_Metadata.Title[0] ? p_Itinerary->m_Metadata.Title : p_Itinerary->m_DisplayName, p_Itinerary->m_FileName);
 
 		// Save and convert
 		m_wndFloatButtons.SetGroupAlert(2, p_Itinerary->m_IsModified);

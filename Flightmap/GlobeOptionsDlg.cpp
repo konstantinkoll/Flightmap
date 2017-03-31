@@ -41,8 +41,7 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 void GlobeOptionsDlg::AddQuality(CComboBox& wndCombobox, UINT nResID)
 {
-	CString tmpStr((LPCSTR)nResID);
-	wndCombobox.AddString(tmpStr);
+	wndCombobox.AddString(CString((LPCSTR)nResID));
 }
 
 BOOL GlobeOptionsDlg::InitDialog()

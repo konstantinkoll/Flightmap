@@ -244,7 +244,7 @@ UINT CColorHistory::OnGetDlgCode()
 
 void CColorHistory::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_HOME:
 		for (INT a=0; a<16; a++)

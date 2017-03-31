@@ -1261,8 +1261,7 @@ CString GetLatestVersion(CString CurrentVersion)
 								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
 								{
 									pBuffer[dwDownloaded] = '\0';
-									CString tmpStr(pBuffer);
-									VersionIni += tmpStr;
+									VersionIni += CString(pBuffer);
 								}
 
 								delete[] pBuffer;
@@ -1432,13 +1431,10 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			}
 	}
 	else
+	{
 		if (Force)
-		{
-			CString Caption((LPCSTR)IDS_UPDATE);
-			CString Text((LPCSTR)IDS_UPDATENOTAVAILABLE);
-
-			FMMessageBox(pParentWnd, Text, Caption, MB_ICONINFORMATION | MB_OK);
-		}
+			FMMessageBox(pParentWnd, CString((LPCSTR)IDS_UPDATENOTAVAILABLE), CString((LPCSTR)IDS_UPDATE), MB_ICONINFORMATION | MB_OK);
+	}
 }
 
 
@@ -1451,8 +1447,5 @@ INT FMMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, 
 
 void FMErrorBox(CWnd* pParentWnd, UINT nID)
 {
-	CString Caption((LPCSTR)IDS_ERROR);
-	CString Message((LPCSTR)nID);
-
-	FMMessageBox(pParentWnd, Message, Caption, MB_OK | MB_ICONERROR);
+	FMMessageBox(pParentWnd, CString((LPCSTR)nID), CString((LPCSTR)IDS_ERROR), MB_OK | MB_ICONERROR);
 }

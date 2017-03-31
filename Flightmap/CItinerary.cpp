@@ -577,7 +577,7 @@ void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr)
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		wcsncpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (WCHAR*)lpszStr, FMAttributes[Attr].DataParameter-1);
+		wcsncpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (WCHAR*)lpszStr, _TRUNCATE);
 
 		if ((Attr==2) || (Attr==5) || (Attr==9))
 		{
@@ -841,8 +841,7 @@ CItinerary::CItinerary(CItinerary* pItinerary)
 	{
 		SetDisplayName(pItinerary->m_FileName);
 
-		CString tmpStr((LPCSTR)IDS_FILTEREDITINERARY);
-		m_DisplayName += tmpStr;
+		m_DisplayName += CString((LPCSTR)IDS_FILTEREDITINERARY);
 	}
 	else
 	{

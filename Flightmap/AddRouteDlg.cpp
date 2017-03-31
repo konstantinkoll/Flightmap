@@ -59,8 +59,7 @@ void AddRouteDlg::DoDataExchange(CDataExchange* pDX)
 BOOL AddRouteDlg::InitDialog()
 {
 	// Route
-	CString tmpStr((LPCSTR)IDS_CUEBANNER_ROUTE);
-	m_wndRoute.SetCueBanner(tmpStr);
+	m_wndRoute.SetCueBanner(CString((LPCSTR)IDS_CUEBANNER_ROUTE));
 
 	// Carrier
 	PrepareCarrierCtrl(&m_wndCarrier, p_Itinerary);

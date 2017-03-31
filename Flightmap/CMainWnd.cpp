@@ -47,9 +47,7 @@ BOOL CMainWnd::Create(CItinerary* pItinerary)
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
-	CString Caption((LPCSTR)IDR_APPLICATION);
-
-	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Main"), CSize(0, 0), TRUE);
+	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_APPLICATION), _T("Main"), CSize(0, 0), TRUE);
 }
 
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
@@ -207,10 +205,7 @@ BOOL CMainWnd::CloseFile()
 {
 	if (m_pItinerary)
 		if (m_pItinerary->m_IsModified)
-		{
-			CString Text((LPCSTR)IDS_NOTSAVED);
-
-			switch (FMMessageBox(this, Text, m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONWARNING))
+			switch (FMMessageBox(this, CString((LPCSTR)IDS_NOTSAVED), m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONWARNING))
 			{
 			case IDCANCEL:
 				return FALSE;
@@ -221,7 +216,6 @@ BOOL CMainWnd::CloseFile()
 				if (m_pItinerary->m_IsModified)
 					return FALSE;
 			}
-		}
 
 	return TRUE;
 }

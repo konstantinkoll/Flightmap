@@ -143,8 +143,7 @@ void AboutDlg::CheckInternetConnection()
 
 void AboutDlg::AddQuality(CComboBox& wndCombobox, UINT nResID)
 {
-	CString tmpStr((LPCSTR)nResID);
-	wndCombobox.AddString(tmpStr);
+	wndCombobox.AddString(CString((LPCSTR)nResID));
 }
 
 BOOL AboutDlg::InitDialog()

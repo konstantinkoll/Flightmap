@@ -24,27 +24,29 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		// Breite
+		// Width
 		INT OldWidth[FMAttributeCount];
 		memcpy(&OldWidth, &p_ViewParameters->ColumnWidth, sizeof(OldWidth));
 		ZeroMemory(&p_ViewParameters->ColumnWidth, sizeof(p_ViewParameters->ColumnWidth));
 
-		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
-		{
-			const UINT Attr = (UINT)m_wndAttributes.GetItemData(a);
-			const BOOL Show = m_wndAttributes.GetCheck(a) || (Attr==0) || (Attr==3);
-			p_ViewParameters->ColumnWidth[Attr] = Show ? OldWidth[Attr] ? OldWidth[Attr] : FMAttributes[Attr].RecommendedWidth : 0;
-		}
-
-		// Reihenfolge
 		UINT Count = 0;
+
 		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
 		{
 			const UINT Attr = (UINT)m_wndAttributes.GetItemData(a);
+
 			if (m_wndAttributes.GetCheck(a) || (Attr==0) || (Attr==3))
-				p_ViewParameters->ColumnOrder[Count++] = Attr;
+			{
+				p_ViewParameters->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : FMAttributes[Attr].RecommendedWidth;
+				p_ViewParameters->ColumnOrder[Count++] = (INT)m_wndAttributes.GetItemData(a);
+			}
+			else
+			{
+				p_ViewParameters->ColumnWidth[Attr] = 0;
+			}
 		}
 
+		// Order
 		for (INT a=0; a<FMAttributeCount; a++)
 			if (!p_ViewParameters->ColumnWidth[a])
 				p_ViewParameters->ColumnOrder[Count++] = a;

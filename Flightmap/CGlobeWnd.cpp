@@ -17,9 +17,7 @@ BOOL CGlobeWnd::Create()
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_GLOBE));
 
-	CString Caption((LPCSTR)IDR_GLOBE);
-
-	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Globe"), CSize(0, 0), TRUE);
+	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_GLOBE), _T("Globe"), CSize(0, 0), TRUE);
 }
 
 BOOL CGlobeWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -51,6 +49,7 @@ void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 		}
 
 	SetWindowText(Caption);
+
 	m_wndGlobeView.SetFlights(pKitchen);
 }
 

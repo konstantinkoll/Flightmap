@@ -1063,10 +1063,8 @@ void CGlobeView::OnPaint()
 		CRect rectText(rect);
 		rectText.top += 6;
 
-		CString tmpStr((LPCSTR)IDS_NORENDERINGCONTEXT);
-
 		dc.SetTextColor(0x0000FF);
-		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		dc.DrawText(CString((LPCSTR)IDS_NORENDERINGCONTEXT), rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 		DrawWindowEdge(dc, Themed);
 
@@ -1270,7 +1268,7 @@ void CGlobeView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CGlobeView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
-	switch(nChar)
+	switch (nChar)
 	{
 	case VK_ADD:
 	case VK_OEM_PLUS:

@@ -29,9 +29,7 @@ BOOL CMapWnd::Create()
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_MAP));
 
-	CString Caption((LPCSTR)IDR_MAP);
-
-	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, Caption, _T("Map"), CSize(0, 0), TRUE);
+	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_MAP), _T("Map"), CSize(0, 0), TRUE);
 }
 
 BOOL CMapWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
