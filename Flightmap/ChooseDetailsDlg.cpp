@@ -38,7 +38,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 			if (m_wndAttributes.GetCheck(a) || (Attr==0) || (Attr==3))
 			{
 				p_ViewParameters->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : FMAttributes[Attr].RecommendedWidth;
-				p_ViewParameters->ColumnOrder[Count++] = (INT)m_wndAttributes.GetItemData(a);
+				p_ViewParameters->ColumnOrder[Count++] = Attr;
 			}
 			else
 			{

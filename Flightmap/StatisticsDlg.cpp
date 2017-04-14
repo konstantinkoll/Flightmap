@@ -516,15 +516,8 @@ BOOL StatisticsDlg::OnInitDialog()
 	m_wndFilterRating.SetRating(0);
 
 	// Class
-	CString tmpName;
-	CString tmpHint;
-
-	ENSURE(tmpName.LoadString(IDS_REVENUEFLIGHTS));
-	m_wndListClass.AddCategory(0, tmpName, _T(""), TRUE);
-
-	ENSURE(tmpName.LoadString(IDS_NONREVFLIGHTS));
-	ENSURE(tmpHint.LoadString(IDS_INCLUDESCREW));
-	m_wndListClass.AddCategory(1, tmpName, tmpHint, TRUE);
+	m_wndListClass.AddCategory(0, CString((LPCSTR)IDS_REVENUEFLIGHTS), _T(""));
+	m_wndListClass.AddCategory(1, CString((LPCSTR)IDS_NONREVFLIGHTS), CString((LPCSTR)IDS_INCLUDESCREW), TRUE);
 
 	m_wndListClass.AddColumn(0, _T(""));
 	m_wndListClass.AddColumn(1, _T(""));

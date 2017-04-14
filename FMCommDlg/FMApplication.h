@@ -99,7 +99,6 @@ public:
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
 
 	CImageList m_SystemImageListSmall;
-	CImageList m_SystemImageListLarge;
 	CImageList m_SystemImageListExtraLarge;
 	HBITMAP hRatingBitmaps[MaxRating+1];
 	FMFont m_DefaultFont;

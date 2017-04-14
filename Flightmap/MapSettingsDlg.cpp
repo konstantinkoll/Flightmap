@@ -181,11 +181,8 @@ BOOL MapSettingsDlg::InitDialog()
 	m_ResolutionPresetIconsImageList.Attach(m_ResolutionPresetIcons.ExtractImageList());
 	m_wndResolutionList.SetImageList(&m_ResolutionPresetIconsImageList, LVSIL_SMALL);
 
-	ENSURE(tmpStr.LoadString(IDS_COLUMN_RESOLUTION));
-	m_wndResolutionList.AddColumn(0, tmpStr);
-
-	ENSURE(tmpStr.LoadString(IDS_COLUMN_APPLICATION));
-	m_wndResolutionList.AddColumn(1, tmpStr);
+	m_wndResolutionList.AddColumn(0, CString((LPCSTR)IDS_COLUMN_RESOLUTION));
+	m_wndResolutionList.AddColumn(1, CString((LPCSTR)IDS_COLUMN_APPLICATION));
 
 	BOOL bUserDefined = TRUE;
 	static UINT puColumns[1] = { 1 };
@@ -227,10 +224,7 @@ BOOL MapSettingsDlg::InitDialog()
 
 	// Tab 1
 	for (UINT a=0; a<4; a++)
-	{
-		ENSURE(tmpStr.LoadString(IDS_BACKGROUND_DEFAULT+a));
-		m_wndBackground.AddString(tmpStr);
-	}
+		m_wndBackground.AddString(CString((LPCSTR)(IDS_BACKGROUND_DEFAULT+a)));
 
 	m_wndBackground.SetCurSel(theApp.m_MapSettings.Background);
 	m_wndColorIndicatorBackground.SetColor(m_clrBackground=theApp.m_MapSettings.BackgroundColor);

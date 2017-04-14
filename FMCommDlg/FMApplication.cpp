@@ -141,9 +141,6 @@ FMApplication::FMApplication(GUID& AppID)
 	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&il)))
 		m_SystemImageListSmall.Attach((HIMAGELIST)il);
 
-	if (SUCCEEDED(SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&il)))
-		m_SystemImageListLarge.Attach((HIMAGELIST)il);
-
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
 }

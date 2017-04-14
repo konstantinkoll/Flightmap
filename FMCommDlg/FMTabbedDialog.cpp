@@ -198,6 +198,7 @@ BOOL FMTabbedDialog::InitDialog()
 
 	// Buttons
 	HINSTANCE hInstance = LoadLibrary(_T("USER32.DLL"));
+
 	CString tmpStr;
 
 	ENSURE(tmpStr.LoadString(hInstance, 799+IDOK));

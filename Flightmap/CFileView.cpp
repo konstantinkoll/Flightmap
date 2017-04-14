@@ -121,7 +121,7 @@ void CFileView::Init()
 	m_wndExplorerList.Create(WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | LVS_OWNERDATA | LVS_EDITLABELS | LVS_SHAREIMAGELISTS, CRect(0, 0, 0, 0), this, 2);
 
 	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListSmall, LVSIL_SMALL);
-	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
+	m_wndExplorerList.SetImageList(&theApp.m_SystemImageListExtraLarge, LVSIL_NORMAL);
 
 	for (UINT a=0; a<4; a++)
 		m_wndExplorerList.AddColumn(a, CString((LPCSTR)IDS_SUBITEM_NAME+a), 100, a);
@@ -585,7 +585,7 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 UseIcon:
 			// Icon
-			pTooltipData->hIcon = FMGetApp()->m_SystemImageListLarge.ExtractIcon(pAttachment->IconID);
+			pTooltipData->hIcon = FMGetApp()->m_SystemImageListExtraLarge.ExtractIcon(pAttachment->IconID);
 		}
 
 		delete pBitmap;

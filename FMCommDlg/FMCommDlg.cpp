@@ -196,6 +196,7 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
 
 			rect.top += rectLine.Height();
+
 			dc.SelectObject(&FMGetApp()->m_DefaultFont);
 			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_END_ELLIPSIS | DT_WORDBREAK | DT_NOPREFIX);
 		}

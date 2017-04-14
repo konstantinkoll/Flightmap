@@ -120,30 +120,37 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 
 	case FMTypeUnicodeString:
 		pEdit->SetLimitText(FMAttributes[Attr].DataParameter);
+
 		break;
 
 	case FMTypeUINT:
 		pEdit->SetLimitText(6);
 		pEdit->SetValidChars(_T("0123456789"));
+
 		break;
 
 	case FMTypeClass:
 		pEdit->SetLimitText(2);
 		pEdit->SetValidChars(_T("CFHJYcfhjy+"));
+
 		break;
 
 	case FMTypeDateTime:
 		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_DATETIME));
+
 		pEdit->SetCueBanner(tmpStr);
 		pEdit->SetLimitText(16);
 		pEdit->SetValidChars(_T("0123456789:-. "));
+
 		break;
 
 	case FMTypeTime:
 		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_TIME));
+
 		pEdit->SetCueBanner(tmpStr);
 		pEdit->SetLimitText(5);
 		pEdit->SetValidChars(_T("0123456789:"));
+
 		break;
 	}
 
