@@ -292,43 +292,43 @@ void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles)
 	tmpStr.Format(IDS_MILES, AwardMiles, StatusMiles);
 }
 
-void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM)
+void DistanceToString(LPWSTR pStr, SIZE_T cCount, DOUBLE DistanceNM)
 {
 	if (theApp.m_UseStatuteMiles)
 	{
-		swprintf_s(pBuffer, cCount, L"%u mi (%u km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
+		swprintf_s(pStr, cCount, L"%u mi (%u km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
 	}
 	else
 	{
-		swprintf_s(pBuffer, cCount, L"%u nm (%u km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
+		swprintf_s(pStr, cCount, L"%u nm (%u km)", (UINT)DistanceNM, (UINT)(DistanceNM*1.852));
 	}
 }
 
-void TimeToString(WCHAR* pBuffer, SIZE_T cCount, UINT Time)
+void TimeToString(LPWSTR pStr, SIZE_T cCount, UINT Time)
 {
-	swprintf_s(pBuffer, cCount, L"%02d:%02d", Time/60, Time%60);
+	swprintf_s(pStr, cCount, L"%02d:%02d", Time/60, Time%60);
 }
 
-void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft)
+void DateTimeToString(LPWSTR pStr, SIZE_T cCount, FILETIME ft)
 {
 	SYSTEMTIME st;
 	FileTimeToSystemTime(&ft, &st);
 
 	if ((st.wHour!=0) || (st.wMinute!=0))
 	{
-		swprintf_s(pBuffer, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
+		swprintf_s(pStr, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
 	}
 	else
 	{
-		swprintf_s(pBuffer, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
+		swprintf_s(pStr, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
 	}
 }
 
-void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route)
+void RouteToString(LPWSTR pStr, SIZE_T cCount, AIRX_Route& Route)
 {
 	if (Route.DistanceNM==-1)
 	{
-		wcscpy_s(pBuffer, cCount, _T("—"));
+		wcscpy_s(pStr, cCount, _T("—"));
 		return;
 	}
 
@@ -338,98 +338,98 @@ void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route)
 	WCHAR tmpBuf[256];
 	DistanceToString(tmpBuf, 256, Route.DistanceNM);
 
-	swprintf_s(pBuffer, cCount, L"%s–%s, %s", From.GetBuffer(), To.GetBuffer(), tmpBuf);
+	swprintf_s(pStr, cCount, L"%s–%s, %s", From.GetBuffer(), To.GetBuffer(), tmpBuf);
 }
 
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount)
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount)
 {
 	ASSERT(Attr<FMAttributeCount);
-	ASSERT(pBuffer);
+	ASSERT(pStr);
 	ASSERT(cCount>=1);
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
-	*pBuffer = L'\0';
+	*pStr = L'\0';
 
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		wcscpy_s(pBuffer, cCount, (WCHAR*)pData);
+		wcscpy_s(pStr, cCount, (LPCWSTR)pData);
 		break;
 
 	case FMTypeAnsiString:
-		MultiByteToWideChar(CP_ACP, 0, (CHAR*)pData, -1, pBuffer, (INT)cCount);
+		MultiByteToWideChar(CP_ACP, 0, (LPCSTR)pData, -1, pStr, (INT)cCount);
 		break;
 
 	case FMTypeUINT:
 		if (*((UINT*)pData))
-			swprintf_s(pBuffer, cCount, L"%u", *((UINT*)pData));
+			swprintf_s(pStr, cCount, L"%u", *((UINT*)pData));
 
 		break;
 
 	case FMTypeDistance:
 		if (Flight.Flags & AIRX_DistanceValid)
-			DistanceToString(pBuffer, cCount, *((DOUBLE*)pData));
+			DistanceToString(pStr, cCount, *((DOUBLE*)pData));
 
 		break;
 
 	case FMTypeFlags:
 		if (Flight.Flags & AIRX_AwardFlight)
-			wcscat_s(pBuffer, cCount, L"A");
+			wcscat_s(pStr, cCount, L"A");
 
 		if (Flight.Flags & AIRX_GroundTransportation)
-			wcscat_s(pBuffer, cCount, L"G");
+			wcscat_s(pStr, cCount, L"G");
 
 		if (Flight.Flags & AIRX_BusinessTrip)
-			wcscat_s(pBuffer, cCount, L"B");
+			wcscat_s(pStr, cCount, L"B");
 
 		if (Flight.Flags & AIRX_LeisureTrip)
-			wcscat_s(pBuffer, cCount, L"L");
+			wcscat_s(pStr, cCount, L"L");
 
 		if (Flight.Flags & AIRX_Upgrade)
-			wcscat_s(pBuffer, cCount, L"U");
+			wcscat_s(pStr, cCount, L"U");
 
 		if (Flight.Flags & AIRX_Cancelled)
-			wcscat_s(pBuffer, cCount, L"C");
+			wcscat_s(pStr, cCount, L"C");
 
 		break;
 
 	case FMTypeDateTime:
 		if ((((FILETIME*)pData)->dwHighDateTime!=0) || (((FILETIME*)pData)->dwLowDateTime!=0))
-			DateTimeToString(pBuffer, cCount, *((FILETIME*)pData));
+			DateTimeToString(pStr, cCount, *((FILETIME*)pData));
 
 		break;
 
 	case FMTypeTime:
 		if (*((UINT*)pData))
-			TimeToString(pBuffer, cCount, *((UINT*)pData));
+			TimeToString(pStr, cCount, *((UINT*)pData));
 
 		break;
 
 	case FMTypeClass:
-		switch (*((CHAR*)pData))
+		switch (*((LPCSTR)pData))
 		{
 		case AIRX_Economy:
-			wcscpy_s(pBuffer, cCount, L"Y");
+			wcscpy_s(pStr, cCount, L"Y");
 			break;
 
 		case AIRX_PremiumEconomy:
-			wcscpy_s(pBuffer, cCount, L"Y+");
+			wcscpy_s(pStr, cCount, L"Y+");
 			break;
 
 		case AIRX_Business:
-			wcscpy_s(pBuffer, cCount, L"J");
+			wcscpy_s(pStr, cCount, L"J");
 			break;
 
 		case AIRX_First:
-			wcscpy_s(pBuffer, cCount, L"F");
+			wcscpy_s(pStr, cCount, L"F");
 			break;
 
 		case AIRX_Crew:
-			wcscpy_s(pBuffer, cCount, L"Crew/DCM");
+			wcscpy_s(pStr, cCount, L"Crew/DCM");
 			break;
 
 		case AIRX_Charter:
-			wcscpy_s(pBuffer, cCount, L"Charter");
+			wcscpy_s(pStr, cCount, L"Charter");
 			break;
 		}
 
@@ -437,7 +437,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cC
 
 	case FMTypeColor:
 		if (*((COLORREF*)pData)!=(COLORREF)-1)
-			swprintf_s(pBuffer, cCount, L"#%06X", _byteswap_ulong(*((COLORREF*)pData)) >> 8);
+			swprintf_s(pStr, cCount, L"#%06X", _byteswap_ulong(*((COLORREF*)pData)) >> 8);
 
 		break;
 	}
@@ -452,9 +452,9 @@ __forceinline void ScanUINT(LPCWSTR Str, UINT& num)
 	swscanf_s(Str, L"%u", &num);
 }
 
-void ScanDateTime(LPCWSTR lpszStr, FILETIME& ft)
+void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 {
-	ASSERT(lpszStr);
+	ASSERT(pStr);
 
 	UINT Year;
 	UINT Month;
@@ -463,7 +463,7 @@ void ScanDateTime(LPCWSTR lpszStr, FILETIME& ft)
 	UINT Minute;
 	SYSTEMTIME st;
 
-	INT c = swscanf_s(lpszStr, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
+	INT c = swscanf_s(pStr, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
 	if (c>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
@@ -482,7 +482,7 @@ void ScanDateTime(LPCWSTR lpszStr, FILETIME& ft)
 		return;
 	}
 
-	c = swscanf_s(lpszStr, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
+	c = swscanf_s(pStr, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
 	if (c>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
@@ -501,7 +501,7 @@ void ScanDateTime(LPCWSTR lpszStr, FILETIME& ft)
 		return;
 	}
 
-	c = swscanf_s(lpszStr, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
+	c = swscanf_s(pStr, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
 	if (c>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
@@ -523,14 +523,14 @@ void ScanDateTime(LPCWSTR lpszStr, FILETIME& ft)
 	ft.dwHighDateTime = ft.dwLowDateTime = 0;
 }
 
-void ScanTime(LPCWSTR lpszStr, UINT& Time)
+void ScanTime(LPCWSTR pStr, UINT& Time)
 {
-	ASSERT(lpszStr);
+	ASSERT(pStr);
 
 	UINT Hour;
 	UINT Minute;
 
-	INT c = swscanf_s(lpszStr, L"%u:%u", &Hour, &Minute);
+	INT c = swscanf_s(pStr, L"%u:%u", &Hour, &Minute);
 	if (c>=1)
 	{
 		Time = Hour*60;
@@ -544,11 +544,11 @@ void ScanTime(LPCWSTR lpszStr, UINT& Time)
 	Time = 0;
 }
 
-void ScanColor(LPCWSTR lpszStr, COLORREF& col)
+void ScanColor(LPCWSTR pStr, COLORREF& col)
 {
-	ASSERT(lpszStr);
+	ASSERT(pStr);
 
-	if (swscanf_s((*lpszStr==L'#') ? lpszStr+1 : lpszStr, L"%06X", &col)==1)
+	if (swscanf_s((*pStr==L'#') ? pStr+1 : pStr, L"%06X", &col)==1)
 		if (col!=(COLORREF)-1)
 		{
 			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
@@ -558,24 +558,27 @@ void ScanColor(LPCWSTR lpszStr, COLORREF& col)
 	col = (COLORREF)-1;
 }
 
-void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr)
+void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr)
 {
 	ASSERT(Attr<FMAttributeCount);
-	ASSERT(lpszStr);
+	ASSERT(pStr);
 
-	while ((*lpszStr!=L'\0') && (*lpszStr<=L' '))
-		lpszStr++;
+	while ((*pStr!=L'\0') && (*pStr<=L' '))
+		pStr++;
 
-	WCHAR* ptr = lpszStr;
-	WCHAR* end = lpszStr;
-	while (*ptr!=L'\0')
+	WCHAR* Ptr = pStr;
+	WCHAR* pEnd = pStr;
+
+	while (*Ptr!=L'\0')
 	{
-		if (*ptr!=L' ')
-			end = ptr+1;
-		ptr++;
+		if (*Ptr!=L' ')
+			pEnd = Ptr+1;
+
+		Ptr++;
 	}
-	if (*end)
-		*end = L'\0';
+
+	if (*pEnd)
+		*pEnd = L'\0';
 
 	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
 	WCHAR* pWChar;
@@ -584,11 +587,11 @@ void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr)
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		wcsncpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (WCHAR*)lpszStr, _TRUNCATE);
+		wcsncpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (LPCWSTR)pStr, _TRUNCATE);
 
 		if ((Attr==2) || (Attr==5) || (Attr==9))
 		{
-			pWChar = (WCHAR*)pData;
+			pWChar = (LPWSTR)pData;
 
 			while (*pWChar)
 			{
@@ -601,7 +604,7 @@ void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr)
 
 	case FMTypeAnsiString:
 		pChar = (CHAR*)pData;
-		WideCharToMultiByte(CP_ACP, 0, lpszStr, -1, pChar, FMAttributes[Attr].DataParameter, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pStr, -1, pChar, FMAttributes[Attr].DataParameter, NULL, NULL);
 
 		while (*pChar)
 			*(pChar++) = (CHAR)toupper(*pChar);
@@ -609,46 +612,46 @@ void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr)
 		break;
 
 	case FMTypeUINT:
-		ScanUINT(lpszStr, *((UINT*)pData));
+		ScanUINT(pStr, *((UINT*)pData));
 		break;
 
 	case FMTypeFlags:
 		Flight.Flags &= ~(AIRX_AwardFlight | AIRX_GroundTransportation | AIRX_BusinessTrip | AIRX_LeisureTrip);
 
-		if (wcschr(lpszStr, L'A'))
+		if (wcschr(pStr, L'A'))
 			Flight.Flags |= AIRX_AwardFlight;
 
-		if (wcschr(lpszStr, L'G'))
+		if (wcschr(pStr, L'G'))
 			Flight.Flags |= AIRX_GroundTransportation;
 
-		if (wcschr(lpszStr, L'B'))
+		if (wcschr(pStr, L'B'))
 			Flight.Flags |= AIRX_BusinessTrip;
 
-		if (wcschr(lpszStr, L'L'))
+		if (wcschr(pStr, L'L'))
 			Flight.Flags |= AIRX_LeisureTrip;
 
-		if (wcschr(lpszStr, L'U'))
+		if (wcschr(pStr, L'U'))
 			Flight.Flags |= AIRX_Upgrade;
 
-		if (wcschr(lpszStr, L'C'))
+		if (wcschr(pStr, L'C'))
 			Flight.Flags |= AIRX_Cancelled;
 
 		break;
 
 	case FMTypeDateTime:
-		ScanDateTime(lpszStr, *((FILETIME*)pData));
+		ScanDateTime(pStr, *((FILETIME*)pData));
 		break;
 
 	case FMTypeTime:
-		ScanTime(lpszStr, *((UINT*)pData));
+		ScanTime(pStr, *((UINT*)pData));
 		break;
 
 	case FMTypeClass:
-		*((CHAR*)pData) = (_wcsicmp(L"Y", lpszStr)==0) ? AIRX_Economy : (_wcsicmp(L"Y+", lpszStr)==0) ? AIRX_PremiumEconomy : (_wcsicmp(L"J", lpszStr)==0) ? AIRX_Business : (_wcsicmp(L"F", lpszStr)==0) ? AIRX_First : ((_wcsicmp(L"C", lpszStr)==0) || (_wcsicmp(L"CREW", lpszStr)==0) || (_wcsicmp(L"CREW/DCM", lpszStr)==0)) ? AIRX_Crew : ((_wcsicmp(L"H", lpszStr)==0) || (_wcsicmp(L"CHARTER", lpszStr)==0)) ? AIRX_Charter : AIRX_Unknown;
+		*((CHAR*)pData) = (_wcsicmp(L"Y", pStr)==0) ? AIRX_Economy : (_wcsicmp(L"Y+", pStr)==0) ? AIRX_PremiumEconomy : (_wcsicmp(L"J", pStr)==0) ? AIRX_Business : (_wcsicmp(L"F", pStr)==0) ? AIRX_First : ((_wcsicmp(L"C", pStr)==0) || (_wcsicmp(L"CREW", pStr)==0) || (_wcsicmp(L"CREW/DCM", pStr)==0)) ? AIRX_Crew : ((_wcsicmp(L"H", pStr)==0) || (_wcsicmp(L"CHARTER", pStr)==0)) ? AIRX_Charter : AIRX_Unknown;
 		break;
 
 	case FMTypeColor:
-		ScanColor(lpszStr, *((COLORREF*)pData));
+		ScanColor(pStr, *((COLORREF*)pData));
 		break;
 	}
 }
@@ -657,7 +660,7 @@ void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr)
 // Other
 //
 
-BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, WCHAR* pDelimiterFound)
+BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, LPWSTR pDelimiterFound)
 {
 	if (Pos>=strSrc.GetLength())
 		return FALSE;
@@ -672,6 +675,7 @@ BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& D
 				*pDelimiterFound = strSrc[Pos];
 
 			Pos++;
+
 			return TRUE;
 		}
 
@@ -749,14 +753,14 @@ Finish:
 	return Result;
 }
 
-__forceinline void ReadUTF7WCHAR(CFile& f, WCHAR* pChar, UINT cCount)
+__forceinline void ReadUTF7WCHAR(CFile& f, LPWSTR pStr, SIZE_T cCount)
 {
-	wcscpy_s(pChar, cCount, ReadUTF7String(f));
+	wcscpy_s(pStr, cCount, ReadUTF7String(f));
 }
 
-__forceinline void ReadUTF7CHAR(CFile& f, CHAR* pChar, UINT cCount)
+__forceinline void ReadUTF7CHAR(CFile& f, LPSTR pStr, SIZE_T cCount)
 {
-	WideCharToMultiByte(CP_ACP, 0, ReadUTF7String(f), -1, pChar, cCount, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, ReadUTF7String(f), -1, pStr, (INT)cCount, NULL, NULL);
 }
 
 void ReadUTF7FILETIME(CFile& f, FILETIME& Time)
@@ -1390,11 +1394,11 @@ INT CItinerary::Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, c
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		Compare = _wcsicmp((WCHAR*)pValue1, (WCHAR*)pValue2);
+		Compare = _wcsicmp((LPCWSTR)pValue1, (LPCWSTR)pValue2);
 		break;
 
 	case FMTypeAnsiString:
-		Compare = _stricmp((CHAR*)pValue1, (CHAR*)pValue2);
+		Compare = _stricmp((LPCSTR)pValue1, (LPCSTR)pValue2);
 		break;
 
 	case FMTypeRating:
@@ -1502,7 +1506,7 @@ AIRX_Attachment* CItinerary::GetGPSPath(AIRX_Flight& Flight)
 	{
 		AIRX_Attachment* pAttachment = &m_Attachments[Flight.Attachments[a]];
 
-		WCHAR* pExtension = wcsrchr(pAttachment->Name, L'.');
+		LPCWSTR pExtension = wcsrchr(pAttachment->Name, L'.');
 		if (pExtension)
 			if (_wcsicmp(pExtension, L".gpx")==0)
 			{
@@ -1550,7 +1554,7 @@ void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
 	m_Flights.AddItem(Flight);
 }
 
-void CItinerary::AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure)
+void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, FILETIME Departure)
 {
 	AIRX_Flight Flight;
 	ResetFlight(Flight);
@@ -1631,7 +1635,7 @@ void CItinerary::DeleteSelectedFlights()
 
 void CItinerary::SetDisplayName(const CString& Filename)
 {
-	const WCHAR* pChar = wcsrchr(Filename, L'\\');
+	const LPCWSTR pChar = wcsrchr(Filename, L'\\');
 
 	m_DisplayName = pChar ? pChar+1 : Filename;
 }
@@ -1780,7 +1784,7 @@ void CItinerary::ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force)
 
 	Attachment.Flags &= ~(AIRX_Valid | AIRX_Invalid);
 
-	WCHAR* pExtension = wcsrchr(Attachment.Name, L'.');
+	LPCWSTR pExtension = wcsrchr(Attachment.Name, L'.');
 	if (pExtension)
 		if (_wcsicmp(pExtension, L".gpx")==0)
 		{

@@ -165,7 +165,7 @@ FMApplication::~FMApplication()
 	if (hFontLetterGothic)
 		RemoveFontMemResourceEx(hFontLetterGothic);
 
-	for (UINT a=0; a<=MaxRating; a++)
+	for (UINT a=0; a<=MAXRATING; a++)
 		DeleteObject(hRatingBitmaps[a]);
 }
 
@@ -195,7 +195,7 @@ BOOL FMApplication::InitInstance()
 	ENSURE(AfxOleInit());
 
 	// Rating bitmaps
-	for (UINT a=0; a<=MaxRating; a++)
+	for (UINT a=0; a<=MAXRATING; a++)
 		hRatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
 
 	// Eingebettete Schrift
@@ -239,7 +239,7 @@ BOOL FMApplication::InitInstance()
 	return TRUE;
 }
 
-CWnd* FMApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
+CWnd* FMApplication::OpenCommandLine(LPCWSTR /*pCmdLine*/)
 {
 	return NULL;
 }
@@ -253,7 +253,7 @@ INT FMApplication::ExitInstance()
 
 	GdiplusShutdown(m_GdiPlusToken);
 
-	for (UINT a=0; a<=MaxRating; a++)
+	for (UINT a=0; a<=MAXRATING; a++)
 		DeleteObject(hRatingBitmaps[a]);
 
 	return CWinAppEx::ExitInstance();
@@ -448,7 +448,7 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirp
 	ShowTooltip(pCallerWnd, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
 }
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CHAR* Code, const CString& Hint)
+void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, LPCSTR Code, const CString& Hint)
 {
 	FMAirport* pAirport = NULL;
 	if (FMIATAGetAirportByCode(Code, &pAirport))

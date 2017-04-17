@@ -112,7 +112,7 @@ void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void EditFlightDlg::GetIATACode(UINT nID, CHAR* pIATA)
+void EditFlightDlg::GetIATACode(UINT nID, LPSTR pIATA)
 {
 	ASSERT(pIATA);
 
@@ -133,7 +133,7 @@ void EditFlightDlg::DisplayAirport(UINT nID, FMAirport* pAirport)
 	GetDlgItem(nID)->SetWindowText(tmpStr1);
 }
 
-void EditFlightDlg::DisplayAirport(UINT nID, CHAR* pIATA)
+void EditFlightDlg::DisplayAirport(UINT nID, LPCSTR pIATA)
 {
 	ASSERT(pIATA);
 
@@ -156,7 +156,7 @@ void EditFlightDlg::DisplayAirport(UINT nDisplayID, UINT nEditID)
 	DisplayAirport(nDisplayID, Code);
 }
 
-void EditFlightDlg::SelectAirport(UINT nEditID, CHAR* pIATA)
+void EditFlightDlg::SelectAirport(UINT nEditID, LPSTR pIATA)
 {
 	ASSERT(nEditID);
 	ASSERT(pIATA);

@@ -21,7 +21,7 @@ CKitchen::CKitchen(const CString& DisplayName, BOOL MergeMetro)
 	m_FlightRoutes.InitHashTable(4096);
 }
 
-FMAirport* CKitchen::AddAirport(const CHAR* Code)
+FMAirport* CKitchen::AddAirport(const LPCSTR Code)
 {
 	ASSERT(Code);
 

@@ -68,7 +68,7 @@ public:
 	CFlightmapApp();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
+	virtual CWnd* OpenCommandLine(LPCWSTR CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void Broadcast(UINT Message);
@@ -77,8 +77,8 @@ public:
 	void AddToRecentSearchTerms(const CString& Str);
 	void AddToRecentReplaceTerms(const CString& Str);
 	void OpenAirportGoogleEarth(FMAirport* pAirport);
-	void OpenAirportGoogleEarth(CHAR* Code);
-	void OpenAirportLiquidFolders(CHAR* Code);
+	void OpenAirportGoogleEarth(LPCSTR Code);
+	void OpenAirportLiquidFolders(LPCSTR Code);
 	void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
 
 	CList<CString> m_RecentFiles;

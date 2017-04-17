@@ -25,8 +25,10 @@
 using namespace CryptoPP;
 
 
-BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+// Draw
+//
 
+BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path)
 {
@@ -738,7 +740,7 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF clr, BOOL Enabled, BOO
 }
 
 
-// IATA-Datenbank
+// IATA
 //
 
 #include "IATA_DE.h"
@@ -789,7 +791,7 @@ INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport
 	return Last;
 }
 
-BOOL FMIATAGetAirportByCode(const CHAR* Code, FMAirport** ppAirport)
+BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport** ppAirport)
 {
 	if (!Code)
 		return FALSE;
@@ -930,7 +932,7 @@ __forceinline DOUBLE GetSeconds(DOUBLE c)
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
-void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero)
+void FMGeoCoordinateToString(const DOUBLE c, LPSTR tmpStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
 {
 	sprintf_s(tmpStr, cCount, FillZero ? "%03u°%02u\'%02u\"%c" : "%u°%u\'%u\"%c",
 		(UINT)(fabs(c)+ROUNDOFF),
@@ -947,7 +949,7 @@ void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, B
 	tmpStr = Coordinate;
 }
 
-void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero)
+void FMGeoCoordinatesToString(const FMGeoCoordinates& c, LPSTR tmpStr, SIZE_T cCount, BOOL FillZero)
 {
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
@@ -965,7 +967,7 @@ void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCoun
 	}
 }
 
-void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero)
+void FMGeoCoordinatesToString(const FMGeoCoordinates& c, CString& tmpStr, BOOL FillZero)
 {
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
@@ -987,7 +989,7 @@ void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL Fi
 }
 
 
-// Lizensierung
+// License
 //
 
 static BOOL LicenseRead = FALSE;
@@ -997,7 +999,7 @@ static FILETIME ExpireBuffer = { 0 };
 
 #define BUFSIZE    4096
 
-void ParseInput(CHAR* pStr, FMLicense* pLicense)
+void ParseInput(LPSTR pStr, FMLicense* pLicense)
 {
 	ASSERT(pStr);
 	ASSERT(pLicense);
@@ -1006,50 +1008,51 @@ void ParseInput(CHAR* pStr, FMLicense* pLicense)
 
 	while (*pStr)
 	{
-		CHAR* Ptr = strstr(pStr, "\n");
-		*Ptr = '\0';
+		CHAR* pChar = strstr(pStr, "\n");
+		if (pChar)
+			*pChar = '\0';
 
-		CHAR* Trenner = strchr(pStr, '=');
-		if (Trenner)
+		CHAR* pSeparator = strchr(pStr, '=');
+		if (pSeparator)
 		{
-			*(Trenner++) = '\0';
+			*(pSeparator++) = '\0';
 
 			if (strcmp(pStr, LICENSE_ID)==0)
 			{
-				strcpy_s(pLicense->PurchaseID, 256, Trenner);
+				strcpy_s(pLicense->PurchaseID, 256, pSeparator);
 			}
 			else
 				if (strcmp(pStr, LICENSE_PRODUCT)==0)
 				{
-					strcpy_s(pLicense->ProductID, 256, Trenner);
+					strcpy_s(pLicense->ProductID, 256, pSeparator);
 				}
 				else
 					if (strcmp(pStr, LICENSE_DATE)==0)
 					{
-						strcpy_s(pLicense->PurchaseDate, 256, Trenner);
+						strcpy_s(pLicense->PurchaseDate, 256, pSeparator);
 					}
 					else
 						if (strcmp(pStr, LICENSE_QUANTITY)==0)
 						{
-							strcpy_s(pLicense->Quantity, 256, Trenner);
+							strcpy_s(pLicense->Quantity, 256, pSeparator);
 						}
 						else
 							if (strcmp(pStr, LICENSE_NAME)==0)
 							{
-								strcpy_s(pLicense->RegName, 256, Trenner);
+								strcpy_s(pLicense->RegName, 256, pSeparator);
 							}
 							else
 								if (strcmp(pStr, LICENSE_VERSION)==0)
 								{
-									sscanf_s(Trenner, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
+									sscanf_s(pSeparator, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
 								}
 		}
 
-		pStr = Ptr+1;
+		pStr = pChar+1;
 	}
 }
 
-__forceinline BOOL ReadCodedLicense(CHAR* pStr, SIZE_T cCount)
+__forceinline BOOL ReadCodedLicense(LPCSTR pStr, SIZE_T cCount)
 {
 	BOOL Result = FALSE;
 
@@ -1438,6 +1441,9 @@ void FMCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	}
 }
 
+
+// Message box
+//
 
 INT FMMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 {

@@ -21,7 +21,7 @@ CExplorerList::CExplorerList()
 	m_ColumnCount = 1;
 	m_Hover = FALSE;
 	m_HoverItem = m_TooltipItem = -1;
-	hThemeButton = NULL;
+	m_hThemeButton = NULL;
 }
 
 void CExplorerList::PreSubclassWindow()
@@ -70,7 +70,7 @@ void CExplorerList::Init()
 		VERIFY(m_wndHeader.SubclassWindow(pHeader->m_hWnd));
 
 	if (FMGetApp()->m_ThemeLibLoaded)
-		hThemeButton = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		m_hThemeButton = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 
 	SetWidgetSize();
 
@@ -82,12 +82,12 @@ void CExplorerList::Init()
 
 void CExplorerList::SetWidgetSize()
 {
-	if (hThemeButton)
+	if (m_hThemeButton)
 	{
 		CDC dc;
 		dc.CreateCompatibleDC(NULL);
 
-		FMGetApp()->zGetThemePartSize(hThemeButton, dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
+		FMGetApp()->zGetThemePartSize(m_hThemeButton, dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
 	}
 	else
 	{
@@ -172,7 +172,7 @@ void CExplorerList::AdjustLayout(INT ListWidth)
 		ListWidth -= 4;
 
 	if (!(GetStyle() & LVS_ALIGNLEFT))
-		ListWidth -= GetSystemMetrics(SM_CXVSCROLL);
+		ListWidth -= GetSystemMetrics(SM_CXVSCROLL)+4;
 
 	if (ListWidth<16)
 		return;
@@ -270,13 +270,13 @@ void CExplorerList::DrawItem(INT nID, CDC* pDC)
 			CRect rectButton(rectIcon.TopLeft(), m_CheckboxSize);
 			rectButton.OffsetRect(2*PADDING, (rectIcon.Height()-m_CheckboxSize.cy)/2);
 
-			if (hThemeButton)
+			if (m_hThemeButton)
 			{
 				INT uiStyle = (GetHotItem()==nID) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
 				if (GetCheck(nID))
 					uiStyle += 4;
 
-				FMGetApp()->zDrawThemeBackground(hThemeButton, dc, BP_CHECKBOX, uiStyle, rectButton, rectButton);
+				FMGetApp()->zDrawThemeBackground(m_hThemeButton, dc, BP_CHECKBOX, uiStyle, rectButton, rectButton);
 			}
 			else
 			{
@@ -441,8 +441,8 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CExplorerList::OnDestroy()
 {
-	if (hThemeButton)
-		FMGetApp()->zCloseThemeData(hThemeButton);
+	if (m_hThemeButton)
+		FMGetApp()->zCloseThemeData(m_hThemeButton);
 
 	CListCtrl::OnDestroy();
 }
@@ -466,10 +466,10 @@ LRESULT CExplorerList::OnThemeChanged()
 {
 	if (FMGetApp()->m_ThemeLibLoaded)
 	{
-		if (hThemeButton)
-			FMGetApp()->zCloseThemeData(hThemeButton);
+		if (m_hThemeButton)
+			FMGetApp()->zCloseThemeData(m_hThemeButton);
 
-		hThemeButton = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		m_hThemeButton = FMGetApp()->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 	}
 
 	SetWidgetSize();

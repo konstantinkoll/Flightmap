@@ -11,9 +11,9 @@
 #include "IATA.h"
 #include <uxtheme.h>
 
-#define RatingBitmapWidth      88
-#define RatingBitmapHeight     15
-#define MaxRating              10
+#define RATINGBITMAPWIDTH      88
+#define RATINGBITMAPHEIGHT     15
+#define MAXRATING              10
 
 #define OS_XP                   0
 #define OS_Vista                1
@@ -66,7 +66,7 @@ public:
 	virtual ~FMApplication();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
+	virtual CWnd* OpenCommandLine(LPCWSTR pCmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void AddFrame(CWnd* pFrame);
@@ -80,7 +80,7 @@ public:
 	static HANDLE LoadFontFromResource(UINT nID);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CHAR* Code, const CString& Hint);
+	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LPCSTR Code, const CString& Hint);
 	BOOL IsTooltipVisible() const;
 	void HideTooltip();
 	static void PlayAsteriskSound();
@@ -100,7 +100,7 @@ public:
 
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListExtraLarge;
-	HBITMAP hRatingBitmaps[MaxRating+1];
+	HBITMAP hRatingBitmaps[MAXRATING+1];
 	FMFont m_DefaultFont;
 	FMFont m_ItalicFont;
 	FMFont m_SmallFont;

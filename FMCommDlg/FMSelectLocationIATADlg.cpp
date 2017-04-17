@@ -9,7 +9,7 @@
 // FMSelectLocationIATADlg
 //
 
-FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, const CHAR* pAirport)
+FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirport)
 	: FMDialog(IDD_SELECTIATA, pParentWnd)
 {
 	m_LastCountrySelected = FMGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
@@ -199,7 +199,7 @@ void FMSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		CHAR* pChar = (pItem->iSubItem==0) ? p_Airports[Index]->Code : p_Airports[Index]->Name;
+		LPCSTR pChar = (pItem->iSubItem==0) ? p_Airports[Index]->Code : p_Airports[Index]->Name;
 		MultiByteToWideChar(CP_ACP, 0, pChar, -1, pItem->pszText, 256);
 	}
 }

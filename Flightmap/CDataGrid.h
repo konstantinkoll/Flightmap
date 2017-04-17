@@ -140,7 +140,7 @@ private:
 	void DoDelete();
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected);
 	void AutosizeColumn(UINT Attr);
-	void FinishEdit(WCHAR* pStr, const CPoint& Item);
+	void FinishEdit(LPWSTR pStr, const CPoint& Item);
 	void DestroyEdit(BOOL Accept=FALSE);
 
 	INT m_HScrollMax;

@@ -164,7 +164,7 @@ static const FMAttribute FMAttributes[FMAttributeCount] =
 	{ IDS_COLUMN18, FMTypeUINT, offsetof(AIRX_Flight, MilesAward), 0 , 70, FALSE, TRUE, TRUE, TRUE },					// Award miles
 	{ IDS_COLUMN19, FMTypeUINT, offsetof(AIRX_Flight, MilesStatus), 0, 70, FALSE, TRUE, TRUE, TRUE },					// Status miles
 	{ IDS_COLUMN20, FMTypeFlags, offsetof(AIRX_Flight, Flags), 0, 132, FALSE, FALSE, TRUE, FALSE },						// Flags
-	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 28, RatingBitmapWidth+7, FALSE, TRUE, TRUE, FALSE },	// Rating
+	{ IDS_COLUMN21, FMTypeRating, offsetof(AIRX_Flight, Flags), 28, RATINGBITMAPWIDTH+7, FALSE, TRUE, TRUE, FALSE },	// Rating
 	{ IDS_COLUMN22, FMTypeUnicodeString, offsetof(AIRX_Flight, Comments), 255, 100, TRUE, TRUE, TRUE, TRUE },			// Comments
 	{ IDS_COLUMN23, FMTypeTime, offsetof(AIRX_Flight, FlightTime), 0, 100, FALSE, TRUE, TRUE, TRUE },					// Flight time
 	{ IDS_COLUMN24, FMTypeUINT, offsetof(AIRX_Flight, UpgradeVoucher), 0, 70, FALSE, TRUE, TRUE, TRUE }					// Voucher used
@@ -233,7 +233,7 @@ private:
 	static FILETIME MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute);
 	static INT Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending);
 	void Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending);
-	void AddFlight(CHAR* From, CHAR* To, WCHAR* Carrier, WCHAR* Equipment, CHAR* FlightNo, CHAR Class, CHAR* Seat, CHAR* Registration, WCHAR* Name, UINT Miles, COLORREF Color, FILETIME Departure);
+	void AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, FILETIME Departure);
 	void SetDisplayName(const CString& Filename);
 	static void RemoveAttachment(UINT Index, AIRX_Flight* pFlight);
 	static void FreeAttachment(AIRX_Attachment& Attachment);
@@ -265,12 +265,12 @@ void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL 
 void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight=NULL);
 
-void DistanceToString(WCHAR* pBuffer, SIZE_T cCount, DOUBLE DistanceNM);
-void TimeToString(WCHAR* pBuffer, SIZE_T cCount, UINT Time);
-void DateTimeToString(WCHAR* pBuffer, SIZE_T cCount, FILETIME ft);
-void RouteToString(WCHAR* pBuffer, SIZE_T cCount, AIRX_Route& Route);
+void DistanceToString(LPWSTR pStr, SIZE_T cCount, DOUBLE DistanceNM);
+void TimeToString(LPWSTR pStr, SIZE_T cCount, UINT Time);
+void DateTimeToString(LPWSTR pStr, SIZE_T cCount, FILETIME ft);
+void RouteToString(LPWSTR pStr, SIZE_T cCount, AIRX_Route& Route);
 void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles);
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, WCHAR* pBuffer, SIZE_T cCount);
-void StringToAttribute(LPWSTR lpszStr, AIRX_Flight& Flight, UINT Attr);
+void AttributeToString(AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount);
+void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr);
 
-BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, WCHAR* pDelimiterFound=NULL);
+BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, LPWSTR pDelimiterFound=NULL);

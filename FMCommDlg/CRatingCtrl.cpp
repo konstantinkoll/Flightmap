@@ -9,10 +9,10 @@
 // CRatingCtrl
 //
 
-#define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
-                                            INT h = min(rect.Height(), RatingBitmapHeight);
+#define PrepareBlend()                      INT w = min(rect.Width(), RATINGBITMAPWIDTH); \
+                                            INT h = min(rect.Height(), RATINGBITMAPHEIGHT);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
-                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
+                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MAXRATING ? 0 : level]); \
                                             AlphaBlend(dc, rect.left+(rect.Width()-w)/2, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF); \
                                             SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
@@ -40,7 +40,7 @@ CRatingCtrl::CRatingCtrl()
 
 void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 {
-	ASSERT(Rating<=MaxRating);
+	ASSERT(Rating<=MAXRATING);
 
 	if (Prepare)
 	{
@@ -48,8 +48,8 @@ void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
 		GetWindowRect(rect);
 		GetParent()->ScreenToClient(rect);
 
-		if (rect.Width()<RatingBitmapWidth+8)
-			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RatingBitmapWidth+8), max(rect.Height(), RatingBitmapHeight+4), SWP_NOACTIVATE | SWP_NOZORDER);
+		if (rect.Width()<RATINGBITMAPWIDTH+8)
+			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RATINGBITMAPWIDTH+8), max(rect.Height(), RATINGBITMAPHEIGHT+4), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	m_Rating = Rating;
@@ -161,8 +161,8 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 
 	if (Rating<0)
 		Rating = 0;
-	if (Rating>MaxRating)
-		Rating = MaxRating;
+	if (Rating>MAXRATING)
+		Rating = MAXRATING;
 
 	if (m_Rating!=(UCHAR)Rating)
 	{
@@ -175,7 +175,7 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 
 void CRatingCtrl::OnLButtonDown(UINT /*Flags*/, CPoint point)
 {
-	if ((point.x>=0) && (point.x<RatingBitmapWidth+2))
+	if ((point.x>=0) && (point.x<RATINGBITMAPWIDTH+2))
 		if ((point.x<6) || ((point.x-2)%18<16))
 		{
 			m_Rating = (UCHAR)((point.x<6) ? 0 : 2*((point.x-2)/18)+((point.x-2)%18>8)+1);
@@ -196,7 +196,7 @@ BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*
 	CRect rect;
 	GetClientRect(rect);
 
-	SetCursor(AfxGetApp()->LoadStandardCursor((point.x<0) || (point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RatingBitmapWidth+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
+	SetCursor(AfxGetApp()->LoadStandardCursor((point.x<0) || (point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RATINGBITMAPWIDTH+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
 	return TRUE;
 }
 

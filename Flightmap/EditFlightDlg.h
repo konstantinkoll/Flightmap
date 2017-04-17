@@ -23,7 +23,7 @@ protected:
 	virtual BOOL InitSidebar(LPSIZE pszTabArea);
 	virtual BOOL InitDialog();
 
-	void SelectAirport(UINT nEditID, CHAR* pIATA);
+	void SelectAirport(UINT nEditID, LPSTR pIATA);
 	void DisplayLocation(const FMGeoCoordinates& Location);
 
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
@@ -66,8 +66,8 @@ protected:
 	CFileView m_wndFileView;
 
 private:
-	void GetIATACode(UINT nID, CHAR* pIATA);
+	void GetIATACode(UINT nID, LPSTR pIATA);
 	void DisplayAirport(UINT nID, FMAirport* pAirport);
-	void DisplayAirport(UINT nID, CHAR* pIATA);
+	void DisplayAirport(UINT nID, LPCSTR pIATA);
 	void DisplayAirport(UINT nDisplayID, UINT nEditID);
 };

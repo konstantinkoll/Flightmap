@@ -75,6 +75,6 @@ protected:
 	UINT m_WaypointCount;
 
 private:
-	FMAirport* AddAirport(const CHAR* Code);
+	FMAirport* AddAirport(const LPCSTR Code);
 	static FlightSegments* ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile);
 };

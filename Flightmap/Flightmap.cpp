@@ -25,7 +25,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 			ZeroMemory(&cdsw, sizeof(cdsw));
 			cdsw.AppID = theAppID;
 			if (lParam)
-				wcscpy_s(cdsw.Command, MAX_PATH, (WCHAR*)lParam);
+				wcscpy_s(cdsw.Command, MAX_PATH, (LPCWSTR)lParam);
 
 			COPYDATASTRUCT cds;
 			cds.cbData = sizeof(cdsw);
@@ -209,7 +209,7 @@ BOOL CFlightmapApp::InitInstance()
 	return TRUE;
 }
 
-CWnd* CFlightmapApp::OpenCommandLine(WCHAR* CmdLine)
+CWnd* CFlightmapApp::OpenCommandLine(LPCWSTR CmdLine)
 {
 	if (CmdLine)
 		if (_wcsicmp(CmdLine, L"/CHECKUPDATE")==0)
@@ -379,14 +379,14 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	}
 }
 
-void CFlightmapApp::OpenAirportGoogleEarth(CHAR* Code)
+void CFlightmapApp::OpenAirportGoogleEarth(LPCSTR Code)
 {
 	FMAirport* pAirport;
 	if (FMIATAGetAirportByCode(Code, &pAirport))
 		OpenAirportGoogleEarth(pAirport);
 }
 
-void CFlightmapApp::OpenAirportLiquidFolders(CHAR* Code)
+void CFlightmapApp::OpenAirportLiquidFolders(LPCSTR Code)
 {
 	WCHAR Parameter[4];
 	MultiByteToWideChar(CP_ACP, 0, Code, -1, Parameter, 4);

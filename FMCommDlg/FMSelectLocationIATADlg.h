@@ -15,7 +15,7 @@
 class FMSelectLocationIATADlg : public FMDialog
 {
 public:
-	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, const CHAR* pAirport=NULL);
+	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR pAirport=NULL);
 
 	FMAirport* p_Airport;
 

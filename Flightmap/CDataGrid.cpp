@@ -21,10 +21,10 @@
 #define MARGIN         3
 #define LEFTMARGIN     (BACKSTAGEBORDER-1)
 #define FLAGCOUNT      7
-#define PrepareBlend(rect)                  INT w = min(rect.Width(), RatingBitmapWidth); \
-                                            INT h = min(rect.Height(), RatingBitmapHeight);
+#define PrepareBlend(rect)                  INT w = min(rect.Width(), RATINGBITMAPWIDTH); \
+                                            INT h = min(rect.Height(), RATINGBITMAPHEIGHT);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
-                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MaxRating ? 0 : level]); \
+                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MAXRATING ? 0 : level]); \
                                             AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
                                             SelectObject(hdcMem, hOldBitmap); \
                                             DeleteDC(hdcMem); }
@@ -202,8 +202,8 @@ void CDataGrid::DoCopy(BOOL Cut)
 		HGLOBAL hClipBuffer = GlobalAlloc(GMEM_DDESHARE, Size);
 		if (hClipBuffer)
 		{
-			WCHAR* pBuffer = (WCHAR*)GlobalLock(hClipBuffer);
-			wcscpy_s((WCHAR*)pBuffer, Size, Text);
+			LPWSTR pBuffer = (LPWSTR)GlobalLock(hClipBuffer);
+			wcscpy_s((LPWSTR)pBuffer, Size, Text);
 
 			GlobalUnlock(hClipBuffer);
 
@@ -630,7 +630,7 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* Item, INT* pSubitem)
 								break;
 
 							case FMTypeRating:
-								if (x<RatingBitmapWidth+6)
+								if (x<RATINGBITMAPWIDTH+6)
 									if ((x<6) || (x%18<16))
 										*pSubitem = (x<6) ? 0 : 2*(x/18)+(x%18>8)+1;
 
@@ -783,7 +783,7 @@ __forceinline void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, 
 		{
 			const UCHAR Rating = (UCHAR)(*((UINT*)(((BYTE*)&Flight)+FMAttributes[Attr].Offset))>>FMAttributes[Attr].DataParameter);
 
-			rectItem.top += (rectItem.Height()-RatingBitmapHeight-1)/2;
+			rectItem.top += (rectItem.Height()-RATINGBITMAPHEIGHT-1)/2;
 			PrepareBlend(rectItem);
 			Blend(dc, rectItem, Rating, theApp.hRatingBitmaps);
 		}
@@ -826,7 +826,7 @@ void CDataGrid::AutosizeColumn(UINT Attr)
 	m_ViewParameters.ColumnWidth[Attr] = theApp.m_ViewParameters.ColumnWidth[Attr] = min(Width, MAXWIDTH);
 }
 
-void CDataGrid::FinishEdit(WCHAR* pStr, const CPoint& Item)
+void CDataGrid::FinishEdit(LPWSTR pStr, const CPoint& Item)
 {
 	const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
 	StringToAttribute(pStr, p_Itinerary->m_Flights[Item.y], Attr);

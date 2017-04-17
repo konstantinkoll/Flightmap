@@ -343,17 +343,17 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 		if (pData->Alpha>0.0f)
 		{
 			// Beschriftung
-			CHAR* Caption = (theApp.m_GlobeShowAirportIATA ? pData->pAirport->Code : theApp.m_GlobeShowAirportNames ? pData->NameString : NULL);
-			CHAR* Subcaption = ((theApp.m_GlobeShowAirportIATA && theApp.m_GlobeShowAirportNames) ? pData->NameString : NULL);
-			CHAR* Coordinates = (theApp.m_GlobeShowGPS ? pData->CoordString : NULL);
-			WCHAR* Count = (theApp.m_GlobeShowMovements ? (theApp.m_GlobeShowAirportNames || theApp.m_GlobeShowGPS) ? pData->CountStringLarge : pData->CountStringSmall : NULL);
+			LPCSTR Caption = (theApp.m_GlobeShowAirportIATA ? pData->pAirport->Code : theApp.m_GlobeShowAirportNames ? pData->NameString : NULL);
+			LPCSTR Subcaption = ((theApp.m_GlobeShowAirportIATA && theApp.m_GlobeShowAirportNames) ? pData->NameString : NULL);
+			LPCSTR Coordinates = (theApp.m_GlobeShowGPS ? pData->CoordString : NULL);
+			LPCWSTR Count = (theApp.m_GlobeShowMovements ? (theApp.m_GlobeShowAirportNames || theApp.m_GlobeShowGPS) ? pData->CountStringLarge : pData->CountStringSmall : NULL);
 
 			DrawLabel(pData, Caption, Subcaption, Coordinates, Count, m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
 		}
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, CHAR* Caption, CHAR* Subcaption, CHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR Caption, LPCSTR Subcaption, LPCSTR Coordinates, LPCWSTR Description, BOOL Focused, BOOL Hot, BOOL Themed)
 {
 	ASSERT(ARROWSIZE>3);
 

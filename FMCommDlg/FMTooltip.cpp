@@ -375,7 +375,7 @@ void FMTooltip::AppendAttribute(CString& Str, UINT ResID, LPCSTR pValue)
 	AppendAttribute(Str, CString((LPCSTR)ResID), CString(pValue));
 }
 
-void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, const CString& Name, const CString& Value)
+void FMTooltip::AppendAttribute(LPWSTR pStr, SIZE_T cCount, const CString& Name, const CString& Value)
 {
 	ASSERT(pStr);
 
@@ -394,14 +394,14 @@ void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, const CString& Name,
 	}
 }
 
-void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CString& Value)
+void FMTooltip::AppendAttribute(LPWSTR pStr, SIZE_T cCount, UINT ResID, const CString& Value)
 {
 	ASSERT(pStr);
 
 	AppendAttribute(pStr, cCount, CString((LPCSTR)ResID), Value);
 }
 
-void FMTooltip::AppendAttribute(WCHAR* pStr, SIZE_T cCount, UINT ResID, const CHAR* pValue)
+void FMTooltip::AppendAttribute(LPWSTR pStr, SIZE_T cCount, UINT ResID, LPCSTR pValue)
 {
 	ASSERT(pStr);
 	ASSERT(pValue);

@@ -134,12 +134,12 @@ UINT FMIATAGetAirportCount();
 const FMCountry* FMIATAGetCountry(UINT ID);
 INT FMIATAGetNextAirport(INT Last, FMAirport** ppAirport);
 INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport);
-BOOL FMIATAGetAirportByCode(const CHAR* Code, FMAirport** ppAirport);
+BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport** ppAirport);
 HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height);
-void FMGeoCoordinateToString(const DOUBLE c, CHAR* tmpStr, UINT cCount, BOOL IsLatitude, BOOL FillZero);
+void FMGeoCoordinateToString(const DOUBLE c, LPSTR tmpStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
 void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero);
-void FMGeoCoordinatesToString(const FMGeoCoordinates c, CHAR* tmpStr, UINT cCount, BOOL FillZero);
-void FMGeoCoordinatesToString(const FMGeoCoordinates c, CString& tmpStr, BOOL FillZero=FALSE);
+void FMGeoCoordinatesToString(const FMGeoCoordinates& c, LPSTR tmpStr, SIZE_T cCount, BOOL FillZero);
+void FMGeoCoordinatesToString(const FMGeoCoordinates& c, CString& tmpStr, BOOL FillZero=FALSE);
 
 
 // Lizensierung
