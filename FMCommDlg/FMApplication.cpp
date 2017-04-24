@@ -542,13 +542,10 @@ void FMApplication::AddFileExtension(CString& Extensions, UINT nID, const CStrin
 		Extensions += _T("|");
 }
 
-void FMApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
+void FMApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval)
 {
-	if (EnableAutoUpdate)
-		*EnableAutoUpdate = GetInt(_T("EnableAutoUpdate"), 1)!=0;
-
-	if (Interval)
-		*Interval = GetInt(_T("UpdateCheckInterval"), 0);
+	EnableAutoUpdate = GetInt(_T("EnableAutoUpdate"), 1)!=0;
+	Interval = GetInt(_T("UpdateCheckInterval"), 0);
 }
 
 void FMApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
@@ -561,9 +558,9 @@ BOOL FMApplication::IsUpdateCheckDue()
 {
 	BOOL EnableAutoUpdate;
 	INT Interval;
-	GetUpdateSettings(&EnableAutoUpdate, &Interval);
+	GetUpdateSettings(EnableAutoUpdate, Interval);
 
-	if ((EnableAutoUpdate) && (Interval>=0) && (Interval<=2))
+	if (EnableAutoUpdate && (Interval>=0) && (Interval<=2))
 	{
 		FILETIME ft;
 		GetSystemTimeAsFileTime(&ft);
@@ -576,28 +573,30 @@ BOOL FMApplication::IsUpdateCheckDue()
 		Now.HighPart = ft.dwHighDateTime;
 		Now.LowPart = ft.dwLowDateTime;
 
-#define SECOND ((ULONGLONG)10000000)
-#define MINUTE (60*SECOND)
-#define HOUR   (60*MINUTE)
-#define DAY    (24*HOUR)
+#define SECOND (10000000ull)
+#define MINUTE (60ull*SECOND)
+#define HOUR   (60ull*MINUTE)
+#define DAY    (24ull*HOUR)
+
+		ULARGE_INTEGER NextUpdateCheck = LastUpdateCheck;
+		NextUpdateCheck.QuadPart += 10ull*SECOND;
 
 		switch (Interval)
 		{
 		case 0:
-			LastUpdateCheck.QuadPart += DAY;
+			NextUpdateCheck.QuadPart += DAY;
 			break;
 
 		case 1:
-			LastUpdateCheck.QuadPart += 7*DAY;
+			NextUpdateCheck.QuadPart += 7ull*DAY;
 			break;
 
 		case 2:
-			LastUpdateCheck.QuadPart += 30*DAY;
+			NextUpdateCheck.QuadPart += 30ull*DAY;
 			break;
 		}
-		LastUpdateCheck.QuadPart += 10*SECOND;
 
-		if (Now.QuadPart>=LastUpdateCheck.QuadPart)
+		if ((Now.QuadPart>=NextUpdateCheck.QuadPart) || (Now.QuadPart<LastUpdateCheck.QuadPart))
 		{
 			WriteInt(_T("LastUpdateCheckHigh"), Now.HighPart);
 			WriteInt(_T("LastUpdateCheckLow"), Now.LowPart);

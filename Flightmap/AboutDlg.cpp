@@ -86,7 +86,7 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 	else
 	{
-		FMGetApp()->GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
+		FMGetApp()->GetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);

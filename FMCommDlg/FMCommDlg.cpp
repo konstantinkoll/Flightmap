@@ -791,12 +791,12 @@ INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport
 	return Last;
 }
 
-BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport** ppAirport)
+BOOL FMIATAGetAirportByCode(LPCSTR pCode, FMAirport** ppAirport)
 {
-	if (!Code)
+	if (!pCode)
 		return FALSE;
 
-	if (strlen(Code)!=3)
+	if (strlen(pCode)!=3)
 		return FALSE;
 
 	INT First = 0;
@@ -808,7 +808,7 @@ BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport** ppAirport)
 
 		*ppAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
-		INT Result = strcmp((*ppAirport)->Code, Code);
+		INT Result = strcmp((*ppAirport)->Code, pCode);
 		if (!Result)
 			return TRUE;
 

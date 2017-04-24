@@ -93,7 +93,7 @@ public:
 	static void PlayWarningSound();
 	static HRESULT SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
 	static void AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last=FALSE);
-	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
+	void GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);

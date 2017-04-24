@@ -120,8 +120,12 @@ private:
 	CString m_DisplayName;
 	static CString m_strFlightCountSingular;
 	static CString m_FlightCount_Plural;
+	static const GLcolor m_lAmbient;
+	static const GLcolor m_lDiffuse;
+	static const GLcolor m_lSpecular;
+	static const GLcolor m_FogColor;
 
-	LPCTSTR lpszCursorName;
+	LPCWSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
 
