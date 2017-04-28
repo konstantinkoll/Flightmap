@@ -22,7 +22,7 @@ void FMRegisterDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLay
 {
 	FMDialog::PaintOnBackground(dc, g, rectLayout);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	// Text
 	CRect rectBorders(0, 0, 7, 7);

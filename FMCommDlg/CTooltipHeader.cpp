@@ -117,7 +117,7 @@ void CTooltipHeader::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_3DFACE));
 
 	CFont* pOldFont = dc.SelectObject(GetFont());
@@ -190,7 +190,7 @@ void CTooltipHeader::OnPaint()
 							rectBounds.top--;
 					}
 
-					DrawSubitemBackground(dc, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
+					DrawSubitemBackground(dc, g, rectBounds, Themed, m_PressedItem==a, (m_PressedItem==-1) && ((m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a))));
 
 					if (Themed)
 					{

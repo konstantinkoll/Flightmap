@@ -156,7 +156,7 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 
 	m_ContentRect = rectWindow;
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 	if (Themed)
 	{
 		m_ContentRect.OffsetRect(0, SHADOWOFFSET);
@@ -307,7 +307,7 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 
 	for (LONG Row=rectAlpha.top; Row<rectAlpha.bottom; Row++)
 	{
-		BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+rectAlpha.left*4+3;
+		LPBYTE Ptr = (LPBYTE)Bitmap.bmBits+Bitmap.bmWidthBytes*Row+rectAlpha.left*4+3;
 
 		for (LONG Column=rectAlpha.left; Column<rectAlpha.right; Column++)
 		{

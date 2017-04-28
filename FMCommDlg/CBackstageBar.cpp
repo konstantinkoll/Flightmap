@@ -199,7 +199,7 @@ HBITMAP CBackstageBar::LoadMaskedIcon(UINT nID, INT Size, COLORREF clr)
 	if (GetObject(hBitmap, sizeof(Bitmap), &Bitmap))
 		for (LONG Row=0; Row<Bitmap.bmHeight; Row++)
 		{
-			BYTE* Ptr = (BYTE*)Bitmap.bmBits+Bitmap.bmWidthBytes*Row;
+			LPBYTE Ptr = (LPBYTE)Bitmap.bmBits+Bitmap.bmWidthBytes*Row;
 
 			for (LONG Column=0; Column<Bitmap.bmWidth; Column++)
 			{
@@ -291,7 +291,7 @@ void CBackstageBar::OnPaint()
 	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd));
 
 	// Border
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 	if (!Themed)
 		dc.Draw3dRect(rect, 0x000000, 0x000000);
 

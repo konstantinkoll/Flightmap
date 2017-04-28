@@ -183,7 +183,7 @@ void FMDialog::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 void FMDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 {
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	// Child windows
 	if (Themed)

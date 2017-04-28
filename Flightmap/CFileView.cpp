@@ -285,7 +285,7 @@ void CFileView::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
@@ -566,7 +566,7 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			bmi.biPlanes = 1;
 			bmi.biBitCount = 24;
 
-			BYTE* pbData = NULL;
+			LPBYTE pbData = NULL;
 			pTooltipData->hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
 			HGDIOBJ hOldBitmap = dc.SelectObject(pTooltipData->hBitmap);
 

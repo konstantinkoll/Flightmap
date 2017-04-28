@@ -714,7 +714,7 @@ void CFloatButtons::OnPaint()
 		Graphics g(dc);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		BOOL Themed = IsCtrlThemed();
+		const BOOL Themed = IsCtrlThemed();
 
 		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 

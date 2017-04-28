@@ -111,12 +111,12 @@ CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height)
 	return pBitmap;
 }
 
-void DrawLocationIndicator(Graphics& g, INT x, INT y, INT sz)
+void DrawLocationIndicator(Graphics& g, INT x, INT y, INT Size)
 {
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	Gdiplus::REAL Radius = (Gdiplus::REAL)sz/8.0f;
-	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), sz-(INT)Radius-1, sz-(INT)Radius-1);
+	Gdiplus::REAL Radius = (Gdiplus::REAL)Size/8.0f;
+	Rect rect(x+(INT)(0.5f*Radius), y+(INT)(0.5f*Radius), Size-(INT)Radius-1, Size-(INT)Radius-1);
 
 	SolidBrush brush(Color(0xFFFF0000));
 	g.FillEllipse(&brush, rect);
@@ -305,7 +305,7 @@ void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL /*WinFo
 	}
 }
 
-void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
+void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Selected, BOOL Hover, BOOL ClipHorizontal)
 {
 	if (Hover || Selected)
 		if (Themed)
@@ -324,7 +324,6 @@ void DrawSubitemBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Selected, BOOL
 				rect.DeflateRect(1, 1);
 			}
 
-			Graphics g(dc);
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			if (Hover)
@@ -574,12 +573,10 @@ void DrawWhiteButtonBorder(Graphics& g, LPCRECT lpRect, BOOL IncludeBottom)
 	}
 }
 
-void DrawWhiteButtonBackground(CDC& dc, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled, BOOL DrawBorder)
+void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL Focused, BOOL Selected, BOOL Hover, BOOL Disabled, BOOL DrawBorder)
 {
 	if (Themed)
 	{
-		Graphics g(dc);
-
 		if (DrawBorder)
 			DrawWhiteButtonBorder(g, rect, FALSE);
 
@@ -839,31 +836,31 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 	bmi.biPlanes = 1;
 	bmi.biBitCount = 24;
 
-	BYTE* pbData = NULL;
+	LPBYTE pbData = NULL;
 	HBITMAP hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
 
 	// Draw
 	Graphics g(dc);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
-	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
 	Bitmap* pMap = FMGetApp()->GetCachedResourceImage(IDB_BLUEMARBLE_2048);
+	const CSize szMap(pMap->GetWidth(), pMap->GetHeight());
 
-	INT L = pMap->GetWidth();
-	INT H = pMap->GetHeight();
-	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*L)/360.0);
-	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*H)/180.0);
+	INT LocX = (INT)(((pAirport->Location.Longitude+180.0)*szMap.cx)/360.0);
+	INT LocY = (INT)(((pAirport->Location.Latitude+90.0)*szMap.cy)/180.0);
+
 	INT PosX = -LocX+Width/2;
 	INT PosY = -LocY+Height/2;
-	if (PosY>1)
+
+	if (PosY>0)
 	{
-		PosY = 1;
+		PosY = 0;
 	}
 	else
-		if (PosY<(INT)Height-H)
+		if (PosY<(INT)Height-szMap.cy)
 		{
-			PosY = Height-H;
+			PosY = (INT)Height-szMap.cy;
 		}
 
 	ImageAttributes ImgAttr;
@@ -871,6 +868,7 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, UINT Width, UINT Height)
 
 	g.DrawImage(pMap, Rect(0, 0, Width, Height), -PosX, -PosY, Width, Height, UnitPixel, &ImgAttr);
 
+	// Location indicator
 	LocX += PosX-8;
 	LocY += PosY-8;
 	DrawLocationIndicator(g, LocX, LocY, 16);
@@ -1060,7 +1058,7 @@ __forceinline BOOL ReadCodedLicense(LPCSTR pStr, SIZE_T cCount)
 	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\Flightmap", &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwSize = (DWORD)cCount;
-		Result = (RegQueryValueExA(hKey, "License", 0, NULL, (BYTE*)pStr, &dwSize)==ERROR_SUCCESS);
+		Result = (RegQueryValueExA(hKey, "License", 0, NULL, (LPBYTE)pStr, &dwSize)==ERROR_SUCCESS);
 
 		RegCloseKey(hKey);
 	}
@@ -1092,7 +1090,7 @@ BOOL GetLicense(FMLicense* pLicense)
 		StringSource(Message, TRUE,
 			new Base64Decoder(
 				new SignatureVerificationFilter(Verifier,
-					new ArraySink((BYTE*)Recovered, BUFSIZE-1),
+					new ArraySink((LPBYTE)Recovered, BUFSIZE-1),
 					SignatureVerificationFilter::THROW_EXCEPTION | SignatureVerificationFilter::PUT_MESSAGE)));
 	}
 	catch(CryptoPP::Exception /*&e*/)
@@ -1139,17 +1137,17 @@ BOOL FMIsSharewareExpired()
 			BOOL Result = FALSE;
 
 			DWORD dwSize = sizeof(DWORD);
-			if (RegQueryValueEx(hKey, _T("Seed"), 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &dwSize)==ERROR_SUCCESS)
+			if (RegQueryValueEx(hKey, _T("Seed"), 0, NULL, (LPBYTE)&ExpireBuffer.dwHighDateTime, &dwSize)==ERROR_SUCCESS)
 			{
 				dwSize = sizeof(DWORD);
-				if (RegQueryValueEx(hKey, _T("Envelope"), 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &dwSize)==ERROR_SUCCESS)
+				if (RegQueryValueEx(hKey, _T("Envelope"), 0, NULL, (LPBYTE)&ExpireBuffer.dwLowDateTime, &dwSize)==ERROR_SUCCESS)
 					Result = TRUE;
 			}
 
 			if (!Result)
 			{
-				RegSetValueEx(hKey, _T("Seed"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
-				RegSetValueEx(hKey, _T("Envelope"), 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
+				RegSetValueEx(hKey, _T("Seed"), 0, REG_DWORD, (LPBYTE)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
+				RegSetValueEx(hKey, _T("Envelope"), 0, REG_DWORD, (LPBYTE)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
 			}
 
 			RegCloseKey(hKey);

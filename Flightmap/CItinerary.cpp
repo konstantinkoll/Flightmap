@@ -347,7 +347,7 @@ void AttributeToString(AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCoun
 	ASSERT(pStr);
 	ASSERT(cCount>=1);
 
-	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
+	const LPVOID pData = (((LPBYTE)&Flight)+FMAttributes[Attr].Offset);
 	*pStr = L'\0';
 
 	switch (FMAttributes[Attr].Type)
@@ -580,7 +580,7 @@ void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr)
 	if (*pEnd)
 		*pEnd = L'\0';
 
-	const LPVOID pData = (((BYTE*)&Flight)+FMAttributes[Attr].Offset);
+	const LPVOID pData = (((LPBYTE)&Flight)+FMAttributes[Attr].Offset);
 	WCHAR* pWChar;
 	CHAR* pChar;
 
@@ -1385,8 +1385,8 @@ INT CItinerary::Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, c
 	ASSERT(Attr<FMAttributeCount);
 	ASSERT(FMAttributes[Attr].Sortable);
 
-	const void* pValue1 = (BYTE*)Eins+FMAttributes[Attr].Offset;
-	const void* pValue2 = (BYTE*)Zwei+FMAttributes[Attr].Offset;
+	const void* pValue1 = (LPBYTE)Eins+FMAttributes[Attr].Offset;
+	const void* pValue2 = (LPBYTE)Zwei+FMAttributes[Attr].Offset;
 
 	// Gewünschtes Attribut vergleichen
 	INT Compare = 0;
@@ -1737,7 +1737,7 @@ Bitmap* CItinerary::DecodePictureAttachment(UINT Index) const
 
 Bitmap* CItinerary::DecodePictureAttachment(const AIRX_Attachment& Attachment)
 {
-	IStream* pStream = SHCreateMemStream((BYTE*)Attachment.pData, Attachment.Size);
+	IStream* pStream = SHCreateMemStream((LPBYTE)Attachment.pData, Attachment.Size);
 
 	Bitmap* pBitmap = Gdiplus::Bitmap::FromStream(pStream);
 

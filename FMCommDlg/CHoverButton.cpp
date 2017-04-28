@@ -55,16 +55,20 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	MemBitmap.Attach(CreateCompatibleBitmap(lpDrawItemStruct->hDC, rect.Width(), rect.Height()));
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	Graphics g(dc);
+
+	// Background
+	
 	// State
 	const BOOL Disabled = (lpDrawItemStruct->itemState & ODS_DISABLED);
 	const BOOL Focused = (lpDrawItemStruct->itemState & ODS_FOCUS);
 	const BOOL Selected = (lpDrawItemStruct->itemState & ODS_SELECTED);
 
 	// Background
-	FillRect(dc, rect, (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
+	FillRect(dc, rect, (HBRUSH)GetOwner()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)lpDrawItemStruct->hwndItem));
 
 	// Button
-	DrawWhiteButtonBackground(dc, rect, IsCtrlThemed(), Focused, Selected, m_Hover, Disabled);
+	DrawWhiteButtonBackground(dc, g, rect, IsCtrlThemed(), Focused, Selected, m_Hover, Disabled);
 
 	// Content
 	NM_DRAWBUTTONFOREGROUND tag;
@@ -80,7 +84,7 @@ void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 		::OffsetRect(&lpDrawItemStruct->rcItem, 1, 1);
 
 	if (!GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag)))
-		DrawWhiteButtonForeground(dc, lpDrawItemStruct, (GetOwner()->SendMessage(WM_QUERYUISTATE) & UISF_HIDEACCEL)==0);
+		DrawWhiteButtonForeground(dc, lpDrawItemStruct, (GetParent()->SendMessage(WM_QUERYUISTATE) & UISF_HIDEACCEL)==0);
 
 	// Blit to screen
 	BitBlt(lpDrawItemStruct->hDC, 0, 0, rect.Width(), rect.Height(), dc.m_hDC, 0, 0, SRCCOPY);

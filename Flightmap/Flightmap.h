@@ -68,7 +68,7 @@ public:
 	CFlightmapApp();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(LPCWSTR CmdLine=NULL);
+	virtual CWnd* OpenCommandLine(LPWSTR CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void Broadcast(UINT Message);

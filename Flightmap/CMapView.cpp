@@ -204,7 +204,7 @@ void CMapView::OnPaint()
 	Graphics g(dc);
 
 	// Background
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	DrawCardBackground(dc, g, rect, Themed);
 

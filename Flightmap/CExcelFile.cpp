@@ -43,7 +43,7 @@ void CExcelFile::WriteRoute(AIRX_Flight& Flight)
 
 		if (FMAttributes[a].Type==FMTypeDistance)
 		{
-			tmpBuffer.Format(_T("%u"), (UINT)(*((DOUBLE*)(((BYTE*)&Flight)+FMAttributes[a].Offset))));
+			tmpBuffer.Format(_T("%u"), (UINT)(*((DOUBLE*)(((LPBYTE)&Flight)+FMAttributes[a].Offset))));
 		}
 		else
 		{

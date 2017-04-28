@@ -239,7 +239,7 @@ BOOL FMApplication::InitInstance()
 	return TRUE;
 }
 
-CWnd* FMApplication::OpenCommandLine(LPCWSTR /*pCmdLine*/)
+CWnd* FMApplication::OpenCommandLine(LPWSTR /*pCmdLine*/)
 {
 	return NULL;
 }
@@ -358,7 +358,7 @@ Bitmap* FMApplication::GetResourceImage(UINT nID) const
 				DWORD Size = SizeofResource(AfxGetResourceHandle(), hResource);
 				if (Size)
 				{
-					IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
+					IStream* pStream = SHCreateMemStream((LPBYTE)pResourceData, Size);
 
 					pBitmap = Gdiplus::Bitmap::FromStream(pStream);
 

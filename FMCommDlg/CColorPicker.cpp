@@ -283,7 +283,7 @@ void CHueWheel::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	// Bitmaps
 	const HueWheelBitmaps* pBitmaps = GetBitmaps(Themed);
@@ -734,7 +734,7 @@ void CGradationPyramid::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	// Bitmaps
 	const GradationPyramidBitmaps* pBitmaps = GetBitmaps(Themed);

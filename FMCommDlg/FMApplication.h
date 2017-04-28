@@ -66,7 +66,7 @@ public:
 	virtual ~FMApplication();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(LPCWSTR pCmdLine=NULL);
+	virtual CWnd* OpenCommandLine(LPWSTR pCmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void AddFrame(CWnd* pFrame);

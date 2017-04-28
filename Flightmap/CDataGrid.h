@@ -139,6 +139,7 @@ private:
 	void DoCopy(BOOL Cut);
 	void DoDelete();
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected);
+	INT GetMaxAttributeWidth(UINT Attr) const;
 	void AutosizeColumn(UINT Attr);
 	void FinishEdit(LPWSTR pStr, const CPoint& Item);
 	void DestroyEdit(BOOL Accept=FALSE);

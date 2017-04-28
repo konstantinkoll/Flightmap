@@ -1038,7 +1038,7 @@ void CGlobeView::OnPaint()
 {
 	CPaintDC pDC(this);
 
-	BOOL Themed = IsCtrlThemed();
+	const BOOL Themed = IsCtrlThemed();
 
 	if (m_RenderContext.hRC)
 	{

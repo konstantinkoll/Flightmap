@@ -29,7 +29,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		memcpy(&OldWidth, &p_ViewParameters->ColumnWidth, sizeof(OldWidth));
 		ZeroMemory(&p_ViewParameters->ColumnWidth, sizeof(p_ViewParameters->ColumnWidth));
 
-		UINT Count = 0;
+		UINT Index = 0;
 
 		for (INT a=0; a<m_wndAttributes.GetItemCount(); a++)
 		{
@@ -38,7 +38,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 			if (m_wndAttributes.GetCheck(a) || (Attr==0) || (Attr==3))
 			{
 				p_ViewParameters->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : FMAttributes[Attr].RecommendedWidth;
-				p_ViewParameters->ColumnOrder[Count++] = Attr;
+				p_ViewParameters->ColumnOrder[Index++] = Attr;
 			}
 			else
 			{
@@ -49,7 +49,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		// Order
 		for (INT a=0; a<FMAttributeCount; a++)
 			if (!p_ViewParameters->ColumnWidth[a])
-				p_ViewParameters->ColumnOrder[Count++] = a;
+				p_ViewParameters->ColumnOrder[Index++] = a;
 	}
 }
 

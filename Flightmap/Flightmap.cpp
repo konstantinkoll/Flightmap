@@ -209,14 +209,14 @@ BOOL CFlightmapApp::InitInstance()
 	return TRUE;
 }
 
-CWnd* CFlightmapApp::OpenCommandLine(LPCWSTR CmdLine)
+CWnd* CFlightmapApp::OpenCommandLine(LPWSTR pCmdLine)
 {
-	if (CmdLine)
-		if (_wcsicmp(CmdLine, L"/CHECKUPDATE")==0)
+	if (pCmdLine)
+		if (_wcsicmp(pCmdLine, L"/CHECKUPDATE")==0)
 			return NULL;
 
 	CMainWnd* pFrameWnd = new CMainWnd();
-	pFrameWnd->Create(new CItinerary(CmdLine));
+	pFrameWnd->Create(new CItinerary(pCmdLine));
 	pFrameWnd->ShowWindow(SW_SHOW);
 
 	return pFrameWnd;
