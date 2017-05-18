@@ -16,12 +16,12 @@
 // CDataGrid
 //
 
-#define FLAGCOUNT           7
-#define ITEMPADDING         2
-#define LEFTMARGIN          (BACKSTAGEBORDER-1)
-#define MINCOLUMNWIDTH      50
-#define MAXAUTOWIDTH        400
-#define SPACER              (4*ITEMPADDING+1)
+#define FLAGCOUNT          7
+#define ITEMPADDING        2
+#define LEFTMARGIN         (BACKSTAGEBORDER-1)
+#define MINCOLUMNWIDTH     50
+#define MAXAUTOWIDTH       400
+#define SPACER             (4*ITEMPADDING+1)
 
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
 
@@ -1940,10 +1940,10 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (pWnd->GetSafeHwnd()==m_wndHeader)
 	{
-		CMenu menu;
-		menu.LoadMenu(IDM_DETAILS);
+		CMenu Menu;
+		Menu.LoadMenu(IDM_DETAILS);
 
-		CMenu* pPopup = menu.GetSubMenu(0);
+		CMenu* pPopup = Menu.GetSubMenu(0);
 		ASSERT_VALID(pPopup);
 
 		CPoint pt(point);
@@ -1968,10 +1968,10 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 		ClientToScreen(&point);
 	}
 
-	CMenu menu;
-	menu.LoadMenu(IDM_DATAGRID);
+	CMenu Menu;
+	Menu.LoadMenu(IDM_DATAGRID);
 
-	CMenu* pPopup = menu.GetSubMenu(0);
+	CMenu* pPopup = Menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
