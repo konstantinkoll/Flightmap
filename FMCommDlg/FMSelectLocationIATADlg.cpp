@@ -141,6 +141,7 @@ void FMSelectLocationIATADlg::LoadCountry(UINT Country)
 	CRect rect;
 	m_wndAirportList.GetClientRect(rect);
 	m_wndAirportList.SetColumnWidth(1, rect.Width()-m_wndAirportList.GetColumnWidth(0));
+	m_wndAirportList.SetFocus();
 }
 
 BOOL FMSelectLocationIATADlg::InitDialog()
@@ -161,9 +162,6 @@ BOOL FMSelectLocationIATADlg::InitDialog()
 
 	pComboBox->SelectString(-1, CString(FMIATAGetCountry(Country)->Name));
 	LoadCountry(Country);
-
-	if (p_Airport)
-		m_wndAirportList.SetFocus();
 
 	return p_Airport!=NULL;
 }

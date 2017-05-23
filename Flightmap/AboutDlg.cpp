@@ -77,7 +77,7 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		FMGetApp()->SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+		FMGetApp()->WriteUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 
 		theApp.m_ModelQuality = (GLModelQuality)m_wndModelQuality.GetCurSel();
 		theApp.m_TextureQuality = (GLTextureQuality)m_wndTextureQuality.GetCurSel();
@@ -176,7 +176,7 @@ BOOL AboutDlg::InitDialog()
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
-	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
 	m_VersionFont.CreateFont(HeightVersion);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
@@ -268,7 +268,7 @@ void AboutDlg::OnEnableAutoUpdate()
 
 void AboutDlg::OnUpdateNow()
 {
-	FMCheckForUpdate(TRUE, this);
+	theApp.CheckForUpdate(TRUE, this);
 }
 
 void AboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)

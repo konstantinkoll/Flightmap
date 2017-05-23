@@ -38,26 +38,8 @@
 #include "GLFont.h"
 #include "GLRenderer.h"
 #include "IATA.h"
-#include "License.h"
 
 #define FMGetApp() ((FMApplication*)AfxGetApp())
-
-struct FMVersion
-{
-	UINT Major;
-	UINT Minor;
-	UINT Build;
-};
-
-struct FMLicense
-{
-	CHAR PurchaseID[256];
-	CHAR ProductID[256];
-	CHAR PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
-	CHAR Quantity[8];
-	CHAR RegName[256];
-	FMVersion Version;
-};
 
 #define MB_ICONREADY      0x00000050L
 #define MB_ICONSHIELD     0x00000060L
@@ -102,6 +84,11 @@ struct PROGRESSDATA
 	TBPFLAG tbpFlags;
 };
 
+void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright=NULL);
+
+
+// Draw
+
 extern BLENDFUNCTION BF;
 
 void CreateRoundRectangle(LPCRECT lpRect, INT Radius, GraphicsPath& Path);
@@ -127,7 +114,7 @@ void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL 
 void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TRUE, BOOL Focused=FALSE, BOOL Hover=FALSE);
 
 
-// IATA database
+// IATA
 
 UINT FMIATAGetCountryCount();
 UINT FMIATAGetAirportCount();
@@ -142,16 +129,10 @@ void FMGeoCoordinatesToString(const FMGeoCoordinates& c, LPSTR tmpStr, SIZE_T cC
 void FMGeoCoordinatesToString(const FMGeoCoordinates& c, CString& tmpStr, BOOL FillZero=FALSE);
 
 
-// Lizensierung
+// License
 
 BOOL FMIsLicensed(FMLicense* pLicense=NULL, BOOL Reload=FALSE);
 BOOL FMIsSharewareExpired();
-
-
-// Update
-
-void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright=NULL);
-void FMCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
 
 // MessageBox

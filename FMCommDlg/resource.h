@@ -93,7 +93,7 @@
 #define IDS_UPDATE_SMALLBUGFIX          20306
 #define IDS_UPDATE_IATA                 20307
 #define IDS_UPDATE_PERFORMANCE          20308
-#define IDF_LETTERGOTHIC                20400
+#define IDF_DINMITTELSCHRIFT            20400
 #define IDD_MESSAGEBOX                  21000
 #define IDD_TABBEDDIALOG                21001
 #define IDC_BUTTON1                     21002

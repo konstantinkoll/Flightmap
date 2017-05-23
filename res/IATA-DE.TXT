@@ -7120,7 +7120,7 @@ SJG     San Pedro Jagua, Kolumbien;4;4*37'59"N, 73*18'0"W
 SJH     San Juan del Cesar, Kolumbien;4;10*43'59"N, 72*58'59"W
 SJI     San José, Philippinen;4;12*21'41"N, 121*2'48"E
 SJJ     Sarajevo, Bosnien;4;43*49'28"N, 18*19'53"E
-SJK     Sao Jose dos Lampos, Brasilien;4;23*13'41"S, 45*51'46"W
+SJK     Sao José dos Lampos, Brasilien;4;23*13'41"S, 45*51'46"W
 SJL     Sao Gabriel, Brasilien;4;0*8'54"S, 66*59'8"W
 SJM     San Juan de la Maguana, Dom. Republik;4;18*49'1"N, 71*16'59"W
 SJN     St. Johns, USA;4;34*31'7"N, 109*22'44"W

@@ -9,6 +9,7 @@
 #include "FMTooltip.h"
 #include "GLRenderer.h"
 #include "IATA.h"
+#include "License.h"
 #include <uxtheme.h>
 
 #define RATINGBITMAPWIDTH      88
@@ -71,18 +72,30 @@ public:
 
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
+
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
 	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, BOOL AllowReset=TRUE);
 	void SendMail(const CString& Subject=_T("")) const;
+	static HRESULT SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
+	static void AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last=FALSE);
+
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
+	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0);
+	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
+	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue);
+	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
+
 	Bitmap* GetResourceImage(UINT nID) const;
 	Bitmap* GetCachedResourceImage(UINT nID);
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
+
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint);
 	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LPCSTR Code, const CString& Hint);
 	BOOL IsTooltipVisible() const;
 	void HideTooltip();
+
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
 	static void PlayErrorSound();
@@ -91,12 +104,10 @@ public:
 	static void PlayQuestionSound();
 	static void PlayTrashSound();
 	static void PlayWarningSound();
-	static HRESULT SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
-	static void AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last=FALSE);
+
 	void GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval);
-	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
-	BOOL IsUpdateCheckDue();
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
+	void WriteUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
+	void CheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListExtraLarge;
@@ -157,14 +168,43 @@ protected:
 private:
 	static void PlayRegSound(const CString& Identifier);
 
+	BOOL IsUpdateCheckDue();
+	void WriteUpdateCheckTime();
+	static CString GetLatestVersion(CString CurrentVersion);
+	static CString GetIniValue(CString Ini, const CString& Name);
+	static void ParseVersion(const CString& tmpStr, FMVersion* pVersion);
+	static BOOL IsVersionLater(const FMVersion& LatestVersion, const FMVersion& CurrentVersion);
+	static BOOL IsUpdateFeatureLater(const CString& VersionIni, const CString& Name, FMVersion& CurrentVersion);
+	static DWORD GetUpdateFeatures(const CString& VersionIni, FMVersion& CurrentVersion);
+
 	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
 	HMODULE hModShell;
 	HMODULE hModKernel;
 	HMODULE hModUser;
-	HANDLE hFontLetterGothic;
+	HANDLE hFontDinMittelschrift;
 };
+
+inline INT FMApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault)
+{
+	return GetInt(lpszEntry, nDefault);
+}
+
+inline CString FMApplication::GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault)
+{
+	return GetString(lpszEntry, lpszDefault);
+}
+
+inline BOOL FMApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue)
+{
+	return WriteInt(lpszEntry, nValue);
+}
+
+inline BOOL FMApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
+{
+	return WriteString(lpszEntry, lpszValue);
+}
 
 inline BOOL FMApplication::IsTooltipVisible() const
 {
@@ -175,7 +215,5 @@ inline BOOL FMApplication::IsTooltipVisible() const
 
 inline void FMApplication::HideTooltip()
 {
-	ASSERT(IsWindow(m_wndTooltip));
-
 	m_wndTooltip.HideTooltip();
 }

@@ -7,6 +7,7 @@
 #include <commoncontrols.h>
 #include <io.h>
 #include <mmsystem.h>
+#include <winhttp.h>
 
 
 // FMApplication
@@ -162,8 +163,8 @@ FMApplication::~FMApplication()
 	if (hModUser)
 		FreeLibrary(hModUser);
 
-	if (hFontLetterGothic)
-		RemoveFontMemResourceEx(hFontLetterGothic);
+	if (hFontDinMittelschrift)
+		RemoveFontMemResourceEx(hFontDinMittelschrift);
 
 	for (UINT a=0; a<=MAXRATING; a++)
 		DeleteObject(hRatingBitmaps[a]);
@@ -199,7 +200,7 @@ BOOL FMApplication::InitInstance()
 		hRatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
 
 	// Eingebettete Schrift
-	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC);
+	hFontDinMittelschrift = LoadFontFromResource(IDF_DINMITTELSCHRIFT);
 
 	// Fonts
 	INT Size = 11;
@@ -212,7 +213,7 @@ BOOL FMApplication::InitInstance()
 	m_SmallFont.CreateFont(-(Size*2/3+3), CLEARTYPE_QUALITY, FW_NORMAL, 0, _T("Segoe UI"));
 	m_SmallBoldFont.CreateFont(-(Size*2/3+3), CLEARTYPE_QUALITY, FW_BOLD, 0, _T("Segoe UI"));
 	m_LargeFont.CreateFont(-Size*7/6);
-	m_CaptionFont.CreateFont(-Size*2, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("Letter Gothic"));
+	m_CaptionFont.CreateFont(-Size*2+1, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
 	m_UACFont.CreateFont(-Size*3/2);
 
 	CFont* pDialogFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
@@ -259,6 +260,9 @@ INT FMApplication::ExitInstance()
 	return CWinAppEx::ExitInstance();
 }
 
+
+// Frame handling
+
 void FMApplication::AddFrame(CWnd* pFrame)
 {
 	m_pMainFrames.AddTail(pFrame);
@@ -282,6 +286,9 @@ void FMApplication::KillFrame(CWnd* pVictim)
 		}
 	}
 }
+
+
+// Dialog wrapper
 
 BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 {
@@ -341,6 +348,52 @@ void FMApplication::SendMail(const CString& Subject) const
 
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
 }
+
+HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap)
+{
+	ASSERT(pBitmap);
+
+	CImage img;
+	img.Attach(*pBitmap);
+	HRESULT Result = img.Save(FileName, guidFileType);
+
+	if (!DeleteBitmap)
+		img.Detach();
+
+	return Result;
+}
+
+void FMApplication::AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last)
+{
+	Extensions += CString((LPCSTR)nID);
+	Extensions += _T(" (*.");
+	Extensions += Extension;
+	Extensions += _T(")|*.");
+	Extensions += Extension;
+	Extensions += _T("|");
+
+	if (Last)
+		Extensions += _T("|");
+}
+
+
+// Registry access
+
+void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
+{
+	UINT Bytes;
+	LPBYTE pBuffer = NULL;
+	CWinAppEx::GetBinary(lpszEntry, &pBuffer, &Bytes);
+
+	if (pBuffer)
+	{
+		memcpy_s(pData, Size, pBuffer, min(Size, Bytes));
+		free(pBuffer);
+	}
+}
+
+
+// Resource access
 
 Bitmap* FMApplication::GetResourceImage(UINT nID) const
 {
@@ -422,6 +475,8 @@ HANDLE FMApplication::LoadFontFromResource(UINT nID)
 }
 
 
+// Tooltips
+
 void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
 {
 	ASSERT(IsWindow(m_wndTooltip));
@@ -455,6 +510,8 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, LPCSTR Code, con
 		ShowTooltip(pCallerWnd, point, pAirport, Hint);
 }
 
+
+// Sounds
 
 void FMApplication::PlayRegSound(const CString& Identifier)
 {
@@ -515,32 +572,290 @@ void FMApplication::PlayWarningSound()
 }
 
 
-HRESULT FMApplication::SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap)
+// Updates
+
+void FMApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval)
 {
-	ASSERT(pBitmap);
-
-	CImage img;
-	img.Attach(*pBitmap);
-	HRESULT Result = img.Save(FileName, guidFileType);
-
-	if (!DeleteBitmap)
-		img.Detach();
-
-	return Result;
+	EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
+	Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
 }
 
-void FMApplication::AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last)
+void FMApplication::WriteUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
 {
-	Extensions += CString((LPCSTR)nID);
-	Extensions += _T(" (*.");
-	Extensions += Extension;
-	Extensions += _T(")|*.");
-	Extensions += Extension;
-	Extensions += _T("|");
-
-	if (Last)
-		Extensions += _T("|");
+	WriteGlobalInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
+	WriteGlobalInt(_T("UpdateCheckInterval"), Interval);
 }
+
+BOOL FMApplication::IsUpdateCheckDue()
+{
+	BOOL EnableAutoUpdate;
+	INT Interval;
+	GetUpdateSettings(EnableAutoUpdate, Interval);
+
+	if (EnableAutoUpdate && (Interval>=0) && (Interval<=2))
+	{
+		FILETIME ft;
+		GetSystemTimeAsFileTime(&ft);
+
+		ULARGE_INTEGER LastUpdateCheck;
+		LastUpdateCheck.HighPart = GetGlobalInt(_T("LastUpdateCheckHigh"), 0);
+		LastUpdateCheck.LowPart = GetGlobalInt(_T("LastUpdateCheckLow"), 0);
+
+		ULARGE_INTEGER Now;
+		Now.HighPart = ft.dwHighDateTime;
+		Now.LowPart = ft.dwLowDateTime;
+
+#define SECOND (10000000ull)
+#define MINUTE (60ull*SECOND)
+#define HOUR   (60ull*MINUTE)
+#define DAY    (24ull*HOUR)
+
+		ULARGE_INTEGER NextUpdateCheck = LastUpdateCheck;
+		NextUpdateCheck.QuadPart += 10ull*SECOND;
+
+		switch (Interval)
+		{
+		case 0:
+			NextUpdateCheck.QuadPart += DAY;
+			break;
+
+		case 1:
+			NextUpdateCheck.QuadPart += 7ull*DAY;
+			break;
+
+		case 2:
+			NextUpdateCheck.QuadPart += 30ull*DAY;
+			break;
+		}
+
+		if ((Now.QuadPart>=NextUpdateCheck.QuadPart) || (Now.QuadPart<LastUpdateCheck.QuadPart))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+void FMApplication::WriteUpdateCheckTime()
+{
+	FILETIME ft;
+	GetSystemTimeAsFileTime(&ft);
+
+	ULARGE_INTEGER Now;
+	Now.HighPart = ft.dwHighDateTime;
+	Now.LowPart = ft.dwLowDateTime;
+
+	WriteGlobalInt(_T("LastUpdateCheckHigh"), Now.HighPart);
+	WriteGlobalInt(_T("LastUpdateCheckLow"), Now.LowPart);
+}
+
+CString FMApplication::GetLatestVersion(CString CurrentVersion)
+{
+	CString VersionIni;
+
+	// License
+	CurrentVersion += FMIsLicensed() ? _T(" (licensed)") : FMIsSharewareExpired() ? _T(" (expired)") : _T(" (evaluation)");
+
+	// Get available version
+	HINTERNET hSession = WinHttpOpen(_T("Flightmap/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+	if (hSession)
+	{
+		HINTERNET hConnect = WinHttpConnect(hSession, L"update.flightmap.net", INTERNET_DEFAULT_HTTP_PORT, 0);
+		if (hConnect)
+		{
+			HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/version.ini", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+			if (hRequest)
+			{
+				if (WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, NULL, 0, 0, 0))
+					if (WinHttpReceiveResponse(hRequest, NULL))
+					{
+						DWORD dwSize;
+
+						do
+						{
+							dwSize = 0;
+							if (WinHttpQueryDataAvailable(hRequest, &dwSize))
+							{
+								CHAR* pBuffer = new CHAR[dwSize+1];
+								DWORD dwDownloaded;
+
+								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
+								{
+									pBuffer[dwDownloaded] = '\0';
+
+									VersionIni += CString(pBuffer);
+								}
+
+								delete[] pBuffer;
+							}
+						}
+						while (dwSize>0);
+					}
+
+				WinHttpCloseHandle(hRequest);
+			}
+
+			WinHttpCloseHandle(hConnect);
+		}
+
+		WinHttpCloseHandle(hSession);
+	}
+
+	return VersionIni;
+}
+
+CString FMApplication::GetIniValue(CString Ini, const CString& Name)
+{
+	while (!Ini.IsEmpty())
+	{
+		INT Pos = Ini.Find(L"\n");
+		if (Pos==-1)
+			Pos = Ini.GetLength()+1;
+
+		CString Line = Ini.Mid(0, Pos-1);
+		Ini.Delete(0, Pos+1);
+
+		Pos = Line.Find(L"=");
+		if (Pos!=-1)
+			if (Line.Mid(0, Pos)==Name)
+				return Line.Mid(Pos+1, Line.GetLength()-Pos);
+	}
+
+	return _T("");
+}
+
+void FMApplication::ParseVersion(const CString& tmpStr, FMVersion* pVersion)
+{
+	ASSERT(pVersion);
+
+	swscanf_s(tmpStr, L"%u.%u.%u", &pVersion->Major, &pVersion->Minor, &pVersion->Build);
+}
+
+BOOL FMApplication::IsVersionLater(const FMVersion& LatestVersion, const FMVersion& CurrentVersion)
+{
+	return ((LatestVersion.Major>CurrentVersion.Major) ||
+		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor>CurrentVersion.Minor)) ||
+		((LatestVersion.Major==CurrentVersion.Major) && (LatestVersion.Minor==CurrentVersion.Minor) && (LatestVersion.Build>CurrentVersion.Build)));
+}
+
+BOOL FMApplication::IsUpdateFeatureLater(const CString& VersionIni, const CString& Name, FMVersion& CurrentVersion)
+{
+	FMVersion FeatureVersion = { 0 };
+	ParseVersion(GetIniValue(VersionIni, Name), &FeatureVersion);
+
+	return IsVersionLater(FeatureVersion, CurrentVersion);
+}
+
+DWORD FMApplication::GetUpdateFeatures(const CString& VersionIni, FMVersion& CurrentVersion)
+{
+	DWORD UpdateFeatures = 0;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("SecurityPatch"), CurrentVersion))
+		UpdateFeatures |= UPDATE_SECUTIRYPATCH;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("ImportantBugfix"), CurrentVersion))
+		UpdateFeatures |= UPDATE_IMPORTANTBUGFIX;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("NetworkAPI"), CurrentVersion))
+		UpdateFeatures |= UPDATE_NETWORKAPI;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("NewFeature"), CurrentVersion))
+		UpdateFeatures |= UPDATE_NEWFEATURE;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("NewVisualization"), CurrentVersion))
+		UpdateFeatures |= UPDATE_NEWVISUALIZATION;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("UI"), CurrentVersion))
+		UpdateFeatures |= UPDATE_UI;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("SmallBugfix"), CurrentVersion))
+		UpdateFeatures |= UPDATE_SMALLBUGFIX;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("IATA"), CurrentVersion))
+		UpdateFeatures |= UPDATE_IATA;
+
+	if (IsUpdateFeatureLater(VersionIni, _T("Performance"), CurrentVersion))
+		UpdateFeatures |= UPDATE_PERFORMANCE;
+
+	return UpdateFeatures;
+}
+
+void FMApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
+{
+	// Obtain current version from instance version resource
+	CString CurrentVersion;
+	GetFileVersion(AfxGetResourceHandle(), CurrentVersion);
+
+	FMVersion CV = { 0 };
+	ParseVersion(CurrentVersion, &CV);
+
+	// Check due?
+	const BOOL Check = Force | IsUpdateCheckDue();
+
+	// Perform check
+	CString LatestVersion = GetGlobalString(_T("LatestUpdateVersion"));
+	CString LatestMSN = GetGlobalString(_T("LatestUpdateMSN"));
+	DWORD LatestUpdateFeatures = GetGlobalInt(_T("LatestUpdateFeatures"));
+
+	if (Check)
+	{
+		CWaitCursor csr;
+		CString VersionIni = GetLatestVersion(CurrentVersion);
+
+		if (!VersionIni.IsEmpty())
+		{
+			LatestVersion = GetIniValue(VersionIni, _T("Version"));
+			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
+			LatestUpdateFeatures = GetUpdateFeatures(VersionIni, CV);
+
+			WriteGlobalString(_T("LatestUpdateVersion"), LatestVersion);
+			WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
+			WriteGlobalInt(_T("LatestUpdateFeatures"), LatestUpdateFeatures);
+			WriteUpdateCheckTime();
+		}
+	}
+
+	// Update available?
+	BOOL UpdateAvailable = FALSE;
+	if (!LatestVersion.IsEmpty())
+	{
+		FMVersion LV = { 0 };
+		ParseVersion(LatestVersion, &LV);
+
+		CString IgnoreMSN = GetGlobalString(_T("IgnoreUpdateMSN"));
+
+		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || Force) && IsVersionLater(LV, CV);
+	}
+
+	// Result
+	if (UpdateAvailable)
+	{
+		if (pParentWnd)
+		{
+			if (m_pUpdateNotification)
+				m_pUpdateNotification->DestroyWindow();
+
+			FMUpdateDlg dlg(LatestVersion, LatestMSN, LatestUpdateFeatures, pParentWnd);
+			dlg.DoModal();
+		}
+		else
+			if (m_pUpdateNotification)
+			{
+				m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
+			}
+			else
+			{
+				m_pUpdateNotification = new FMUpdateDlg(LatestVersion, LatestMSN, LatestUpdateFeatures);
+				m_pUpdateNotification->Create();
+				m_pUpdateNotification->ShowWindow(SW_SHOW);
+			}
+	}
+	else
+	{
+		if (Force)
+			FMMessageBox(pParentWnd, CString((LPCSTR)IDS_UPDATENOTAVAILABLE), CString((LPCSTR)IDS_UPDATE), MB_ICONINFORMATION | MB_OK);
+	}
+}
+/*// Updates
 
 void FMApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval)
 {
@@ -548,7 +863,7 @@ void FMApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval)
 	Interval = GetInt(_T("UpdateCheckInterval"), 0);
 }
 
-void FMApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
+void FMApplication::WriteUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
 {
 	WriteInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
 	WriteInt(_T("UpdateCheckInterval"), Interval);
@@ -597,29 +912,24 @@ BOOL FMApplication::IsUpdateCheckDue()
 		}
 
 		if ((Now.QuadPart>=NextUpdateCheck.QuadPart) || (Now.QuadPart<LastUpdateCheck.QuadPart))
-		{
-			WriteInt(_T("LastUpdateCheckHigh"), Now.HighPart);
-			WriteInt(_T("LastUpdateCheckLow"), Now.LowPart);
-
 			return TRUE;
-		}
 	}
 
 	return FALSE;
 }
 
-void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
+void FMApplication::CheckedForUpdate()
 {
-	UINT Bytes;
-	LPBYTE pBuffer = NULL;
-	CWinAppEx::GetBinary(lpszEntry, &pBuffer, &Bytes);
+	FILETIME ft;
+	GetSystemTimeAsFileTime(&ft);
 
-	if (pBuffer)
-	{
-		memcpy_s(pData, Size, pBuffer, min(Size, Bytes));
-		free(pBuffer);
-	}
-}
+	ULARGE_INTEGER Now;
+	Now.HighPart = ft.dwHighDateTime;
+	Now.LowPart = ft.dwLowDateTime;
+
+	WriteInt(_T("LastUpdateCheckHigh"), Now.HighPart);
+	WriteInt(_T("LastUpdateCheckLow"), Now.LowPart);
+}*/
 
 
 BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)

@@ -1437,6 +1437,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\DINMittelschrift.ttf"
+			>
+		</File>
+		<File
 			RelativePath=".\Div.png"
 			>
 		</File>
@@ -1482,10 +1486,6 @@
 		</File>
 		<File
 			RelativePath=".\Info.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Letter_Gothic.ttf"
 			>
 		</File>
 		<File

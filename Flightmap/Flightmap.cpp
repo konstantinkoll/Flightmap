@@ -198,7 +198,8 @@ BOOL CFlightmapApp::InitInstance()
 	if (m_MapSettings.Height>4096)
 		m_MapSettings.Height = 4096;
 
-	FMCheckForUpdate();
+	// Execute
+	CheckForUpdate();
 
 	CWnd* pFrameWnd = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
 	if (pFrameWnd)
@@ -405,7 +406,7 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	CFont fntTitle;
 	fntTitle.CreateFont((INT)Spacer, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, _T("Letter Gothic"));
+		DEFAULT_PITCH | FF_DONTCARE, _T("DIN Mittelschrift"));
 
 	CFont fntSubtitle;
 	fntSubtitle.CreateFont((INT)(Spacer*0.75), 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
