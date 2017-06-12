@@ -7,8 +7,13 @@
 #include <wininet.h>
 
 
+#ifdef _M_X64
 // Use a GUID to uniquely identify the tray icon: {FD604358-411B-4D4C-88F9-D5AAF961A411}
 static const GUID TrayIcon = { 0xFD604358, 0x411B, 0x4D4C, { 0x88, 0xF9, 0xD5, 0xAA, 0xF9, 0x61, 0xA4, 0x11 } };
+#else
+// Use a GUID to uniquely identify the tray icon: {BF5C8D89-0E4B-4C32-BA1D-20E4EC26437B}
+static const GUID TrayIcon = { 0xBF5C8D89, 0x0E4B, 0x4C32, { 0xBA, 0x1D, 0x20, 0xE4, 0xEC, 0x26, 0x43, 0x7B } };
+#endif
 
 
 // FMUpdateDlg

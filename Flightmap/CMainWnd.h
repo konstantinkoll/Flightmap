@@ -24,7 +24,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
-	virtual BOOL GetLayoutRect(LPRECT lpRect) const;
+	virtual BOOL HasDocumentSheet() const;
 
 	BOOL Create(CItinerary* pItinerary);
 

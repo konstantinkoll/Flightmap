@@ -28,7 +28,7 @@ void FMSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		INT Index = m_wndAirportList.GetNextItem(-1, LVIS_SELECTED);
+		const INT Index = m_wndAirportList.GetNextItem(-1, LVIS_SELECTED);
 		if (Index!=-1)
 			p_Airport = p_Airports[Index];
 
@@ -193,7 +193,7 @@ void FMSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	INT Index = pItem->iItem;
+	const INT Index = pItem->iItem;
 
 	if (pItem->mask & LVIF_TEXT)
 	{

@@ -16,12 +16,12 @@ struct SortParameters
 
 INT CALLBACK SortFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
-	SortParameters* sp = (SortParameters*)lParamSort;
+	SortParameters* pSortParameters = (SortParameters*)lParamSort;
 
-	CString item1= sp->pList->GetItemText((INT)lParam1, sp->Column);
-	CString item2= sp->pList->GetItemText((INT)lParam2, sp->Column);
+	CString item1= pSortParameters->pList->GetItemText((INT)lParam1, pSortParameters->Column);
+	CString item2= pSortParameters->pList->GetItemText((INT)lParam2, pSortParameters->Column);
 
-	if (sp->ConvertToNumber)
+	if (pSortParameters->ConvertToNumber)
 	{
 		LONG i1;
 		if (swscanf_s(item1.GetBuffer(), _T("%i"), &i1)<1)
@@ -360,7 +360,7 @@ void StatisticsDlg::UpdateStatistics()
 			Item.iGroupId = a<5 ? 0 : 1;
 			Item.iImage = a%6;
 
-			INT Index = m_wndListClass.InsertItem(&Item);
+			const INT Index = m_wndListClass.InsertItem(&Item);
 
 			tmpStr.Format(FlightsByClass[a]==1 ? MaskFlightsSingular : MaskFlightsPlural, FlightsByClass[a]);
 			m_wndListClass.SetItemText(Index, 1, tmpStr);
@@ -393,7 +393,7 @@ void StatisticsDlg::UpdateStatistics()
 		tmpStr.Format(_T("%5d"), pPair1->value);
 		Item.pszText = tmpStr.GetBuffer();
 
-		INT Index = m_wndListRoute.InsertItem(&Item);
+		const INT Index = m_wndListRoute.InsertItem(&Item);
 
 		tmpStr = Rt;
 		m_wndListRoute.SetItemText(Index, 1, tmpStr);
@@ -422,7 +422,7 @@ void StatisticsDlg::UpdateStatistics()
 			tmpStr.Format(_T("%5d"), pPair2->value);
 			Item.pszText = tmpStr.GetBuffer();
 
-			INT Index = m_wndListAirport.InsertItem(&Item);
+			const INT Index = m_wndListAirport.InsertItem(&Item);
 
 			tmpStr = pAirport->Code;
 			m_wndListAirport.SetItemText(Index, 1, tmpStr);
@@ -451,7 +451,7 @@ void StatisticsDlg::UpdateStatistics()
 		tmpStr.Format(_T("%5d"), pPair3->value.FlightCount);
 		Item.pszText = tmpStr.GetBuffer();
 
-		INT Index = m_wndListCarrier.InsertItem(&Item);
+		const INT Index = m_wndListCarrier.InsertItem(&Item);
 
 		DistanceToString(tmpBuf, 256, pPair3->value.DistanceNM);
 		m_wndListCarrier.SetItemText(Index, 1, tmpBuf);
@@ -477,7 +477,7 @@ void StatisticsDlg::UpdateStatistics()
 		tmpStr.Format(_T("%5d"), pPair4->value);
 		Item.pszText = tmpStr.GetBuffer();
 
-		INT Index = m_wndListEquipment.InsertItem(&Item);
+		const INT Index = m_wndListEquipment.InsertItem(&Item);
 		m_wndListEquipment.SetItemText(Index, 1, pPair4->key);
 
 		m_wndListCarrier.SetItemData(Index, Index);

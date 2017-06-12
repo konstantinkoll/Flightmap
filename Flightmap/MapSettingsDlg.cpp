@@ -120,7 +120,7 @@ void MapSettingsDlg::DoDataExchange(CDataExchange* pDX)
 		}
 		else
 		{
-			INT Index = m_wndResolutionList.GetNextItem(-1, LVIS_SELECTED);
+			const INT Index = m_wndResolutionList.GetNextItem(-1, LVIS_SELECTED);
 			if (Index!=-1)
 			{
 				theApp.m_MapSettings.Width = ResolutionPresets[Index].Width;

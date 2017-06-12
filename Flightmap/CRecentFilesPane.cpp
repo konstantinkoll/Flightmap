@@ -72,7 +72,7 @@ void CRecentFilesPane::UpdateList()
 
 CString CRecentFilesPane::GetSelectedRecentFilePath() const
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 		if (m_RecentFiles[Index].IsValid)
 			return m_RecentFiles[Index].Path;
@@ -229,7 +229,7 @@ void CRecentFilesPane::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CRecentFilesPane::OnFileOpen()
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 		if (m_RecentFiles[Index].IsValid)
 			GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_OPENRECENT);
@@ -237,7 +237,7 @@ void CRecentFilesPane::OnFileOpen()
 
 void CRecentFilesPane::OnFileRemove()
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 	{
 		CString Str(m_RecentFiles[Index].Path);
@@ -255,7 +255,7 @@ void CRecentFilesPane::OnFileRemove()
 
 void CRecentFilesPane::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 
 	BOOL bEnable = (Index!=-1);
 

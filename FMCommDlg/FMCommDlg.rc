@@ -396,8 +396,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_TOGGLESIDEBAR 
-                            "Blendet die Seitenleiste ein oder aus.\nSeitenleiste"
     IDM_BACKSTAGE_PURCHASE  "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Öffnet ein Fenster zum Freischalten von Flightmap.\nLizenzschlüssel eingeben"
@@ -701,7 +699,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_TOGGLESIDEBAR "Toggles the sidebar.\nSidebar"
     IDM_BACKSTAGE_PURCHASE  "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
     IDM_BACKSTAGE_ENTERLICENSEKEY 
                             "Opens a window to enter your license key.\nEnter license key"
@@ -711,5 +708,3 @@ END
 
 #endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
-
-

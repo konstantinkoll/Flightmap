@@ -6,11 +6,10 @@
 #define IDR_MAP                         129
 #define IDR_GLOBE                       130
 #define IDR_STATISTICS                  131
-#define IDM_BACKSTAGE_TOGGLESIDEBAR     200
-#define IDM_BACKSTAGE_PURCHASE          201
-#define IDM_BACKSTAGE_ENTERLICENSEKEY   202
-#define IDM_BACKSTAGE_SUPPORT           203
-#define IDM_BACKSTAGE_ABOUT             204
+#define IDM_BACKSTAGE_PURCHASE          200
+#define IDM_BACKSTAGE_ENTERLICENSEKEY   201
+#define IDM_BACKSTAGE_SUPPORT           202
+#define IDM_BACKSTAGE_ABOUT             203
 #define IDB_DIVDOWN                     20000
 #define IDB_DIVUP                       20001
 #define IDB_RATING0                     20002

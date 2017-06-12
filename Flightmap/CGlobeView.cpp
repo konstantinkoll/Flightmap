@@ -1185,7 +1185,7 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index==-1)
 	{
 		if (CursorOnGlobe(point))
@@ -1229,7 +1229,7 @@ void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	}
 	else
 	{
-		INT Index = ItemAtPosition(point);
+		const INT Index = ItemAtPosition(point);
 		if (Index!=-1)
 		{
 			if (GetFocus()!=this)
@@ -1244,7 +1244,7 @@ void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CGlobeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		SelectItem(Index, TRUE);
@@ -1258,7 +1258,7 @@ void CGlobeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CGlobeView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if ((Index!=-1) && (GetFocus()!=this))
 		SetFocus();
 

@@ -1546,7 +1546,7 @@ void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
 
 	for (UINT a=0; a<pItinerary->m_Flights[Row].AttachmentCount; a++)
 	{
-		UINT Index = AddAttachment(pItinerary, pItinerary->m_Flights[Row].Attachments[a]);
+		const UINT Index = AddAttachment(pItinerary, pItinerary->m_Flights[Row].Attachments[a]);
 		if (Index!=(UINT)-1)
 			Flight.Attachments[Flight.AttachmentCount++] = Index;
 	}

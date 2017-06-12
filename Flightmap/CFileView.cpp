@@ -640,7 +640,7 @@ void CFileView::OnAdd()
 
 void CFileView::OnOpen()
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 	{
 		AIRX_Attachment* pAttachment = GetSelectedAttachment();
@@ -688,7 +688,7 @@ void CFileView::OnOpen()
 
 void CFileView::OnSaveAs()
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 	{
 		AIRX_Attachment* pAttachment = GetAttachment(Index);
@@ -724,7 +724,7 @@ void CFileView::OnSaveAs()
 
 void CFileView::OnDelete()
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 		if (FMMessageBox(this, CString((LPCSTR)IDS_DELETE_FILE), GetAttachment(Index)->Name, MB_YESNO | MB_ICONWARNING)==IDYES)
 		{
@@ -735,7 +735,7 @@ void CFileView::OnDelete()
 
 void CFileView::OnRename()
 {
-	INT Index = GetSelectedFile();
+	const INT Index = GetSelectedFile();
 	if (Index!=-1)
 	{
 		if (GetFocus()!=&m_wndExplorerList)

@@ -73,11 +73,9 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 	return CBackstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-BOOL CMainWnd::GetLayoutRect(LPRECT lpRect) const
+BOOL CMainWnd::HasDocumentSheet() const
 {
-	CBackstageWnd::GetLayoutRect(lpRect);
-
-	return (m_pItinerary!=NULL) || (m_pWndFileMenu!=NULL);
+	return m_pItinerary || m_pWndFileMenu;
 }
 
 void CMainWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
@@ -115,7 +113,6 @@ void CMainWnd::HideFileMenu()
 	{
 		FMGetApp()->HideTooltip();
 
-		m_ForceSidebarAlwaysVisible = FALSE;
 		m_wndSidebar.SetSelection();
 
 		m_pWndFileMenu->DestroyWindow();
@@ -161,8 +158,6 @@ void CMainWnd::UpdateWindowStatus()
 
 			m_pWndDataGrid->EnsureVisible();
 		}
-
-		m_ShowSidebar = FALSE;
 	}
 	else
 	{
@@ -644,16 +639,16 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndSidebar.AddCommand(IDM_SIDEBAR_FILEMENU, 0);
 	m_wndSidebar.AddCaption(IDR_MAP);
 	m_wndSidebar.AddCommand(IDM_SIDEBAR_MAP_OPEN, 1);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_MAP_SETTINGS, -1);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_MAP_SETTINGS, 2);
 	m_wndSidebar.AddCaption(IDR_GLOBE);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_GLOBE_OPEN, 2);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_GLOBE_SETTINGS, -1);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_GLOBE_OPEN, 3);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_GLOBE_SETTINGS, 2);
 	m_wndSidebar.AddCaption(IDS_GOOGLEEARTH);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_GOOGLEEARTH_OPEN, 3);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_GOOGLEEARTH_SETTINGS, -1);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_GOOGLEEARTH_OPEN, 4);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_GOOGLEEARTH_SETTINGS, 2);
 	m_wndSidebar.AddCaption(IDS_STATISTICS);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_STATISTICS_OPEN, 4);
-	m_wndSidebar.AddCommand(IDM_SIDEBAR_STATISTICS_SETTINGS, -1);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_STATISTICS_OPEN, 5);
+	m_wndSidebar.AddCommand(IDM_SIDEBAR_STATISTICS_SETTINGS, 2);
 
 	SetSidebar(&m_wndSidebar);
 
@@ -663,17 +658,16 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.SetOwner(GetOwner());
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_TOGGLESIDEBAR, 0, TRUE, FALSE, TRUE);
-	m_wndTaskbar.AddButton(IDM_DATAGRID_EDITFLIGHT, 1, TRUE);
-	m_wndTaskbar.AddButton(IDM_DATAGRID_ADDROUTE, 2);
-	m_wndTaskbar.AddButton(IDM_DATAGRID_FINDREPLACE, 3);
-	m_wndTaskbar.AddButton(IDM_DATAGRID_FILTER, 4);
-	m_wndTaskbar.AddButton(IDM_DATAGRID_INSERTROW, 5);
+	m_wndTaskbar.AddButton(IDM_DATAGRID_EDITFLIGHT, 0, TRUE);
+	m_wndTaskbar.AddButton(IDM_DATAGRID_ADDROUTE, 1);
+	m_wndTaskbar.AddButton(IDM_DATAGRID_FINDREPLACE, 2);
+	m_wndTaskbar.AddButton(IDM_DATAGRID_FILTER, 3);
+	m_wndTaskbar.AddButton(IDM_DATAGRID_INSERTROW, 4);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 6, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 5, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 6, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 8, TRUE, TRUE);
 
 	UpdateWindowStatus();
 
@@ -896,7 +890,6 @@ void CMainWnd::OnFileMenu()
 {
 	if (!m_pWndFileMenu)
 	{
-		m_ForceSidebarAlwaysVisible = TRUE;
 		m_wndSidebar.SetSelection(IDM_SIDEBAR_FILEMENU);
 
 		m_pWndFileMenu = new CFileMenu();

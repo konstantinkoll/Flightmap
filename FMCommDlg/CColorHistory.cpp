@@ -60,7 +60,7 @@ INT CColorHistory::ItemAtPosition(CPoint point) const
 {
 	if (point.x % (m_ItemWidth+MARGIN)<m_ItemWidth)
 	{
-		INT Index = point.x/(m_ItemWidth+MARGIN);
+		const INT Index = point.x/(m_ItemWidth+MARGIN);
 
 		if (Index>15)
 			return -1;
@@ -129,7 +129,7 @@ void CColorHistory::OnPaint()
 
 void CColorHistory::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 
 	if (!m_Hover)
 	{
@@ -185,7 +185,7 @@ void CColorHistory::OnMouseHover(UINT nFlags, CPoint point)
 
 void CColorHistory::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 		SetFocusItem(Index);
 
@@ -201,7 +201,7 @@ void CColorHistory::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 
 void CColorHistory::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 	{
 		SetFocusItem(Index);
@@ -219,7 +219,7 @@ void CColorHistory::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 
 void CColorHistory::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 		SetFocusItem(Index);
 
@@ -229,7 +229,7 @@ void CColorHistory::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CColorHistory::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
-	INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(point);
 	if (Index!=-1)
 		SetFocusItem(Index);
 
