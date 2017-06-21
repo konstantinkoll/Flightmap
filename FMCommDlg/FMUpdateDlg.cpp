@@ -51,7 +51,7 @@ void FMUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayou
 	FMDialog::PaintOnBackground(dc, g, rectLayout);
 
 	// Logo
-	g.DrawImage(p_Logo, rectLayout.left+9, rectLayout.top+m_IconTop);
+	g.DrawImage(p_Logo, rectLayout.left+6, rectLayout.top+m_IconTop);
 
 	// Caption
 	const BOOL Themed = IsCtrlThemed();

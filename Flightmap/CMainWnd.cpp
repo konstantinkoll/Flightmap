@@ -586,6 +586,7 @@ Ende:
 
 	if (pdex.hDevMode)
 		GlobalFree(pdex.hDevMode);
+
 	if (pdex.hDevNames)
 		GlobalFree(pdex.hDevNames);
 }

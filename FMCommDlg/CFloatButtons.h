@@ -135,4 +135,5 @@ private:
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
+	BOOL m_Destroying;
 };

@@ -780,7 +780,7 @@ __forceinline void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, 
 		{
 			// Rating bitmap
 			const UCHAR Rating = (UCHAR)(*((UINT*)(((LPBYTE)&Flight)+FMAttributes[Attr].Offset))>>FMAttributes[Attr].DataParameter);
-			ASSERT(Rating<=FMMaxRating);
+			ASSERT(Rating<=MAXRATING);
 
 			CDC dcMem;
 			dcMem.CreateCompatibleDC(&dc);

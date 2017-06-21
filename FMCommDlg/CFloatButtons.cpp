@@ -477,6 +477,7 @@ CFloatButtons::CFloatButtons()
 
 	hBackgroundBrush = NULL;
 	m_BackBufferL = m_BackBufferH = m_VScrollMax = m_VScrollPos = 0;
+	m_Destroying = FALSE;
 }
 
 BOOL CFloatButtons::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID)
@@ -676,6 +677,9 @@ END_MESSAGE_MAP()
 
 void CFloatButtons::OnDestroy()
 {
+	// Destorying the button groups may cause focus events to fire!
+	m_Destroying = TRUE;
+
 	for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
 		delete m_ButtonGroups[a];
 
@@ -847,9 +851,10 @@ BOOL CFloatButtons::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint pt)
 
 void CFloatButtons::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
-		if (m_ButtonGroups[a]->SetFocus())
-			break;
+	if (!m_Destroying)
+		for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
+			if (m_ButtonGroups[a]->SetFocus())
+				break;
 }
 
 void CFloatButtons::OnIdleUpdateCmdUI()
