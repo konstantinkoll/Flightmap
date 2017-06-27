@@ -846,7 +846,7 @@ BOOL FMIATAGetAirportByCode(LPCSTR pCode, FMAirport** ppAirport)
 
 		*ppAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
-		INT Result = strcmp((*ppAirport)->Code, pCode);
+		const INT Result = strcmp((*ppAirport)->Code, pCode);
 		if (!Result)
 			return TRUE;
 

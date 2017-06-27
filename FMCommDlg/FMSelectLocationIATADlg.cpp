@@ -59,19 +59,19 @@ INT FMSelectLocationIATADlg::Compare(INT n1, INT n2)
 	return Result;
 }
 
-void FMSelectLocationIATADlg::Heap(INT Wurzel, INT Anzahl)
+void FMSelectLocationIATADlg::Heap(INT Element, INT Count)
 {
-	while (Wurzel<=Anzahl/2-1)
+	while (Element<=Count/2-1)
 	{
-		INT Index = (Wurzel+1)*2-1;
-		if (Index+1<Anzahl)
+		INT Index = (Element+1)*2-1;
+		if (Index+1<Count)
 			if (Compare(Index, Index+1)<0)
 				Index++;
 
-		if (Compare(Wurzel, Index)<0)
+		if (Compare(Element, Index)<0)
 		{
-			Swap(p_Airports[Wurzel], p_Airports[Index]);
-			Wurzel = Index;
+			Swap(p_Airports[Element], p_Airports[Index]);
+			Element = Index;
 		}
 		else
 		{

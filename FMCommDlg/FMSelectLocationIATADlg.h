@@ -45,12 +45,12 @@ protected:
 private:
 	INT Compare(INT n1, INT n2);
 	static void Swap(FMAirport*& Eins, FMAirport*& Zwei);
-	void Heap(INT Wurzel, INT Anzahl);
+	void Heap(INT Element, INT Count);
 };
 
 inline void FMSelectLocationIATADlg::Swap(FMAirport*& Eins, FMAirport*& Zwei)
 {
-	FMAirport* Temp = Eins;
+	FMAirport* pAirport = Eins;
 	Eins = Zwei;
-	Zwei = Temp;
+	Zwei = pAirport;
 }

@@ -579,6 +579,8 @@ void CBackstageWnd::UpdateRegion(INT cx, INT cy)
 	if (IsZoomed() || !IsCtrlThemed())
 	{
 		SetWindowRgn(CreateRectRgn(0, 0, cx, cy), TRUE);
+
+		m_RegionWidth = m_RegionHeight = -1;
 	}
 	else
 	{
