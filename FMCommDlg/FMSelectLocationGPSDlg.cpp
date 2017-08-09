@@ -10,7 +10,7 @@
 //
 
 FMSelectLocationGPSDlg::FMSelectLocationGPSDlg(const FMGeoCoordinates& Location, CWnd* pParentWnd)
-	: FMDialog(IDD_SELECTGPS, pParentWnd)
+	: FMDialog(IDD_SELECTLOCATIONGPS, pParentWnd)
 {
 	m_Location = Location;
 }

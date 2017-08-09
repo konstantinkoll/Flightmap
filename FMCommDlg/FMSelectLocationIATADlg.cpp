@@ -9,8 +9,8 @@
 // FMSelectLocationIATADlg
 //
 
-FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirport)
-	: FMDialog(IDD_SELECTIATA, pParentWnd)
+FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirport, UINT nIDTemplate)
+	: FMDialog(nIDTemplate, pParentWnd)
 {
 	m_LastCountrySelected = FMGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
 	m_LastSortColumn = FMGetApp()->GetInt(_T("IATALastSortColumn"), 0);

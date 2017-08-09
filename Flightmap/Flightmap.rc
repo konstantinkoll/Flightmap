@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,16,0
- PRODUCTVERSION 2,2,16,0
+ FILEVERSION 2,2,17,0
+ PRODUCTVERSION 2,2,17,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.2.16"
+            VALUE "FileVersion", "2.2.17"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.2.16"
+            VALUE "ProductVersion", "2.2.17"
         END
     END
     BLOCK "VarFileInfo"
@@ -378,7 +378,7 @@ BEGIN
     GROUPBOX        "Filter",IDC_STATIC,7,7,586,54
     LTEXT           "Flughafen:",IDC_STATIC,14,16,60,8
     EDITTEXT        IDC_FILTER_AIRPORT,14,26,60,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Auswählen...",IDD_SELECTIATA,13,41,61,13,WS_GROUP
+    PUSHBUTTON      "&Auswählen...",IDD_SELECTLOCATIONIATA,13,41,61,13,WS_GROUP
     LTEXT           "Fluglinie:",IDC_STATIC,105,16,100,8
     COMBOBOX        IDC_FILTER_CARRIER,105,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Muster:",IDC_STATIC,240,16,100,8
@@ -496,7 +496,7 @@ BEGIN
     CONTROL         "Filtern",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,140,15
     LTEXT           "Flughafen:",IDC_STATIC,7,62,140,8
     EDITTEXT        IDC_FILTER_AIRPORT,7,72,73,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Auswählen...",IDD_SELECTIATA,87,72,60,13,WS_GROUP
+    PUSHBUTTON      "&Auswählen...",IDD_SELECTLOCATIONIATA,87,72,60,13,WS_GROUP
     LTEXT           "Fluglinie:",IDC_STATIC,7,92,140,8
     COMBOBOX        IDC_FILTER_CARRIER,7,102,140,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Muster:",IDC_STATIC,7,121,140,8
@@ -1501,7 +1501,7 @@ BEGIN
     GROUPBOX        "Filter",IDC_STATIC,7,7,586,54
     LTEXT           "Airport:",IDC_STATIC,14,16,60,8
     EDITTEXT        IDC_FILTER_AIRPORT,14,26,60,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Select...",IDD_SELECTIATA,13,41,61,13,WS_GROUP
+    PUSHBUTTON      "&Select...",IDD_SELECTLOCATIONIATA,13,41,61,13,WS_GROUP
     LTEXT           "Carrier:",IDC_STATIC,105,16,100,8
     COMBOBOX        IDC_FILTER_CARRIER,105,26,100,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Equipment:",IDC_STATIC,240,16,100,8
@@ -1603,7 +1603,7 @@ BEGIN
     CONTROL         "Filter",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,140,15
     LTEXT           "Airport:",IDC_STATIC,7,62,140,8
     EDITTEXT        IDC_FILTER_AIRPORT,7,72,73,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
-    PUSHBUTTON      "&Select...",IDD_SELECTIATA,87,72,60,13,WS_GROUP
+    PUSHBUTTON      "&Select...",IDD_SELECTLOCATIONIATA,87,72,60,13,WS_GROUP
     LTEXT           "Carrier:",IDC_STATIC,7,92,140,8
     COMBOBOX        IDC_FILTER_CARRIER,7,102,140,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Equipment:",IDC_STATIC,7,121,140,8

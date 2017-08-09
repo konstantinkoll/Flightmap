@@ -10,12 +10,12 @@
 // FMSelectLocationIATADlg
 //
 
-#define MaxAirportsPerCountry   2500
+#define MaxAirportsPerCountry     2500
 
 class FMSelectLocationIATADlg : public FMDialog
 {
 public:
-	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR pAirport=NULL);
+	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR pAirport=NULL, UINT nIDTemplate=IDD_SELECTLOCATIONIATA);
 
 	FMAirport* p_Airport;
 

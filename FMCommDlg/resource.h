@@ -110,10 +110,10 @@
 #define IDC_CATEGORY10                  21014
 #define IDC_CATEGORY11                  21015
 #define IDC_CATEGORY12                  21016
-#define IDD_SELECTIATA                  21100
+#define IDD_SELECTLOCATIONIATA          21100
 #define IDC_COUNTRY                     21101
 #define IDC_AIRPORTS                    21102
-#define IDD_SELECTGPS                   21200
+#define IDD_SELECTLOCATIONGPS           21200
 #define IDC_MAP                         21201
 #define IDC_LATITUDE                    21202
 #define IDC_LONGITUDE                   21203

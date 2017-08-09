@@ -39,7 +39,7 @@ BOOL CGoogleEarthFile::Open(LPCTSTR lpszFileName, LPCTSTR lpszDisplayName)
 	WriteString(_T("<open>1</open>\n"));
 	WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
 	WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
-	WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
+	WriteString(_T("<StyleMap id=\"Location\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
 
 	return m_IsOpen;
 }
@@ -59,7 +59,7 @@ void CGoogleEarthFile::WriteAirport(FMAirport* pAirport)
 	WriteAttribute(IDS_AIRPORT_LOCATION, tmpStr);
 	WriteString(_T("&lt;div&gt;</description>\n"));
 
-	WriteString(_T("<styleUrl>#C</styleUrl>\n"));
+	WriteString(_T("<styleUrl>#Location</styleUrl>\n"));
 	tmpStr.Format(_T("<Point><coordinates>%.6lf,%.6lf,-5000</coordinates></Point>\n"), pAirport->Location.Longitude, -pAirport->Location.Latitude);
 	WriteString(tmpStr);
 	WriteString(_T("</Placemark>\n"));
