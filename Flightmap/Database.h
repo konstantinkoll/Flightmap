@@ -2,76 +2,48 @@
 // Carriers
 //
 
-#define CARRIERCOUNT     58
+#define CARRIERCOUNT     30
 
 static const WCHAR Carriers[CARRIERCOUNT][30] = {
-	L"Adria Airways",
 	L"Aegean Airlines",
 	L"Aeroflot",
 	L"Aerolíneas Argentinas",
-	L"Aeroméxico",
-	L"Air Berlin",
 	L"Air Canada",
 	L"Air China",
-	L"Air Europa",
 	L"Air France",
 	L"Air New Zealand",
-	L"Alitalia",
 	L"American Airlines",
 	L"ANA",
 	L"Asiana Airlines",
 	L"Austrian Airlines",
-	L"Avianca",
 	L"British Airways",
-	L"Brussels Airlines",
 	L"Cathay Pacific",
 	L"China Airlines",
-	L"China Eastern Airlines",
-	L"China Southern Airlines",
-	L"Czech Airlines",
-	L"Copa Airlines",
-	L"Croatia Airlines",
 	L"Delta Air Lines",
-	L"EgyptAir",
-	L"Ethiopian Airlines",
 	L"Finnair",
-	L"Garuda Indonesia",
 	L"Iberia",
-	L"Japan Airlines",
-	L"Kenya Airways",
 	L"KLM",
-	L"Korean Air",
 	L"LAN",
 	L"LOT Polish Airlines",
 	L"Lufthansa",
-	L"Middle East Airlines",
 	L"Quantas",
-	L"Royal Jordanian",
-	L"S7 Airlines",
-	L"Saudi Arabian Airlines",
 	L"Scandinavian Airlines (SAS)",
-	L"Shenzhen Airlines",
 	L"Singapore Airlines",
 	L"South African Airways",
 	L"Swiss",
-	L"TACA Airlines",
-	L"TAM Airlines",
 	L"TAP Portugal",
-	L"TAROM",
 	L"Thai Airways",
 	L"Turkish Airlines",
-	L"United Airlines",
-	L"Vietnam Airlines",
-	L"Xiamen Airlines"
+	L"United Airlines"
 };
 
 
 // Equipment
 //
 
-#define EQUIPMENTCOUNT     32
+#define EQUIPMENTCOUNT     30
 
-static const WCHAR Equipment[EQUIPMENTCOUNT][20] = {
+static const WCHAR Equipment[EQUIPMENTCOUNT][21] = {
 	L"Airbus A300",
 	L"Airbus A310",
 	L"Airbus A318",
@@ -100,8 +72,6 @@ static const WCHAR Equipment[EQUIPMENTCOUNT][20] = {
 	L"Embraer ERJ-145",
 	L"Embraer ERJ-175",
 	L"Embraer ERJ-195",
-	L"Fokker 50/60",
-	L"Fokker 70/100",
 	L"MD-11",
-	L"SSJ 100"
+	L"Sukhoi Super Jet 100"
 };

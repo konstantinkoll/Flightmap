@@ -260,7 +260,7 @@ inline void CItinerary::FreeAttachment(AIRX_Attachment& Attachment)
 void ResetFlight(AIRX_Flight& Flight);
 void CalcDistance(AIRX_Flight& Flight, BOOL Force=FALSE);
 void CalcFuture(AIRX_Flight& Flight, SYSTEMTIME* pTime=NULL);
-void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight=NULL);
+void PrepareEditCtrl(CMFCMaskedEdit* pMaskedEdit, UINT Attr, AIRX_Flight* pFlight=NULL);
 void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);
 void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary=NULL, BOOL IncludeDatabase=TRUE);
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight=NULL);
@@ -270,7 +270,7 @@ void TimeToString(LPWSTR pStr, SIZE_T cCount, UINT Time);
 void DateTimeToString(LPWSTR pStr, SIZE_T cCount, FILETIME ft);
 void RouteToString(LPWSTR pStr, SIZE_T cCount, AIRX_Route& Route);
 void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles);
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount);
+void AttributeToString(const AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount);
 void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr);
 
 BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, LPWSTR pDelimiterFound=NULL);

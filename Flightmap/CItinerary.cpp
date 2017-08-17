@@ -82,9 +82,9 @@ void CalcFuture(AIRX_Flight& Flight, SYSTEMTIME* pTime)
 		Flight.Flags |= AIRX_FutureFlight;
 }
 
-void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
+void PrepareEditCtrl(CMFCMaskedEdit* pMaskedEdit, UINT Attr, AIRX_Flight* pFlight)
 {
-	ASSERT(pEdit);
+	ASSERT(pMaskedEdit);
 
 	CString tmpStr;
 
@@ -95,61 +95,61 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 		{
 		case 0:
 		case 3:
-			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+			pMaskedEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
 			break;
 
 		case 2:
 		case 5:
 		case 8:
 		case 16:
-			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
+			pMaskedEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
 			break;
 
 		case 9:
-			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "));
+			pMaskedEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "));
 			break;
 
 		case 11:
-			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789- "));
+			pMaskedEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789- "));
 			break;
 
 		case 14:
-			pEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/"));
+			pMaskedEdit->SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/"));
 			break;
 		}
 
 	case FMTypeUnicodeString:
-		pEdit->SetLimitText(FMAttributes[Attr].DataParameter);
+		pMaskedEdit->SetLimitText(FMAttributes[Attr].DataParameter);
 
 		break;
 
 	case FMTypeUINT:
-		pEdit->SetLimitText(6);
-		pEdit->SetValidChars(_T("0123456789"));
+		pMaskedEdit->SetLimitText(6);
+		pMaskedEdit->SetValidChars(_T("0123456789"));
 
 		break;
 
 	case FMTypeClass:
-		pEdit->SetLimitText(2);
-		pEdit->SetValidChars(_T("CFHJYcfhjy+"));
+		pMaskedEdit->SetLimitText(2);
+		pMaskedEdit->SetValidChars(_T("CFHJYcfhjy+"));
 
 		break;
 
 	case FMTypeDateTime:
 		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_DATETIME));
 
-		pEdit->SetCueBanner(tmpStr);
-		pEdit->SetLimitText(16);
-		pEdit->SetValidChars(_T("0123456789:-. "));
+		pMaskedEdit->SetCueBanner(tmpStr);
+		pMaskedEdit->SetLimitText(16);
+		pMaskedEdit->SetValidChars(_T("0123456789:-. "));
 
 		break;
 
 	case FMTypeTime:
 		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_TIME));
 
-		pEdit->SetCueBanner(tmpStr);
-		pEdit->SetLimitText(5);
-		pEdit->SetValidChars(_T("0123456789:"));
+		pMaskedEdit->SetCueBanner(tmpStr);
+		pMaskedEdit->SetLimitText(5);
+		pMaskedEdit->SetValidChars(_T("0123456789:"));
 
 		break;
 	}
@@ -159,34 +159,40 @@ void PrepareEditCtrl(CMFCMaskedEdit* pEdit, UINT Attr, AIRX_Flight* pFlight)
 		WCHAR tmpBuf[256];
 		AttributeToString(*pFlight, Attr, tmpBuf, 256);
 
-		pEdit->SetWindowText(tmpBuf);
+		pMaskedEdit->SetWindowText(tmpBuf);
 	}
 }
 
 void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
 {
-	if (IncludeDatabase)
-		for (UINT a=0; a<CARRIERCOUNT; a++)
-			pComboBox->AddString(Carriers[a]);
+	ASSERT(pComboBox);
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
 			if (pItinerary->m_Flights[a].Carrier[0])
 				if (pComboBox->FindStringExact(-1, pItinerary->m_Flights[a].Carrier)==CB_ERR)
 					pComboBox->AddString(pItinerary->m_Flights[a].Carrier);
+
+	if (IncludeDatabase)
+		for (UINT a=0; a<CARRIERCOUNT; a++)
+			if (pComboBox->FindStringExact(-1, Carriers[a])==CB_ERR)
+				pComboBox->AddString(Carriers[a]);
 }
 
 void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
 {
-	if (IncludeDatabase)
-		for (UINT a=0; a<EQUIPMENTCOUNT; a++)
-			pComboBox->AddString(Equipment[a]);
+	ASSERT(pComboBox);
 
 	if (pItinerary)
 		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
 			if (pItinerary->m_Flights[a].Equipment[0])
 				if (pComboBox->FindStringExact(-1, pItinerary->m_Flights[a].Equipment)==CB_ERR)
 					pComboBox->AddString(pItinerary->m_Flights[a].Equipment);
+
+	if (IncludeDatabase)
+		for (UINT a=0; a<EQUIPMENTCOUNT; a++)
+			if (pComboBox->FindStringExact(-1, Equipment[a])==CB_ERR)
+				pComboBox->AddString(Equipment[a]);
 }
 
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight)
@@ -209,7 +215,7 @@ void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT
 	}
 }
 
-CString ExportAttribute(AIRX_Flight& Flight, UINT Attr, BOOL Label=TRUE, BOOL Colon=TRUE, BOOL NewLine=TRUE)
+CString ExportAttribute(const AIRX_Flight& Flight, UINT Attr, BOOL Label=TRUE, BOOL Colon=TRUE, BOOL NewLine=TRUE)
 {
 	WCHAR tmpBuf[256];
 	AttributeToString(Flight, Attr, tmpBuf, 256);
@@ -231,14 +237,14 @@ CString ExportAttribute(AIRX_Flight& Flight, UINT Attr, BOOL Label=TRUE, BOOL Co
 	return tmpStr;
 }
 
-CString ExportLocation(AIRX_Flight& Flight, UINT AttrBase)
+CString ExportLocation(const AIRX_Flight& Flight, UINT AttrBase)
 {
 	CString DateTime = ExportAttribute(Flight, AttrBase+1, FALSE, FALSE, FALSE);
 	CString Gate = ExportAttribute(Flight, AttrBase+2, TRUE, FALSE, FALSE);
 
 	CString tmpStr =ExportAttribute(Flight, AttrBase, TRUE, TRUE, FALSE);
 
-	if ((!DateTime.IsEmpty()) || (!Gate.IsEmpty()))
+	if (!DateTime.IsEmpty() || !Gate.IsEmpty())
 	{
 		tmpStr += _T(" (");
 
@@ -341,7 +347,7 @@ void RouteToString(LPWSTR pStr, SIZE_T cCount, AIRX_Route& Route)
 	swprintf_s(pStr, cCount, L"%s–%s, %s", From.GetBuffer(), To.GetBuffer(), tmpBuf);
 }
 
-void AttributeToString(AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount)
+void AttributeToString(const AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount)
 {
 	ASSERT(Attr<FMAttributeCount);
 	ASSERT(pStr);

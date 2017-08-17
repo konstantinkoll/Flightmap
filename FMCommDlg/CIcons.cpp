@@ -74,9 +74,9 @@ INT CIcons::Load(UINT nID, UINT Flags, FMFont* pFont)
 	if (!pFont)
 		pFont = (Flags>=LI_SLIGHTLYLARGER) ? &FMGetApp()->m_LargeFont : &FMGetApp()->m_DefaultFont;
 
-	INT Height = pFont->GetFontHeight();
+	const INT Height = pFont->GetFontHeight();
 
-	INT Level = (Height>=32) ? 2 : (Height>=24) ? 1 : 0;
+	UINT Level = (Height>=32) ? 2 : (Height>=24) ? 1 : 0;
 	if (Flags==LI_FORTOOLTIPS)
 		Level += 2;
 
