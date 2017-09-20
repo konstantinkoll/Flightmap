@@ -74,7 +74,10 @@ private:
 	FMDynArray<DialogControl, 2, 2> m_BottomRightControls;
 	DialogControl m_BottomLeftControl;
 	CPoint m_LastSize;
+
+#ifndef _DEBUG
 	CDesktopDimmer m_wndDesktopDimmer;
+#endif
 };
 
 inline void FMDialog::MapDialogRect(LPRECT lpRect) const

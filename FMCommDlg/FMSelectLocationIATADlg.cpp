@@ -53,10 +53,7 @@ INT FMSelectLocationIATADlg::Compare(INT n1, INT n2)
 		break;
 	}
 
-	if (m_LastSortDirection)
-		Result = -Result;
-
-	return Result;
+	return m_LastSortDirection ? -Result : Result;
 }
 
 void FMSelectLocationIATADlg::Heap(INT Element, INT Count)
@@ -149,8 +146,8 @@ BOOL FMSelectLocationIATADlg::InitDialog()
 	// Combobox füllen
 	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_COUNTRY);
 
-	UINT cCount = FMIATAGetCountryCount();
-	for (UINT a=0; a<cCount; a++)
+	const UINT CountyCount = FMIATAGetCountryCount();
+	for (UINT a=0; a<CountyCount; a++)
 		pComboBox->AddString(CString(FMIATAGetCountry(a)->Name));
 
 	// Liste konfigurieren

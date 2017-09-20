@@ -9,14 +9,6 @@
 // CRatingCtrl
 //
 
-#define PrepareBlend()                      INT w = min(rect.Width(), RATINGBITMAPWIDTH); \
-                                            INT h = min(rect.Height(), RATINGBITMAPHEIGHT);
-#define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
-                                            HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdcMem, bitmaps[level>MAXRATING ? 0 : level]); \
-                                            AlphaBlend(dc, rect.left+(rect.Width()-w)/2, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF); \
-                                            SelectObject(hdcMem, hOldBitmap); \
-                                            DeleteDC(hdcMem); }
-
 CRatingCtrl::CRatingCtrl()
 	: CWnd()
 {
@@ -112,10 +104,18 @@ void CRatingCtrl::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
+	// Background
 	dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_WINDOW));
 
-	PrepareBlend();
-	Blend(dc, rect, m_Rating, FMGetApp()->hRatingBitmaps);
+	// Bitmap
+	CDC dcMem;
+	dcMem.CreateCompatibleDC(&dc);
+
+	HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(FMGetApp()->hRatingBitmaps[m_Rating]);
+
+	dc.AlphaBlend((rect.Width()-RATINGBITMAPWIDTH)/2, (rect.Height()-RATINGBITMAPHEIGHT)/2, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, &dcMem, 0, 0, RATINGBITMAPWIDTH, RATINGBITMAPHEIGHT, BF);
+
+	SelectObject(dcMem, hOldBitmap);
 
 	if (GetFocus()==this)
 	{

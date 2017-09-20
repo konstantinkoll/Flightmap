@@ -263,7 +263,7 @@ INT_PTR FMDialog::DoModal()
 				// Handle parent window
 				HWND hWndParent = CBackstageWnd::GetSafeOwner_(p_ParentWnd->GetSafeHwnd(), &hWndTop);
 
-				BOOL EnableDisableParent = (hWndParent && (hWndParent!=::GetDesktopWindow()) && ::IsWindowEnabled(hWndParent));
+				const BOOL EnableDisableParent = (hWndParent && (hWndParent!=::GetDesktopWindow()) && ::IsWindowEnabled(hWndParent));
 				if (EnableDisableParent)
 					::EnableWindow(hWndParent, FALSE);
 

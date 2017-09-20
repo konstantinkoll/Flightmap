@@ -702,7 +702,7 @@ void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BO
 void DrawWhiteButtonForeground(CDC& dc, LPDRAWITEMSTRUCT lpDrawItemStruct, BOOL ShowKeyboardCues)
 {
 	CRect rect(lpDrawItemStruct->rcItem);
-	rect.DeflateRect(2, 2);
+	rect.DeflateRect(6, 4);
 
 	WCHAR Caption[256];
 	::GetWindowText(lpDrawItemStruct->hwndItem, Caption, 256);

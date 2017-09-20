@@ -581,10 +581,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CDialogMenuBar.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CExplorerList.h"
 				>
 			</File>
