@@ -188,8 +188,8 @@ BOOL CFlightmapApp::InitInstance()
 			m_RecentReplaceTerms.AddTail(tmpValue);
 	}
 
-	if (m_MapSettings.Width<400)
-		m_MapSettings.Width = 400;
+	if (m_MapSettings.Width<320)
+		m_MapSettings.Width = 320;
 	if (m_MapSettings.Width>8192)
 		m_MapSettings.Width = 8192;
 
