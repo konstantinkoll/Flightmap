@@ -23,7 +23,7 @@ CFileView::CFileView()
 	ZeroMemory(&wndcls, sizeof(wndcls));
 	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
+	wndcls.hCursor = theApp.LoadStandardCursor(IDC_ARROW);
 	wndcls.lpszClassName = L"CFileView";
 
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CFileView", &wndcls)))
@@ -585,7 +585,7 @@ void CFileView::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 UseIcon:
 			// Icon
-			pTooltipData->hIcon = FMGetApp()->m_SystemImageListExtraLarge.ExtractIcon(pAttachment->IconID);
+			pTooltipData->hIcon = theApp.m_SystemImageListExtraLarge.ExtractIcon(pAttachment->IconID);
 		}
 
 		delete pBitmap;

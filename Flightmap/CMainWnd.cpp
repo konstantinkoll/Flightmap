@@ -45,7 +45,7 @@ BOOL CMainWnd::Create(CItinerary* pItinerary)
 {
 	m_pItinerary = pItinerary;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_APPLICATION), _T("Main"), CSize(0, 0), TRUE);
 }
@@ -111,7 +111,7 @@ void CMainWnd::HideFileMenu()
 {
 	if (m_pWndFileMenu)
 	{
-		FMGetApp()->HideTooltip();
+		theApp.HideTooltip();
 
 		m_wndSidebar.SetSelection();
 

@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,20,0
- PRODUCTVERSION 2,2,20,0
+ FILEVERSION 2,3,0,0
+ PRODUCTVERSION 2,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.2.20"
+            VALUE "FileVersion", "2.3.0"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2017 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.2.20"
+            VALUE "ProductVersion", "2.3.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -672,7 +672,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,216,173,10
     CONTROL         "Skalierung von Grafik und Schrift",IDC_CATEGORY5,
                     "CCategory",WS_GROUP,7,235,173,15
-    CONTROL         "&Verkleinern zulassen falls sinnvoll",IDC_SCALE_ALLOWSMALLER,
+    CONTROL         "Mit Hintergrund &skalieren",IDC_SCALE_ALLOWSMALLER,
                     "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,253,173,10
     CONTROL         "Immer &Standardgröße verwenden",IDC_SCALE_ALWAYSDEFAULT,
                     "Button",BS_AUTORADIOBUTTON,7,265,173,10
@@ -1096,6 +1096,8 @@ BEGIN
     IDS_MAPSETTINGS         "Karten-Einstellungen"
     IDS_COLUMN_RESOLUTION   "Auflösung"
     IDS_COLUMN_APPLICATION  "Einsatzgebiet"
+    IDS_MAPDIMENSION_ORIGINAL "%ld×%ld Pixel (Original)"
+    IDS_MAPDIMENSION_SCALED  "%ld×%ld Pixel (skaliert auf %ld×%ld)"
 END
 
 STRINGTABLE 
@@ -1791,8 +1793,7 @@ BEGIN
     CONTROL         "&Wide border (e.g. for picture frames)",IDC_WIDEBORDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,216,173,10
     CONTROL         "Graphics and font scaling",IDC_CATEGORY5,"CCategory",WS_GROUP,7,235,173,15
-    CONTROL         "Allow do&wnscale when appropriate",IDC_SCALE_ALLOWSMALLER,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,253,173,10
+    CONTROL         "&Scale with background",IDC_SCALE_ALLOWSMALLER,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,253,173,10
     CONTROL         "Always use &default size",IDC_SCALE_ALWAYSDEFAULT,
                     "Button",BS_AUTORADIOBUTTON,7,265,173,10
     CONTROL         "Always use d&ouble size",IDC_SCALE_ALWAYSDOUBLE,"Button",BS_AUTORADIOBUTTON,7,277,173,10
@@ -2222,6 +2223,8 @@ BEGIN
     IDS_MAPSETTINGS         "Map settings"
     IDS_COLUMN_RESOLUTION   "Resolution"
     IDS_COLUMN_APPLICATION  "Application"
+    IDS_MAPDIMENSION_ORIGINAL "%ld×%ld pixels (original)"
+    IDS_MAPDIMENSION_SCALED  "%ld×%ld pixels (scaled to %ld×%ld)"
 END
 
 STRINGTABLE 

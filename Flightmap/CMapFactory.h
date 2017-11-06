@@ -21,34 +21,39 @@ public:
 	CBitmap* RenderMap(CKitchen* pKitchen);
 
 protected:
-	static void AppendLabel(CString& Buf, UINT nID, UINT MaxLines);
+	static void AppendLabel(CString& strNote, UINT nID, UINT MaxLines);
 	CBitmap* LoadBackground(INT Left, INT Top, INT Right, INT Bottom, INT Width, INT Height, INT MapOffset) const;
-	void DrawLine(Graphics& g, Pen& pen, REAL x1, REAL y1, REAL x2, REAL y2, INT MinS=0, INT MinZ=0, REAL Scale=1.0f, REAL* pLabelZ=NULL, REAL* pLabelS=NULL) const;
-	static void DrawArrow(Graphics& g, Brush& brush, REAL x1, REAL y1, REAL x2, REAL y2, INT MinS, INT MinZ, REAL Scale, REAL Upscale);
-	static REAL MapX(REAL S);
-	static REAL MapX(DOUBLE S);
-	static REAL MapY(REAL Z);
-	static REAL MapY(DOUBLE Z);
+	COLORREF PreparePen(Pen& pen, const FlightRoute& Route, const CKitchen* pKitchen, DOUBLE GfxScale) const;
+	void DrawLine(CDC& dcMask, Graphics& g, Pen& pen, REAL x1, REAL y1, REAL x2, REAL y2, REAL Scale, INT MinS, INT MinZ, REAL* pLabelX=NULL, REAL* pLabelY=NULL) const;
+	static void DrawArrow(Graphics& g, Brush& brush, REAL x1, REAL y1, REAL x2, REAL y2, REAL Scale, REAL GfxScale, INT MinS, INT MinZ);
+	static REAL MapX(REAL X);
+	static REAL MapX(DOUBLE X);
+	static REAL MapY(REAL Y);
+	static REAL MapY(DOUBLE Y);
+	static INT ScanMask(const CDC& dc, CRect& rect, UINT Border, INT Width, INT Height);
 
 	MapSettings m_Settings;
+
+private:
+	void DrawLine(CDC& dcMask, Graphics& g, Pen& pen, REAL x1, REAL y1, REAL x2, REAL y2, REAL Scale) const;
 };
 
-inline REAL CMapFactory::MapX(REAL S)
+inline REAL CMapFactory::MapX(REAL X)
 {
-	return S*BGWIDTH/(2*PI)+BGWIDTH/2;
+	return X*(BGWIDTH/2)/PI+BGWIDTH/2;
 }
 
-inline REAL CMapFactory::MapX(DOUBLE S)
+inline REAL CMapFactory::MapX(DOUBLE X)
 {
-	return MapX((REAL)S);
+	return MapX((REAL)X);
 }
 
-inline REAL CMapFactory::MapY(REAL Z)
+inline REAL CMapFactory::MapY(REAL Y)
 {
-	return Z*BGHEIGHT/PI+BGHEIGHT/2;
+	return Y*BGHEIGHT/PI+BGHEIGHT/2;
 }
 
-inline REAL CMapFactory::MapY(DOUBLE Z)
+inline REAL CMapFactory::MapY(DOUBLE Y)
 {
-	return MapY((REAL)Z);
+	return MapY((REAL)Y);
 }

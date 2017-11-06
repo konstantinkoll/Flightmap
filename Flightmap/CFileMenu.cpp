@@ -27,7 +27,7 @@ BOOL CFileMenu::Create(CWnd* pParentWnd, UINT nID, CItinerary* pItinerary)
 {
 	p_Itinerary = pItinerary;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
@@ -261,7 +261,7 @@ void CFileMenu::OnFileViewInFolder()
 	{
 		SHOpenFolderAndSelectItems(pidlFQ, 0, NULL, 0);
 
-		FMGetApp()->GetShellManager()->FreeItem(pidlFQ);
+		theApp.GetShellManager()->FreeItem(pidlFQ);
 	}
 }
 

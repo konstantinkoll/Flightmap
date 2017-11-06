@@ -48,8 +48,8 @@ AboutDlg::AboutDlg(CWnd* pParentWnd)
 	wcscat_s(m_Build, 256, tmpStr);
 
 	GetLocalTime(&st);
-	p_Santa = (st.wMonth==12) ? FMGetApp()->GetCachedResourceImage(IDB_SANTA) : NULL;
-	p_Logo = FMGetApp()->GetCachedResourceImage((st.wMonth==3) && (st.wDay==17) ? IDB_STPATRICK : IDB_FLIGHTMAP_128);
+	p_Santa = (st.wMonth==12) ? theApp.GetCachedResourceImage(IDB_SANTA) : NULL;
+	p_Logo = theApp.GetCachedResourceImage((st.wMonth==3) && (st.wDay==17) ? IDB_STPATRICK : IDB_FLIGHTMAP_128);
 
 	GetFileVersion(AfxGetInstanceHandle(), m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -77,7 +77,7 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		FMGetApp()->WriteUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+		theApp.WriteUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 
 		theApp.m_ModelQuality = (GLModelQuality)m_wndModelQuality.GetCurSel();
 		theApp.m_TextureQuality = (GLTextureQuality)m_wndTextureQuality.GetCurSel();
@@ -86,7 +86,7 @@ void AboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 	else
 	{
-		FMGetApp()->GetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
+		theApp.GetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);

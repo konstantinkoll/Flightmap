@@ -124,6 +124,8 @@
 #define IDS_MAPSETTINGS                 1073
 #define IDS_COLUMN_RESOLUTION           1074
 #define IDS_COLUMN_APPLICATION          1075
+#define IDS_MAPDIMENSION_ORIGINAL       1076
+#define IDS_MAPDIMENSION_SCALED         1077
 #define IDS_FILEMENU_NEW                1100
 #define IDS_FILEMENU_TEMPLATES          1101
 #define IDS_FILEMENU_OPEN               1102

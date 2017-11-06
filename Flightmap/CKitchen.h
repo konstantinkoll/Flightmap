@@ -16,7 +16,7 @@
 struct FlightAirport
 {
 	FMAirport* pAirport;	// Airport
-	LPVOID lpAirport;		// Additonal data, e.g. from map factory
+	LPVOID lpAirportData;	// Additonal data, e.g. from map factory
 };
 
 struct FlightRoute
@@ -31,8 +31,8 @@ struct FlightRoute
 	BYTE Arrows;
 
 	// Annotations
-	REAL LabelZ;
-	REAL LabelS;
+	REAL LabelX;
+	REAL LabelY;
 	DOUBLE DistanceNM;
 	ULONG FlightTime;
 	UINT FlightTimeCount;

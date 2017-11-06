@@ -128,7 +128,7 @@ BOOL CFlightmapApp::InitInstance()
 	m_MapSettings.BackgroundColor = GetInt(_T("MapBackgroundColor"), 0xF0F0F0);
 	m_MapSettings.CenterPacific = GetInt(_T("MapCenterPacific"), FALSE);
 	m_MapSettings.WideBorder = GetInt(_T("MapWideBorder"), FALSE);
-	m_MapSettings.ForegroundScale = GetInt(_T("MapForegroundScale"), 0);
+	m_MapSettings.ForegroundScale = GetInt(_T("MapForegroundScale"), 1);
 	m_MapSettings.Width = GetInt(_T("MapWidth"), 640);
 	m_MapSettings.Height = GetInt(_T("MapHeight"), 640);
 	m_MapSettings.ShowRoutes = GetInt(_T("MapShowRoutes"), TRUE);

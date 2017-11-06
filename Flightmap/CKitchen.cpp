@@ -132,7 +132,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 			Route.Count = 1;
 			Route.Color = Flight.Color;
 			Route.Arrows = Arrow;
-			Route.LabelZ = Route.LabelS = -1.0f;
+			Route.LabelX = Route.LabelY = -1.0f;
 			Route.DistanceNM = 0.0;
 
 			if (Flight.FlightTime)
@@ -257,19 +257,22 @@ FlightSegments* CKitchen::Tesselate(FlightRoute& Route)
 
 	const DOUBLE MinH = 1.01;
 	const DOUBLE Elevation = min(D/2, 0.25);
+	const DOUBLE ElevationEase = UseWaypoint ? PI/2 : PI;
+
+	const DOUBLE Matrix[] = { cos(Lat1)*cos(Lon1), cos(Lat2)*cos(Lon2), cos(Lat1)*sin(Lon1), cos(Lat2)*sin(Lon2), sin(Lat1), sin(Lat2) };
 
 	for (UINT a=0; a<PointCount; a++)
 	{
 		const DOUBLE V = sin((PointCount-a-1)*D/(PointCount-1))/sin(D);
 		const DOUBLE W = sin(a*D/(PointCount-1))/sin(D);
 
-		const DOUBLE X = V*cos(Lat1)*cos(Lon1)+W*cos(Lat2)*cos(Lon2);
-		const DOUBLE Y = V*cos(Lat1)*sin(Lon1)+W*cos(Lat2)*sin(Lon2);
-		const DOUBLE Z = V*sin(Lat1)+W*sin(Lat2);
+		const DOUBLE X = V*Matrix[0]+W*Matrix[1];
+		const DOUBLE Y = V*Matrix[2]+W*Matrix[3];
+		const DOUBLE Z = V*Matrix[4]+W*Matrix[5];
 
 		pSegments->Points[a][0] = atan2(Z, sqrt(X*X+Y*Y));
 		pSegments->Points[a][1] = atan2(Y, X);
-		pSegments->Points[a][2] = MinH+Elevation*sin((UseWaypoint ? PI/2 : PI)*a/(PointCount-1));
+		pSegments->Points[a][2] = MinH+Elevation*sin(ElevationEase*a/(PointCount-1));
 	}
 
 	return pSegments;

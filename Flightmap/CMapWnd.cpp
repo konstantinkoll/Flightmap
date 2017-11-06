@@ -27,7 +27,7 @@ CMapWnd::~CMapWnd()
 
 BOOL CMapWnd::Create()
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_MAP));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_MAP));
 
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_MAP), _T("Map"), CSize(0, 0), TRUE);
 }
@@ -53,7 +53,7 @@ void CMapWnd::SetBitmap(CBitmap* pBitmap, const CString& DisplayName, const CStr
 {
 	// Bitmap
 	delete m_pBitmap;
-	m_wndMapView.SetBitmap(m_pBitmap=pBitmap);
+	m_wndMapView.SetBitmap(m_pBitmap=pBitmap, Title);
 
 	// Caption and title
 	CString Caption((LPCSTR)IDR_MAP);

@@ -29,22 +29,49 @@ CMapView::~CMapView()
 
 BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
+BOOL CMapView::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		theApp.HideTooltip();
+		break;
+	}
+
+	return CFrontstageWnd::PreTranslateMessage(pMsg);
+}
+
 void CMapView::DeleteScaledBitmap()
 {
+	theApp.HideTooltip();
+	m_Hover = FALSE;
+
 	if (m_pBitmapScaled!=p_BitmapOriginal)
 		delete m_pBitmapScaled;
 
 	m_pBitmapScaled = NULL;
 }
 
-void CMapView::SetBitmap(CBitmap* pBitmap)
+void CMapView::SetBitmap(CBitmap* pBitmap, const CString& Title)
 {
 	p_BitmapOriginal = pBitmap;
+	m_Title = Title;
 
 	ScaleBitmap();
 }
@@ -55,11 +82,11 @@ void CMapView::ScaleBitmap()
 
 	if (p_BitmapOriginal)
 	{
-		CSize Size = p_BitmapOriginal->GetBitmapDimension();
+		const CSize Size = p_BitmapOriginal->GetBitmapDimension();
 
 		const DOUBLE ZoomFactor = GetZoomFactor();
-		INT Width = (INT)((DOUBLE)Size.cx*ZoomFactor);
-		INT Height = (INT)((DOUBLE)Size.cy*ZoomFactor);
+		const INT Width = (INT)((DOUBLE)Size.cx*ZoomFactor);
+		const INT Height = (INT)((DOUBLE)Size.cy*ZoomFactor);
 
 		if (ZoomFactor<1.0)
 		{
@@ -101,6 +128,17 @@ void CMapView::AdjustLayout()
 {
 	AdjustScrollbars();
 	Invalidate();
+}
+
+void CMapView::GetCardRect(const CRect& rectClient, CRect& rectCard) const
+{
+	const INT PosX = m_ScrollWidth<rectClient.Width() ? (rectClient.Width()-m_ScrollWidth)/2 : -m_HScrollPos;
+	const INT PosY = m_ScrollHeight<rectClient.Height() ? (rectClient.Height()-m_ScrollHeight)/2 : -m_VScrollPos;
+
+	rectCard.left = PosX+(BORDER-CARDPADDING);
+	rectCard.right = PosX+m_ScrollWidth-(BORDER-CARDPADDING);
+	rectCard.top = PosY+(BORDER-CARDPADDING);
+	rectCard.bottom = PosY+m_ScrollHeight-(BORDER-CARDPADDING);
 }
 
 void CMapView::ResetScrollbars()
@@ -162,6 +200,9 @@ BEGIN_MESSAGE_MAP(CMapView, CFrontstageWnd)
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
@@ -211,18 +252,16 @@ void CMapView::OnPaint()
 	// Card
 	if (m_pBitmapScaled)
 	{
-		INT PosX = m_ScrollWidth<rect.Width() ? (rect.Width()-m_ScrollWidth)/2 : -m_HScrollPos;
-		INT PosY = m_ScrollHeight<rect.Height() ? (rect.Height()-m_ScrollHeight)/2 : -m_VScrollPos;
-
-		CRect rectMap(PosX+BORDER, PosY+BORDER, PosX+m_ScrollWidth-BORDER, PosY+m_ScrollHeight-BORDER);
-
-		CRect rectCard(rectMap);
-		rectCard.InflateRect(CARDPADDING, CARDPADDING);
+		CRect rectCard;
+		GetCardRect(rect, rectCard);
 
 		DrawCardForeground(dc, g, rectCard, Themed);
 
 		// Map picture (either pre-scaled or streched)
-		CSize Size = m_pBitmapScaled->GetBitmapDimension();
+		const CSize Size = m_pBitmapScaled->GetBitmapDimension();
+
+		CRect rectMap(rectCard);
+		rectMap.DeflateRect(CARDPADDING, CARDPADDING);
 
 		CDC dcMap;
 		dcMap.CreateCompatibleDC(&pDC);
@@ -364,6 +403,76 @@ void CMapView::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (GetFocus()!=this)
 		SetFocus();
+}
+
+
+void CMapView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	CFrontstageWnd::OnMouseMove(nFlags, point);
+
+	CRect rectCard;
+	GetCardRect(rectCard);
+
+	const BOOL MouseOverCard = rectCard.PtInRect(point);
+
+	if (MouseOverCard!=m_Hover)
+		if ((m_Hover=MouseOverCard)==TRUE)
+		{
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_LEAVE | TME_HOVER;
+			tme.dwHoverTime = HOVERTIME;
+			tme.hwndTrack = m_hWnd;
+			TrackMouseEvent(&tme);
+		}
+		else
+		{
+			theApp.HideTooltip();
+		}
+}
+
+void CMapView::OnMouseLeave()
+{
+	theApp.HideTooltip();
+	m_Hover = FALSE;
+
+	Invalidate();
+}
+
+void CMapView::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		if (!theApp.IsTooltipVisible() && p_BitmapOriginal)
+		{
+			NM_TOOLTIPDATA tag;
+			ZeroMemory(&tag, sizeof(tag));
+
+			tag.hdr.code = REQUEST_TOOLTIP_DATA;
+			tag.hdr.hwndFrom = m_hWnd;
+			tag.hdr.idFrom = GetDlgCtrlID();
+
+			const CSize SizeOriginal = p_BitmapOriginal->GetBitmapDimension();
+			CString tmpStr;
+
+			if (m_pBitmapScaled && (m_pBitmapScaled!=p_BitmapOriginal))
+			{
+				const CSize SizeScaled = m_pBitmapScaled->GetBitmapDimension();
+
+				tmpStr.Format(IDS_MAPDIMENSION_SCALED, SizeOriginal.cx, SizeOriginal.cy, SizeScaled.cx, SizeScaled.cy);
+			}
+			else
+			{
+				tmpStr.Format(IDS_MAPDIMENSION_ORIGINAL, SizeOriginal.cx, SizeOriginal.cy);
+			}
+
+			theApp.ShowTooltip(this, point, m_Title, tmpStr);
+		}
+	}
+	else
+	{
+		theApp.HideTooltip();
+	}
 }
 
 BOOL CMapView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)

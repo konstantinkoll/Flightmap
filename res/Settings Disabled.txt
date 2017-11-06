@@ -1,3 +1,0 @@
-- Konvertierung in Graustufen
-- RGB: 33% schwarz überfüllen
-- A: 82,5% schwarz überfüllen

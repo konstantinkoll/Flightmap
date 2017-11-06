@@ -217,7 +217,7 @@ void CRecentFilesPane::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 			swprintf_s(pTooltipData->Hint, 4096, L"%s: %s\n%s: %s\n%s: %s", SubitemNames[0], m_wndExplorerList.GetItemText(pTooltipData->Item, 1), SubitemNames[1], m_wndExplorerList.GetItemText(pTooltipData->Item, 2), SubitemNames[2], m_wndExplorerList.GetItemText(pTooltipData->Item, 3));
 
 			// Icon
-			pTooltipData->hIcon = FMGetApp()->m_SystemImageListExtraLarge.ExtractIcon(m_RecentFiles[pTooltipData->Item].IconID);
+			pTooltipData->hIcon = theApp.m_SystemImageListExtraLarge.ExtractIcon(m_RecentFiles[pTooltipData->Item].IconID);
 
 			*pResult = TRUE;
 		}

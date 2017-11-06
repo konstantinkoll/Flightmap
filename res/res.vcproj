@@ -1497,6 +1497,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\MetropolitanDistinct.png"
+			>
+		</File>
+		<File
+			RelativePath=".\MetropolitanMerged.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Minimize.ico"
 			>
 		</File>
@@ -1602,10 +1610,6 @@
 		</File>
 		<File
 			RelativePath=".\SeatYP_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Settings Disabled.txt"
 			>
 		</File>
 		<File

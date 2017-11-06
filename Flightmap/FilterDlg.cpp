@@ -60,7 +60,7 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL FilterDlg::InitDialog()
 {
-	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&FMGetApp()->m_DefaultFont);
+	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&theApp.m_DefaultFont);
 
 	// Filter
 	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);

@@ -15,7 +15,7 @@ CIcons CGlobeWnd::m_SmallIcons;
 
 BOOL CGlobeWnd::Create()
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_GLOBE));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_GLOBE));
 
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_GLOBE), _T("Globe"), CSize(0, 0), TRUE);
 }

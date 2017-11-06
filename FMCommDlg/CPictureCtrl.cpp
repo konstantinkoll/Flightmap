@@ -193,7 +193,7 @@ void CPictureCtrl::OnPaint()
 	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
-	if ((m_DisplayMode==PC_COLOR) || (p_Picture==NULL))
+	if ((m_DisplayMode==PC_COLOR) || !p_Picture)
 	{
 		dc.FillSolidRect(rect, m_DisplayColor);
 	}
@@ -201,8 +201,8 @@ void CPictureCtrl::OnPaint()
 	{
 		Graphics g(dc);
 
-		INT Width = p_Picture->GetWidth();
-		INT Height = p_Picture->GetHeight();
+		const INT Width = p_Picture->GetWidth();
+		const INT Height = p_Picture->GetHeight();
 
 		if (m_DisplayMode==PC_PICTURE_SCALETOFIT)
 		{

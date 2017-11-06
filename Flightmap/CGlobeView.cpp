@@ -58,7 +58,7 @@ CGlobeView::CGlobeView()
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, theApp.LoadStandardCursor(IDC_ARROW));
 
 	if (!CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID))
 		return FALSE;
@@ -86,7 +86,7 @@ BOOL CGlobeView::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		FMGetApp()->HideTooltip();
+		theApp.HideTooltip();
 		break;
 	}
 
@@ -103,42 +103,42 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 	CFlightAirports::CPair* pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
 	while (pPair1)
 	{
-		GlobeItemData pData;
-		ZeroMemory(&pData, sizeof(pData));
-		pData.pAirport = pPair1->value.pAirport;
+		GlobeItemData Data;
+		ZeroMemory(&Data, sizeof(GlobeItemData));
+		Data.pAirport = pPair1->value.pAirport;
 
-		strcpy_s(pData.NameString, 130, pData.pAirport->Name);
-		const FMCountry* pCountry = FMIATAGetCountry(pData.pAirport->CountryID);
+		strcpy_s(Data.NameString, 130, Data.pAirport->Name);
+		const FMCountry* pCountry = FMIATAGetCountry(Data.pAirport->CountryID);
 		if (pCountry)
 		{
-			strcat_s(pData.NameString, 130, ", ");
-			strcat_s(pData.NameString, 130, pCountry->Name);
+			strcat_s(Data.NameString, 130, ", ");
+			strcat_s(Data.NameString, 130, pCountry->Name);
 		}
 
-		FMGeoCoordinatesToString(pData.pAirport->Location, pData.CoordString, 32, FALSE);
+		FMGeoCoordinatesToString(Data.pAirport->Location, Data.CoordString, 32, FALSE);
 
 		// Calculate world coordinates
-		const DOUBLE LatitudeRad = -theRenderer.DegToRad(pData.pAirport->Location.Latitude);
-		const DOUBLE LongitudeRad = theRenderer.DegToRad(pData.pAirport->Location.Longitude);
+		const DOUBLE LatitudeRad = -theRenderer.DegToRad(Data.pAirport->Location.Latitude);
+		const DOUBLE LongitudeRad = theRenderer.DegToRad(Data.pAirport->Location.Longitude);
 
 		const DOUBLE D = cos(LatitudeRad);
 
-		pData.World[0] = (GLfloat)(sin(LongitudeRad)*D);
-		pData.World[1] = (GLfloat)(sin(LatitudeRad));
-		pData.World[2] = (GLfloat)(cos(LongitudeRad)*D);
+		Data.World[0] = (GLfloat)(sin(LongitudeRad)*D);
+		Data.World[1] = (GLfloat)(sin(LatitudeRad));
+		Data.World[2] = (GLfloat)(cos(LongitudeRad)*D);
 
 		// Other properties
 		UINT Count = 0;
-		pKitchen->m_FlightAirportCounts.Lookup(pData.pAirport->Code, Count);
+		pKitchen->m_FlightAirportCounts.Lookup(Data.pAirport->Code, Count);
 
 		CString tmpStr;
 		tmpStr.Format(Count==1 ? m_strFlightCountSingular : m_FlightCount_Plural, Count);
-		wcscpy_s(pData.CountStringLarge, 64, tmpStr.GetBuffer());
+		wcscpy_s(Data.CountStringLarge, 64, tmpStr.GetBuffer());
 
 		tmpStr.Format(_T("%u"), Count);
-		wcscpy_s(pData.CountStringSmall, 16, tmpStr.GetBuffer());
+		wcscpy_s(Data.CountStringSmall, 8, tmpStr.GetBuffer());
 
-		m_Airports.AddItem(pData);
+		m_Airports.AddItem(Data);
 		pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
 	}
 
@@ -1126,8 +1126,8 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((FMGetApp()->IsTooltipVisible()) && (Item!=m_HotItem))
-			FMGetApp()->HideTooltip();
+		if ((theApp.IsTooltipVisible()) && (Item!=m_HotItem))
+			theApp.HideTooltip();
 
 	if (m_HotItem!=Item)
 	{
@@ -1139,7 +1139,7 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
-	FMGetApp()->HideTooltip();
+	theApp.HideTooltip();
 
 	if (zDelta<0)
 	{
@@ -1155,7 +1155,7 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 
 void CGlobeView::OnMouseLeave()
 {
-	FMGetApp()->HideTooltip();
+	theApp.HideTooltip();
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
@@ -1167,12 +1167,12 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 			if (m_HotItem!=-1)
 			{
-				if (!FMGetApp()->IsTooltipVisible())
-					FMGetApp()->ShowTooltip(this, point, m_Airports[m_HotItem].pAirport, m_Airports[m_HotItem].CountStringLarge);
+				if (!theApp.IsTooltipVisible())
+					theApp.ShowTooltip(this, point, m_Airports[m_HotItem].pAirport, m_Airports[m_HotItem].CountStringLarge);
 			}
 			else
 			{
-				FMGetApp()->HideTooltip();
+				theApp.HideTooltip();
 			}
 
 	TRACKMOUSEEVENT tme;

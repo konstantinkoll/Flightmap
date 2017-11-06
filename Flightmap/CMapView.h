@@ -20,12 +20,16 @@ public:
 	~CMapView();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetBitmap(CBitmap* pBitmap);
+	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName=_T(""));
 
 protected:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
 	DOUBLE GetZoomFactor() const;
 	void ScaleBitmap();
 	void AdjustLayout();
+	void GetCardRect(const CRect& rectClient, CRect& rectCard) const;
+	void GetCardRect(CRect& rectCard) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -34,6 +38,9 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
@@ -45,6 +52,7 @@ protected:
 
 	CBitmap* p_BitmapOriginal;
 	CBitmap* m_pBitmapScaled;
+	CString m_Title;
 	BOOL m_Hover;
 	INT m_ScrollWidth;
 	INT m_ScrollHeight;
@@ -64,4 +72,12 @@ private:
 inline DOUBLE CMapView::GetZoomFactor() const
 {
 	return ZoomFactors[min(m_ZoomFactor, ZOOMFACTORS)];
+}
+
+inline void CMapView::GetCardRect(CRect& rectCard) const
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	GetCardRect(rectClient, rectCard);
 }
