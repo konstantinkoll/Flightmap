@@ -96,8 +96,7 @@ void CTaskbar::AdjustLayout()
 		if (pTaskButton->IsWindowEnabled())
 		{
 			const INT Width = pTaskButton->GetPreferredWidth();
-			RPos -= Width+BORDER;
-			if (RPos>=BORDERLEFT)
+			if ((RPos-=Width+BORDER)>=BORDERLEFT)
 			{
 				pTaskButton->SetWindowPos(NULL, RPos, Row, Width, Height, SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
 			}
@@ -338,7 +337,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 	{
 		if ((INT)a==m_FirstRight)
-			NeedsSeparator = TRUE;
+			NeedsSeparator = (Menu.GetMenuItemCount()>0);
 
 		CTaskButton* pTaskButton = m_Buttons[a];
 		if (pTaskButton->IsWindowEnabled())

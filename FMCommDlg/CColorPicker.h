@@ -37,6 +37,11 @@ public:
 	DOUBLE GetHue() const;
 
 protected:
+	HueWheelBitmaps* GetBitmaps(BOOL Themed);
+	static void DrawEtchedText(CDC& dc, CRect rect, LPCWSTR lpStr, BOOL Themed);
+	BOOL PointInRing(const CPoint& point) const;
+	void UpdateCursor();
+
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -48,11 +53,6 @@ protected:
 	afx_msg UINT OnGetDlgCode();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
-
-	HueWheelBitmaps* GetBitmaps(BOOL Themed);
-	static void DrawEtchedText(CDC& dc, CRect rect, LPCWSTR lpStr, BOOL Themed);
-	BOOL PointInRing(const CPoint& point) const;
-	void UpdateCursor();
 
 	DOUBLE m_Hue;
 	INT m_Size;

@@ -34,6 +34,10 @@ CColorHistory::CColorHistory()
 	m_FocusItem = 0;
 	m_HotItem = -1;
 	m_Hover = FALSE;
+
+	lpszCursorName = IDC_WAIT;
+	hCursor = FMGetApp()->LoadStandardCursor(IDC_WAIT);
+	m_CursorPos.x = m_CursorPos.y = 0;
 }
 
 void CColorHistory::PreSubclassWindow()
@@ -71,10 +75,24 @@ INT CColorHistory::ItemAtPosition(CPoint point) const
 	return -1;
 }
 
+void CColorHistory::UpdateCursor()
+{
+	LPCTSTR Cursor = (ItemAtPosition(m_CursorPos)!=-1) ? IDC_HAND : IDC_ARROW;
+
+	if (Cursor!=lpszCursorName)
+	{
+		hCursor = FMGetApp()->LoadStandardCursor(Cursor);
+
+		SetCursor(hCursor);
+		lpszCursorName = Cursor;
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CColorHistory, CFrontstageWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -127,9 +145,16 @@ void CColorHistory::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
+BOOL CColorHistory::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
+{
+	SetCursor(hCursor);
+
+	return TRUE;
+}
+
 void CColorHistory::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-	const INT Index = ItemAtPosition(point);
+	const INT Index = ItemAtPosition(m_CursorPos=point);
 
 	if (!m_Hover)
 	{
@@ -151,6 +176,8 @@ void CColorHistory::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		m_HotItem = Index;
 		Invalidate();
 	}
+
+	UpdateCursor();
 }
 
 void CColorHistory::OnMouseLeave()

@@ -469,8 +469,8 @@ void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 	UINT Minute;
 	SYSTEMTIME st;
 
-	INT c = swscanf_s(pStr, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
-	if (c>=3)
+	INT cToken = swscanf_s(pStr, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
+	if (cToken>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
 
@@ -478,7 +478,7 @@ void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 		st.wMonth = (WORD)Month;
 		st.wDay = (WORD)Day;
 
-		if (c==5)
+		if (cToken==5)
 		{
 			st.wHour = (WORD)Hour;
 			st.wMinute = (WORD)Minute;
@@ -488,8 +488,8 @@ void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 		return;
 	}
 
-	c = swscanf_s(pStr, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
-	if (c>=3)
+	cToken = swscanf_s(pStr, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
+	if (cToken>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
 
@@ -497,7 +497,7 @@ void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 		st.wMonth = (WORD)Month;
 		st.wDay = (WORD)Day;
 
-		if (c==5)
+		if (cToken==5)
 		{
 			st.wHour = (WORD)Hour;
 			st.wMinute = (WORD)Minute;
@@ -507,8 +507,8 @@ void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 		return;
 	}
 
-	c = swscanf_s(pStr, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
-	if (c>=3)
+	cToken = swscanf_s(pStr, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
+	if (cToken>=3)
 	{
 		ZeroMemory(&st, sizeof(st));
 
@@ -516,7 +516,7 @@ void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
 		st.wMonth = (WORD)Month;
 		st.wDay = (WORD)Day;
 
-		if (c==5)
+		if (cToken==5)
 		{
 			st.wHour = (WORD)Hour;
 			st.wMinute = (WORD)Minute;

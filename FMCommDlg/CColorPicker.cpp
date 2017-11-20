@@ -833,9 +833,7 @@ BOOL CGradationPyramid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Me
 
 void CGradationPyramid::OnMouseMove(UINT nFlags, CPoint point)
 {
-	m_CursorPos = point;
-
-	if (PointInPyramid(point))
+	if (PointInPyramid(m_CursorPos=point))
 	{
 		INT Row;
 		INT Column;

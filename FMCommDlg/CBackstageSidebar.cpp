@@ -132,6 +132,8 @@ void CBackstageSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, LPCWSTR
 
 	if (Item.Caption[0]==L'\0')
 	{
+		ASSERT(!Selectable);
+
 		Size.cx = 0;
 		Size.cy = BORDER+2;
 	}
@@ -485,7 +487,7 @@ void CBackstageSidebar::OnPaint()
 
 			rectItem.left += BORDERLEFT;
 
-			if (m_Items[a].Selectable)
+			if (m_Items[a].Selectable && m_Items[a].Caption[0])
 			{
 				rectItem.DeflateRect(BORDER, BORDER);
 

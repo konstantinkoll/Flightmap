@@ -27,9 +27,11 @@ public:
 protected:
 	void SetFocusItem(INT FocusItem);
 	INT ItemAtPosition(CPoint point) const;
+	void UpdateCursor();
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -49,4 +51,9 @@ protected:
 	INT m_HotItem;
 	INT m_ItemWidth;
 	BOOL m_Hover;
+
+private:
+	LPCTSTR lpszCursorName;
+	HCURSOR hCursor;
+	CPoint m_CursorPos;
 };
