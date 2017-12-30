@@ -98,7 +98,7 @@ struct GradationPyramidBitmaps
 	HBITMAP hBitmapTop;
 };
 
-class CGradationPyramid : public CWnd
+class CGradationPyramid : public CFrontstageWnd
 {
 public:
 	CGradationPyramid();
@@ -106,16 +106,21 @@ public:
 	BOOL Create(CWnd* pParentWnd, const CRect& rect, UINT nID);
 	void SetHue(DOUBLE Hue);
 	void SetColor(INT Row, INT Column);
+	void SetColor(const CPoint& point);
 	void SetColor(COLORREF clr);
 	COLORREF GetColor() const;
 
 protected:
+	virtual CPoint PointAtPosition(CPoint point) const;
+	virtual void ShowTooltip(const CPoint& point);
+
 	GradationPyramidBitmaps* GetBitmaps(BOOL Themed);
 	static UINT ColumnsPerRow(UINT Row);
 	COLORREF GetColor(UINT Row, UINT Column) const;
-	void GetCoordinates(PointF* pPoints, UINT Row, UINT Column, REAL Widen=0.0f) const;
+	COLORREF GetColor(const CPoint& point) const;
+	void GetCoordinates(PointF* pPoints, const CPoint& point, REAL Widen=0.0f) const;
 	void UpdateCursor();
-	BOOL PointInPyramid(CPoint point) const;
+	BOOL PointInPyramid(const CPoint& point) const;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -123,8 +128,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg UINT OnGetDlgCode();
@@ -139,22 +142,29 @@ protected:
 	REAL m_HalfWidth;
 	REAL m_Slope;
 	CPoint m_FocusItem;
-	CPoint m_HotItem;
-	BOOL m_Hover;
 	static FMDynArray<GradationPyramidBitmaps, 2, 2> m_Bitmaps;
 
 private:
 	void CreateBitmaps(GradationPyramidBitmaps* pBitmaps);
-	void ItemAtPosition(CPoint point, INT& Row, INT& Column) const;
 
 	LPCTSTR lpszCursorName;
 	HCURSOR hCursor;
 	CPoint m_CursorPos;
 };
 
+inline void CGradationPyramid::SetColor(const CPoint& point)
+{
+	SetColor(point.y, point.x);
+}
+
+inline COLORREF CGradationPyramid::GetColor(const CPoint& point) const
+{
+	return GetColor(point.y, point.x);
+}
+
 inline COLORREF CGradationPyramid::GetColor() const
 {
-	return GetColor(m_FocusItem.y, m_FocusItem.x);
+	return GetColor(m_FocusItem);
 }
 
 inline UINT CGradationPyramid::ColumnsPerRow(UINT Row)

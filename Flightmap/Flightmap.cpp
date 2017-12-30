@@ -383,7 +383,7 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 void CFlightmapApp::OpenAirportGoogleEarth(LPCSTR Code)
 {
 	FMAirport* pAirport;
-	if (FMIATAGetAirportByCode(Code, &pAirport))
+	if (FMIATAGetAirportByCode(Code, pAirport))
 		OpenAirportGoogleEarth(pAirport);
 }
 

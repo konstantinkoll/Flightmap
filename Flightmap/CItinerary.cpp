@@ -25,11 +25,11 @@ void CalcDistance(AIRX_Flight& Flight, BOOL Force)
 	Flight.Flags &= ~(AIRX_DistanceValid | AIRX_UnknownFrom | AIRX_UnknownTo);
 
 	FMAirport* pFrom;
-	if (!FMIATAGetAirportByCode(Flight.From.Code, &pFrom))
+	if (!FMIATAGetAirportByCode(Flight.From.Code, pFrom))
 		Flight.Flags |= AIRX_UnknownFrom;
 
 	FMAirport* pTo;
-	if (!FMIATAGetAirportByCode(Flight.To.Code, &pTo))
+	if (!FMIATAGetAirportByCode(Flight.To.Code, pTo))
 		Flight.Flags |= AIRX_UnknownTo;
 
 	if ((Flight.Flags & (AIRX_UnknownFrom | AIRX_UnknownTo))==0)

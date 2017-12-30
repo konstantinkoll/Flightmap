@@ -14,10 +14,10 @@
 #define BORDER     3*CARDPADDING
 
 CMapView::CMapView()
+	: CFrontstageWnd()
 {
 	p_BitmapOriginal = m_pBitmapScaled = NULL;
 
-	m_Hover = FALSE;
 	m_ScrollWidth = m_ScrollHeight = 0;
 	m_ZoomFactor = theApp.m_MapZoomFactor;
 }
@@ -34,33 +34,9 @@ BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
-BOOL CMapView::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		theApp.HideTooltip();
-		break;
-	}
-
-	return CFrontstageWnd::PreTranslateMessage(pMsg);
-}
-
 void CMapView::DeleteScaledBitmap()
 {
-	theApp.HideTooltip();
-	m_Hover = FALSE;
+	HideTooltip();
 
 	if (m_pBitmapScaled!=p_BitmapOriginal)
 		delete m_pBitmapScaled;
@@ -191,18 +167,51 @@ void CMapView::AdjustScrollbars()
 	SetScrollInfo(SB_HORZ, &si);
 }
 
+INT CMapView::ItemAtPosition(CPoint point) const
+{
+	CRect rectCard;
+	GetCardRect(rectCard);
+
+	return rectCard.PtInRect(point) ? 0 : -1;
+}
+
+void CMapView::ShowTooltip(const CPoint& point)
+{
+	if (p_BitmapOriginal)
+	{
+		NM_TOOLTIPDATA tag;
+		ZeroMemory(&tag, sizeof(tag));
+
+		tag.hdr.code = REQUEST_TOOLTIP_DATA;
+		tag.hdr.hwndFrom = m_hWnd;
+		tag.hdr.idFrom = GetDlgCtrlID();
+
+		const CSize SizeOriginal = p_BitmapOriginal->GetBitmapDimension();
+		CString tmpStr;
+
+		if (m_pBitmapScaled && (m_pBitmapScaled!=p_BitmapOriginal))
+		{
+			const CSize SizeScaled = m_pBitmapScaled->GetBitmapDimension();
+
+			tmpStr.Format(IDS_MAPDIMENSION_SCALED, SizeOriginal.cx, SizeOriginal.cy, SizeScaled.cx, SizeScaled.cy);
+		}
+		else
+		{
+			tmpStr.Format(IDS_MAPDIMENSION_ORIGINAL, SizeOriginal.cx, SizeOriginal.cy);
+		}
+
+		theApp.ShowTooltip(this, point, m_Title, tmpStr);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CMapView, CFrontstageWnd)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
 	ON_WM_LBUTTONDOWN()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_CONTEXTMENU()
@@ -220,11 +229,6 @@ INT CMapView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ResetScrollbars();
 
 	return 0;
-}
-
-BOOL CMapView::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CMapView::OnPaint()
@@ -403,76 +407,6 @@ void CMapView::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (GetFocus()!=this)
 		SetFocus();
-}
-
-
-void CMapView::OnMouseMove(UINT nFlags, CPoint point)
-{
-	CFrontstageWnd::OnMouseMove(nFlags, point);
-
-	CRect rectCard;
-	GetCardRect(rectCard);
-
-	const BOOL MouseOverCard = rectCard.PtInRect(point);
-
-	if (MouseOverCard!=m_Hover)
-		if ((m_Hover=MouseOverCard)==TRUE)
-		{
-			TRACKMOUSEEVENT tme;
-			tme.cbSize = sizeof(TRACKMOUSEEVENT);
-			tme.dwFlags = TME_LEAVE | TME_HOVER;
-			tme.dwHoverTime = HOVERTIME;
-			tme.hwndTrack = m_hWnd;
-			TrackMouseEvent(&tme);
-		}
-		else
-		{
-			theApp.HideTooltip();
-		}
-}
-
-void CMapView::OnMouseLeave()
-{
-	theApp.HideTooltip();
-	m_Hover = FALSE;
-
-	Invalidate();
-}
-
-void CMapView::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (!theApp.IsTooltipVisible() && p_BitmapOriginal)
-		{
-			NM_TOOLTIPDATA tag;
-			ZeroMemory(&tag, sizeof(tag));
-
-			tag.hdr.code = REQUEST_TOOLTIP_DATA;
-			tag.hdr.hwndFrom = m_hWnd;
-			tag.hdr.idFrom = GetDlgCtrlID();
-
-			const CSize SizeOriginal = p_BitmapOriginal->GetBitmapDimension();
-			CString tmpStr;
-
-			if (m_pBitmapScaled && (m_pBitmapScaled!=p_BitmapOriginal))
-			{
-				const CSize SizeScaled = m_pBitmapScaled->GetBitmapDimension();
-
-				tmpStr.Format(IDS_MAPDIMENSION_SCALED, SizeOriginal.cx, SizeOriginal.cy, SizeScaled.cx, SizeScaled.cy);
-			}
-			else
-			{
-				tmpStr.Format(IDS_MAPDIMENSION_ORIGINAL, SizeOriginal.cx, SizeOriginal.cy);
-			}
-
-			theApp.ShowTooltip(this, point, m_Title, tmpStr);
-		}
-	}
-	else
-	{
-		theApp.HideTooltip();
-	}
 }
 
 BOOL CMapView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)

@@ -137,13 +137,17 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	case 0x27:
 	case 0x6B:
 	case 0xBB:
-		Rating++;
+		if (++Rating>MAXRATING)
+			Rating = MAXRATING;
+
 		break;
 
 	case 0x25:
 	case 0x6D:
 	case 0xBD:
-		Rating--;
+		if (--Rating<0)
+			Rating = 0;
+
 		break;
 
 	case '0':
@@ -158,11 +162,6 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	default:
 		return;
 	}
-
-	if (Rating<0)
-		Rating = 0;
-	if (Rating>MAXRATING)
-		Rating = MAXRATING;
 
 	if (m_Rating!=(UCHAR)Rating)
 	{

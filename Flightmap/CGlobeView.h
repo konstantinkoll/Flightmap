@@ -38,15 +38,15 @@ class CGlobeView : public CFrontstageWnd
 public:
 	CGlobeView();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen=TRUE);
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
-	INT ItemAtPosition(CPoint point) const;
-	void InvalidateItem(INT Index);
+	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void InvalidateItem(INT Index);
+	virtual void ShowTooltip(const CPoint& point);
+
 	void SelectItem(INT Index, BOOL Select);
 	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
@@ -59,8 +59,6 @@ protected:
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
@@ -86,9 +84,7 @@ protected:
 	UINT m_MaxRouteCount;
 
 	INT m_FocusItem;
-	INT m_HotItem;
 	BOOL m_IsSelected;
-	BOOL m_Hover;
 
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;

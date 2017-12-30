@@ -29,12 +29,12 @@ FMAirport* CKitchen::AddAirport(const LPCSTR Code)
 		return NULL;
 
 	FMAirport* pAirport;
-	if (!FMIATAGetAirportByCode(Code, &pAirport))
+	if (!FMIATAGetAirportByCode(Code, pAirport))
 		return NULL;
 
 	if ((m_MergeMetro) && (pAirport->MetroCode[0]!='\0'))
 		if (strcmp(pAirport->Code, pAirport->MetroCode)!=0)
-			FMIATAGetAirportByCode(pAirport->MetroCode, &pAirport);
+			FMIATAGetAirportByCode(pAirport->MetroCode, pAirport);
 
 	FlightAirport Airport;
 	if (m_FlightAirports.Lookup(pAirport->Code, Airport))

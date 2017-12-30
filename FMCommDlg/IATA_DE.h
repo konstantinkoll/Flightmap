@@ -227,7 +227,7 @@ FMCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8756
+#define AirportCount_DE 8757
 FMAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1926,7 +1926,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{ 209, "DKB", "", "De Kalb Taylor", { -41.933611, -88.705833 } },
 	{  11, "DKI", "", "Dunk Island", { 17.939722, 146.141944 } },
 	{ 209, "DKK", "", "Dunkirk", { -42.493333, -79.271944 } },
-	{ 169, "DKR", "", "Dakar", { -14.739722, -17.490278 } },
+	{ 169, "DKR", "", "Dakar (Léopold Sédar Senghor)", { -14.739722, -17.490278 } },
 	{ 209, "DKX", "", "Knoxville (Downtown Island Airport)", { -35.963889, -83.873611 } },
 	{  87, "DLA", "", "Douala", { -4.006111, 9.719444 } },
 	{ 136, "DLB", "", "Dalbertis", { 5.000000, 142.083056 } },
@@ -2028,6 +2028,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{ 148, "DSK", "", "Dera Ismail Khan", { -31.909444, 70.896667 } },
 	{ 170, "DSL", "", "Daru", { -7.983056, -10.850000 } },
 	{ 209, "DSM", "", "Des Moines", { -41.533889, -93.663056 } },
+	{ 169, "DSS", "", "Dakar (Blaise Diagne)", { -14.670833, -17.072778 } },
 	{ 209, "DSV", "", "Dansville", { -42.570833, -77.713056 } },
 	{ 209, "DTA", "", "Delta", { -39.380556, -112.507778 } },
 	{  73, "DTD", "", "Datadawai", { 0.716944, 116.483056 } },

@@ -42,11 +42,11 @@ CGlobeView::CGlobeView()
 	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
 	m_CursorPos.x = m_CursorPos.y = 0;
 
-	m_FocusItem = m_HotItem = -1;
+	m_FocusItem = -1;
 
 	m_nTextureBlueMarble = m_nTextureClouds = m_nTextureLocationIndicator = m_nRouteModel = m_nGlobeModel = m_nHaloModel = 0;
 	m_GlobeRadius = m_Momentum = 0.0f;
-	m_IsSelected = m_Hover = m_Grabbed = FALSE;
+	m_IsSelected = m_Grabbed = FALSE;
 	m_MinRouteCount = m_MaxRouteCount = m_AnimCounter = m_MoveCounter = 0;
 
 	if (m_strFlightCountSingular.IsEmpty())
@@ -66,31 +66,6 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 	UpdateViewOptions(TRUE);
 
 	return TRUE;
-}
-
-BOOL CGlobeView::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		theApp.HideTooltip();
-		break;
-	}
-
-	return CFrontstageWnd::PreTranslateMessage(pMsg);
 }
 
 void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
@@ -277,28 +252,10 @@ BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
 
 void CGlobeView::UpdateCursor()
 {
-	LPCWSTR Cursor;
-
-	if (m_Grabbed)
-	{
-		Cursor = IDC_HAND;
-	}
-	else
-	{
-		Cursor = IDC_ARROW;
-
-		if (CursorOnGlobe(m_CursorPos))
-			if (ItemAtPosition(m_CursorPos)==-1)
-				Cursor = IDC_HAND;
-	}
+	LPCTSTR Cursor = m_Grabbed || (CursorOnGlobe(m_CursorPos) && (m_HoverItem==-1)) ? IDC_HAND : IDC_ARROW;
 
 	if (Cursor!=lpszCursorName)
-	{
-		hCursor = theApp.LoadStandardCursor(Cursor);
-
-		SetCursor(hCursor);
-		lpszCursorName = Cursor;
-	}
+		SetCursor(hCursor=FMGetApp()->LoadStandardCursor(lpszCursorName=Cursor));
 }
 
 
@@ -353,7 +310,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 			LPCSTR pCoordinates = (theApp.m_GlobeShowGPS ? pData->CoordString : NULL);
 			LPCWSTR pCount = (theApp.m_GlobeShowMovements ? (theApp.m_GlobeShowAirportNames || theApp.m_GlobeShowGPS) ? pData->CountStringLarge : pData->CountStringSmall : NULL);
 
-			DrawLabel(pData, pCaption, pSubcaption, pCoordinates, pCount, m_FocusItem==(INT)a, m_HotItem==(INT)a, Themed);
+			DrawLabel(pData, pCaption, pSubcaption, pCoordinates, pCount, m_FocusItem==(INT)a, m_HoverItem==(INT)a, Themed);
 		}
 	}
 }
@@ -578,7 +535,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	if (m_GlobeCurrent.Zoom<=m_GlobeTarget.Zoom-5)
 	{
 		m_GlobeCurrent.Zoom += 5;
-		m_HotItem = -1;
+		m_HoverItem = -1;
 
 		Result = TRUE;
 	}
@@ -586,7 +543,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		if (m_GlobeCurrent.Zoom>=m_GlobeTarget.Zoom+5)
 		{
 			m_GlobeCurrent.Zoom -= 5;
-			m_HotItem = -1;
+			m_HoverItem = -1;
 
 			Result = TRUE;
 		}
@@ -632,8 +589,16 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 
 	if (Result)
 	{
+		if (!m_Grabbed)
+		{
+			CPoint point;
+			GetCursorPos(&point);
+			ScreenToClient(&point);
+
+			OnMouseMove(0, point);
+		}
+
 		Invalidate();
-		UpdateCursor();
 	}
 
 	return Result;
@@ -950,6 +915,12 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	theRenderer.EndRender(this, m_RenderContext, Themed);
 }
 
+void CGlobeView::ShowTooltip(const CPoint& point)
+{
+	if (m_Momentum==0.0f)
+		theApp.ShowTooltip(this, point, m_Airports[m_HoverItem].pAirport, m_Airports[m_HoverItem].CountStringLarge);
+}
+
 
 BEGIN_MESSAGE_MAP(CGlobeView, CFrontstageWnd)
 	ON_WM_CREATE()
@@ -958,8 +929,6 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFrontstageWnd)
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
@@ -1090,9 +1059,9 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/
 	return TRUE;
 }
 
-void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	m_CursorPos = point;
+	CFrontstageWnd::OnMouseMove(nFlags, m_CursorPos=point);
 
 	if (m_Grabbed)
 	{
@@ -1112,35 +1081,10 @@ void CGlobeView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	{
 		UpdateCursor();
 	}
-
-	INT Item = ItemAtPosition(point);
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((theApp.IsTooltipVisible()) && (Item!=m_HotItem))
-			theApp.HideTooltip();
-
-	if (m_HotItem!=Item)
-	{
-		InvalidateItem(m_HotItem);
-		m_HotItem = Item;
-		InvalidateItem(m_HotItem);
-	}
 }
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
-	theApp.HideTooltip();
-
 	if (zDelta<0)
 	{
 		OnZoomOut();
@@ -1151,36 +1095,6 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 	}
 
 	return TRUE;
-}
-
-void CGlobeView::OnMouseLeave()
-{
-	theApp.HideTooltip();
-
-	m_Hover = FALSE;
-	m_HotItem = -1;
-}
-
-void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if (m_Momentum==0.0f)
-		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-			if (m_HotItem!=-1)
-			{
-				if (!theApp.IsTooltipVisible())
-					theApp.ShowTooltip(this, point, m_Airports[m_HotItem].pAirport, m_Airports[m_HotItem].CountStringLarge);
-			}
-			else
-			{
-				theApp.HideTooltip();
-			}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
 }
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
@@ -1359,6 +1273,7 @@ void CGlobeView::OnZoomIn()
 	{
 		m_GlobeTarget.Zoom -= 100;
 
+		HideTooltip();
 		UpdateScene();
 	}
 }
@@ -1369,6 +1284,7 @@ void CGlobeView::OnZoomOut()
 	{
 		m_GlobeTarget.Zoom += 100;
 
+		HideTooltip();
 		UpdateScene();
 	}
 }

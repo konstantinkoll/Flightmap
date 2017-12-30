@@ -8,8 +8,6 @@
 // FMTooltip
 //
 
-#define HOVERTIME     850
-
 class FMTooltip : public CWnd
 {
 public:

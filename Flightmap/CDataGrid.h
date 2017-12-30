@@ -46,15 +46,17 @@ public:
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual CPoint PointAtPosition(CPoint point) const;
+	virtual void InvalidatePoint(const CPoint& Point);
+	virtual void ShowTooltip(const CPoint& point);
 
 	void AdjustLayout();
 	void AdjustHeader();
 	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0', CPoint Item=CPoint(-1, -1));
 	void EditFlight(CPoint Item=CPoint(-1, -1), INT SelectTab=-1);
 	void EnsureVisible(CPoint Item);
-	BOOL HitTest(CPoint point, CPoint* Item, INT* pSubitem=NULL);
-	void InvalidateItem(const CPoint& Item);
-	void InvalidateItem(UINT Row, UINT Attr);
+	INT PartAtPosition(const CPoint& point) const;
+	void InvalidatePoint(UINT Row, UINT Attr);
 	void InvalidateRow(UINT Row);
 	void SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect);
 	void SelectItem(UINT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
@@ -65,14 +67,12 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg LRESULT OnThemeChanged();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -115,7 +115,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CItinerary* p_Itinerary;
-	CMFCMaskedEdit* p_Edit;
 	BOOL m_EditAllowCursor;
 	CTooltipHeader m_wndHeader;
 	static CIcons m_LargeIcons;
@@ -124,9 +123,7 @@ protected:
 	UINT m_HeaderHeight;
 	UINT m_RowHeight;
 	CPoint m_FocusItem;
-	CPoint m_HotItem;
-	INT m_HotSubitem;
-	BOOL m_Hover;
+	INT m_HoverPart;
 	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 	INT m_SelectionAnchor;
@@ -144,6 +141,7 @@ private:
 	void FinishEdit(LPWSTR pStr, const CPoint& Item);
 	void DestroyEdit(BOOL Accept=FALSE);
 
+	CMFCMaskedEdit* m_pWndEdit;
 	INT m_HScrollMax;
 	INT m_VScrollMax;
 	INT m_HScrollPos;

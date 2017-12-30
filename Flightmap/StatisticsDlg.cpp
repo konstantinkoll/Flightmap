@@ -272,13 +272,13 @@ void StatisticsDlg::UpdateStatistics()
 		{
 			FMAirport* pAirport;
 
-			if (FMIATAGetAirportByCode(From, &pAirport))
+			if (FMIATAGetAirportByCode(From, pAirport))
 				if ((pAirport->MetroCode[0]!='\0') && (strcmp(pAirport->Code, pAirport->MetroCode)!=0))
 					strcpy_s(From, 4, pAirport->MetroCode);
 
-			if (FMIATAGetAirportByCode(To, &pAirport))
+			if (FMIATAGetAirportByCode(To, pAirport))
 				if ((pAirport->MetroCode[0]!='\0') && (strcmp(pAirport->Code, pAirport->MetroCode)!=0))
-						strcpy_s(To, 4, pAirport->MetroCode);
+					strcpy_s(To, 4, pAirport->MetroCode);
 		}
 
 		if ((strlen(From)==3) && (strlen(To)==3))
@@ -417,7 +417,7 @@ void StatisticsDlg::UpdateStatistics()
 		strcpy_s(Code, 4, pPair2->key);
 
 		FMAirport* pAirport;
-		if (FMIATAGetAirportByCode(Code, &pAirport))
+		if (FMIATAGetAirportByCode(Code, pAirport))
 		{
 			tmpStr.Format(_T("%5d"), pPair2->value);
 			Item.pszText = tmpStr.GetBuffer();

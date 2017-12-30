@@ -145,6 +145,9 @@ FMApplication::FMApplication(GUID& AppID)
 
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
+
+	// Tooltip
+	p_WndTooltipOwner = NULL;
 }
 
 FMApplication::~FMApplication()
@@ -478,16 +481,16 @@ HANDLE FMApplication::LoadFontFromResource(UINT nID)
 
 // Tooltips
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
+void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon, HBITMAP hBitmap)
 {
 	ASSERT(IsWindow(m_wndTooltip));
-	ASSERT(pCallerWnd);
+	ASSERT(pWndOwner);
 
-	pCallerWnd->ClientToScreen(&point);
+	(p_WndTooltipOwner=pWndOwner)->ClientToScreen(&point);
 	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
 }
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint)
+void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, FMAirport* pAirport, const CString& Hint)
 {
 	CString Caption(pAirport->Code);
 	CString Text;
@@ -501,16 +504,26 @@ void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirp
 	if (!Hint.IsEmpty())
 		Text.Append(_T("\n")+Hint);
 
-	ShowTooltip(pCallerWnd, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
+	ShowTooltip(pWndOwner, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
 }
 
-void FMApplication::ShowTooltip(CWnd* pCallerWnd, CPoint point, LPCSTR Code, const CString& Hint)
+void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, LPCSTR Code, const CString& Hint)
 {
-	FMAirport* pAirport = NULL;
-	if (FMIATAGetAirportByCode(Code, &pAirport))
-		ShowTooltip(pCallerWnd, point, pAirport, Hint);
+	FMAirport* pAirport;
+	if (FMIATAGetAirportByCode(Code, pAirport))
+		ShowTooltip(pWndOwner, point, pAirport, Hint);
 }
 
+void FMApplication::HideTooltip(const CWnd* pWndOwner)
+{
+	if (!pWndOwner || (pWndOwner==p_WndTooltipOwner))
+	{
+		if (m_wndTooltip.IsWindowVisible())
+			m_wndTooltip.HideTooltip();
+
+		p_WndTooltipOwner = NULL;
+	}
+}
 
 // Sounds
 

@@ -32,12 +32,9 @@ CColorHistory::CColorHistory()
 	memcpy_s(m_Colors, sizeof(m_Colors), FMGetApp()->m_ColorHistory, sizeof(FMGetApp()->m_ColorHistory));
 
 	m_FocusItem = 0;
-	m_HotItem = -1;
-	m_Hover = FALSE;
 
 	lpszCursorName = IDC_WAIT;
 	hCursor = FMGetApp()->LoadStandardCursor(IDC_WAIT);
-	m_CursorPos.x = m_CursorPos.y = 0;
 }
 
 void CColorHistory::PreSubclassWindow()
@@ -60,6 +57,14 @@ void CColorHistory::SetFocusItem(INT FocusItem)
 	Invalidate();
 }
 
+void CColorHistory::UpdateCursor()
+{
+	LPCTSTR Cursor = (m_HoverItem>=0) ? IDC_HAND : IDC_ARROW;
+
+	if (Cursor!=lpszCursorName)
+		SetCursor(hCursor=FMGetApp()->LoadStandardCursor(lpszCursorName=Cursor));
+}
+
 INT CColorHistory::ItemAtPosition(CPoint point) const
 {
 	if (point.x % (m_ItemWidth+MARGIN)<m_ItemWidth)
@@ -75,27 +80,21 @@ INT CColorHistory::ItemAtPosition(CPoint point) const
 	return -1;
 }
 
-void CColorHistory::UpdateCursor()
+void CColorHistory::InvalidateItem(INT /*Index*/)
 {
-	LPCTSTR Cursor = (ItemAtPosition(m_CursorPos)!=-1) ? IDC_HAND : IDC_ARROW;
+	Invalidate();
+}
 
-	if (Cursor!=lpszCursorName)
-	{
-		hCursor = FMGetApp()->LoadStandardCursor(Cursor);
-
-		SetCursor(hCursor);
-		lpszCursorName = Cursor;
-	}
+void CColorHistory::ShowTooltip(const CPoint& point)
+{
+	FMGetApp()->ShowTooltip(this, point, _T(""), CColorPicker::FormatColor(m_Colors[m_HoverItem]));
 }
 
 
 BEGIN_MESSAGE_MAP(CColorHistory, CFrontstageWnd)
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -106,11 +105,6 @@ BEGIN_MESSAGE_MAP(CColorHistory, CFrontstageWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
-
-BOOL CColorHistory::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
 
 void CColorHistory::OnPaint()
 {
@@ -135,7 +129,7 @@ void CColorHistory::OnPaint()
 
 	for (UINT a=0; a<16; a++)
 	{
-		DrawColor(dc, CRect(x, 0, x+m_ItemWidth, rect.bottom), IsCtrlThemed(), m_Colors[a], IsWindowEnabled(), (GetFocus()==this) && ((INT)a==m_FocusItem), (INT)a==m_HotItem);
+		DrawColor(dc, CRect(x, 0, x+m_ItemWidth, rect.bottom), IsCtrlThemed(), m_Colors[a], IsWindowEnabled(), (GetFocus()==this) && ((INT)a==m_FocusItem), (INT)a==m_HoverItem);
 
 		x += m_ItemWidth+MARGIN;
 	}
@@ -152,62 +146,11 @@ BOOL CColorHistory::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Messag
 	return TRUE;
 }
 
-void CColorHistory::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CColorHistory::OnMouseMove(UINT nFlags, CPoint point)
 {
-	const INT Index = ItemAtPosition(m_CursorPos=point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-	else
-		if ((FMGetApp()->IsTooltipVisible()) && (Index!=m_HotItem))
-			FMGetApp()->HideTooltip();
-
-	if (m_HotItem!=Index)
-	{
-		m_HotItem = Index;
-		Invalidate();
-	}
+	CFrontstageWnd::OnMouseMove(nFlags, point);
 
 	UpdateCursor();
-}
-
-void CColorHistory::OnMouseLeave()
-{
-	FMGetApp()->HideTooltip();
-	Invalidate();
-
-	m_HotItem = -1;
-	m_Hover = FALSE;
-}
-
-void CColorHistory::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (m_HotItem!=-1)
-			if (!FMGetApp()->IsTooltipVisible())
-				FMGetApp()->ShowTooltip(this, point, _T(""), CColorPicker::FormatColor(m_Colors[m_HotItem]));
-	}
-	else
-	{
-		FMGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
 }
 
 void CColorHistory::OnLButtonDown(UINT /*nFlags*/, CPoint point)

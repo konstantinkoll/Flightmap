@@ -109,7 +109,7 @@ BEGIN
             VALUE "FileDescription", "Flightmap"
             VALUE "FileVersion", "2.3.1"
             VALUE "InternalName", "Flightmap"
-            VALUE "LegalCopyright", "© 2007-2017 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2007-2018 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"

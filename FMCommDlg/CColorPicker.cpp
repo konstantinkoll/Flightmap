@@ -221,12 +221,7 @@ void CHueWheel::UpdateCursor()
 	LPCTSTR Cursor = (m_Grabbed || PointInRing(m_CursorPos)) ? IDC_HAND : IDC_ARROW;
 
 	if (Cursor!=lpszCursorName)
-	{
-		hCursor = FMGetApp()->LoadStandardCursor(Cursor);
-
-		SetCursor(hCursor);
-		lpszCursorName = Cursor;
-	}
+		SetCursor(hCursor=FMGetApp()->LoadStandardCursor(lpszCursorName=Cursor));
 }
 
 
@@ -473,12 +468,10 @@ void CHueWheel::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 FMDynArray<GradationPyramidBitmaps, 2, 2> CGradationPyramid::m_Bitmaps;
 
 CGradationPyramid::CGradationPyramid()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	m_Hue = 225.0;				// Deep sea blue
 	m_FocusItem.x = m_FocusItem.y = 0;
-	m_HotItem.x = m_HotItem.y = -1;
-	m_Hover = FALSE;
 
 	lpszCursorName = IDC_WAIT;
 	hCursor = FMGetApp()->LoadStandardCursor(IDC_WAIT);
@@ -619,16 +612,16 @@ COLORREF CGradationPyramid::GetColor(UINT Row, UINT Column) const
 	return CDrawingManager::HLStoRGB_ONE(m_Hue/360.0, 0.5-(Column-(ColumnsPerRow(Row)-1)/2.0)/(ColumnsPerRow(ROWS-1)-1), 1.0-(DOUBLE)Row/(ROWS-1));
 }
 
-void CGradationPyramid::GetCoordinates(PointF* pPoints, UINT Row, UINT Column, REAL Widen) const
+void CGradationPyramid::GetCoordinates(PointF* pPoints, const CPoint& point, REAL Widen) const
 {
 	ASSERT(pPoints);
-	ASSERT(Row<ROWS);
-	ASSERT(Column<ColumnsPerRow(Row));
+	ASSERT(point.y<ROWS);
+	ASSERT(point.x<(INT)ColumnsPerRow(point.y));
 
-	REAL x = (REAL)m_Width/2.0f+((REAL)(Column/2)-0.5f*Row)*m_BaseWidth;
-	REAL y = Row*m_RowHeight;
+	const REAL x = (REAL)m_Width/2.0f+((REAL)(point.x/2)-0.5f*point.y)*m_BaseWidth;
+	const REAL y = point.y*m_RowHeight;
 
-	if (Column & 1)
+	if (point.x & 1)
 	{
 		pPoints[0] = PointF(x-Widen, y-Widen/2.0f);
 		pPoints[1] = PointF(x+m_BaseWidth+Widen, y-Widen/2.0f);
@@ -647,49 +640,46 @@ void CGradationPyramid::UpdateCursor()
 	LPCTSTR Cursor = PointInPyramid(m_CursorPos) ? IDC_HAND : IDC_ARROW;
 
 	if (Cursor!=lpszCursorName)
-	{
-		hCursor = FMGetApp()->LoadStandardCursor(Cursor);
-
-		SetCursor(hCursor);
-		lpszCursorName = Cursor;
-	}
+		SetCursor(hCursor=FMGetApp()->LoadStandardCursor(lpszCursorName=Cursor));
 }
 
-void CGradationPyramid::ItemAtPosition(CPoint point, INT& Row, INT& Column) const
-{
-	Row = (INT)(point.y/m_RowHeight);
-	if (Row<0)
-		Row = 0;
-
-	if (Row>ROWS-1)
-		Row = ROWS-1;
-
-	const REAL AdjustedX = (REAL)point.x-(m_Height-point.y+1)*m_Slope;
-	Column = 2*(INT)(AdjustedX/m_BaseWidth);
-	if (AdjustedX-Column*m_HalfWidth>point.y-Row*m_RowHeight)
-		Column++;
-
-	if (Column<0)
-		Column = 0;
-
-	if ((UINT)Column>ColumnsPerRow(Row)-1)
-		Column = ColumnsPerRow(Row)-1;
-}
-
-BOOL CGradationPyramid::PointInPyramid(CPoint point) const
+BOOL CGradationPyramid::PointInPyramid(const CPoint& point) const
 {
 	return (point.x>m_Width/2.0f-point.y*m_Slope) && (point.x<m_Width/2.0f+point.y*m_Slope);
 }
 
+CPoint CGradationPyramid::PointAtPosition(CPoint point) const
+{
+	INT Row = (INT)(point.y/m_RowHeight);
+	if (Row<0)
+		Row = 0;
+	if (Row>ROWS-1)
+		Row = ROWS-1;
 
-BEGIN_MESSAGE_MAP(CGradationPyramid, CWnd)
+	const REAL AdjustedX = (REAL)point.x-(m_Height-point.y+1)*m_Slope;
+	INT Column = 2*(INT)(AdjustedX/m_BaseWidth);
+	if (AdjustedX-Column*m_HalfWidth>point.y-Row*m_RowHeight)
+		Column++;
+	if (Column<0)
+		Column = 0;
+	if ((UINT)Column>ColumnsPerRow(Row)-1)
+		Column = ColumnsPerRow(Row)-1;
+
+	return CPoint(Column, Row);
+}
+
+void CGradationPyramid::ShowTooltip(const CPoint& point)
+{
+	FMGetApp()->ShowTooltip(this, point, _T(""), CColorPicker::FormatColor(GetColor(m_HoverPoint.y, m_HoverPoint.x)));
+}
+
+
+BEGIN_MESSAGE_MAP(CGradationPyramid, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_GETDLGCODE()
@@ -698,7 +688,7 @@ END_MESSAGE_MAP()
 
 INT CGradationPyramid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	CRect rect;
@@ -779,7 +769,7 @@ void CGradationPyramid::OnPaint()
 	const REAL Width = m_Height/80.0f;
 
 	PointF points[3];
-	GetCoordinates(points, m_FocusItem.y, m_FocusItem.x, Width*1.25f+1.0f);
+	GetCoordinates(points, m_FocusItem, Width*1.25f+1.0f);
 
 	GraphicsPath Path;
 	Path.AddLines(points, 3);
@@ -806,7 +796,7 @@ void CGradationPyramid::OnPaint()
 	dcMem.SelectObject(hOldBitmap);
 
 	// Draw marker
-	GetCoordinates(points, m_FocusItem.y, m_FocusItem.x);
+	GetCoordinates(points, m_FocusItem);
 
 	Path.Reset();
 	Path.AddLines(points, 3);
@@ -835,30 +825,10 @@ void CGradationPyramid::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (PointInPyramid(m_CursorPos=point))
 	{
-		INT Row;
-		INT Column;
-		ItemAtPosition(point, Row, Column);
-
-		if (!m_Hover)
-		{
-			m_Hover = TRUE;
-
-			TRACKMOUSEEVENT tme;
-			tme.cbSize = sizeof(TRACKMOUSEEVENT);
-			tme.dwFlags = TME_LEAVE | TME_HOVER;
-			tme.dwHoverTime = HOVERTIME;
-			tme.hwndTrack = m_hWnd;
-			TrackMouseEvent(&tme);
-		}
-		else
-			if ((FMGetApp()->IsTooltipVisible()) && ((Column!=m_HotItem.x) || (Row!=m_HotItem.y)))
-				FMGetApp()->HideTooltip();
-
-		m_HotItem.x = Column;
-		m_HotItem.y = Row;
+		CFrontstageWnd::OnMouseMove(nFlags, point);
 
 		if (nFlags & MK_LBUTTON)
-			SetColor(Row, Column);
+			SetColor(m_HoverPoint.y, m_HoverPoint.x);
 	}
 	else
 	{
@@ -868,33 +838,6 @@ void CGradationPyramid::OnMouseMove(UINT nFlags, CPoint point)
 	UpdateCursor();
 }
 
-void CGradationPyramid::OnMouseLeave()
-{
-	FMGetApp()->HideTooltip();
-
-	m_Hover = FALSE;
-}
-
-void CGradationPyramid::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (!FMGetApp()->IsTooltipVisible())
-			FMGetApp()->ShowTooltip(this, point, _T(""), CColorPicker::FormatColor(GetColor(m_HotItem.y, m_HotItem.x)));
-	}
-	else
-	{
-		FMGetApp()->HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
-}
-
 void CGradationPyramid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	if (PointInPyramid(point))
@@ -902,11 +845,7 @@ void CGradationPyramid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 		if (GetFocus()!=this)
 			SetFocus();
 
-		INT Row;
-		INT Column;
-		ItemAtPosition(point, Row, Column);
-
-		SetColor(Row, Column);
+		SetColor(PointAtPosition(point));
 	}
 }
 
@@ -914,11 +853,7 @@ void CGradationPyramid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
 	if (PointInPyramid(point))
 	{
-		INT Row;
-		INT Column;
-		ItemAtPosition(point, Row, Column);
-
-		SetColor(Row, Column);
+		SetColor(PointAtPosition(point));
 
 		// Notify owner
 		NMHDR hdr;

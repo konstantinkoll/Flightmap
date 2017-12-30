@@ -10,7 +10,7 @@
 //
 
 CPictureCtrl::CPictureCtrl()
-	: CWnd()
+	: CFrontstageWnd()
 {
 	WNDCLASS wndcls;
 	ZeroMemory(&wndcls, sizeof(wndcls));
@@ -30,14 +30,13 @@ CPictureCtrl::CPictureCtrl()
 	m_DisplayMode = PC_COLOR;
 	m_DisplayColor = 0x000000;
 	p_Picture = NULL;
-	m_Hover = FALSE;
 }
 
 BOOL CPictureCtrl::Create(CWnd* pParentWnd, const CRect& rect, UINT nID, UINT nPictureID, UINT nTooltipID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	if (CWnd::Create(className, _T(""), WS_CHILD | WS_VISIBLE | WS_BORDER, rect, pParentWnd, nID))
+	if (CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_VISIBLE | WS_BORDER, rect, pParentWnd, nID))
 	{
 		SetPicture(nPictureID, nTooltipID);
 
@@ -45,29 +44,6 @@ BOOL CPictureCtrl::Create(CWnd* pParentWnd, const CRect& rect, UINT nID, UINT nP
 	}
 
 	return FALSE;
-}
-
-BOOL CPictureCtrl::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		FMGetApp()->HideTooltip();
-		break;
-	}
-
-	return CWnd::PreTranslateMessage(pMsg);
 }
 
 void CPictureCtrl::SetPicture(Bitmap* pPicture, const CString& Caption, const CString& Hint, BOOL ScaleToFit)
@@ -78,12 +54,7 @@ void CPictureCtrl::SetPicture(Bitmap* pPicture, const CString& Caption, const CS
 	m_Caption = Caption;
 	m_Hint = Hint;
 
-	if (m_Hover)
-	{
-		FMGetApp()->HideTooltip();
-		m_Hover = FALSE;
-	}
-
+	HideTooltip();
 	Invalidate();
 }
 
@@ -121,12 +92,7 @@ void CPictureCtrl::SetColor(COLORREF clr, const CString& Caption, const CString&
 	m_Caption = Caption;
 	m_Hint = Hint;
 
-	if (m_Hover)
-	{
-		FMGetApp()->HideTooltip();
-		m_Hover = FALSE;
-	}
-
+	HideTooltip();
 	Invalidate();
 }
 
@@ -150,15 +116,22 @@ void CPictureCtrl::SetColor(COLORREF clr, UINT nTooltipID)
 	SetColor(clr, Caption, Hint);
 }
 
+INT CPictureCtrl::ItemAtPosition(CPoint /*point*/) const
+{
+	return 0;
+}
 
-BEGIN_MESSAGE_MAP(CPictureCtrl, CWnd)
+void CPictureCtrl::ShowTooltip(const CPoint& point)
+{
+	if (!m_Caption.IsEmpty() || !m_Hint.IsEmpty())
+		FMGetApp()->ShowTooltip(this, point, m_Caption, m_Hint);
+}
+
+
+BEGIN_MESSAGE_MAP(CPictureCtrl, CFrontstageWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCPAINT()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 END_MESSAGE_MAP()
 
 void CPictureCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
@@ -172,11 +145,6 @@ void CPictureCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpn
 void CPictureCtrl::OnNcPaint()
 {
 	DrawControlBorder(this);
-}
-
-BOOL CPictureCtrl::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CPictureCtrl::OnPaint()
@@ -223,45 +191,4 @@ void CPictureCtrl::OnPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(pOldBitmap);
-}
-
-
-void CPictureCtrl::OnMouseMove(UINT nFlags, CPoint point)
-{
-	CWnd::OnMouseMove(nFlags, point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-		Invalidate();
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-}
-
-void CPictureCtrl::OnMouseLeave()
-{
-	FMGetApp()->HideTooltip();
-	m_Hover = FALSE;
-
-	Invalidate();
-}
-
-void CPictureCtrl::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if (!FMGetApp()->IsTooltipVisible())
-			if (!m_Caption.IsEmpty() || !m_Hint.IsEmpty())
-				FMGetApp()->ShowTooltip(this, point, m_Caption, m_Hint);
-	}
-	else
-	{
-		FMGetApp()->HideTooltip();
-	}
 }

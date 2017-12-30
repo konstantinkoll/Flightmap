@@ -23,7 +23,8 @@ public:
 	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName=_T(""));
 
 protected:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual INT ItemAtPosition(CPoint point) const;
+	virtual void ShowTooltip(const CPoint& point);
 
 	DOUBLE GetZoomFactor() const;
 	void ScaleBitmap();
@@ -53,7 +54,6 @@ protected:
 	CBitmap* p_BitmapOriginal;
 	CBitmap* m_pBitmapScaled;
 	CString m_Title;
-	BOOL m_Hover;
 	INT m_ScrollWidth;
 	INT m_ScrollHeight;
 	INT m_ZoomFactor;

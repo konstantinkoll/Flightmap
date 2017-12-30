@@ -59,7 +59,7 @@ void CCalendarFile::WriteRoute(AIRX_Flight& Flight)
 	WriteString(_T("BEGIN:VEVENT\n"));
 
 	FMAirport* pAirport;
-	if (FMIATAGetAirportByCode(Flight.From.Code, &pAirport))
+	if (FMIATAGetAirportByCode(Flight.From.Code, pAirport))
 	{
 		CString Name(pAirport->Name);
 		CString Country(FMIATAGetCountry(pAirport->CountryID)->Name);

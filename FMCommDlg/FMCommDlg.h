@@ -121,9 +121,9 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TR
 UINT FMIATAGetCountryCount();
 UINT FMIATAGetAirportCount();
 const FMCountry* FMIATAGetCountry(UINT ID);
-INT FMIATAGetNextAirport(INT Last, FMAirport** ppAirport);
-INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport);
-BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport** ppAirport);
+INT FMIATAGetNextAirport(INT Last, FMAirport*& pAirport);
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport*& pAirport);
+BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport*& pAirport);
 HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, LONG Width, LONG Height);
 void FMGeoCoordinateToString(const DOUBLE c, LPSTR tmpStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
 void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero);

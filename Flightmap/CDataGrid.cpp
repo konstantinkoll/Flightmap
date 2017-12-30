@@ -32,9 +32,9 @@ CDataGrid::CDataGrid()
 	: CFrontstageWnd()
 {
 	p_Itinerary = NULL;
-	p_Edit = NULL;
-	m_HeaderItemClicked = m_HotItem.x = m_HotItem.y = m_HotSubitem = m_SelectionAnchor = -1;
-	m_Hover = m_IgnoreHeaderItemChange = FALSE;
+	m_pWndEdit = NULL;
+	m_HeaderItemClicked = m_HoverPart = m_SelectionAnchor = -1;
+	m_IgnoreHeaderItemChange = FALSE;
 	m_ViewParameters = theApp.m_ViewParameters;
 
 	m_FindReplaceSettings = theApp.m_FindReplaceSettings;
@@ -64,7 +64,7 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 	switch (pMsg->message)
 	{
 	case WM_KEYDOWN:
-		if (p_Edit)
+		if (m_pWndEdit)
 			switch (pMsg->wParam)
 			{
 			case VK_EXECUTE:
@@ -102,24 +102,9 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		if (p_Edit)
+		if (m_pWndEdit)
 			return TRUE;
 
-		break;
-
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		theApp.HideTooltip();
 		break;
 	}
 
@@ -160,7 +145,7 @@ BOOL CDataGrid::IsSelected(UINT Index) const
 
 UINT CDataGrid::GetCurrentRow() const
 {
-	return (m_FocusItem.y!=-1) ? (UINT)m_FocusItem.y : 0;
+	return IsPointValid(m_FocusItem.y) ? (UINT)m_FocusItem.y : 0;
 }
 
 void CDataGrid::DoCopy(BOOL Cut)
@@ -342,7 +327,7 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 				*((COLORREF*)(((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset)) = clr;
 
 				p_Itinerary->m_IsModified = TRUE;
-				InvalidateItem(Item);
+				InvalidatePoint(Item);
 			}
 		}
 
@@ -389,7 +374,7 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 			}
 
 		p_Itinerary->m_IsModified = TRUE;
-		InvalidateItem(Item);
+		InvalidatePoint(Item);
 
 		return;
 
@@ -400,7 +385,7 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 			*((DWORD*)pData) |= (((PushChar-'0')*2)<<FMAttributes[Attr].DataParameter);
 
 			p_Itinerary->m_IsModified = TRUE;
-			InvalidateItem(Item);
+			InvalidatePoint(Item);
 		}
 
 		return;
@@ -427,16 +412,16 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 
 	CRect rect(x-2, y-2, x+m_ViewParameters.ColumnWidth[Attr]+1, y+m_RowHeight+1);
 
-	p_Edit = new CMFCMaskedEdit();
-	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
+	m_pWndEdit = new CMFCMaskedEdit();
+	m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
 
-	PrepareEditCtrl(p_Edit, Attr);
+	PrepareEditCtrl(m_pWndEdit, Attr);
 	m_EditAllowCursor = AllowCursor;
 
-	p_Edit->SetWindowText(tmpBuf);
-	p_Edit->SetFont(&theApp.m_DefaultFont);
-	p_Edit->SetFocus();
-	p_Edit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
+	m_pWndEdit->SetWindowText(tmpBuf);
+	m_pWndEdit->SetFont(&theApp.m_DefaultFont);
+	m_pWndEdit->SetFocus();
+	m_pWndEdit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
 }
 
 void CDataGrid::EditFlight(CPoint Item, INT SelectTab)
@@ -586,14 +571,12 @@ void CDataGrid::AdjustScrollbars()
 	SetScrollInfo(SB_HORZ, &si);
 }
 
-BOOL CDataGrid::HitTest(CPoint point, CPoint* Item, INT* pSubitem)
+CPoint CDataGrid::PointAtPosition(CPoint point) const
 {
-	ASSERT(Item);
-
 	point.y -= m_HeaderHeight-m_VScrollPos;
 
-	INT y = (point.y>=0) ? point.y/m_RowHeight : -1;
-	if ((y!=-1) && (y<=(INT)p_Itinerary->m_Flights.m_ItemCount))
+	const INT Row = (point.y>=0) ? point.y/m_RowHeight : -1;
+	if ((Row!=-1) && (Row<=(INT)p_Itinerary->m_Flights.m_ItemCount))
 	{
 		INT x = -m_HScrollPos+LEFTMARGIN;
 
@@ -601,65 +584,60 @@ BOOL CDataGrid::HitTest(CPoint point, CPoint* Item, INT* pSubitem)
 		{
 			const UINT Attr = m_ViewParameters.ColumnOrder[a];
 			if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[Attr]))
-			{
-				Item->x = a;
-				Item->y = y;
-
-				if (pSubitem)
-				{
-					*pSubitem = -1;
-
-					if (y<(INT)p_Itinerary->m_Flights.m_ItemCount)
-					{
-						x = point.x-x-2*ITEMPADDING;
-
-						if (x>0)
-							switch (FMAttributes[Attr].Type)
-							{
-							case FMTypeFlags:
-								if (x<18*FLAGCOUNT)
-									if (x%18<16)
-										*pSubitem = x/18;
-
-								break;
-
-							case FMTypeRating:
-								if (x<RATINGBITMAPWIDTH+6)
-									if ((x<6) || (x%18<16))
-										*pSubitem = (x<6) ? 0 : 2*(x/18)+(x%18>8)+1;
-
-								break;
-							}
-					}
-				}
-
-				return TRUE;
-			}
+				return CPoint(a, Row);
 
 			x += m_ViewParameters.ColumnWidth[Attr];
 		}
 	}
 
-	return FALSE;
+	return CPoint(-1, -1);
 }
 
-void CDataGrid::InvalidateItem(const CPoint& Item)
+INT CDataGrid::PartAtPosition(const CPoint& point) const
 {
-	if ((Item.x!=-1) && (Item.y!=-1))
+	INT x = -m_HScrollPos+LEFTMARGIN;
+
+	for (UINT a=0; a<FMAttributeCount; a++)
+	{
+		const UINT Attr = m_ViewParameters.ColumnOrder[a];
+		if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[Attr]))
+		{
+			if ((x=point.x-x-2*ITEMPADDING)>0)
+				switch (FMAttributes[Attr].Type)
+				{
+				case FMTypeFlags:
+					return ((x<18*FLAGCOUNT) && (x%18<16)) ? x/18 : -1;
+
+				case FMTypeRating:
+					return (x<RATINGBITMAPWIDTH+6) ? (x<6) ? 0 : (x%18<16) ? 2*(x/18)+(x%18>8)+1 : -1 : -1;
+				}
+
+			return -1;
+		}
+
+		x += m_ViewParameters.ColumnWidth[Attr];
+	}
+
+	return -1;
+}
+
+void CDataGrid::InvalidatePoint(const CPoint& Point)
+{
+	if (IsPointValid(Point))
 	{
 		INT x = -m_HScrollPos+LEFTMARGIN;
-		for (UINT a=0; a<(UINT)Item.x; a++)
+		for (UINT a=0; a<(UINT)Point.x; a++)
 			x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
 
-		InvalidateRect(CRect(x-2, m_HeaderHeight+Item.y*m_RowHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]+1, m_HeaderHeight-m_VScrollPos+(Item.y+1)*m_RowHeight+1));
+		InvalidateRect(CRect(x-2, m_HeaderHeight+Point.y*m_RowHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Point.x]]+1, m_HeaderHeight-m_VScrollPos+(Point.y+1)*m_RowHeight+1));
 	}
 }
 
-void CDataGrid::InvalidateItem(UINT Row, UINT Attr)
+void CDataGrid::InvalidatePoint(UINT Row, UINT Attr)
 {
 	for (UINT a=0; a<FMAttributeCount; a++)
 		if (m_ViewParameters.ColumnOrder[a]==(INT)Attr)
-			InvalidateItem(CPoint(a, Row));
+			InvalidatePoint(CPoint(a, Row));
 }
 
 void CDataGrid::InvalidateRow(UINT Row)
@@ -854,14 +832,14 @@ void CDataGrid::FinishEdit(LPWSTR pStr, const CPoint& Item)
 	StringToAttribute(pStr, p_Itinerary->m_Flights[Item.y], Attr);
 
 	p_Itinerary->m_IsModified = TRUE;
-	InvalidateItem(Item);
+	InvalidatePoint(Item);
 
 	switch (Attr)
 	{
 	case 0:
 	case 3:
 		CalcDistance(p_Itinerary->m_Flights[Item.y], TRUE);
-		InvalidateItem(Item.y, 6);
+		InvalidatePoint(Item.y, 6);
 		break;
 
 	case 1:
@@ -875,35 +853,36 @@ void CDataGrid::FinishEdit(LPWSTR pStr, const CPoint& Item)
 
 void CDataGrid::DestroyEdit(BOOL Accept)
 {
-	if (p_Edit)
+	if (m_pWndEdit)
 	{
-		CPoint Item = m_FocusItem;
+		CPoint EditItem = m_FocusItem;
 
+		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
+		CEdit* pVictim = m_pWndEdit;
+		m_pWndEdit = NULL;
+
+		// Get text
 		WCHAR tmpBuf[256];
-		p_Edit->GetWindowText(tmpBuf, 256);
+		pVictim->GetWindowText(tmpBuf, 256);
 
-		// Destroying the edit control will release its focus, in turn causing DestroyEdit()
-		// to be called. To prevent an infinite recursion, we set p_Edit to NULL first.
-		CEdit* pVictim = p_Edit;
-		p_Edit = NULL;
-
+		// Destroy window; this will trigger another DestroyEdit() call!
 		pVictim->DestroyWindow();
 		delete pVictim;
 
-		if ((Accept) && (Item.x!=-1) && (Item.y!=-1))
+		if (Accept && IsPointValid(EditItem))
 		{
-			if (Item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
+			if (EditItem.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
 			{
 				if (tmpBuf[0]==L'\0')
 					return;
 
 				p_Itinerary->AddFlight();
-				Item.y = p_Itinerary->m_Flights.m_ItemCount-1;
+				EditItem.y = p_Itinerary->m_Flights.m_ItemCount-1;
 
 				AdjustLayout();
 			}
 
-			FinishEdit(tmpBuf, Item);
+			FinishEdit(tmpBuf, EditItem);
 		}
 	}
 }
@@ -965,20 +944,191 @@ void CDataGrid::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpCli
 	}
 }
 
+void CDataGrid::ShowTooltip(const CPoint& point)
+{
+	if (!m_pWndEdit && (m_HoverPoint.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
+	{
+		const AIRX_Flight* pFlight = &p_Itinerary->m_Flights[m_HoverPoint.y];
+		const UINT Attr = m_ViewParameters.ColumnOrder[m_HoverPoint.x];
+	
+		WCHAR tmpStr[256];
+		switch (Attr)
+		{
+		case 0:
+			if (strlen(pFlight->From.Code)==3)
+				theApp.ShowTooltip(this, point, pFlight->From.Code, _T(""));
+
+			break;
+
+		case 3:
+			if (strlen(pFlight->To.Code)==3)
+				theApp.ShowTooltip(this, point, pFlight->To.Code, _T(""));
+
+			break;
+
+		default:
+			switch (FMAttributes[Attr].Type)
+			{
+			case FMTypeFlags:
+				if (m_HoverPart!=-1)
+				{
+					CString Caption((LPCSTR)IDS_ATTACHMENTS+m_HoverPart);
+					CString Hint;
+
+					const INT Pos = Caption.Find(L'\n');
+					if (Pos!=-1)
+					{
+						Hint = Caption.Mid(Pos+1);
+						Caption = Caption.Left(Pos);
+					}
+
+					theApp.ShowTooltip(this, point, Caption, Hint, m_LargeIcons.ExtractIcon(m_HoverPart));
+				}
+
+			case FMTypeUINT:
+			case FMTypeDistance:
+			case FMTypeDateTime:
+			case FMTypeTime:
+				if (IsSelected(m_HoverPoint.y))
+				{
+					UINT U;
+					UINT UMin = 0xFFFFFFFF;
+					UINT UMax = 0;
+					ULONGLONG USum = 0;
+					FILETIME F;
+					FILETIME FMin = { 0xFFFFFFFF, 0xFFFFFFFF };
+					FILETIME FMax = { 0, 0 };
+					DOUBLE D;
+					DOUBLE DMin = 100000.0;
+					DOUBLE DMax = 0.0;
+					DOUBLE DSum = 0.0;
+					UINT Count = 0;
+
+					for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+						if (IsSelected(a))
+						{
+							const LPVOID pData = (((LPBYTE)&p_Itinerary->m_Flights[a])+FMAttributes[Attr].Offset);
+
+							switch (FMAttributes[Attr].Type)
+							{
+							case FMTypeUINT:
+							case FMTypeTime:
+								U = *((UINT*)pData);
+								if (U)
+								{
+									if (U<UMin)
+										UMin = U;
+
+									if (U>UMax)
+										UMax = U;
+
+									USum += U;
+									Count++;
+								}
+
+								break;
+
+							case FMTypeDistance:
+								D = *((DOUBLE*)pData);
+								if (D)
+								{
+									if (D<DMin)
+										DMin = D;
+
+									if (D>DMax)
+										DMax = D;
+
+									DSum += D;
+									Count++;
+								}
+
+								break;
+
+							case FMTypeDateTime:
+								F = *((FILETIME*)pData);
+								if ((F.dwHighDateTime!=0) || (F.dwLowDateTime!=0))
+								{
+									if ((F.dwHighDateTime<FMin.dwHighDateTime) || ((F.dwHighDateTime==FMin.dwHighDateTime) && (F.dwLowDateTime<FMin.dwLowDateTime)))
+										FMin = F;
+
+									if ((F.dwHighDateTime>FMax.dwHighDateTime) || ((F.dwHighDateTime==FMax.dwHighDateTime) && (F.dwLowDateTime>FMax.dwLowDateTime)))
+										FMax = F;
+
+									Count++;
+								}
+
+								break;
+							}
+						}
+
+					if (Count)
+					{
+						CString Hint;
+						WCHAR tmpMin[256];
+						WCHAR tmpMax[256];
+						WCHAR tmpAvg[256];
+
+						switch (FMAttributes[Attr].Type)
+						{
+						case FMTypeUINT:
+							Hint.Format(IDS_TOOLTIP_UINT, UMin, UMax, (DOUBLE)USum/(DOUBLE)Count);
+							break;
+
+						case FMTypeTime:
+							TimeToString(tmpMin, 256, UMin);
+							TimeToString(tmpMax, 256, UMax);
+							TimeToString(tmpAvg, 256, (UINT)((DOUBLE)USum/(DOUBLE)Count));
+
+							Hint.Format(IDS_TOOLTIP_TIME, tmpMin, tmpMax, tmpAvg);
+							break;
+
+						case FMTypeDistance:
+							DistanceToString(tmpMin, 256, DMin);
+							DistanceToString(tmpMax, 256, DMax);
+							DistanceToString(tmpAvg, 256, DSum/(DOUBLE)Count);
+
+							Hint.Format(IDS_TOOLTIP_DISTANCE, tmpMin, tmpMax, tmpAvg);
+							break;
+
+						case FMTypeDateTime:
+							DateTimeToString(tmpMin, 256, FMin);
+							DateTimeToString(tmpMax, 256, FMax);
+
+							Hint.Format(IDS_TOOLTIP_DATETIME, tmpMin, tmpMax);
+							break;
+						}
+
+						theApp.ShowTooltip(this, point, CString((LPCSTR)IDS_COLUMN0+Attr), Hint);
+					}
+					break;
+				}
+
+			default:
+				AttributeToString(p_Itinerary->m_Flights[m_HoverPoint.y], Attr, tmpStr, 256);
+
+				if (tmpStr[0]!=L'\0')
+				{
+					CSize szText = theApp.m_DefaultFont.GetTextExtent(tmpStr);
+
+					if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-SPACER) || (FMAttributes[Attr].Type==FMTypeColor))
+						theApp.ShowTooltip(this, point, _T(""), tmpStr);
+				}
+			}
+		}
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
-	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEHWHEEL()
 	ON_WM_KEYDOWN()
@@ -1096,11 +1246,6 @@ void CDataGrid::OnTimer(UINT_PTR nIDEvent)
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
-BOOL CDataGrid::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
 void CDataGrid::OnPaint()
 {
 	CRect rectUpdate;
@@ -1195,7 +1340,7 @@ void CDataGrid::OnPaint()
 	}
 
 	// Focus cell
-	if ((m_FocusItem.x!=-1) && (m_FocusItem.y!=-1))
+	if (IsPointValid(m_FocusItem))
 	{
 		INT x = -m_HScrollPos+LEFTMARGIN;
 		for (INT Col=0; Col<m_FocusItem.x; Col++)
@@ -1290,14 +1435,14 @@ void CDataGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		ScrollWindow(0, -nInc);
 		SetScrollPos(SB_VERT, m_VScrollPos);
 
-		if (p_Edit)
+		if (m_pWndEdit)
 		{
 			CRect rect;
-			p_Edit->GetWindowRect(rect);
+			m_pWndEdit->GetWindowRect(rect);
 			ScreenToClient(rect);
 
 			rect.OffsetRect(0, -nInc);
-			p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+			m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
@@ -1352,239 +1497,25 @@ void CDataGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CFrontstageWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CDataGrid::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CDataGrid::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CPoint Item(-1, -1);
-	INT Subitem = -1;
-	BOOL OnItem = HitTest(point, &Item, &Subitem);
+	CFrontstageWnd::OnMouseMove(nFlags, point);
 
-	if (!m_Hover)
+	const INT Part = IsPointValid(m_HoverPoint) ? PartAtPosition(point) : -1;
+	if (Part!=m_HoverPart)
 	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
+		m_HoverPart = Part;
+		HideTooltip();
 	}
-	else
-		if ((theApp.IsTooltipVisible()) && ((Item!=m_HotItem) || (Subitem!=m_HotSubitem)))
-			theApp.HideTooltip();
 
-	if (!OnItem)
-	{
-		m_HotItem.x = m_HotItem.y = m_HotSubitem = -1;
-	}
-	else
-		if ((Item!=m_HotItem) || (Subitem!=m_HotSubitem))
-		{
-			InvalidateItem(m_HotItem);
-			m_HotItem = Item;
-			m_HotSubitem = Subitem;
-			InvalidateItem(m_HotItem);
-
-			SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
-		}
+	SetCursor(theApp.LoadStandardCursor(m_HoverPart==-1 ? IDC_ARROW : IDC_HAND));
 }
 
 void CDataGrid::OnMouseLeave()
 {
-	theApp.HideTooltip();
-	InvalidateItem(m_HotItem);
+	m_HoverPart = -1;
 
-	m_Hover = FALSE;
-	m_HotItem.x = m_HotItem.y = m_HotSubitem = -1;
-}
-
-void CDataGrid::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
-	{
-		if ((m_HotItem.x!=-1) && (m_HotItem.y!=-1) && (!p_Edit))
-			if (!theApp.IsTooltipVisible() && (m_HotItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
-			{
-				const AIRX_Flight* pFlight = &p_Itinerary->m_Flights[m_HotItem.y];
-				const UINT Attr = m_ViewParameters.ColumnOrder[m_HotItem.x];
-				WCHAR tmpStr[256];
-
-				switch (Attr)
-				{
-				case 0:
-					if (strlen(pFlight->From.Code)==3)
-						theApp.ShowTooltip(this, point, pFlight->From.Code, _T(""));
-
-					break;
-
-				case 3:
-					if (strlen(pFlight->To.Code)==3)
-						theApp.ShowTooltip(this, point, pFlight->To.Code, _T(""));
-
-					break;
-
-				default:
-					switch (FMAttributes[Attr].Type)
-					{
-					case FMTypeFlags:
-						if (m_HotSubitem!=-1)
-						{
-							CString Caption((LPCSTR)IDS_ATTACHMENTS+m_HotSubitem);
-							CString Hint;
-
-							INT Pos = Caption.Find(L'\n');
-							if (Pos!=-1)
-							{
-								Hint = Caption.Mid(Pos+1);
-								Caption = Caption.Left(Pos);
-							}
-
-							theApp.ShowTooltip(this, point, Caption, Hint, m_LargeIcons.ExtractIcon(m_HotSubitem));
-						}
-
-					case FMTypeUINT:
-					case FMTypeDistance:
-					case FMTypeDateTime:
-					case FMTypeTime:
-						if (IsSelected(m_HotItem.y))
-						{
-							UINT U;
-							UINT UMin = 0xFFFFFFFF;
-							UINT UMax = 0;
-							ULONGLONG USum = 0;
-							FILETIME F;
-							FILETIME FMin = { 0xFFFFFFFF, 0xFFFFFFFF };
-							FILETIME FMax = { 0, 0 };
-							DOUBLE D;
-							DOUBLE DMin = 100000.0;
-							DOUBLE DMax = 0.0;
-							DOUBLE DSum = 0.0;
-							UINT Count = 0;
-
-							for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-								if (IsSelected(a))
-								{
-									const LPVOID pData = (((LPBYTE)&p_Itinerary->m_Flights[a])+FMAttributes[Attr].Offset);
-
-									switch (FMAttributes[Attr].Type)
-									{
-									case FMTypeUINT:
-									case FMTypeTime:
-										U = *((UINT*)pData);
-										if (U)
-										{
-											if (U<UMin)
-												UMin = U;
-
-											if (U>UMax)
-												UMax = U;
-
-											USum += U;
-											Count++;
-										}
-
-										break;
-
-									case FMTypeDistance:
-										D = *((DOUBLE*)pData);
-										if (D)
-										{
-											if (D<DMin)
-												DMin = D;
-
-											if (D>DMax)
-												DMax = D;
-
-											DSum += D;
-											Count++;
-										}
-
-										break;
-
-									case FMTypeDateTime:
-										F = *((FILETIME*)pData);
-										if ((F.dwHighDateTime!=0) || (F.dwLowDateTime!=0))
-										{
-											if ((F.dwHighDateTime<FMin.dwHighDateTime) || ((F.dwHighDateTime==FMin.dwHighDateTime) && (F.dwLowDateTime<FMin.dwLowDateTime)))
-												FMin = F;
-
-											if ((F.dwHighDateTime>FMax.dwHighDateTime) || ((F.dwHighDateTime==FMax.dwHighDateTime) && (F.dwLowDateTime>FMax.dwLowDateTime)))
-												FMax = F;
-
-											Count++;
-										}
-
-										break;
-									}
-								}
-
-							if (Count)
-							{
-								CString Hint;
-								WCHAR tmpMin[256];
-								WCHAR tmpMax[256];
-								WCHAR tmpAvg[256];
-
-								switch (FMAttributes[Attr].Type)
-								{
-								case FMTypeUINT:
-									Hint.Format(IDS_TOOLTIP_UINT, UMin, UMax, (DOUBLE)USum/(DOUBLE)Count);
-									break;
-
-								case FMTypeTime:
-									TimeToString(tmpMin, 256, UMin);
-									TimeToString(tmpMax, 256, UMax);
-									TimeToString(tmpAvg, 256, (UINT)((DOUBLE)USum/(DOUBLE)Count));
-
-									Hint.Format(IDS_TOOLTIP_TIME, tmpMin, tmpMax, tmpAvg);
-									break;
-
-								case FMTypeDistance:
-									DistanceToString(tmpMin, 256, DMin);
-									DistanceToString(tmpMax, 256, DMax);
-									DistanceToString(tmpAvg, 256, DSum/(DOUBLE)Count);
-
-									Hint.Format(IDS_TOOLTIP_DISTANCE, tmpMin, tmpMax, tmpAvg);
-									break;
-
-								case FMTypeDateTime:
-									DateTimeToString(tmpMin, 256, FMin);
-									DateTimeToString(tmpMax, 256, FMax);
-
-									Hint.Format(IDS_TOOLTIP_DATETIME, tmpMin, tmpMax);
-									break;
-								}
-
-								theApp.ShowTooltip(this, point, CString((LPCSTR)IDS_COLUMN0+Attr), Hint);
-							}
-							break;
-						}
-
-					default:
-						AttributeToString(p_Itinerary->m_Flights[m_HotItem.y], Attr, tmpStr, 256);
-
-						if (tmpStr[0]!=L'\0')
-						{
-							CSize szText = theApp.m_DefaultFont.GetTextExtent(tmpStr);
-
-							if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-SPACER) || (FMAttributes[Attr].Type==FMTypeColor))
-								theApp.ShowTooltip(this, point, _T(""), tmpStr);
-						}
-					}
-				}
-			}
-	}
-	else
-	{
-		theApp.HideTooltip();
-	}
-
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVERTIME;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
+	CFrontstageWnd::OnMouseLeave();
 }
 
 BOOL CDataGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
@@ -1602,7 +1533,7 @@ BOOL CDataGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
-		theApp.HideTooltip();
+		HideTooltip();
 
 		m_VScrollPos += nInc;
 		ScrollWindow(0, -nInc);
@@ -1625,7 +1556,7 @@ void CDataGrid::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
 	INT nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
 	if (nInc)
 	{
-		theApp.HideTooltip();
+		HideTooltip();
 
 		m_HScrollPos += nInc;
 		ScrollWindow(-nInc, 0);
@@ -1767,24 +1698,20 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
-	if (!p_Edit)
+	if (!m_pWndEdit)
 		if (nChar>=L' ')
 			EditCell(FALSE, FALSE, (WCHAR)nChar);
 }
 
 void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	SetFocus();
-
 	DestroyEdit();
 
-	CPoint Item;
-	INT Subitem = -1;
-	if (HitTest(point, &Item, &Subitem))
-	{
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
 		if (nFlags & MK_CONTROL)
 		{
-			InvalidateItem(m_FocusItem);
+			InvalidatePoint(m_FocusItem);
 			m_FocusItem = Item;
 			SelectItem(Item.y, !IsSelected(Item.y));
 		}
@@ -1794,41 +1721,42 @@ void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 				if (Item.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 				{
 					const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
+					const UINT Part = PartAtPosition(point);
 					const LPVOID pData = (((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset);
 
 					switch (FMAttributes[Attr].Type)
 					{
 					case FMTypeFlags:
-						if (Subitem==0)
+						if (Part==0)
 						{
 							EditFlight(Item, 2);
 						}
 						else
-							if (Subitem!=-1)
+							if (Part!=-1)
 							{
-								*((DWORD*)pData) ^= DisplayFlags[Subitem];
+								*((DWORD*)pData) ^= DisplayFlags[Part];
 								p_Itinerary->m_IsModified = TRUE;
 
-								if (DisplayFlags[Subitem]==AIRX_Cancelled)
+								if (DisplayFlags[Part]==AIRX_Cancelled)
 								{
 									InvalidateRow(Item.y);
 								}
 								else
 								{
-									InvalidateItem(Item);
+									InvalidatePoint(Item);
 								}
 							}
 
 						break;
 
 					case FMTypeRating:
-						if (Subitem!=-1)
+						if (Part!=-1)
 						{
 							*((DWORD*)pData) &= ~(15<<FMAttributes[Attr].DataParameter);
-							*((DWORD*)pData) |= (Subitem<<FMAttributes[Attr].DataParameter);
+							*((DWORD*)pData) |= (Part<<FMAttributes[Attr].DataParameter);
 
 							p_Itinerary->m_IsModified = TRUE;
-							InvalidateItem(Item);
+							InvalidatePoint(Item);
 						}
 
 						break;
@@ -1842,18 +1770,14 @@ void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 			{
 				SetFocusItem(Item, nFlags & MK_SHIFT);
 			}
-	}
-	else
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-	}
+
+	if (GetFocus()!=this)
+		SetFocus();
 }
 
 void CDataGrid::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	CPoint Item;
-	if (HitTest(point, &Item))
+	if (IsPointValid(PointAtPosition(point)))
 	{
 		if (GetFocus()!=this)
 			SetFocus();
@@ -1868,15 +1792,15 @@ void CDataGrid::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CDataGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
-	CPoint Item;
-	if (HitTest(point, &Item))
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
 		EditFlight(Item);
 }
 
 void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	CPoint Item;
-	if (HitTest(point, &Item))
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
 	{
 		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
 			if (!IsSelected(Item.y))
@@ -1888,10 +1812,10 @@ void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
 			}
 			else
 			{
-				InvalidateItem(m_FocusItem);
+				InvalidatePoint(m_FocusItem);
 				m_FocusItem = Item;
 				EnsureVisible();
-				InvalidateItem(m_FocusItem);
+				InvalidatePoint(m_FocusItem);
 			}
 	}
 	else
@@ -1903,8 +1827,8 @@ void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CDataGrid::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	CPoint Item;
-	if (HitTest(point, &Item))
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
 	{
 		if (GetFocus()!=this)
 			SetFocus();
@@ -1977,19 +1901,19 @@ void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
-	SetCursor(theApp.LoadStandardCursor(m_HotSubitem==-1 ? IDC_ARROW : IDC_HAND));
+	SetCursor(theApp.LoadStandardCursor(m_HoverPart==-1 ? IDC_ARROW : IDC_HAND));
 
 	return TRUE;
 }
 
 void CDataGrid::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	InvalidateItem(m_FocusItem);
+	InvalidatePoint(m_FocusItem);
 }
 
 void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 {
-	InvalidateItem(m_FocusItem);
+	InvalidatePoint(m_FocusItem);
 }
 
 
@@ -2055,7 +1979,7 @@ Finish:
 
 void CDataGrid::OnInsertRow()
 {
-	if (m_FocusItem.y!=-1)
+	if (IsPointValid(m_FocusItem))
 	{
 		p_Itinerary->InsertFlights(m_FocusItem.y);
 		p_Itinerary->m_IsModified = TRUE;
@@ -2237,7 +2161,7 @@ FoundPosition:
 		StringToAttribute(m_FindReplaceSettings.ReplaceTerm, p_Itinerary->m_Flights[Item.y], Attr);
 		p_Itinerary->m_IsModified = TRUE;
 
-		InvalidateItem(Item);
+		InvalidatePoint(Item);
 		goto Again;
 	}
 	else
@@ -2417,7 +2341,7 @@ void CDataGrid::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 	DestroyEdit(TRUE);
 
-	*pResult = (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+	*pResult = (pHdr->iItem<0) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CDataGrid::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)

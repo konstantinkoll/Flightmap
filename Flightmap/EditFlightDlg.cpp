@@ -138,7 +138,7 @@ void EditFlightDlg::DisplayAirport(UINT nID, LPCSTR pIATA)
 	ASSERT(pIATA);
 
 	FMAirport* pAirport;
-	if (FMIATAGetAirportByCode(pIATA, &pAirport))
+	if (FMIATAGetAirportByCode(pIATA, pAirport))
 	{
 		DisplayAirport(nID, pAirport);
 	}
@@ -310,12 +310,12 @@ void EditFlightDlg::OnCheckAirports()
 
 	FMAirport* pFrom;
 	GetIATACode(IDC_FROM_IATA, Code);
-	if (!FMIATAGetAirportByCode(Code, &pFrom))
+	if (!FMIATAGetAirportByCode(Code, pFrom))
 		goto SetActive;
 
 	FMAirport* pTo;
 	GetIATACode(IDC_TO_IATA, Code);
-	if (!FMIATAGetAirportByCode(Code, &pTo))
+	if (!FMIATAGetAirportByCode(Code, pTo))
 		goto SetActive;
 
 	bActive = (pFrom==pTo) && (pFrom!=NULL);

@@ -869,17 +869,17 @@ const FMCountry* FMIATAGetCountry(UINT CountryID)
 	return UseGermanDB ? &Countries_DE[CountryID] : &Countries_EN[CountryID];
 }
 
-INT FMIATAGetNextAirport(INT Last, FMAirport** ppAirport)
+INT FMIATAGetNextAirport(INT Last, FMAirport*& pAirport)
 {
 	if (Last>=(INT)FMIATAGetAirportCount()-1)
 		return -1;
 
-	*ppAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+	pAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 
 	return Last;
 }
 
-INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport)
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport*& pAirport)
 {
 	UINT Count = FMIATAGetAirportCount();
 
@@ -888,19 +888,19 @@ INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport** ppAirport
 		if (Last>=(INT)Count-1)
 			return -1;
 
-		*ppAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+		pAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 	}
-	while ((*ppAirport)->CountryID!=CountryID);
+	while (pAirport->CountryID!=CountryID);
 
 	return Last;
 }
 
-BOOL FMIATAGetAirportByCode(LPCSTR pCode, FMAirport** ppAirport)
+BOOL FMIATAGetAirportByCode(LPCSTR lpszCode, FMAirport*& pAirport)
 {
-	if (!pCode)
+	if (!lpszCode)
 		return FALSE;
 
-	if (strlen(pCode)!=3)
+	if (strlen(lpszCode)!=3)
 		return FALSE;
 
 	INT First = 0;
@@ -910,9 +910,9 @@ BOOL FMIATAGetAirportByCode(LPCSTR pCode, FMAirport** ppAirport)
 	{
 		const INT Mid = (First+Last)/2;
 
-		*ppAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
+		pAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
-		const INT Result = strcmp((*ppAirport)->Code, pCode);
+		const INT Result = strcmp(pAirport->Code, lpszCode);
 		if (!Result)
 			return TRUE;
 

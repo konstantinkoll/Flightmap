@@ -92,7 +92,7 @@ void CFloatButton::OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult)
 		// Icon
 		if ((m_IconID>=0) && (rect.Width()>=p_ButtonIcons->GetIconSize()+PADDING/2+rect.Height()))
 		{
-			p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left, rect.top+(rect.Height()-p_ButtonIcons->GetIconSize())/2, m_IconID, m_Hover, Disabled);
+			p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left, rect.top+(rect.Height()-p_ButtonIcons->GetIconSize())/2, m_IconID, m_HoverItem>=0, Disabled);
 
 			rect.left += p_ButtonIcons->GetIconSize()+PADDING/2;
 		}
@@ -103,7 +103,7 @@ void CFloatButton::OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 	{
 		// Icon
-		p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left+(rect.Width()-p_ButtonIcons->GetIconSize())/2, rect.top+PADDING, m_IconID, m_Hover, Disabled);
+		p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left+(rect.Width()-p_ButtonIcons->GetIconSize())/2, rect.top+PADDING, m_IconID, m_HoverItem>=0, Disabled);
 
 		rect.DeflateRect(PADDING, PADDING);
 		rect.top += p_ButtonIcons->GetIconSize()+PADDING-2;

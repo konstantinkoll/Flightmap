@@ -1770,7 +1770,7 @@ DJV     Dabajoro, Venezuela
 DKB     De Kalb Taylor, USA;4;41*56'1"N, 88*42'21"W
 DKI     Dunk Island, Australia;4;17*56'23"S, 146*8'31"E
 DKK     Dunkirk, USA;4;42*29'36"N, 79*16'19"W
-DKR     Dakar, Senegal;4;14*44'23"N, 17*29'25"W
+DKR     Dakar (Léopold Sédar Senghor), Senegal;4;14*44'23"N, 17*29'25"W
 DKX     Knoxville (Downtown Island Airport), USA;4;35*57'50"N, 83*52'25"W
 DLA     Douala, Kamerun;4;4*0'22"N, 9*43'10"E
 DLB     Dalbertis, New Guinea;4;5*0'0"S, 142*4'59"E
@@ -1882,6 +1882,7 @@ DSI     Destin, USA;4;30*24'0"N, 86*28'17"W
 DSK     Dera Ismail Khan, Pakistan;4;31*54'34"N, 70*53'48"E
 DSL     Daru, Sierra Leone;4;7*58'59"N, 10*51'0"W
 DSM     Des Moines, USA;4;41*32'2"N, 93*39'47"W
+DSS     Dakar (Blaise Diagne), Senegal;5;14*40'15"N, 17*4'22"W
 DSV     Dansville, USA;4;42*34'15"N, 77*42'47"W
 DTA     Delta, USA;4;39*22'50"N, 112*30'28"W
 DTD     Datadawai, Indonesia;4;0*43'1"S, 116*28'59"E

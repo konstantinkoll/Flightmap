@@ -92,11 +92,10 @@ public:
 	static HICON LoadDialogIcon(UINT nID);
 	static HANDLE LoadFontFromResource(UINT nID);
 
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, FMAirport* pAirport, const CString& Hint);
-	void ShowTooltip(CWnd* pCallerWnd, CPoint point, LPCSTR Code, const CString& Hint);
-	BOOL IsTooltipVisible() const;
-	void HideTooltip();
+	void ShowTooltip(CWnd* pWndOwner, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
+	void ShowTooltip(CWnd* pWndOwner, CPoint point, FMAirport* pAirport, const CString& Hint);
+	void ShowTooltip(CWnd* pWndOwner, CPoint point, LPCSTR Code, const CString& Hint);
+	void HideTooltip(const CWnd* pWndOwner=NULL);
 
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
@@ -164,6 +163,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	FMTooltip m_wndTooltip;
+	const CWnd* p_WndTooltipOwner;
 	FMDynArray<ResourceCacheItem, 16, 4> m_ResourceCache;
 	UINT m_NagCounter;
 
@@ -206,16 +206,4 @@ inline BOOL FMApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue)
 inline BOOL FMApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 {
 	return WriteString(lpszEntry, lpszValue);
-}
-
-inline BOOL FMApplication::IsTooltipVisible() const
-{
-	ASSERT(IsWindow(m_wndTooltip));
-
-	return m_wndTooltip.IsWindowVisible();
-}
-
-inline void FMApplication::HideTooltip()
-{
-	m_wndTooltip.HideTooltip();
 }
