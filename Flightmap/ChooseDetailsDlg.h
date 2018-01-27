@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "CDataGrid.h"
 #include "FMCommDlg.h"
+#include "Flightmap.h"
 
 
 // ChooseDetailsDlg

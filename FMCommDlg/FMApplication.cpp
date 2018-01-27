@@ -13,7 +13,7 @@
 // FMApplication
 //
 
-FMApplication::FMApplication(GUID& AppID)
+FMApplication::FMApplication(const GUID& AppID)
 {
 	// ID
 	m_AppID = AppID;
@@ -57,8 +57,7 @@ FMApplication::FMApplication(GUID& AppID)
 		zGetThemePartSize = (PFNGETTHEMEPARTSIZE)GetProcAddress(hModThemes, "GetThemePartSize");
 		zIsAppThemed = (PFNISAPPTHEMED)GetProcAddress(hModThemes, "IsAppThemed");
 
-		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zGetThemePartSize && zIsAppThemed);
-		if (m_ThemeLibLoaded)
+		if (!(m_ThemeLibLoaded=(zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zGetThemePartSize && zIsAppThemed)))
 		{
 			FreeLibrary(hModThemes);
 			hModThemes = NULL;
@@ -83,8 +82,7 @@ FMApplication::FMApplication(GUID& AppID)
 		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModDwm, "DwmIsCompositionEnabled");
 		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModDwm, "DwmSetWindowAttribute");
 
-		m_DwmLibLoaded = (zDwmIsCompositionEnabled && zDwmSetWindowAttribute);
-		if (!m_DwmLibLoaded)
+		if (!(m_DwmLibLoaded=(zDwmIsCompositionEnabled && zDwmSetWindowAttribute)))
 		{
 			FreeLibrary(hModDwm);
 			hModDwm = NULL;
@@ -104,8 +102,7 @@ FMApplication::FMApplication(GUID& AppID)
 	{
 		zRegisterApplicationRestart = (PFNREGISTERAPPLICATIONRESTART)GetProcAddress(hModKernel, "RegisterApplicationRestart");
 
-		m_KernelLibLoaded = (zRegisterApplicationRestart!=NULL);
-		if (!m_KernelLibLoaded)
+		if ((m_KernelLibLoaded=(zRegisterApplicationRestart!=NULL))==FALSE)
 		{
 			FreeLibrary(hModKernel);
 			hModKernel = NULL;
@@ -118,14 +115,34 @@ FMApplication::FMApplication(GUID& AppID)
 		m_KernelLibLoaded = FALSE;
 	}
 
+	// Shell
+	hModShell = LoadLibrary(_T("SHELL32.DLL"));
+	if (hModShell)
+	{
+		zGetPropertyStoreForWindow = (PFNGETPROPERTYSTOREFORWINDOW)GetProcAddress(hModShell, "SHGetPropertyStoreForWindow");
+		zSetCurrentProcessExplicitAppUserModelID = (PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)GetProcAddress(hModShell, "SetCurrentProcessExplicitAppUserModelID");
+
+		if (!(m_ShellLibLoaded=(zGetPropertyStoreForWindow && zSetCurrentProcessExplicitAppUserModelID)))
+		{
+			FreeLibrary(hModShell);
+			hModShell = NULL;
+		}
+	}
+	else
+	{
+		zChangeWindowMessageFilter = NULL;
+		zSetCurrentProcessExplicitAppUserModelID = NULL;
+
+		m_ShellLibLoaded = FALSE;
+	}
+
 	// User
 	hModUser = LoadLibrary(_T("USER32.DLL"));
 	if (hModUser)
 	{
 		zChangeWindowMessageFilter = (PFNCHANGEWINDOWMESSAGEFILTER)GetProcAddress(hModKernel, "ChangeWindowMessageFilter");
 
-		m_UserLibLoaded = (zChangeWindowMessageFilter!=NULL);
-		if (!m_UserLibLoaded)
+		if ((m_UserLibLoaded=(zChangeWindowMessageFilter!=NULL))==FALSE)
 		{
 			FreeLibrary(hModUser);
 			hModUser = NULL;
@@ -139,12 +156,12 @@ FMApplication::FMApplication(GUID& AppID)
 	}
 
 	// System image lists
-	IImageList* il;
-	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&il)))
-		m_SystemImageListSmall.Attach((HIMAGELIST)il);
+	IImageList* pImageList;
+	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&pImageList)))
+		m_SystemImageListSmall.Attach((HIMAGELIST)pImageList);
 
-	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
-		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
+	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&pImageList)))
+		m_SystemImageListExtraLarge.Attach((HIMAGELIST)pImageList);
 
 	// Tooltip
 	p_WndTooltipOwner = NULL;
@@ -244,9 +261,9 @@ BOOL FMApplication::InitInstance()
 	return TRUE;
 }
 
-CWnd* FMApplication::OpenCommandLine(LPWSTR /*pCmdLine*/)
+BOOL FMApplication::OpenCommandLine(LPWSTR /*pCmdLine*/)
 {
-	return NULL;
+	return FALSE;
 }
 
 INT FMApplication::ExitInstance()
@@ -299,9 +316,7 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 	if ((Level & NAG_EXPIRED) ? FMIsSharewareExpired() : !FMIsLicensed())
 		if ((Level & NAG_FORCE) || (++m_NagCounter)>=5)
 		{
-			FMRegisterDlg dlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow());
-			dlg.DoModal();
-
+			FMRegisterDlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow()).DoModal();
 			m_NagCounter = 0;
 
 			return TRUE;
@@ -312,14 +327,13 @@ BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
 
 BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, BOOL AllowReset)
 {
-	FMColorDlg dlg(pColor, pParentWnd, AllowReset);
-
-	if (dlg.DoModal()==IDOK)
+	if (FMColorDlg(pColor, pParentWnd, AllowReset).DoModal()==IDOK)
 	{
 		if (*pColor!=(COLORREF)-1)
 		{
 			COLORREF Colors[16];
-			memcpy_s(Colors, sizeof(Colors), m_ColorHistory, sizeof(m_ColorHistory));
+			ASSERT(sizeof(Colors)==sizeof(m_ColorHistory));
+			memcpy(Colors, m_ColorHistory, sizeof(m_ColorHistory));
 
 			m_ColorHistory[0] = *pColor;
 
@@ -383,7 +397,7 @@ void FMApplication::AddFileExtension(CString& Extensions, UINT nID, const CStrin
 
 // Registry access
 
-void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
+void FMApplication::GetBinary(LPCTSTR lpszEntry, LPVOID pData, UINT Size)
 {
 	UINT Bytes;
 	LPBYTE pBuffer = NULL;
@@ -391,7 +405,7 @@ void FMApplication::GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size)
 
 	if (pBuffer)
 	{
-		memcpy_s(pData, Size, pBuffer, min(Size, Bytes));
+		memcpy(pData, pBuffer, min(Size, Bytes));
 		free(pBuffer);
 	}
 }
@@ -490,28 +504,27 @@ void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, const CString& Ca
 	m_wndTooltip.ShowTooltip(point, Caption, Hint, hIcon, hBitmap);
 }
 
-void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, FMAirport* pAirport, const CString& Hint)
+void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, LPCAIRPORT lpcAirport, const CString& Hint)
 {
-	CString Caption(pAirport->Code);
+	CString Caption(lpcAirport->Code);
 	CString Text;
 	CString tmpStr;
 
-	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_NAME, pAirport->Name);
-	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
-	FMGeoCoordinatesToString(pAirport->Location, tmpStr);
-	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_LOCATION, tmpStr);
+	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_NAME, lpcAirport->Name);
+	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(lpcAirport->CountryID)->Name);
+	FMTooltip::AppendAttribute(Text, IDS_AIRPORT_LOCATION, FMGeoCoordinatesToString(lpcAirport->Location));
 
 	if (!Hint.IsEmpty())
 		Text.Append(_T("\n")+Hint);
 
-	ShowTooltip(pWndOwner, point, Caption, Text, NULL, FMIATACreateAirportMap(pAirport, 192, 192));
+	ShowTooltip(pWndOwner, point, Caption, Text, NULL, FMIATACreateAirportMap(lpcAirport, 192, 192));
 }
 
 void FMApplication::ShowTooltip(CWnd* pWndOwner, CPoint point, LPCSTR Code, const CString& Hint)
 {
-	FMAirport* pAirport;
-	if (FMIATAGetAirportByCode(Code, pAirport))
-		ShowTooltip(pWndOwner, point, pAirport, Hint);
+	LPCAIRPORT lpcAirport;
+	if (FMIATAGetAirportByCode(Code, lpcAirport))
+		ShowTooltip(pWndOwner, point, lpcAirport, Hint);
 }
 
 void FMApplication::HideTooltip(const CWnd* pWndOwner)
@@ -524,6 +537,26 @@ void FMApplication::HideTooltip(const CWnd* pWndOwner)
 		p_WndTooltipOwner = NULL;
 	}
 }
+
+
+// Explorer context menu
+
+void FMApplication::OpenFolderAndSelectItem(LPCWSTR Path)
+{
+	ASSERT(Path);
+
+	if (Path[0]!=L'\0')
+	{
+		LPITEMIDLIST pidlFQ;
+		if (SUCCEEDED(SHParseDisplayName(Path, NULL, &pidlFQ, 0, NULL)))
+		{
+			SHOpenFolderAndSelectItems(pidlFQ, 0, NULL, 0);
+
+			GetShellManager()->FreeItem(pidlFQ);
+		}
+	}
+}
+
 
 // Sounds
 
@@ -590,7 +623,7 @@ void FMApplication::PlayWarningSound()
 
 void FMApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval)
 {
-	EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
+	EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1);
 	Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
 }
 
@@ -608,16 +641,16 @@ BOOL FMApplication::IsUpdateCheckDue()
 
 	if (EnableAutoUpdate && (Interval>=0) && (Interval<=2))
 	{
-		FILETIME ft;
-		GetSystemTimeAsFileTime(&ft);
+		FILETIME FileTime;
+		GetSystemTimeAsFileTime(&FileTime);
+
+		ULARGE_INTEGER Now;
+		Now.HighPart = FileTime.dwHighDateTime;
+		Now.LowPart = FileTime.dwLowDateTime;
 
 		ULARGE_INTEGER LastUpdateCheck;
 		LastUpdateCheck.HighPart = GetGlobalInt(_T("LastUpdateCheckHigh"), 0);
 		LastUpdateCheck.LowPart = GetGlobalInt(_T("LastUpdateCheckLow"), 0);
-
-		ULARGE_INTEGER Now;
-		Now.HighPart = ft.dwHighDateTime;
-		Now.LowPart = ft.dwLowDateTime;
 
 #define SECOND (10000000ull)
 #define MINUTE (60ull*SECOND)
@@ -651,15 +684,11 @@ BOOL FMApplication::IsUpdateCheckDue()
 
 void FMApplication::WriteUpdateCheckTime()
 {
-	FILETIME ft;
-	GetSystemTimeAsFileTime(&ft);
+	FILETIME FileTime;
+	GetSystemTimeAsFileTime(&FileTime);
 
-	ULARGE_INTEGER Now;
-	Now.HighPart = ft.dwHighDateTime;
-	Now.LowPart = ft.dwLowDateTime;
-
-	WriteGlobalInt(_T("LastUpdateCheckHigh"), Now.HighPart);
-	WriteGlobalInt(_T("LastUpdateCheckLow"), Now.LowPart);
+	WriteGlobalInt(_T("LastUpdateCheckHigh"), FileTime.dwHighDateTime);
+	WriteGlobalInt(_T("LastUpdateCheckLow"), FileTime.dwLowDateTime);
 }
 
 CString FMApplication::GetLatestVersion(CString CurrentVersion)
@@ -699,7 +728,7 @@ CString FMApplication::GetLatestVersion(CString CurrentVersion)
 									VersionIni += CString(pBuffer);
 								}
 
-								delete[] pBuffer;
+								delete pBuffer;
 							}
 						}
 						while (dwSize>0);
@@ -812,7 +841,7 @@ void FMApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 	if (Check)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 		CString VersionIni = GetLatestVersion(CurrentVersion);
 
 		if (!VersionIni.IsEmpty())
@@ -848,8 +877,7 @@ void FMApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			if (m_pUpdateNotification)
 				m_pUpdateNotification->DestroyWindow();
 
-			FMUpdateDlg dlg(LatestVersion, LatestMSN, LatestUpdateFeatures, pParentWnd);
-			dlg.DoModal();
+			FMUpdateDlg(LatestVersion, LatestMSN, LatestUpdateFeatures, pParentWnd).DoModal();
 		}
 		else
 			if (m_pUpdateNotification)
@@ -869,81 +897,6 @@ void FMApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			FMMessageBox(pParentWnd, CString((LPCSTR)IDS_UPDATENOTAVAILABLE), CString((LPCSTR)IDS_UPDATE), MB_ICONINFORMATION | MB_OK);
 	}
 }
-/*// Updates
-
-void FMApplication::GetUpdateSettings(BOOL& EnableAutoUpdate, INT& Interval)
-{
-	EnableAutoUpdate = GetInt(_T("EnableAutoUpdate"), 1)!=0;
-	Interval = GetInt(_T("UpdateCheckInterval"), 0);
-}
-
-void FMApplication::WriteUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
-{
-	WriteInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
-	WriteInt(_T("UpdateCheckInterval"), Interval);
-}
-
-BOOL FMApplication::IsUpdateCheckDue()
-{
-	BOOL EnableAutoUpdate;
-	INT Interval;
-	GetUpdateSettings(EnableAutoUpdate, Interval);
-
-	if (EnableAutoUpdate && (Interval>=0) && (Interval<=2))
-	{
-		FILETIME ft;
-		GetSystemTimeAsFileTime(&ft);
-
-		ULARGE_INTEGER LastUpdateCheck;
-		LastUpdateCheck.HighPart = GetInt(_T("LastUpdateCheckHigh"), 0);
-		LastUpdateCheck.LowPart = GetInt(_T("LastUpdateCheckLow"), 0);
-
-		ULARGE_INTEGER Now;
-		Now.HighPart = ft.dwHighDateTime;
-		Now.LowPart = ft.dwLowDateTime;
-
-#define SECOND (10000000ull)
-#define MINUTE (60ull*SECOND)
-#define HOUR   (60ull*MINUTE)
-#define DAY    (24ull*HOUR)
-
-		ULARGE_INTEGER NextUpdateCheck = LastUpdateCheck;
-		NextUpdateCheck.QuadPart += 10ull*SECOND;
-
-		switch (Interval)
-		{
-		case 0:
-			NextUpdateCheck.QuadPart += DAY;
-			break;
-
-		case 1:
-			NextUpdateCheck.QuadPart += 7ull*DAY;
-			break;
-
-		case 2:
-			NextUpdateCheck.QuadPart += 30ull*DAY;
-			break;
-		}
-
-		if ((Now.QuadPart>=NextUpdateCheck.QuadPart) || (Now.QuadPart<LastUpdateCheck.QuadPart))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-void FMApplication::CheckedForUpdate()
-{
-	FILETIME ft;
-	GetSystemTimeAsFileTime(&ft);
-
-	ULARGE_INTEGER Now;
-	Now.HighPart = ft.dwHighDateTime;
-	Now.LowPart = ft.dwLowDateTime;
-
-	WriteInt(_T("LastUpdateCheckHigh"), Now.HighPart);
-	WriteInt(_T("LastUpdateCheckLow"), Now.LowPart);
-}*/
 
 
 BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
@@ -955,15 +908,12 @@ END_MESSAGE_MAP()
 
 void FMApplication::OnBackstagePurchase()
 {
-	CString URL((LPCSTR)IDS_PURCHASEURL);
-
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_PURCHASEURL), NULL, NULL, SW_SHOWNORMAL);
 }
 
 void FMApplication::OnBackstageEnterLicenseKey()
 {
-	FMLicenseDlg dlg(m_pActiveWnd);
-	dlg.DoModal();
+	FMLicenseDlg(m_pActiveWnd).DoModal();
 }
 
 void FMApplication::OnBackstageSupport()

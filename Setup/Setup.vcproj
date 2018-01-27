@@ -163,10 +163,6 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\air.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\airx.ico"
 			>
 		</File>

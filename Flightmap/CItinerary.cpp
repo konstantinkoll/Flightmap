@@ -9,84 +9,12 @@
 #include <winioctl.h>
 
 
-void ResetFlight(AIRX_Flight& Flight)
-{
-	ZeroMemory(&Flight, sizeof(AIRX_Flight));
-	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
-	Flight.Color = (COLORREF)-1;
-}
-
-void CalcDistance(AIRX_Flight& Flight, BOOL Force)
-{
-	if ((Flight.Flags & AIRX_DistanceCalculated) && !Force)
-		return;
-
-	Flight.Flags |= AIRX_DistanceCalculated;
-	Flight.Flags &= ~(AIRX_DistanceValid | AIRX_UnknownFrom | AIRX_UnknownTo);
-
-	FMAirport* pFrom;
-	if (!FMIATAGetAirportByCode(Flight.From.Code, pFrom))
-		Flight.Flags |= AIRX_UnknownFrom;
-
-	FMAirport* pTo;
-	if (!FMIATAGetAirportByCode(Flight.To.Code, pTo))
-		Flight.Flags |= AIRX_UnknownTo;
-
-	if ((Flight.Flags & (AIRX_UnknownFrom | AIRX_UnknownTo))==0)
-	{
-		const BOOL UseWaypoint = (pFrom==pTo) && ((Flight.Waypoint.Latitude!=0) || (Flight.Waypoint.Longitude!=0));
-		const DOUBLE Lat1 = PI*pFrom->Location.Latitude/180;
-		const DOUBLE Lon1 = PI*pFrom->Location.Longitude/180;
-		const DOUBLE Lat2 = PI*(UseWaypoint ? Flight.Waypoint.Latitude : pTo->Location.Latitude)/180;
-		const DOUBLE Lon2 = PI*(UseWaypoint ? Flight.Waypoint.Longitude : pTo->Location.Longitude)/180;
-
-		const DOUBLE DeltaLon = abs(Lon1-Lon2);
-		const DOUBLE tmp1 = cos(Lat1)*sin(DeltaLon);
-		const DOUBLE tmp2 = cos(Lat2)*sin(Lat1)-sin(Lat2)*cos(Lat1)*cos(DeltaLon);
-		const DOUBLE T = sqrt(tmp1*tmp1+tmp2*tmp2);
-		const DOUBLE B = sin(Lat2)*sin(Lat1)+cos(Lat2)*cos(Lat1)*cos(DeltaLon);
-		const DOUBLE GreatCircle = atan2(T, B);
-
-		Flight.DistanceNM = 3438.461*GreatCircle;
-		if (UseWaypoint)
-			Flight.DistanceNM *= 2.0;
-
-		Flight.Flags |= AIRX_DistanceValid;
-	}
-	else
-	{
-		Flight.DistanceNM = 0.0;
-	}
-}
-
-void CalcFuture(AIRX_Flight& Flight, SYSTEMTIME* pTime)
-{
-	Flight.Flags &= ~AIRX_FutureFlight;
-	if ((Flight.From.Time.dwLowDateTime==0) && (Flight.From.Time.dwHighDateTime==0))
-		return;
-
-	SYSTEMTIME stNow;
-	if (pTime)
-	{
-		stNow = *pTime;
-	}
-	else
-	{
-		GetLocalTime(&stNow);
-	}
-
-	SYSTEMTIME stFlight;
-	FileTimeToSystemTime(&Flight.From.Time, &stFlight);
-
-	if ((stFlight.wYear>stNow.wYear) || ((stFlight.wYear==stNow.wYear) && (stFlight.wMonth>stNow.wMonth)) || ((stFlight.wYear==stNow.wYear) && (stFlight.wMonth==stNow.wMonth) && (stFlight.wDay>stNow.wDay)))
-		Flight.Flags |= AIRX_FutureFlight;
-}
+// Helpers
+//
 
 void PrepareEditCtrl(CMFCMaskedEdit* pMaskedEdit, UINT Attr, AIRX_Flight* pFlight)
 {
 	ASSERT(pMaskedEdit);
-
-	CString tmpStr;
 
 	switch (FMAttributes[Attr].Type)
 	{
@@ -136,18 +64,14 @@ void PrepareEditCtrl(CMFCMaskedEdit* pMaskedEdit, UINT Attr, AIRX_Flight* pFligh
 		break;
 
 	case FMTypeDateTime:
-		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_DATETIME));
-
-		pMaskedEdit->SetCueBanner(tmpStr);
+		pMaskedEdit->SetCueBanner(CString((LPCSTR)IDS_CUEBANNER_DATETIME));
 		pMaskedEdit->SetLimitText(16);
 		pMaskedEdit->SetValidChars(_T("0123456789:-. "));
 
 		break;
 
 	case FMTypeTime:
-		ENSURE(tmpStr.LoadString(IDS_CUEBANNER_TIME));
-
-		pMaskedEdit->SetCueBanner(tmpStr);
+		pMaskedEdit->SetCueBanner(CString((LPCSTR)IDS_CUEBANNER_TIME));
 		pMaskedEdit->SetLimitText(5);
 		pMaskedEdit->SetValidChars(_T("0123456789:"));
 
@@ -163,38 +87,6 @@ void PrepareEditCtrl(CMFCMaskedEdit* pMaskedEdit, UINT Attr, AIRX_Flight* pFligh
 	}
 }
 
-void PrepareCarrierCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
-{
-	ASSERT(pComboBox);
-
-	if (pItinerary)
-		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
-			if (pItinerary->m_Flights[a].Carrier[0])
-				if (pComboBox->FindStringExact(-1, pItinerary->m_Flights[a].Carrier)==CB_ERR)
-					pComboBox->AddString(pItinerary->m_Flights[a].Carrier);
-
-	if (IncludeDatabase)
-		for (UINT a=0; a<CARRIERCOUNT; a++)
-			if (pComboBox->FindStringExact(-1, Carriers[a])==CB_ERR)
-				pComboBox->AddString(Carriers[a]);
-}
-
-void PrepareEquipmentCtrl(CComboBox* pComboBox, CItinerary* pItinerary, BOOL IncludeDatabase)
-{
-	ASSERT(pComboBox);
-
-	if (pItinerary)
-		for (UINT a=0; a<pItinerary->m_Flights.m_ItemCount; a++)
-			if (pItinerary->m_Flights[a].Equipment[0])
-				if (pComboBox->FindStringExact(-1, pItinerary->m_Flights[a].Equipment)==CB_ERR)
-					pComboBox->AddString(pItinerary->m_Flights[a].Equipment);
-
-	if (IncludeDatabase)
-		for (UINT a=0; a<EQUIPMENTCOUNT; a++)
-			if (pComboBox->FindStringExact(-1, Equipment[a])==CB_ERR)
-				pComboBox->AddString(Equipment[a]);
-}
-
 void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT Attr, AIRX_Flight* pFlight)
 {
 	DDX_Control(pDX, nIDC, rControl);
@@ -206,7 +98,7 @@ void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT
 			CString tmpStr;
 			rControl.GetWindowText(tmpStr);
 
-			StringToAttribute(tmpStr.GetBuffer(), *pFlight, Attr);
+			StringToAttribute(tmpStr, *pFlight, Attr);
 		}
 	}
 	else
@@ -215,91 +107,42 @@ void DDX_MaskedText(CDataExchange* pDX, INT nIDC, CMFCMaskedEdit& rControl, UINT
 	}
 }
 
-CString ExportAttribute(const AIRX_Flight& Flight, UINT Attr, BOOL Label=TRUE, BOOL Colon=TRUE, BOOL NewLine=TRUE)
+BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, WCHAR* DelimiterFound)
 {
-	WCHAR tmpBuf[256];
-	AttributeToString(Flight, Attr, tmpBuf, 256);
+	if (Pos>=strSrc.GetLength())
+		return FALSE;
 
-	if (tmpBuf[0]==L'\0')
-		return _T("");
+	strDst.Empty();
 
-	CString tmpStr;
-	if (Label)
+	while (Pos<strSrc.GetLength())
 	{
-		ENSURE(tmpStr.LoadString(IDS_COLUMN0+Attr));
-		tmpStr.Append(Colon ? _T(": ") : _T(" "));
+		if (Delimiter.Find(strSrc[Pos])!=-1)
+		{
+			if (DelimiterFound)
+				*DelimiterFound = strSrc[Pos];
+
+			Pos++;
+
+			return TRUE;
+		}
+
+		strDst.AppendChar(strSrc[Pos++]);
 	}
 
-	tmpStr.Append(tmpBuf);
-	if (NewLine)
-		tmpStr.Append(_T("\n"));
+	if (DelimiterFound)
+		*DelimiterFound = L'\0';
 
-	return tmpStr;
-}
-
-CString ExportLocation(const AIRX_Flight& Flight, UINT AttrBase)
-{
-	CString DateTime = ExportAttribute(Flight, AttrBase+1, FALSE, FALSE, FALSE);
-	CString Gate = ExportAttribute(Flight, AttrBase+2, TRUE, FALSE, FALSE);
-
-	CString tmpStr =ExportAttribute(Flight, AttrBase, TRUE, TRUE, FALSE);
-
-	if (!DateTime.IsEmpty() || !Gate.IsEmpty())
-	{
-		tmpStr += _T(" (");
-
-		if (!DateTime.IsEmpty())
-		{
-			tmpStr += DateTime;
-			if (!Gate.IsEmpty())
-			{
-				tmpStr += _T(", ");
-				tmpStr += Gate;
-			}
-		}
-		else
-		{
-			tmpStr += Gate;
-		}
-
-		tmpStr += _T(")");
-	}
-
-	return tmpStr+_T("\n");
-}
-
-void CompressFile(HANDLE hFile, WCHAR cDrive, BOOL bCompress)
-{
-	BY_HANDLE_FILE_INFORMATION FileInformation;
-	if (GetFileInformationByHandle(hFile, &FileInformation))
-		if ((FileInformation.dwFileAttributes & FILE_ATTRIBUTE_ENCRYPTED)==0)
-		{
-			WCHAR Root[4] = L" :\\";
-			Root[0] = cDrive;
-
-			DWORD Flags;
-			if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
-				if (Flags & FS_FILE_COMPRESSION)
-				{
-					USHORT Mode = bCompress ? COMPRESSION_FORMAT_LZNT1 : COMPRESSION_FORMAT_NONE;
-					DWORD Returned;
-
-					DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
-				}
-		}
+	return TRUE;
 }
 
 
 // ToString
 //
 
-void MilesToString(CString &tmpStr, LONG AwardMiles, LONG StatusMiles)
-{
-	tmpStr.Format(IDS_MILES, AwardMiles, StatusMiles);
-}
-
 void DistanceToString(LPWSTR pStr, SIZE_T cCount, DOUBLE DistanceNM)
 {
+	ASSERT(pStr);
+
 	if (theApp.m_UseStatuteMiles)
 	{
 		swprintf_s(pStr, cCount, L"%u mi (%u km)", (UINT)(DistanceNM*1.15077945), (UINT)(DistanceNM*1.852));
@@ -312,29 +155,39 @@ void DistanceToString(LPWSTR pStr, SIZE_T cCount, DOUBLE DistanceNM)
 
 void TimeToString(LPWSTR pStr, SIZE_T cCount, UINT Time)
 {
+	ASSERT(pStr);
+
 	swprintf_s(pStr, cCount, L"%02d:%02d", Time/60, Time%60);
 }
 
-void DateTimeToString(LPWSTR pStr, SIZE_T cCount, FILETIME ft)
+void DateTimeToString(LPWSTR pStr, SIZE_T cCount, const FILETIME& FileTime)
 {
-	SYSTEMTIME st;
-	FileTimeToSystemTime(&ft, &st);
+	ASSERT(pStr);
 
-	if ((st.wHour!=0) || (st.wMinute!=0))
+	SYSTEMTIME SystemTime;
+	FileTimeToSystemTime(&FileTime, &SystemTime);
+
+	if (SystemTime.wHour || SystemTime.wMinute)
 	{
-		swprintf_s(pStr, cCount, L"%04d-%02d-%02d %02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
+		swprintf_s(pStr, cCount, L"%04d-%02d-%02d %02d:%02d", SystemTime.wYear, SystemTime.wMonth, SystemTime.wDay, SystemTime.wHour, SystemTime.wMinute);
 	}
 	else
 	{
-		swprintf_s(pStr, cCount, L"%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
+		swprintf_s(pStr, cCount, L"%04d-%02d-%02d", SystemTime.wYear, SystemTime.wMonth, SystemTime.wDay);
 	}
 }
 
 void RouteToString(LPWSTR pStr, SIZE_T cCount, AIRX_Route& Route)
 {
+	ASSERT(pStr);
+
 	if (Route.DistanceNM==-1)
 	{
-		wcscpy_s(pStr, cCount, _T("—"));
+		ASSERT(cCount>=2);
+
+		pStr[0] = L'—';
+		pStr[1] = L'\0';
+
 		return;
 	}
 
@@ -345,6 +198,13 @@ void RouteToString(LPWSTR pStr, SIZE_T cCount, AIRX_Route& Route)
 	DistanceToString(tmpBuf, 256, Route.DistanceNM);
 
 	swprintf_s(pStr, cCount, L"%s–%s, %s", From.GetBuffer(), To.GetBuffer(), tmpBuf);
+}
+
+void MilesToString(LPWSTR pStr, SIZE_T cCount, LONG AwardMiles, LONG StatusMiles)
+{
+	ASSERT(pStr);
+
+	swprintf_s(pStr, cCount, CString((LPCSTR)IDS_MILES), AwardMiles, StatusMiles);
 }
 
 void AttributeToString(const AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T cCount)
@@ -400,8 +260,8 @@ void AttributeToString(const AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T
 		break;
 
 	case FMTypeDateTime:
-		if ((((FILETIME*)pData)->dwHighDateTime!=0) || (((FILETIME*)pData)->dwLowDateTime!=0))
-			DateTimeToString(pStr, cCount, *((FILETIME*)pData));
+		if ((((LPFILETIME)pData)->dwHighDateTime!=0) || (((LPFILETIME)pData)->dwLowDateTime!=0))
+			DateTimeToString(pStr, cCount, *((LPFILETIME)pData));
 
 		break;
 
@@ -453,95 +313,96 @@ void AttributeToString(const AIRX_Flight& Flight, UINT Attr, LPWSTR pStr, SIZE_T
 // FromString
 //
 
-__forceinline void ScanUINT(LPCWSTR Str, UINT& num)
-{
-	swscanf_s(Str, L"%u", &num);
-}
-
-void ScanDateTime(LPCWSTR pStr, FILETIME& ft)
+inline void ScanUINT(LPCWSTR pStr, UINT& num)
 {
 	ASSERT(pStr);
+
+	swscanf_s(pStr, L"%u", &num);
+}
+
+void ScanDateTime(LPCWSTR pStr, FILETIME& FileTime)
+{
+	ASSERT(pStr);
+
+	INT cToken;
 
 	UINT Year;
 	UINT Month;
 	UINT Day;
 	UINT Hour;
 	UINT Minute;
-	SYSTEMTIME st;
 
-	INT cToken = swscanf_s(pStr, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute);
-	if (cToken>=3)
+	SYSTEMTIME SystemTime;
+	ZeroMemory(&SystemTime, sizeof(SystemTime));
+
+	if ((cToken=swscanf_s(pStr, L"%u-%u-%u %u:%u", &Year, &Month, &Day, &Hour, &Minute))>=3)
 	{
-		ZeroMemory(&st, sizeof(st));
-
-		st.wYear = (WORD)Year;
-		st.wMonth = (WORD)Month;
-		st.wDay = (WORD)Day;
+		SystemTime.wYear = (WORD)Year;
+		SystemTime.wMonth = (WORD)Month;
+		SystemTime.wDay = (WORD)Day;
 
 		if (cToken==5)
 		{
-			st.wHour = (WORD)Hour;
-			st.wMinute = (WORD)Minute;
+			SystemTime.wHour = (WORD)Hour;
+			SystemTime.wMinute = (WORD)Minute;
 		}
 
-		SystemTimeToFileTime(&st, &ft);
+		SystemTimeToFileTime(&SystemTime, &FileTime);
+
 		return;
 	}
 
-	cToken = swscanf_s(pStr, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute);
-	if (cToken>=3)
+	if ((cToken=swscanf_s(pStr, L"%u/%u/%u %u:%u", &Month, &Day, &Year, &Hour, &Minute))>=3)
 	{
-		ZeroMemory(&st, sizeof(st));
-
-		st.wYear = (WORD)Year;
-		st.wMonth = (WORD)Month;
-		st.wDay = (WORD)Day;
+		SystemTime.wYear = (WORD)Year;
+		SystemTime.wMonth = (WORD)Month;
+		SystemTime.wDay = (WORD)Day;
 
 		if (cToken==5)
 		{
-			st.wHour = (WORD)Hour;
-			st.wMinute = (WORD)Minute;
+			SystemTime.wHour = (WORD)Hour;
+			SystemTime.wMinute = (WORD)Minute;
 		}
 
-		SystemTimeToFileTime(&st, &ft);
+		SystemTimeToFileTime(&SystemTime, &FileTime);
+
 		return;
 	}
 
-	cToken = swscanf_s(pStr, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute);
-	if (cToken>=3)
+	if ((cToken=swscanf_s(pStr, L"%u.%u.%u %u:%u", &Day, &Month, &Year, &Hour, &Minute))>=3)
 	{
-		ZeroMemory(&st, sizeof(st));
-
-		st.wYear = (WORD)Year;
-		st.wMonth = (WORD)Month;
-		st.wDay = (WORD)Day;
+		SystemTime.wYear = (WORD)Year;
+		SystemTime.wMonth = (WORD)Month;
+		SystemTime.wDay = (WORD)Day;
 
 		if (cToken==5)
 		{
-			st.wHour = (WORD)Hour;
-			st.wMinute = (WORD)Minute;
+			SystemTime.wHour = (WORD)Hour;
+			SystemTime.wMinute = (WORD)Minute;
 		}
 
-		SystemTimeToFileTime(&st, &ft);
+		SystemTimeToFileTime(&SystemTime, &FileTime);
+
 		return;
 	}
 
-	ft.dwHighDateTime = ft.dwLowDateTime = 0;
+	FileTime.dwHighDateTime = FileTime.dwLowDateTime = 0;
 }
 
 void ScanTime(LPCWSTR pStr, UINT& Time)
 {
 	ASSERT(pStr);
 
+	INT cToken;
+
 	UINT Hour;
 	UINT Minute;
 
-	INT c = swscanf_s(pStr, L"%u:%u", &Hour, &Minute);
-	if (c>=1)
+	if ((cToken=swscanf_s(pStr, L"%u:%u", &Hour, &Minute))>=1)
 	{
 		Time = Hour*60;
 
-		if (c==2)
+		if (cToken==2)
 			Time += min(Minute, 59);
 
 		return;
@@ -558,250 +419,96 @@ void ScanColor(LPCWSTR pStr, COLORREF& col)
 		if (col!=(COLORREF)-1)
 		{
 			col = (((UINT)col & 0xFF0000)>>16) | ((UINT)col & 0xFF00) | (((UINT)col & 0xFF)<<16);
+
 			return;
 		}
 
 	col = (COLORREF)-1;
 }
 
-void StringToAttribute(LPWSTR pStr, AIRX_Flight& Flight, UINT Attr)
+void StringToAttribute(CString tmpStr, AIRX_Flight& Flight, UINT Attr)
 {
 	ASSERT(Attr<FMAttributeCount);
-	ASSERT(pStr);
 
-	while ((*pStr!=L'\0') && (*pStr<=L' '))
-		pStr++;
-
-	WCHAR* Ptr = pStr;
-	WCHAR* pEnd = pStr;
-
-	while (*Ptr!=L'\0')
-	{
-		if (*Ptr!=L' ')
-			pEnd = Ptr+1;
-
-		Ptr++;
-	}
-
-	if (*pEnd)
-		*pEnd = L'\0';
+	tmpStr.Trim();
 
 	const LPVOID pData = (((LPBYTE)&Flight)+FMAttributes[Attr].Offset);
-	WCHAR* pWChar;
-	CHAR* pChar;
 
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeUnicodeString:
-		wcsncpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, (LPCWSTR)pStr, _TRUNCATE);
-
 		if ((Attr==2) || (Attr==5) || (Attr==9))
-		{
-			pWChar = (LPWSTR)pData;
+			tmpStr.MakeUpper();
 
-			while (*pWChar)
-			{
-				*pWChar = (WCHAR)towupper(*pWChar);
-				pWChar++;
-			}
-		}
-
+		wcsncpy_s((WCHAR*)pData, FMAttributes[Attr].DataParameter, tmpStr, _TRUNCATE);
 		break;
 
 	case FMTypeAnsiString:
-		pChar = (CHAR*)pData;
-		WideCharToMultiByte(CP_ACP, 0, pStr, -1, pChar, FMAttributes[Attr].DataParameter, NULL, NULL);
+		tmpStr.MakeUpper();
 
-		while (*pChar)
-			*(pChar++) = (CHAR)toupper(*pChar);
-
+		WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, (LPSTR)pData, FMAttributes[Attr].DataParameter, NULL, NULL);
 		break;
 
 	case FMTypeUINT:
-		ScanUINT(pStr, *((UINT*)pData));
+		ScanUINT(tmpStr, *((UINT*)pData));
 		break;
 
 	case FMTypeFlags:
 		Flight.Flags &= ~(AIRX_AwardFlight | AIRX_GroundTransportation | AIRX_BusinessTrip | AIRX_LeisureTrip);
 
-		if (wcschr(pStr, L'A'))
+		if (tmpStr.Find(L'A')!=-1)
 			Flight.Flags |= AIRX_AwardFlight;
 
-		if (wcschr(pStr, L'G'))
+		if (tmpStr.Find(L'G')!=-1)
 			Flight.Flags |= AIRX_GroundTransportation;
 
-		if (wcschr(pStr, L'B'))
+		if (tmpStr.Find(L'B')!=-1)
 			Flight.Flags |= AIRX_BusinessTrip;
 
-		if (wcschr(pStr, L'L'))
+		if (tmpStr.Find(L'L')!=-1)
 			Flight.Flags |= AIRX_LeisureTrip;
 
-		if (wcschr(pStr, L'U'))
+		if (tmpStr.Find(L'U')!=-1)
 			Flight.Flags |= AIRX_Upgrade;
 
-		if (wcschr(pStr, L'C'))
+		if (tmpStr.Find(L'C')!=-1)
 			Flight.Flags |= AIRX_Cancelled;
 
 		break;
 
 	case FMTypeDateTime:
-		ScanDateTime(pStr, *((FILETIME*)pData));
+		ScanDateTime(tmpStr, *((LPFILETIME)pData));
 		break;
 
 	case FMTypeTime:
-		ScanTime(pStr, *((UINT*)pData));
+		ScanTime(tmpStr, *((UINT*)pData));
 		break;
 
 	case FMTypeClass:
-		*((CHAR*)pData) = (_wcsicmp(L"Y", pStr)==0) ? AIRX_Economy : (_wcsicmp(L"Y+", pStr)==0) ? AIRX_PremiumEconomy : (_wcsicmp(L"J", pStr)==0) ? AIRX_Business : (_wcsicmp(L"F", pStr)==0) ? AIRX_First : ((_wcsicmp(L"C", pStr)==0) || (_wcsicmp(L"CREW", pStr)==0) || (_wcsicmp(L"CREW/DCM", pStr)==0)) ? AIRX_Crew : ((_wcsicmp(L"H", pStr)==0) || (_wcsicmp(L"CHARTER", pStr)==0)) ? AIRX_Charter : AIRX_Unknown;
+		tmpStr.MakeUpper();
+
+		*((CHAR*)pData) =
+			(tmpStr==_T("Y")) ? AIRX_Economy :
+			(tmpStr==_T("Y+")) ? AIRX_PremiumEconomy :
+			(tmpStr==_T("J")) ? AIRX_Business :
+			(tmpStr==_T("F")) ? AIRX_First :
+			((tmpStr==_T("C")) || (tmpStr==_T("CREW")) || (tmpStr==_T("CREW/DCM"))) ? AIRX_Crew :
+			((tmpStr==_T("H")) || (tmpStr==_T("CHARTER"))) ? AIRX_Charter : AIRX_Unknown;
 		break;
 
 	case FMTypeColor:
-		ScanColor(pStr, *((COLORREF*)pData));
+		ScanColor(tmpStr, *((COLORREF*)pData));
 		break;
 	}
-}
-
-
-// Other
-//
-
-BOOL Tokenize(const CString& strSrc, CString& strDst, INT& Pos, const CString& Delimiter, LPWSTR pDelimiterFound)
-{
-	if (Pos>=strSrc.GetLength())
-		return FALSE;
-
-	strDst = _T("");
-
-	while (Pos<strSrc.GetLength())
-	{
-		if (Delimiter.Find(strSrc[Pos])!=-1)
-		{
-			if (pDelimiterFound)
-				*pDelimiterFound = strSrc[Pos];
-
-			Pos++;
-
-			return TRUE;
-		}
-
-		strDst.AppendChar(strSrc[Pos++]);
-	}
-
-	if (pDelimiterFound)
-		*pDelimiterFound = L'\0';
-
-	return TRUE;
-}
-
-__forceinline UINT ReadUTF7Length(CFile& f)
-{
-	UINT Result = 0;
-	UINT Shift = 0;
-	BYTE b;
-
-	do
-	{
-		if (f.Read(&b, 1)!=1)
-			return 0;
-
-		Result |= (b & 0x7F) << Shift;
-		Shift += 7;
-	}
-	while (b & 0x80);
-
-	return Result;
-}
-
-CString ReadUTF7String(CFile& f)
-{
-	UINT nCount = ReadUTF7Length(f);
-	if (!nCount)
-		return _T("");
-
-	LPBYTE Buffer = new BYTE[nCount];
-	CString Result;
-
-	try
-	{
-		if (f.Read(Buffer, nCount)!=nCount)
-			goto Finish;
-	}
-	catch(CFileException ex)
-	{
-		goto Finish;
-	}
-
-	WCHAR Ch = L'\0';
-	UINT Shift = 0;
-	UINT Ptr = 0;
-
-	while (nCount)
-	{
-		Ch |= (Buffer[Ptr] & 0x7F) << Shift;
-
-		if ((Buffer[Ptr++] & 0x80)==0)
-		{
-			Result.AppendChar(Ch);
-			Ch = L'\0';
-			Shift = 0;
-		}
-		else
-		{
-			Shift += 7;
-		}
-
-		nCount --;
-	}
-
-Finish:
-	free(Buffer);
-	return Result;
-}
-
-__forceinline void ReadUTF7WCHAR(CFile& f, LPWSTR pStr, SIZE_T cCount)
-{
-	wcscpy_s(pStr, cCount, ReadUTF7String(f));
-}
-
-__forceinline void ReadUTF7CHAR(CFile& f, LPSTR pStr, SIZE_T cCount)
-{
-	WideCharToMultiByte(CP_ACP, 0, ReadUTF7String(f), -1, pStr, (INT)cCount, NULL, NULL);
-}
-
-void ReadUTF7FILETIME(CFile& f, FILETIME& Time)
-{
-	ScanDateTime(ReadUTF7String(f), Time);
-}
-
-__forceinline void ReadUTF7COLORREF(CFile& f, COLORREF& Color)
-{
-	ScanColor(ReadUTF7String(f), Color);
-}
-
-void ReadUTF7UINT(CFile& f, UINT& Number)
-{
-	ScanUINT(ReadUTF7String(f), Number);
-}
-
-
-BOOL ReadRecord(CFile& f, LPVOID buf, UINT BufferSize, UINT OnDiscSize)
-{
-	UINT Read = BufferSize ? f.Read(buf, min(BufferSize, OnDiscSize)) : 0;
-
-	if (OnDiscSize>BufferSize)
-		f.Seek(OnDiscSize-BufferSize, CFile::current);
-
-	return Read==min(BufferSize, OnDiscSize);
 }
 
 
 // CItinerary
 //
 
-#define AttachmentEndBuffer     1
+#define ATTACHMENT_ENDBUFFER     1
 
-CItinerary::CItinerary(const CString& Filename)
+CItinerary::CItinerary(const CString& Path)
 {
 	ZeroMemory(&m_Metadata, sizeof(m_Metadata));
 
@@ -827,21 +534,18 @@ CItinerary::CItinerary(const CString& Filename)
 	}
 
 	// File
-	if (!Filename.IsEmpty())
+	if (!Path.IsEmpty())
 	{
-		CString Ext = Filename;
+		CString Ext = Path;
 		Ext.Delete(0, Ext.ReverseFind(L'\\')+1);
 		Ext.Delete(0, Ext.ReverseFind(L'.')+1);
 		Ext.MakeLower();
 
 		if (Ext==_T("airx"))
-			OpenAIRX(Filename);
-
-		if (Ext==_T("air"))
-			OpenAIR(Filename);
+			OpenAIRX(Path);
 
 		if (Ext==_T("csv"))
-			OpenCSV(Filename);
+			OpenCSV(Path);
 	}
 }
 
@@ -870,6 +574,25 @@ CItinerary::~CItinerary()
 {
 	for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
 		FreeAttachment(m_Attachments[a]);
+}
+
+
+// Sample itineraries
+
+FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute)
+{
+	SYSTEMTIME SystemTime;
+	SystemTime.wYear = wYear;
+	SystemTime.wMonth = wMonth;
+	SystemTime.wDay = wDay;
+	SystemTime.wHour = wHour;
+	SystemTime.wMinute = wMinute;
+	SystemTime.wDayOfWeek = SystemTime.wMilliseconds = 0;
+
+	FILETIME FileTime;
+	SystemTimeToFileTime(&SystemTime, &FileTime);
+
+	return FileTime;
 }
 
 void CItinerary::NewSampleAtlantic()
@@ -911,172 +634,128 @@ void CItinerary::NewSamplePacific()
 	AddFlight("DFW", "YVR", L"American Airlines", L"Boeing 737", "AA 887", AIRX_Economy, "22B", "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 23, 18, 25));
 }
 
-void CItinerary::OpenAIRX(const CString& Filename)
+
+// Open and save
+
+void CItinerary::SetDisplayName(const CString& Path)
 {
-	ASSERT(!m_IsOpen);
+	const LPCWSTR pChar = wcsrchr(Path, L'\\');
 
-	LPVOID pData = NULL;
-
-	CFile f;
-	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
-	{
-		m_FileName = Filename;
-		SetDisplayName(Filename);
-		theApp.AddToRecentFiles(Filename);
-		SHAddToRecentDocs(SHARD_PATHW, Filename);
-
-		SYSTEMTIME st;
-		GetLocalTime(&st);
-
-		try
-		{
-			AIRX_Header Header;
-			ZeroMemory(&Header, sizeof(Header));
-
-			if (f.Read(&Header, sizeof(Header))==sizeof(Header))
-				if (Header.Magic==0x58524941)
-				{
-					ReadRecord(f, &m_Metadata, sizeof(m_Metadata), Header.MetadataRecordSize);
-
-					for (UINT a=0; a<Header.FlightCount; a++)
-					{
-						AIRX_Flight Flight;
-						ResetFlight(Flight);
-
-						if (ReadRecord(f, &Flight, sizeof(Flight), Header.FlightRecordSize))
-						{
-							CalcDistance(Flight, TRUE);
-							CalcFuture(Flight, &st);
-
-							if (Flight.AttachmentCount>AIRX_MaxAttachmentCount)
-								Flight.AttachmentCount = AIRX_MaxAttachmentCount;
-
-							m_Flights.AddItem(Flight);
-						}
-					}
-
-					if (m_Metadata.CurrentRow>m_Flights.m_ItemCount)
-						m_Metadata.CurrentRow = m_Flights.m_ItemCount;
-
-					for (UINT a=0; a<Header.AttachmentCount; a++)
-					{
-						AIRX_Attachment Attachment;
-						ZeroMemory(&Attachment, sizeof(Attachment));
-
-						if (ReadRecord(f, &Attachment, sizeof(Attachment), Header.AttachmentRecordSize))
-						{
-							Attachment.IconID = -1;
-
-							if (pData)
-								free(pData);
-
-							pData = malloc(Attachment.Size+AttachmentEndBuffer);
-							if (pData)
-								if (f.Read(pData, Attachment.Size)==Attachment.Size)
-								{
-									Attachment.pData = pData;
-									pData = NULL;
-
-									ValidateAttachment(Attachment, TRUE);
-
-									m_Attachments.AddItem(Attachment);
-								}
-						}
-					}
-				}
-				else
-				{
-					FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
-				}
-
-			f.Close();
-		}
-		catch(CFileException ex)
-		{
-			f.Close();
-			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
-		}
-	}
-	else
-	{
-		FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
-	}
-
-	if (pData)
-		free(pData);
+	m_DisplayName = pChar ? pChar+1 : Path;
 }
 
-void CItinerary::OpenAIR(const CString& Filename)
+void CItinerary::CompressFile(HANDLE hFile, WCHAR cDrive, BOOL bCompress)
+{
+	BY_HANDLE_FILE_INFORMATION FileInformation;
+	if (GetFileInformationByHandle(hFile, &FileInformation) && ((FileInformation.dwFileAttributes & FILE_ATTRIBUTE_ENCRYPTED)==0))
+	{
+		WCHAR Root[4] = L" :\\";
+		Root[0] = cDrive;
+
+		DWORD Flags;
+		if (GetVolumeInformation(Root, NULL, 0, NULL, NULL, &Flags, NULL, 0))
+			if (Flags & FS_FILE_COMPRESSION)
+			{
+				USHORT Mode = bCompress ? COMPRESSION_FORMAT_LZNT1 : COMPRESSION_FORMAT_NONE;
+				DWORD Returned;
+
+				DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &Mode, sizeof(Mode), NULL, 0, &Returned, NULL);
+			}
+	}
+}
+
+BOOL CItinerary::ReadRecord(CFile& File, LPVOID pBuffer, UINT BufferSize, UINT OnDiscSize)
+{
+	ASSERT(pBuffer);
+
+	UINT Read = BufferSize ? File.Read(pBuffer, min(BufferSize, OnDiscSize)) : 0;
+
+	if (OnDiscSize>BufferSize)
+		File.Seek(OnDiscSize-BufferSize, CFile::current);
+
+	return Read==min(BufferSize, OnDiscSize);
+}
+
+void CItinerary::OpenAIRX(const CString& Path)
 {
 	ASSERT(!m_IsOpen);
 
-	CFile f;
-	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
+	CFile File;
+	if (File.Open(Path, CFile::modeRead | CFile::osSequentialScan))
 	{
-		SetDisplayName(Filename);
-		theApp.AddToRecentFiles(Filename);
-		SHAddToRecentDocs(SHARD_PATHW, Filename);
+		SetDisplayName(m_FileName=Path);
+		theApp.AddToRecentFiles(Path);
+		SHAddToRecentDocs(SHARD_PATHW, Path);
 
-		SYSTEMTIME st;
-		GetLocalTime(&st);
+		SYSTEMTIME stLocal;
+		GetLocalTime(&stLocal);
 
 		try
 		{
-			UINT Count = 0;
-			f.Read(&Count, sizeof(Count));
+			// No need to zero out the header
+			AIRX_Header Header;
 
-			if ((ULONGLONG)Count*30>f.GetLength())
+			if ((File.Read(&Header, sizeof(Header))==sizeof(Header)) && (Header.Magic==0x58524941))
 			{
-				FMErrorBox(CWnd::GetActiveWindow(), IDS_ILLEGALFORMAT);
+				// m_Metadata is already zeroed out in constructor
+				ReadRecord(File, &m_Metadata, sizeof(m_Metadata), Header.MetadataRecordSize);
+
+				// Reset flight once to accomodate future expansion
+				AIRX_Flight Flight;
+				ResetFlight(Flight);
+
+				for (UINT a=0; a<Header.FlightCount; a++)
+				{
+					if (ReadRecord(File, &Flight, sizeof(Flight), Header.FlightRecordSize))
+					{
+						// Mask out volatile flags
+						Flight.Flags &= (AIRX_AwardFlight | AIRX_BusinessTrip | AIRX_LeisureTrip | AIRX_GroundTransportation | AIRX_Selected | AIRX_Cancelled | AIRX_Upgrade);
+
+						// Precaution for future increase of max. attachment count
+						if (Flight.AttachmentCount>AIRX_MaxAttachmentCount)
+							Flight.AttachmentCount = AIRX_MaxAttachmentCount;
+
+						AddFlight(Flight, &stLocal);
+					}
+				}
+
+				if (m_Metadata.CurrentRow>m_Flights.m_ItemCount)
+					m_Metadata.CurrentRow = m_Flights.m_ItemCount;
+
+				AIRX_Attachment Attachment;
+				ZeroMemory(&Attachment, sizeof(Attachment));
+
+				for (UINT a=0; a<Header.AttachmentCount; a++)
+					if (ReadRecord(File, &Attachment, sizeof(Attachment), Header.AttachmentRecordSize))
+					{
+						Attachment.IconID = -1;
+
+						LPVOID pData = malloc(Attachment.FileSize+ATTACHMENT_ENDBUFFER);
+						if (pData)
+							if (File.Read(pData, Attachment.FileSize)==Attachment.FileSize)
+							{
+								Attachment.pData = pData;
+								ValidateAttachment(Attachment, TRUE);
+
+								m_Attachments.AddItem(Attachment);
+							}
+							else
+							{
+								free (pData);
+							}
+					}
 			}
 			else
 			{
-				for (UINT a=0; a<Count; a++)
-				{
-					AIRX_Flight Flight;
-					ResetFlight(Flight);
-
-					ReadUTF7CHAR(f, Flight.From.Code, 4);
-					ReadUTF7CHAR(f, Flight.To.Code, 4);
-					ReadUTF7WCHAR(f, Flight.Carrier, 64);
-					ReadUTF7WCHAR(f, Flight.Equipment, 64);
-					ReadUTF7CHAR(f, Flight.FlightNo, 8);
-
-					CString Class = ReadUTF7String(f);
-					Flight.Class = (Class==_T("Y")) ? AIRX_Economy : (Class==_T("Y+")) ? AIRX_PremiumEconomy : (Class==_T("J")) ? AIRX_Business : (Class==_T("F")) ? AIRX_First : (Class==_T("C")) ? AIRX_Crew : AIRX_Unknown;
-
-					ReadUTF7FILETIME(f, Flight.From.Time);
-					ReadUTF7COLORREF(f, Flight.Color);
-					ReadUTF7CHAR(f, Flight.Seat, 4);
-					ReadUTF7CHAR(f, Flight.Registration, 16);
-					ReadUTF7WCHAR(f, Flight.Name, 64);
-
-					if (ReadUTF7String(f).MakeUpper()==_T("A"))
-						Flight.Flags = AIRX_AwardFlight;
-
-					ReadUTF7UINT(f, Flight.MilesAward);
-					ReadUTF7UINT(f, Flight.MilesStatus);
-					ReadUTF7FILETIME(f, Flight.To.Time);
-					ReadUTF7CHAR(f, Flight.EtixCode, 7);
-					ReadUTF7UINT(f, Flight.Fare);
-
-					for (UINT b=0; b<15; b++)
-						ReadUTF7String(f);
-
-					CalcDistance(Flight, TRUE);
-					CalcFuture(Flight, &st);
-
-					m_Flights.AddItem(Flight);
-				}
+				FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 			}
-
-			f.Close();
 		}
 		catch(CFileException ex)
 		{
-			f.Close();
 			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 		}
+
+		File.Close();
 	}
 	else
 	{
@@ -1084,19 +763,19 @@ void CItinerary::OpenAIR(const CString& Filename)
 	}
 }
 
-void CItinerary::OpenCSV(const CString& Filename)
+void CItinerary::OpenCSV(const CString& Path)
 {
 	ASSERT(!m_IsOpen);
 
-	CStdioFile f;
-	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
+	CStdioFile File;
+	if (File.Open(Path, CFile::modeRead | CFile::osSequentialScan))
 	{
-		SetDisplayName(Filename);
-		theApp.AddToRecentFiles(Filename);
-		SHAddToRecentDocs(SHARD_PATHW, Filename);
+		SetDisplayName(Path);
+		theApp.AddToRecentFiles(Path);
+		SHAddToRecentDocs(SHARD_PATHW, Path);
 
-		SYSTEMTIME st;
-		GetLocalTime(&st);
+		SYSTEMTIME stLocal;
+		GetLocalTime(&stLocal);
 
 		WCHAR Separator[4];
 		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLIST, Separator, 4);
@@ -1104,66 +783,66 @@ void CItinerary::OpenCSV(const CString& Filename)
 		try
 		{
 			CString Caption;
-			if (f.ReadString(Caption))
+			if (File.ReadString(Caption))
 			{
-				CMap<CString, LPCTSTR, INT, INT&> map;
-				map[L"FROM"] = 0;
-				map[L"FRM IATA"] = 0;
-				map[L"FROM IATA"] = 0;
-				map[L"ORT VON"] = 0;
-				map[L"START"] = 0;
-				map[L"DATE & TIME"] = 1;
-				map[L"DATE"] = 1;
-				map[L"DATUM"] = 1;
-				map[L"DEPARTURE"] = 1;
-				map[L"DEPT. TIME"] = 1;
-				map[L"ZEIT VON"] = 1;
-				map[L"DEPT. GATE"] = 2;
-				map[L"TO"] = 3;
-				map[L"TO IATA"] = 3;
-				map[L"ORT BIS"] = 3;
-				map[L"ZIEL"] = 3;
-				map[L"ARRIVAL"] = 4;
-				map[L"ARR. TIME"] = 4;
-				map[L"ZEIT BIS"] = 4;
-				map[L"ARR. GATE"] = 5;
-				map[L"AIRLINE"] = 7;
-				map[L"CARRIER"] = 7;
-				map[L"OPERATOR"] = 7;
-				map[L"FLIGHT"] = 8;
-				map[L"FLIGHT #"] = 8;
-				map[L"FLIGHT_NUMBER"] = 8;
-				map[L"FLUGNR"] = 8;
-				map[L"CODESHARE"] = 9;
-				map[L"CODESHARES"] = 9;
-				map[L"EQUIPMENT"] = 10;
-				map[L"MUSTER"] = 10;
-				map[L"PLANE"] = 10;
-				map[L"TYPE"] = 10;
-				map[L"AIRCRAFT REGISTRATION"] = 11;
-				map[L"REGISTRATION"] = 11;
-				map[L"TAIL"] = 11;
-				map[L"AIRCRAFT NAME"] = 12;
-				map[L"CLASS"] = 13;
-				map[L"KLASSE"] = 13;
-				map[L"SEAT"] = 14;
-				map[L"SITZ"] = 14;
-				map[L"COLOR"] = 15;
-				map[L"ETIX"] = 16;
-				map[L"BOOKING"] = 16;
-				map[L"ETIX CODE"] = 16;
-				map[L"ETIX BOOKING CODE"] = 16;
-				map[L"FARE"] = 17;
-				map[L"PRICE"] = 17;
-				map[L"AWARD MILES"] = 18;
-				map[L"STATUS MILES"] = 19;
-				map[L"FLAGS"] = 20;
-				map[L"RATING"] = 21;
-				map[L"COMMENTS"] = 22;
-				map[L"FLIGHT TIME"] = 23;
-				map[L"VOUCHER"] = 24;
-				map[L"EVOUCHER"] = 24;
-				map[L"UPGRADE VOUCHER"] = 24;
+				CMap<CString, LPCTSTR, INT, INT&> Map;
+				Map[L"FROM"] = 0;
+				Map[L"FRM IATA"] = 0;
+				Map[L"FROM IATA"] = 0;
+				Map[L"ORT VON"] = 0;
+				Map[L"START"] = 0;
+				Map[L"DATE & TIME"] = 1;
+				Map[L"DATE"] = 1;
+				Map[L"DATUM"] = 1;
+				Map[L"DEPARTURE"] = 1;
+				Map[L"DEPT. TIME"] = 1;
+				Map[L"ZEIT VON"] = 1;
+				Map[L"DEPT. GATE"] = 2;
+				Map[L"TO"] = 3;
+				Map[L"TO IATA"] = 3;
+				Map[L"ORT BIS"] = 3;
+				Map[L"ZIEL"] = 3;
+				Map[L"ARRIVAL"] = 4;
+				Map[L"ARR. TIME"] = 4;
+				Map[L"ZEIT BIS"] = 4;
+				Map[L"ARR. GATE"] = 5;
+				Map[L"AIRLINE"] = 7;
+				Map[L"CARRIER"] = 7;
+				Map[L"OPERATOR"] = 7;
+				Map[L"FLIGHT"] = 8;
+				Map[L"FLIGHT #"] = 8;
+				Map[L"FLIGHT_NUMBER"] = 8;
+				Map[L"FLUGNR"] = 8;
+				Map[L"CODESHARE"] = 9;
+				Map[L"CODESHARES"] = 9;
+				Map[L"EQUIPMENT"] = 10;
+				Map[L"MUSTER"] = 10;
+				Map[L"PLANE"] = 10;
+				Map[L"TYPE"] = 10;
+				Map[L"AIRCRAFT REGISTRATION"] = 11;
+				Map[L"REGISTRATION"] = 11;
+				Map[L"TAIL"] = 11;
+				Map[L"AIRCRAFT NAME"] = 12;
+				Map[L"CLASS"] = 13;
+				Map[L"KLASSE"] = 13;
+				Map[L"SEAT"] = 14;
+				Map[L"SITZ"] = 14;
+				Map[L"COLOR"] = 15;
+				Map[L"ETIX"] = 16;
+				Map[L"BOOKING"] = 16;
+				Map[L"ETIX CODE"] = 16;
+				Map[L"ETIX BOOKING CODE"] = 16;
+				Map[L"FARE"] = 17;
+				Map[L"PRICE"] = 17;
+				Map[L"AWARD MILES"] = 18;
+				Map[L"STATUS MILES"] = 19;
+				Map[L"FLAGS"] = 20;
+				Map[L"RATING"] = 21;
+				Map[L"COMMENTS"] = 22;
+				Map[L"FLIGHT TIME"] = 23;
+				Map[L"VOUCHER"] = 24;
+				Map[L"EVOUCHER"] = 24;
+				Map[L"UPGRADE VOUCHER"] = 24;
 
 				INT RouteMapping = -1;
 				INT Mapping[100];
@@ -1184,7 +863,7 @@ void CItinerary::OpenCSV(const CString& Filename)
 					}
 					else
 					{
-						map.Lookup(resToken, Mapping[Column]);
+						Map.Lookup(resToken, Mapping[Column]);
 					}
 
 					Column++;
@@ -1193,12 +872,12 @@ void CItinerary::OpenCSV(const CString& Filename)
 				// Flights
 				CString Line;
 				CString Route;
-				while (f.ReadString(Line))
+				while (File.ReadString(Line))
 				{
 					AIRX_Flight Flight;
 					ResetFlight(Flight);
-					Route.Empty();
 
+					Route.Empty();
 					Pos = 0;
 					Column = 0;
 
@@ -1211,7 +890,7 @@ void CItinerary::OpenCSV(const CString& Filename)
 						else
 							if (Mapping[Column]!=-1)
 							{
-								StringToAttribute(resToken.GetBuffer(), Flight, Mapping[Column]);
+								StringToAttribute(resToken, Flight, Mapping[Column]);
 							}
 
 						Column++;
@@ -1219,10 +898,7 @@ void CItinerary::OpenCSV(const CString& Filename)
 
 					if (Route.IsEmpty())
 					{
-						CalcDistance(Flight, TRUE);
-						CalcFuture(Flight);
-
-						m_Flights.AddItem(Flight);
+						AddFlight(Flight, &stLocal);
 					}
 					else
 					{
@@ -1236,15 +912,12 @@ void CItinerary::OpenCSV(const CString& Filename)
 							From = To;
 							To = resToken;
 
-							if ((!From.IsEmpty()) && (!To.IsEmpty()))
+							if (!From.IsEmpty() && !To.IsEmpty())
 							{
-								StringToAttribute(From.GetBuffer(), Flight, 0);
-								StringToAttribute(To.GetBuffer(), Flight, 3);
+								StringToAttribute(From, Flight, 0);
+								StringToAttribute(To, Flight, 3);
 
-								CalcDistance(Flight, TRUE);
-								CalcFuture(Flight, &st);
-
-								m_Flights.AddItem(Flight);
+								AddFlight(Flight, &stLocal);
 							}
 
 							if (DelimiterFound==L',')
@@ -1253,14 +926,13 @@ void CItinerary::OpenCSV(const CString& Filename)
 					}
 				}
 			}
-
-			f.Close();
 		}
 		catch(CFileException ex)
 		{
-			f.Close();
 			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 		}
+
+		File.Close();
 	}
 	else
 	{
@@ -1268,17 +940,24 @@ void CItinerary::OpenCSV(const CString& Filename)
 	}
 }
 
-void CItinerary::SaveAIRX(CString Filename)
+void CItinerary::SaveAIRX(const CString& Path, UINT CurrentRow)
 {
-	CFile f;
-	if (f.Open(Filename, CFile::modeCreate | CFile::modeReadWrite | CFile::osSequentialScan))
+	ASSERT(CurrentRow<=m_Flights.m_ItemCount);
+
+	// Current row
+	m_Metadata.CurrentRow = CurrentRow;
+
+	// Save file
+	CFile File;
+	if (File.Open(Path, CFile::modeCreate | CFile::modeReadWrite | CFile::osSequentialScan))
 	{
 		// Compression
 		BOOL bCompress = TRUE;
 		for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
 		{
 			CString Ext(m_Attachments[a].Name);
-			INT Pos = Ext.ReverseFind(L'.');
+
+			const INT Pos = Ext.ReverseFind(L'.');
 			if (Pos!=-1)
 			{
 				Ext = Ext.Mid(Pos+1).MakeLower();
@@ -1292,13 +971,12 @@ void CItinerary::SaveAIRX(CString Filename)
 			}
 		}
 
-		CompressFile(f.m_hFile, Filename[0], bCompress);
+		CompressFile(File.m_hFile, Path[0], bCompress);
 
 		// Write file
-		m_FileName = Filename;
-		SetDisplayName(Filename);
-		theApp.AddToRecentFiles(Filename);
-		SHAddToRecentDocs(SHARD_PATHW, Filename);
+		SetDisplayName(m_FileName=Path);
+		theApp.AddToRecentFiles(Path);
+		SHAddToRecentDocs(SHARD_PATHW, Path);
 
 		try
 		{
@@ -1311,33 +989,43 @@ void CItinerary::SaveAIRX(CString Filename)
 			Header.AttachmentCount = m_Attachments.m_ItemCount;
 			Header.AttachmentRecordSize = sizeof(AIRX_Attachment);
 
-			f.Write(&Header, sizeof(Header));
-			f.Write(&m_Metadata, sizeof(m_Metadata));
-			f.Write(&m_Flights[0], Header.FlightCount*Header.FlightRecordSize);
+			File.Write(&Header, sizeof(Header));
+			File.Write(&m_Metadata, sizeof(m_Metadata));
+
+			if (Header.FlightCount>0)
+				File.Write(&m_Flights[0], Header.FlightCount*Header.FlightRecordSize);
 
 			for (UINT a=0; a<Header.AttachmentCount; a++)
 			{
+				// Create copy of attachment record
 				AIRX_Attachment Attachment = m_Attachments[a];
-
-				if (!Attachment.pData)
-					Attachment.Size = 0;
-				Attachment.pData = NULL;
 				Attachment.IconID = -1;
 
-				f.Write(&Attachment, sizeof(Attachment));
-				if ((m_Attachments[a].pData) && (Attachment.Size!=0))
-					f.Write(m_Attachments[a].pData, Attachment.Size);
-			}
+				if (!Attachment.pData)
+				{
+					Attachment.FileSize = 0;
+				}
+				else
+				{
+					Attachment.pData = NULL;
+				}
 
-			f.Close();
+				// Attachment record
+				File.Write(&Attachment, sizeof(Attachment));
+
+				// File body
+				if (m_Attachments[a].pData && Attachment.FileSize)
+					File.Write(m_Attachments[a].pData, Attachment.FileSize);
+			}
 
 			m_IsModified = FALSE;
 		}
 		catch(CFileException ex)
 		{
-			f.Close();
 			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 		}
+
+		File.Close();
 	}
 	else
 	{
@@ -1345,201 +1033,77 @@ void CItinerary::SaveAIRX(CString Filename)
 	}
 }
 
-CString CItinerary::Flight2Text(AIRX_Flight& Flight)
+
+// Editing itinerary
+
+UINT CItinerary::GetFlightCount(BOOL Limit) const
 {
-	CString tmpStr;
-
-	tmpStr += ExportLocation(Flight, 0);
-	tmpStr += ExportLocation(Flight, 3);
-
-	const UINT Attrs[15] = { 6, 23, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 22 };
-	for (UINT a=0; a<15; a++)
-		tmpStr += ExportAttribute(Flight, Attrs[a]);
-
-	if (!tmpStr.IsEmpty())
-		tmpStr += _T("\n");
-
-	return tmpStr;
+	return Limit && !FMIsLicensed() ? min(m_Flights.m_ItemCount, 10) : m_Flights.m_ItemCount;
 }
 
-CString CItinerary::Flight2Text(UINT Index)
+void CItinerary::ResetFlight(AIRX_Flight& Flight)
 {
-	ASSERT(Index<m_Flights.m_ItemCount);
+	ZeroMemory(&Flight, sizeof(AIRX_Flight));
 
-	return Flight2Text(m_Flights[Index]);
+	Flight.Waypoint.Latitude = Flight.Waypoint.Longitude = Flight.DistanceNM = 0.0;
+	Flight.Color = (COLORREF)-1;
 }
 
-FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WORD wMinute)
+void CItinerary::UpdateFlight(AIRX_Flight& Flight, LPSYSTEMTIME pTime)
 {
-	SYSTEMTIME st;
-	ZeroMemory(&st, sizeof(st));
+	// Remove flags
+	Flight.Flags &= ~(AIRX_FutureFlight | AIRX_DistanceValid | AIRX_UnknownFrom | AIRX_UnknownTo);
 
-	st.wYear = wYear;
-	st.wMonth = wMonth;
-	st.wDay = wDay;
-	st.wHour = wHour;
-	st.wMinute = wMinute;
+	// Find airports
+	LPCAIRPORT pFrom;
+	if (!FMIATAGetAirportByCode(Flight.From.Code, pFrom))
+		Flight.Flags |= AIRX_UnknownFrom;
 
-	FILETIME ft;
-	SystemTimeToFileTime(&st, &ft);
+	LPCAIRPORT pTo;
+	if (!FMIATAGetAirportByCode(Flight.To.Code, pTo))
+		Flight.Flags |= AIRX_UnknownTo;
 
-	return ft;
-}
-
-INT CItinerary::Compare(AIRX_Flight* Eins, AIRX_Flight* Zwei, const UINT Attr, const BOOL Descending)
-{
-	ASSERT(Attr<FMAttributeCount);
-	ASSERT(FMAttributes[Attr].Sortable);
-
-	const void* pValue1 = (LPBYTE)Eins+FMAttributes[Attr].Offset;
-	const void* pValue2 = (LPBYTE)Zwei+FMAttributes[Attr].Offset;
-
-	// Gewünschtes Attribut vergleichen
-	INT Compare = 0;
-
-	switch (FMAttributes[Attr].Type)
+	// Great Circle distance
+	if ((Flight.Flags & (AIRX_UnknownFrom | AIRX_UnknownTo))==0)
 	{
-	case FMTypeUnicodeString:
-		Compare = _wcsicmp((LPCWSTR)pValue1, (LPCWSTR)pValue2);
-		break;
+		const BOOL UseWaypoint = (pFrom==pTo) && ((Flight.Waypoint.Latitude!=0) || (Flight.Waypoint.Longitude!=0));
+		const DOUBLE Lat1 = PI*pFrom->Location.Latitude/180;
+		const DOUBLE Lon1 = PI*pFrom->Location.Longitude/180;
+		const DOUBLE Lat2 = PI*(UseWaypoint ? Flight.Waypoint.Latitude : pTo->Location.Latitude)/180;
+		const DOUBLE Lon2 = PI*(UseWaypoint ? Flight.Waypoint.Longitude : pTo->Location.Longitude)/180;
 
-	case FMTypeAnsiString:
-		Compare = _stricmp((LPCSTR)pValue1, (LPCSTR)pValue2);
-		break;
+		const DOUBLE DeltaLon = abs(Lon1-Lon2);
+		const DOUBLE tmp1 = cos(Lat1)*sin(DeltaLon);
+		const DOUBLE tmp2 = cos(Lat2)*sin(Lat1)-sin(Lat2)*cos(Lat1)*cos(DeltaLon);
+		const DOUBLE T = sqrt(tmp1*tmp1+tmp2*tmp2);
+		const DOUBLE B = sin(Lat2)*sin(Lat1)+cos(Lat2)*cos(Lat1)*cos(DeltaLon);
+		const DOUBLE GreatCircle = atan2(T, B);
 
-	case FMTypeRating:
-		Compare = (INT)((*(UINT*)pValue1)>>FMAttributes[Attr].DataParameter)-(INT)((*(UINT*)pValue2)>>FMAttributes[Attr].DataParameter);
+		Flight.DistanceNM = 3438.461*GreatCircle;
+		if (UseWaypoint)
+			Flight.DistanceNM *= 2.0;
 
-	case FMTypeUINT:
-	case FMTypeTime:
-		Compare = *(UINT*)pValue1==*(UINT*)pValue2 ? 0 : *(UINT*)pValue1<*(UINT*)pValue2 ? -1 : 1;
-		break;
-
-	case FMTypeDistance:
-		Compare = *(DOUBLE*)pValue1==*(DOUBLE*)pValue2 ? 0 : *(DOUBLE*)pValue1<*(DOUBLE*)pValue2 ? -1 : 1;
-		break;
-
-	case FMTypeDateTime:
-		Compare = CompareFileTime((FILETIME*)pValue1, (FILETIME*)pValue2);
-		break;
-
-	case FMTypeClass:
-		Compare = (INT)(*(UCHAR*)pValue1)-(INT)(*(UCHAR*)pValue2);
-		break;
-
-	default:
-		ASSERT(FALSE);
-	}
-
-	// Ggf. Reihenfolge umkehren
-	return Descending ? -Compare : Compare;
-}
-
-void CItinerary::Heap(UINT Wurzel, const UINT Anzahl, const UINT Attr, const BOOL Descending)
-{
-	AIRX_Flight Flight = m_Flights[Wurzel];
-	UINT Parent = Wurzel;
-	UINT Child;
-
-	while ((Child=(Parent+1)*2)<Anzahl)
-	{
-		if (Compare(&m_Flights[Child-1], &m_Flights[Child], Attr, Descending)>0)
-			Child--;
-
-		m_Flights[Parent] = m_Flights[Child];
-		Parent = Child;
-	}
-
-	if (Child==Anzahl)
-	{
-		if (Compare(&m_Flights[--Child], &Flight, Attr, Descending)>=0)
-		{
-			m_Flights[Parent] = m_Flights[Child];
-			m_Flights[Child] = Flight;
-
-			return;
-		}
-
-		Child = Parent;
+		Flight.Flags |= AIRX_DistanceValid;
 	}
 	else
 	{
-		if (Parent==Wurzel)
-			return;
-
-		if (Compare(&m_Flights[Parent], &Flight, Attr, Descending)>=0)
-		{
-			m_Flights[Parent] = Flight;
-
-			return;
-		}
-
-		Child = (Parent-1)/2;
+		Flight.DistanceNM = 0.0;
 	}
 
-	while (Child!=Wurzel)
+	// Future departure time
+	if (Flight.From.Time.dwLowDateTime || Flight.From.Time.dwHighDateTime)
 	{
-		Parent = (Child-1)/2;
+		SYSTEMTIME stLocal;
+		if (!pTime)
+			GetLocalTime(pTime=&stLocal);
 
-		if (Compare(&m_Flights[Parent], &Flight, Attr, Descending)>=0)
-			break;
+		SYSTEMTIME stFlight;
+		FileTimeToSystemTime(&Flight.From.Time, &stFlight);
 
-		m_Flights[Child] = m_Flights[Parent];
-		Child = Parent;
+		if ((stFlight.wYear>pTime->wYear) ||
+			((stFlight.wYear==pTime->wYear) && ((stFlight.wMonth>pTime->wMonth) || ((stFlight.wMonth==pTime->wMonth) && (stFlight.wDay>pTime->wDay)))))
+			Flight.Flags |= AIRX_FutureFlight;
 	}
-
-	m_Flights[Child] = Flight;
-}
-
-void CItinerary::Sort(UINT Attr, BOOL Descending)
-{
-	if (m_Flights.m_ItemCount>1)
-	{
-		for (INT a=m_Flights.m_ItemCount/2-1; a>=0; a--)
-			Heap(a, m_Flights.m_ItemCount, Attr, Descending);
-
-		for (INT a=m_Flights.m_ItemCount-1; a>0; a--)
-		{
-			Swap(m_Flights[0], m_Flights[a]);
-			Heap(0, a, Attr, Descending);
-		}
-	}
-}
-
-AIRX_Attachment* CItinerary::GetGPSPath(AIRX_Flight& Flight)
-{
-	for (UINT a=0; a<Flight.AttachmentCount; a++)
-	{
-		AIRX_Attachment* pAttachment = &m_Attachments[Flight.Attachments[a]];
-
-		LPCWSTR pExtension = wcsrchr(pAttachment->Name, L'.');
-		if (pExtension)
-			if (_wcsicmp(pExtension, L".gpx")==0)
-			{
-				ValidateAttachment(*pAttachment);
-
-				if (pAttachment->Flags & AIRX_Valid)
-					return pAttachment;
-			}
-	}
-
-	return NULL;
-}
-
-AIRX_Attachment* CItinerary::GetGPSPath(UINT Row)
-{
-	ASSERT(Row<m_Flights.m_ItemCount);
-
-	return GetGPSPath(m_Flights[Row]);
-}
-
-
-void CItinerary::AddFlight()
-{
-	AIRX_Flight Flight;
-	ResetFlight(Flight);
-
-	m_Flights.AddItem(Flight);
 }
 
 void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
@@ -1552,15 +1116,15 @@ void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
 
 	for (UINT a=0; a<pItinerary->m_Flights[Row].AttachmentCount; a++)
 	{
-		const UINT Index = AddAttachment(pItinerary, pItinerary->m_Flights[Row].Attachments[a]);
-		if (Index!=(UINT)-1)
+		const INT Index = AddAttachment(pItinerary, pItinerary->m_Flights[Row].Attachments[a]);
+		if (Index>=0)
 			Flight.Attachments[Flight.AttachmentCount++] = Index;
 	}
 
-	m_Flights.AddItem(Flight);
+	AddFlight(Flight);
 }
 
-void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, FILETIME Departure)
+void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, const FILETIME& Departure)
 {
 	AIRX_Flight Flight;
 	ResetFlight(Flight);
@@ -1578,36 +1142,30 @@ void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equi
 	Flight.Color = Color;
 	Flight.From.Time = Departure;
 
-	CalcDistance(Flight);
-	CalcFuture(Flight);
-
-	m_Flights.AddItem(Flight);
+	AddFlight(Flight);
 }
 
 void CItinerary::InsertFlights(UINT Row, UINT Count, AIRX_Flight* pFlights)
 {
-	if (m_Flights.InsertEmpty(Row, Count, false))
-		if (pFlights)
+	if (m_Flights.InsertEmpty(Row, Count, FALSE) && pFlights)
+	{
+		memcpy(&m_Flights[Row], pFlights, Count*sizeof(AIRX_Flight));
+
+		SYSTEMTIME stLocal;
+		GetLocalTime(&stLocal);
+
+		for (UINT a=Row; a<Row+Count; a++)
 		{
-			const SIZE_T sz = Count*sizeof(AIRX_Flight);
-			memcpy_s(&m_Flights[Row], sz, pFlights, sz);
+			UpdateFlight(a, &stLocal);
 
-			SYSTEMTIME st;
-			GetLocalTime(&st);
-
-			for (UINT a=Row; a<Row+Count; a++)
-			{
-				CalcDistance(m_Flights[a], TRUE);
-				CalcFuture(m_Flights[a], &st);
-
-				m_Flights[a].AttachmentCount = 0;
-			}
+			m_Flights[a].AttachmentCount = 0;
 		}
-		else
-		{
-			for (UINT a=Row; a<Row+Count; a++)
-				ResetFlight(m_Flights[a]);
-		}
+	}
+	else
+	{
+		for (UINT a=Row; a<Row+Count; a++)
+			ResetFlight(a);
+	}
 }
 
 void CItinerary::DeleteFlight(UINT Row)
@@ -1626,11 +1184,7 @@ void CItinerary::DeleteSelectedFlights()
 	{
 		if (m_Flights[Row].Flags & AIRX_Selected)
 		{
-			while (m_Flights[Row].AttachmentCount)
-				DeleteAttachment(m_Flights[Row].Attachments[0]);
-
-			m_Flights.DeleteItems(Row);
-			m_IsModified = TRUE;
+			DeleteFlight(Row);
 		}
 		else
 		{
@@ -1639,60 +1193,215 @@ void CItinerary::DeleteSelectedFlights()
 	}
 }
 
-void CItinerary::SetDisplayName(const CString& Filename)
-{
-	const LPCWSTR pChar = wcsrchr(Filename, L'\\');
 
-	m_DisplayName = pChar ? pChar+1 : Filename;
+// Conversion
+
+CString CItinerary::ExportAttribute(const AIRX_Flight& Flight, UINT Attr, BOOL Label, BOOL Colon, BOOL NewLine)
+{
+	WCHAR tmpBuf[256];
+	AttributeToString(Flight, Attr, tmpBuf, 256);
+
+	if (tmpBuf[0]==L'\0')
+		return _T("");
+
+	CString tmpStr;
+	if (Label)
+	{
+		ENSURE(tmpStr.LoadString(IDS_COLUMN0+Attr));
+		tmpStr.Append(Colon ? _T(": ") : _T(" "));
+	}
+
+	tmpStr.Append(tmpBuf);
+	if (NewLine)
+		tmpStr.Append(_T("\n"));
+
+	return tmpStr;
 }
 
-BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
+CString CItinerary::ExportLocation(const AIRX_Flight& Flight, UINT AttrBase)
 {
+	const CString DateTime = ExportAttribute(Flight, AttrBase+1, FALSE, FALSE, FALSE);
+	const CString Gate = ExportAttribute(Flight, AttrBase+2, TRUE, FALSE, FALSE);
+
+	CString tmpStr = ExportAttribute(Flight, AttrBase, TRUE, TRUE, FALSE);
+
+	if (!DateTime.IsEmpty() || !Gate.IsEmpty())
+	{
+		tmpStr += _T(" (");
+
+		if (!DateTime.IsEmpty())
+		{
+			tmpStr += DateTime;
+			if (!Gate.IsEmpty())
+			{
+				tmpStr += _T(", ");
+				tmpStr += Gate;
+			}
+		}
+		else
+		{
+			tmpStr += Gate;
+		}
+
+		tmpStr += _T(")");
+	}
+
+	return tmpStr+_T("\n");
+}
+
+CString CItinerary::Flight2Text(UINT Row) const
+{
+	ASSERT(Row<m_Flights.m_ItemCount);
+
+	CString tmpStr = ExportLocation(m_Flights[Row], 0);
+	tmpStr += ExportLocation(m_Flights[Row], 3);
+
+	const UINT Attrs[15] = { 6, 23, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 22 };
+	for (UINT a=0; a<15; a++)
+		tmpStr += ExportAttribute(m_Flights[Row], Attrs[a]);
+
+	if (!tmpStr.IsEmpty())
+		tmpStr += _T("\n");
+
+	return tmpStr;
+}
+
+AIRX_Attachment* CItinerary::GetGPSPath(UINT Row)
+{
+	ASSERT(Row<m_Flights.m_ItemCount);
+
+	for (UINT a=0; a<m_Flights[Row].AttachmentCount; a++)
+	{
+		AIRX_Attachment* pAttachment = &m_Attachments[m_Flights[Row].Attachments[a]];
+
+		LPCWSTR pExtension = wcsrchr(pAttachment->Name, L'.');
+		if (pExtension && (_wcsicmp(pExtension, L".gpx")==0))
+		{
+			ValidateAttachment(*pAttachment);
+
+			if (pAttachment->Flags & AIRX_Valid)
+				return pAttachment;
+		}
+	}
+
+	return NULL;
+}
+
+
+// Sorting
+
+INT CItinerary::CompareItems(const AIRX_Flight* pFlight1, const AIRX_Flight* pFlight2, const SortParameters& Parameters)
+{
+	ASSERT(Parameters.Attr<FMAttributeCount);
+	ASSERT(FMAttributes[Parameters.Attr].Sortable);
+
+	const LPCVOID pData1 = (LPBYTE)pFlight1+FMAttributes[Parameters.Attr].Offset;
+	const LPCVOID pData2 = (LPBYTE)pFlight2+FMAttributes[Parameters.Attr].Offset;
+
+	// Compare primary attributes
+	INT Compare = 0;
+
+	switch (FMAttributes[Parameters.Attr].Type)
+	{
+	case FMTypeUnicodeString:
+		Compare = _wcsicmp((LPCWSTR)pData1, (LPCWSTR)pData2);
+		break;
+
+	case FMTypeAnsiString:
+		Compare = _stricmp((LPCSTR)pData1, (LPCSTR)pData2);
+		break;
+
+	case FMTypeRating:
+		Compare = (INT)((*(UINT*)pData1)>>FMAttributes[Parameters.Attr].DataParameter)-(INT)((*(UINT*)pData2)>>FMAttributes[Parameters.Attr].DataParameter);
+		break;
+
+	case FMTypeUINT:
+	case FMTypeTime:
+		Compare = *(UINT*)pData1==*(UINT*)pData2 ? 0 : *(UINT*)pData1<*(UINT*)pData2 ? -1 : 1;
+		break;
+
+	case FMTypeDistance:
+		Compare = *(DOUBLE*)pData1==*(DOUBLE*)pData2 ? 0 : *(DOUBLE*)pData1<*(DOUBLE*)pData2 ? -1 : 1;
+		break;
+
+	case FMTypeDateTime:
+		Compare = CompareFileTime((LPFILETIME)pData1, (LPFILETIME)pData2);
+		break;
+
+	case FMTypeClass:
+		Compare = (INT)(*(UCHAR*)pData1)-(INT)(*(UCHAR*)pData2);
+		break;
+
+	default:
+		ASSERT(FALSE);
+	}
+
+	// Secondary
+	if (!Compare && (Parameters.Attr!=1))
+		Compare = CompareFileTime(&pFlight1->From.Time, &pFlight2->From.Time);
+
+	if (!Compare && (Parameters.Attr!=0))
+		Compare = strcmp(pFlight1->From.Code, pFlight2->From.Code);
+
+	if (!Compare && (Parameters.Attr!=3))
+		Compare = strcmp(pFlight1->To.Code, pFlight2->To.Code);
+
+	return Parameters.Descending ? -Compare : Compare;
+}
+
+
+// Attachments
+
+BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, const CString& Path)
+{
+	// Attachment count
 	if (Flight.AttachmentCount>=AIRX_MaxAttachmentCount)
 	{
 		FMErrorBox(CWnd::GetActiveWindow(), IDS_ATTACHMENT_TOOMANY);
+
 		return FALSE;
 	}
 
 	// FindFirst
-	WIN32_FIND_DATA ffd;
-	HANDLE hFind = FindFirstFile(Filename, &ffd);
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(Path, &FindFileData);
 
 	if (hFind==INVALID_HANDLE_VALUE)
 		return FALSE;
 
-	AIRX_Attachment Attachment;
-	ZeroMemory(&Attachment, sizeof(Attachment));
-
-	wcscpy_s(Attachment.Name, MAX_PATH, Filename.Mid(Filename.ReverseFind(L'\\')+1));
-	Attachment.Size = (((INT64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
-	Attachment.Created = ffd.ftCreationTime;
-	Attachment.Modified = ffd.ftLastWriteTime;
-	Attachment.IconID = -1;
-
 	FindClose(hFind);
 
-	if (Attachment.Size>1024*1024)
+	// Metadata
+	AIRX_Attachment Attachment;
+	wcscpy_s(Attachment.Name, MAX_PATH, Path.Mid(Path.ReverseFind(L'\\')+1));
+	Attachment.Created = FindFileData.ftCreationTime;
+	Attachment.Modified = FindFileData.ftLastWriteTime;
+	Attachment.IconID = -1;
+	Attachment.Flags = 0;
+
+	// Check for 1 MB size limit
+	if ((Attachment.FileSize=(((INT64)FindFileData.nFileSizeHigh) << 32)+FindFileData.nFileSizeLow)>1024*1024)
 	{
 		FMErrorBox(CWnd::GetActiveWindow(), IDS_ATTACHMENT_TOOLARGE);
+
 		return FALSE;
 	}
 
-	Attachment.pData = malloc(Attachment.Size+AttachmentEndBuffer);
-	if (!Attachment.pData)
+	// Allocate memory
+	ASSERT(ATTACHMENT_ENDBUFFER>=1);
+
+	if ((Attachment.pData=malloc(Attachment.FileSize+ATTACHMENT_ENDBUFFER))==NULL)
 		return FALSE;
 
 	BOOL Result = FALSE;
 
-	// Read file
-	CFile f;
-	if (f.Open(Filename, CFile::modeRead | CFile::osSequentialScan))
+	// Read file contents
+	CFile File;
+	if (File.Open(Path, CFile::modeRead | CFile::osSequentialScan))
 	{
 		try
 		{
-			f.Read(Attachment.pData, Attachment.Size);
-			f.Close();
-
+			File.Read(Attachment.pData, Attachment.FileSize);
 			ValidateAttachment(Attachment, TRUE);
 
 			if (m_Attachments.AddItem(Attachment))
@@ -1703,47 +1412,68 @@ BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, CString Filename)
 		}
 		catch(CFileException ex)
 		{
-			f.Close();
 			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 		}
+
+		File.Close();
 	}
 	else
 	{
 		FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 	}
 
-	if (!Result && (Attachment.pData))
-		free(Attachment.pData);
+	if (!Result && Attachment.pData)
+		FreeAttachment(Attachment);
 
 	return Result;
 }
 
-UINT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Index)
+INT CItinerary::AddAttachment(CItinerary* pItinerary, UINT Index)
 {
 	ASSERT(pItinerary);
 	ASSERT(Index<pItinerary->m_Attachments.m_ItemCount);
 
 	AIRX_Attachment Attachment = pItinerary->m_Attachments[Index];
+	ASSERT(ATTACHMENT_ENDBUFFER>=1);
 
-	Attachment.pData = malloc(Attachment.Size+AttachmentEndBuffer);
-	if (!Attachment.pData)
-		return (UINT)-1;
+	if ((Attachment.pData=malloc(Attachment.FileSize+ATTACHMENT_ENDBUFFER))==NULL)
+		return -1;
 
-	memcpy_s(Attachment.pData, Attachment.Size, pItinerary->m_Attachments[Index].pData, Attachment.Size);
+	memcpy(Attachment.pData, pItinerary->m_Attachments[Index].pData, Attachment.FileSize);
 
-	return m_Attachments.AddItem(Attachment) ? m_Attachments.m_ItemCount-1 : (UINT)-1;
+	return m_Attachments.AddItem(Attachment) ? m_Attachments.m_ItemCount-1 : -1;
 }
 
-Bitmap* CItinerary::DecodePictureAttachment(UINT Index) const
+CGPXFile* CItinerary::DecodeGPXAttachment(const AIRX_Attachment& Attachment)
 {
-	ASSERT(Index<m_Attachments.m_ItemCount);
+	if (Attachment.FileSize<16)
+		return NULL;
 
-	return DecodePictureAttachment(m_Attachments[Index]);
+	ASSERT(ATTACHMENT_ENDBUFFER>=1);
+	ASSERT(_msize(Attachment.pData)>=Attachment.FileSize+ATTACHMENT_ENDBUFFER);
+
+	// Terminating NUL
+	((LPSTR)Attachment.pData)[Attachment.FileSize] = '\0';
+
+	CGPXFile* pGPXFile = new CGPXFile();
+
+	try
+	{
+		pGPXFile->parse<parse_non_destructive | parse_no_data_nodes>((LPSTR)Attachment.pData);
+	}
+	catch(parse_error e)
+	{
+		delete pGPXFile;
+
+		pGPXFile = NULL;
+	}
+
+	return pGPXFile;
 }
 
 Bitmap* CItinerary::DecodePictureAttachment(const AIRX_Attachment& Attachment)
 {
-	IStream* pStream = SHCreateMemStream((LPBYTE)Attachment.pData, Attachment.Size);
+	IStream* pStream = SHCreateMemStream((LPBYTE)Attachment.pData, Attachment.FileSize);
 
 	Bitmap* pBitmap = Gdiplus::Bitmap::FromStream(pStream);
 
@@ -1752,58 +1482,79 @@ Bitmap* CItinerary::DecodePictureAttachment(const AIRX_Attachment& Attachment)
 	return pBitmap;
 }
 
-CGPXFile* CItinerary::DecodeGPXAttachment(const AIRX_Attachment& Attachment)
-{
-	if (Attachment.Size<16)
-		return NULL;
-
-	ASSERT(_msize(Attachment.pData)>=Attachment.Size+AttachmentEndBuffer);
-
-	// Terminating NUL
-	*((CHAR*)Attachment.pData+Attachment.Size) = '\0';
-
-	CGPXFile* pGPXFile = new CGPXFile();
-
-	try
-	{
-		pGPXFile->parse<parse_non_destructive | parse_no_data_nodes>((CHAR*)Attachment.pData);
-	}
-	catch(parse_error e)
-	{
-		delete pGPXFile;
-		pGPXFile = NULL;
-	}
-
-	return pGPXFile;
-}
-
 void CItinerary::ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force)
 {
-	if (!Force)
-		if (Attachment.Flags & (AIRX_Valid | AIRX_Invalid))
-		{
-			if (Attachment.Flags & AIRX_Invalid)
-				Attachment.Flags &= ~AIRX_Valid;
+	// No check neccessary
+	if (!Force && (Attachment.Flags & (AIRX_Valid | AIRX_Invalid)))
+	{
+		if (Attachment.Flags & AIRX_Invalid)
+			Attachment.Flags &= ~AIRX_Valid;
 
-			return;
-		}
+		return;
+	}
 
+	// Remove flags
 	Attachment.Flags &= ~(AIRX_Valid | AIRX_Invalid);
 
+	// Check .gpx file
 	LPCWSTR pExtension = wcsrchr(Attachment.Name, L'.');
-	if (pExtension)
-		if (_wcsicmp(pExtension, L".gpx")==0)
+	if (pExtension && (_wcsicmp(pExtension, L".gpx")==0))
+	{
+		CGPXFile* pGPXFile;
+		Attachment.Flags |= (pGPXFile=DecodeGPXAttachment(Attachment))!=NULL ? AIRX_Valid : AIRX_Invalid;
+
+		delete pGPXFile;
+	}
+}
+
+void CItinerary::RenameAttachment(AIRX_Attachment& Attachment, const CString& Name)
+{
+	if (Name.IsEmpty())
+		return;
+
+	// Save extension for later
+	CString Extension(Attachment.Name);
+	
+	const INT Pos = Extension.ReverseFind(L'.');
+	if (Pos!=-1)
+		Extension.Delete(0, Pos);
+
+	// Copy and sanitize name
+	wcscpy_s(Attachment.Name, MAX_PATH, Name);
+
+	WCHAR* pChar = Attachment.Name;
+	while (*pChar)
+	{
+		if (wcschr(L"<>:\"/\\|?*", *pChar))
+			*pChar = L'_';
+
+		pChar++;
+	}
+
+	// Concatenate saved extension
+	wcscat_s(Attachment.Name, MAX_PATH, Extension);
+
+	m_IsModified = TRUE;
+}
+
+void CItinerary::RemoveAttachmentFromFlight(UINT Index, AIRX_Flight& Flight)
+{
+	UINT No = 0;
+	while (No<Flight.AttachmentCount)
+		if (Flight.Attachments[No]==Index)
 		{
-			UINT Mask = AIRX_Invalid;
+			Flight.AttachmentCount--;
 
-			CGPXFile* pGPXFile = DecodeGPXAttachment(Attachment);
-			if (pGPXFile)
-			{
-				Mask = AIRX_Valid;
-				delete pGPXFile;
-			}
+			if (No<Flight.AttachmentCount)
+				for (UINT a=No; a<Flight.AttachmentCount; a++)
+					Flight.Attachments[a] = Flight.Attachments[a+1];
+		}
+		else
+		{
+			if (Flight.Attachments[No]>Index)
+				Flight.Attachments[No]--;
 
-			Attachment.Flags |= Mask;
+			No++;
 		}
 }
 
@@ -1811,65 +1562,57 @@ void CItinerary::DeleteAttachment(UINT Index, AIRX_Flight* pFlight)
 {
 	ASSERT(Index<m_Attachments.m_ItemCount);
 
+	// Free attachment
 	FreeAttachment(m_Attachments[Index]);
 
+	// Compact attachment list
 	m_Attachments.m_ItemCount--;
 	for (UINT a=Index; a<m_Attachments.m_ItemCount; a++)
 		m_Attachments[a] = m_Attachments[a+1];
 
+	// Adjust attachment IDs in all flights
 	for (UINT a=0; a<m_Flights.m_ItemCount; a++)
-		RemoveAttachment(Index, &m_Flights[a]);
+		RemoveAttachmentFromFlight(Index, m_Flights[a]);
 
+	// Adjust attachment IDs in separate flight (that is not part of this itinerary)
 	if (pFlight)
-		RemoveAttachment(Index, pFlight);
+		RemoveAttachmentFromFlight(Index, *pFlight);
 
 	m_IsModified = TRUE;
 }
 
-void CItinerary::DeleteAttachments(AIRX_Flight* pFlight)
+void CItinerary::DeleteAttachments(AIRX_Flight& Flight)
 {
-	if (pFlight)
-	{
-		// Alle Attachments von einem externen Flug (der nicht zu diesem Itinerary gehört) löschen
-		for (UINT a=0; a<pFlight->AttachmentCount; a++)
-			DeleteAttachment(pFlight->Attachments[a]);
+	// Delete all attachments of a separate flight (that is not party of this itinerary)
+	for (UINT a=0; a<Flight.AttachmentCount; a++)
+		DeleteAttachment(Flight.Attachments[a]);
 
-		pFlight->AttachmentCount = 0;
-	}
-	else
-	{
-		// Alle Attachments von diesem Itinerary löschen
-		for (UINT a=0; a<m_Flights.m_ItemCount; a++)
-			m_Flights[a].AttachmentCount = 0;
-
-		for (UINT a=0; a<m_Attachments.m_ItemCount; a++)
-			FreeAttachment(m_Attachments[a]);
-
-		m_Attachments.m_ItemCount = 0;
-	}
-
-	m_IsModified = TRUE;
+	Flight.AttachmentCount = 0;
 }
 
-void CItinerary::RemoveAttachment(UINT Index, AIRX_Flight* pFlight)
+
+// User interface
+
+void CItinerary::PrepareCarrierCtrl(CComboBox& ComboBox, BOOL IncludeDatabase) const
 {
-	ASSERT(pFlight);
+	for (UINT a=0; a<m_Flights.m_ItemCount; a++)
+		if (m_Flights[a].Carrier[0] && (ComboBox.FindStringExact(-1, m_Flights[a].Carrier)==CB_ERR))
+			ComboBox.AddString(m_Flights[a].Carrier);
 
-	UINT No = 0;
-	while (No<pFlight->AttachmentCount)
-		if (pFlight->Attachments[No]==Index)
-		{
-			pFlight->AttachmentCount--;
+	if (IncludeDatabase)
+		for (UINT a=0; a<CARRIERCOUNT; a++)
+			if (ComboBox.FindStringExact(-1, Carriers[a])==CB_ERR)
+				ComboBox.AddString(Carriers[a]);
+}
 
-			if (No<pFlight->AttachmentCount)
-				for (UINT b=No; b<pFlight->AttachmentCount; b++)
-					pFlight->Attachments[b] = pFlight->Attachments[b+1];
-		}
-		else
-		{
-			if (pFlight->Attachments[No]>Index)
-				pFlight->Attachments[No]--;
+void CItinerary::PrepareEquipmentCtrl(CComboBox& ComboBox, BOOL IncludeDatabase) const
+{
+	for (UINT a=0; a<m_Flights.m_ItemCount; a++)
+		if (m_Flights[a].Equipment[0] && (ComboBox.FindStringExact(-1, m_Flights[a].Equipment)==CB_ERR))
+			ComboBox.AddString(m_Flights[a].Equipment);
 
-			No++;
-		}
+	if (IncludeDatabase)
+		for (UINT a=0; a<EQUIPMENTCOUNT; a++)
+			if (ComboBox.FindStringExact(-1, Equipment[a])==CB_ERR)
+				ComboBox.AddString(Equipment[a]);
 }

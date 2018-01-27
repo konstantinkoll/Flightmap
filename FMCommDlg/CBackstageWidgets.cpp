@@ -26,9 +26,9 @@ void CBackstageWidgets::AddWidgetSize(LPSIZE lpSize) const
 {
 	ASSERT(lpSize);
 
-	lpSize->cy += m_ButtonSize+2;
+	lpSize->cy += m_ButtonSize;
 
-	if (IsWindow(m_hWnd))
+	if (HasButtons() && IsWindow(m_hWnd))
 	{
 		lpSize->cx += GetPreferredWidth()-1;
 
@@ -39,7 +39,7 @@ void CBackstageWidgets::AddWidgetSize(LPSIZE lpSize) const
 
 void CBackstageWidgets::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL Themed)
 {
-	INT IconID = m_BarItems[Index].IconID;
+	const INT IconID = m_BarItems[Index].IconID;
 
 	if ((IconID==BACKSTAGEICON_MAXIMIZE) || (IconID==BACKSTAGEICON_RESTORE))
 		m_BarItems[Index].IconID = (GetParent()->GetStyle() & WS_MAXIMIZE) ? BACKSTAGEICON_RESTORE : BACKSTAGEICON_MAXIMIZE;
@@ -67,6 +67,7 @@ INT CBackstageWidgets::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Add items
 	const DWORD dwStyle = GetParent()->GetStyle();
 
 	if (dwStyle & WS_MINIMIZEBOX)
@@ -75,8 +76,8 @@ INT CBackstageWidgets::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (dwStyle & WS_MAXIMIZEBOX)
 		AddItem(SC_MAXIMIZE, BACKSTAGEICON_MAXIMIZE);
 
-	AddItem(SC_CLOSE, BACKSTAGEICON_CLOSE, 0, TRUE);
-	AdjustLayout();
+	if (dwStyle & WS_SYSMENU)
+		AddItem(SC_CLOSE, BACKSTAGEICON_CLOSE, 0, TRUE);
 
 	return 0;
 }

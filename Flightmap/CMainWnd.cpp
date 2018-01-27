@@ -36,16 +36,11 @@ CMainWnd::CMainWnd()
 	m_pWndFileMenu = NULL;
 }
 
-CMainWnd::~CMainWnd()
-{
-	delete m_pItinerary;
-}
-
 BOOL CMainWnd::Create(CItinerary* pItinerary)
 {
 	m_pItinerary = pItinerary;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
+	const CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_APPLICATION), _T("Main"), CSize(0, 0), TRUE);
 }
@@ -53,12 +48,11 @@ BOOL CMainWnd::Create(CItinerary* pItinerary)
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
 	// Hide file menu
-	if (m_pWndFileMenu)
-		if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_ESCAPE))
-		{
-			HideFileMenu();
-			return TRUE;
-		}
+	if (m_pWndFileMenu && (pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_ESCAPE))
+	{
+		HideFileMenu();
+		return TRUE;
+	}
 
 	return CBackstageWnd::PreTranslateMessage(pMsg);
 }
@@ -66,9 +60,8 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-	if (m_pWndDataGrid)
-		if (m_pWndDataGrid->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-			return TRUE;
+	if (m_pWndDataGrid && m_pWndDataGrid->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
 
 	return CBackstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
@@ -130,12 +123,9 @@ void CMainWnd::UpdateWindowStatus()
 {
 	// Set window caption
 	CString Caption((LPCSTR)IDR_APPLICATION);
+
 	if (m_pItinerary)
-		if (!m_pItinerary->m_DisplayName.IsEmpty())
-		{
-			Caption.Insert(0, _T(" - "));
-			Caption.Insert(0, m_pItinerary->m_DisplayName);
-		}
+		m_pItinerary->InsertDisplayName(Caption);
 
 	SetWindowText(Caption);
 
@@ -198,185 +188,150 @@ void CMainWnd::Open(const CString& Path)
 
 BOOL CMainWnd::CloseFile()
 {
-	if (m_pItinerary)
-		if (m_pItinerary->m_IsModified)
-			switch (FMMessageBox(this, CString((LPCSTR)IDS_NOTSAVED), m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONWARNING))
-			{
-			case IDCANCEL:
+	if (m_pItinerary && m_pItinerary->m_IsModified)
+		switch (FMMessageBox(this, CString((LPCSTR)IDS_NOTSAVED), m_pItinerary->m_DisplayName, MB_YESNOCANCEL | MB_ICONWARNING))
+		{
+		case IDCANCEL:
+			return FALSE;
+
+		case IDYES:
+			OnFileSave();
+
+			if (m_pItinerary->m_IsModified)
 				return FALSE;
-
-			case IDYES:
-				OnFileSave();
-
-				if (m_pItinerary->m_IsModified)
-					return FALSE;
-			}
+		}
 
 	return TRUE;
 }
 
-CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro)
+
+// Computation, export and printing
+
+CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro) const
 {
-	CKitchen* pKitchen = new CKitchen(m_pItinerary ? m_pItinerary->m_Metadata.Title[0]!=L'\0' ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName : _T(""), MergeMetro);
+	CKitchen* pKitchen = new CKitchen(m_pItinerary, MergeMetro);
 
 	if (m_pItinerary)
 	{
 		Selected &= m_pWndDataGrid->HasSelection();
 
-		UINT Count = m_pItinerary->m_Flights.m_ItemCount;
-		if (!FMIsLicensed() && Limit)
-			Count = min(Count, 10);
+		const UINT FlightCount = m_pItinerary->GetFlightCount(Limit);
 
-		for (UINT a=0; a<Count; a++)
-		{
-			if (Selected)
-				if (!m_pWndDataGrid->IsSelected(a))
-					continue;
-
-			if (m_pItinerary->m_Flights[a].Flags & AIRX_Cancelled)
-				continue;
-
-			pKitchen->AddFlight(m_pItinerary->m_Flights[a], m_pItinerary->GetGPSPath(a));
-		}
+		for (UINT a=0; a<FlightCount; a++)
+			if (!Selected || m_pWndDataGrid->IsSelected(a))
+				if ((m_pItinerary->m_Flights[a].Flags & AIRX_Cancelled)==0)
+					pKitchen->AddFlight(m_pItinerary->m_Flights[a], m_pItinerary->GetGPSPath(a));
 	}
 
 	return pKitchen;
 }
 
-CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro)
+CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro) const
 {
-	CMapFactory f(&theApp.m_MapSettings);
-
-	return f.RenderMap(GetKitchen(FALSE, Selected, MergeMetro));
+	return CMapFactory(theApp.m_MapSettings).RenderMap(GetKitchen(FALSE, Selected, MergeMetro));
 }
 
-void CMainWnd::ExportMap(const CString& Filename, GUID guidFileType, BOOL Selected, BOOL MergeMetro)
-{
-	CWaitCursor csr;
 
-	theApp.SaveBitmap(GetMap(Selected, MergeMetro), Filename, guidFileType);
-}
-
-void CMainWnd::ExportExcel(const CString& Filename)
+void CMainWnd::ExportCalendar(const CString& Path)
 {
 	ASSERT(m_pItinerary);
 
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
-	CExcelFile f;
-
-	if (!f.Open(Filename))
+	CCalendarFile File;
+	if (!File.Open(Path, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
 	}
 	else
 	{
-		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
+		try
+		{
+			const UINT FlightCount = m_pItinerary->GetFlightCount();
 
-		for (UINT a=0; a<Limit; a++)
-			f.WriteRoute(m_pItinerary->m_Flights[a]);
+			for (UINT a=0; a<FlightCount; a++)
+				File.WriteFlight(m_pItinerary->m_Flights[a]);
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(this, IDS_DRIVENOTREADY);
+		}
 
-		f.Close();
+		File.Close();
 	}
 }
 
-void CMainWnd::ExportCalendar(const CString& Filename)
+void CMainWnd::ExportExcel(const CString& Path)
 {
 	ASSERT(m_pItinerary);
 
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
-	CCalendarFile f;
-
-	if (!f.Open(Filename, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
+	CExcelFile File;
+	if (!File.Open(Path))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
 	}
 	else
 	{
-		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
+		try
+		{
+			const UINT FlightCount = m_pItinerary->GetFlightCount();
 
-		for (UINT a=0; a<Limit; a++)
-			f.WriteRoute(m_pItinerary->m_Flights[a]);
+			for (UINT a=0; a<FlightCount; a++)
+				File.WriteFlight(m_pItinerary->m_Flights[a]);
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(this, IDS_DRIVENOTREADY);
+		}
 
-		f.Close();
+		File.Close();
 	}
 }
 
-BOOL CMainWnd::ExportGoogleEarth(const CString& Filename, BOOL UseCount, BOOL UseColors, BOOL ClampHeight, BOOL Selected, BOOL MergeMetro)
+BOOL CMainWnd::ExportGoogleEarth(const CString& Path, BOOL Selected, BOOL MergeMetro)
 {
-	CGoogleEarthFile f;
+	ASSERT(m_pItinerary);
 
 	theApp.ShowNagScreen(NAG_FORCE, this);
 
-	if (!f.Open(Filename, m_pItinerary ? m_pItinerary->m_DisplayName : NULL))
+	CGoogleEarthFile File;
+	if (!File.Open(Path, m_pItinerary->m_DisplayName))
 	{
 		FMErrorBox(this, IDS_DRIVENOTREADY);
+
 		return FALSE;
 	}
 	else
 	{
-		BOOL Result = FALSE;
 		CKitchen* pKitchen = GetKitchen(TRUE, Selected, MergeMetro);
 
 		try
 		{
-			f.WriteRoutes(pKitchen, UseCount, UseColors, ClampHeight, FALSE);
-
-			CFlightAirports::CPair* pPair = pKitchen->m_FlightAirports.PGetFirstAssoc();
-			while (pPair)
-			{
-				f.WriteAirport(pPair->value.pAirport);
-
-				pPair = pKitchen->m_FlightAirports.PGetNextAssoc(pPair);
-			}
-
-			f.Close();
-			Result = TRUE;
+			File.WriteRoutes(pKitchen, theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClampHeight);
+			File.WriteAirports(pKitchen);
 		}
 		catch(CFileException ex)
 		{
-			f.Close();
 			FMErrorBox(this, IDS_DRIVENOTREADY);
 		}
 
+		File.Close();
 		delete pKitchen;
-		return Result;
+
+		return TRUE;
 	}
 }
 
-void CMainWnd::ExportText(const CString& Filename)
+void CMainWnd::ExportMap(const CString& Path, GUID guidFileType)
 {
-	ASSERT(m_pItinerary);
+	CWaitCursor WaitCursor;
 
-	theApp.ShowNagScreen(NAG_FORCE, this);
-
-	FILE *fStream;
-	if (_tfopen_s(&fStream, Filename, _T("wt,ccs=UTF-8")))
-	{
-		FMErrorBox(this, IDS_DRIVENOTREADY);
-	}
-	else
-	{
-		UINT Limit = FMIsLicensed() ? m_pItinerary->m_Flights.m_ItemCount : min(m_pItinerary->m_Flights.m_ItemCount, 10);
-
-		CStdioFile f(fStream);
-		try
-		{
-			for (UINT a=0; a<Limit; a++)
-				f.WriteString(m_pItinerary->Flight2Text(a));
-
-			f.Close();
-		}
-		catch(CFileException ex)
-		{
-			f.Close();
-			FMErrorBox(this, IDS_DRIVENOTREADY);
-		}
-	}
+	theApp.SaveBitmap(GetMap(), Path, guidFileType);
 }
 
-void CMainWnd::ExportMap(DWORD FilterIndex, BOOL Selected, BOOL MergeMetro)
+void CMainWnd::ExportMap(DWORD FilterIndex)
 {
 	CString Extensions;
 	theApp.AddFileExtension(Extensions, IDS_FILEFILTER_BMP, _T("bmp"));
@@ -386,30 +341,74 @@ void CMainWnd::ExportMap(DWORD FilterIndex, BOOL Selected, BOOL MergeMetro)
 
 	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	dlg.m_ofn.nFilterIndex = FilterIndex;
-	if (dlg.DoModal()==IDOK)
-	{
-		CString ext = dlg.GetFileExt();
 
-		if (ext==_T("bmp"))
-		{
-			ExportMap(dlg.GetPathName(), ImageFormatBMP, Selected, MergeMetro);
-		}
-		else
-			if (ext==_T("jpg"))
-			{
-				ExportMap(dlg.GetPathName(), ImageFormatJPEG, Selected, MergeMetro);
-			}
-			else
-				if (ext==_T("png"))
-				{
-					ExportMap(dlg.GetPathName(), ImageFormatPNG, Selected, MergeMetro);
-				}
-				else
-					if (ext==_T("tif"))
-					{
-						ExportMap(dlg.GetPathName(), ImageFormatTIFF, Selected, MergeMetro);
-					}
+	if (dlg.DoModal()==IDOK)
+		Export(dlg.GetPathName(), dlg.GetFileExt().MakeLower());
+}
+
+void CMainWnd::ExportText(const CString& Path)
+{
+	ASSERT(m_pItinerary);
+
+	theApp.ShowNagScreen(NAG_FORCE, this);
+
+	FILE* fStream;
+	if (_tfopen_s(&fStream, Path, _T("wt,ccs=UTF-8")))
+	{
+		FMErrorBox(this, IDS_DRIVENOTREADY);
 	}
+	else
+	{
+		CStdioFile File(fStream);
+
+		try
+		{
+			const UINT FlightCount = m_pItinerary->GetFlightCount();
+
+			for (UINT a=0; a<FlightCount; a++)
+				File.WriteString(m_pItinerary->Flight2Text(a));
+		}
+		catch(CFileException ex)
+		{
+			FMErrorBox(this, IDS_DRIVENOTREADY);
+		}
+
+		File.Close();
+	}
+}
+
+void CMainWnd::Export(const CString& Path, const CString& Extension)
+{
+	if (Extension==_T("airx"))
+	{
+		m_pItinerary->SaveAIRX(Path, m_pWndDataGrid->GetCurrentRow());
+
+		UpdateWindowStatus();
+	}
+
+	if (Extension==_T("bmp"))
+		ExportMap(Path, ImageFormatBMP);
+
+	if (Extension==_T("csv"))
+		ExportExcel(Path);
+
+	if (Extension==_T("ics"))
+		ExportCalendar(Path);
+
+	if (Extension==_T("kml"))
+		ExportGoogleEarth(Path);
+
+	if (Extension==_T("jpg"))
+		ExportMap(Path, ImageFormatJPEG);
+
+	if (Extension==_T("png"))
+		ExportMap(Path, ImageFormatPNG);
+
+	if (Extension==_T("tif"))
+		ExportMap(Path, ImageFormatTIFF);
+
+	if (Extension==_T("txt"))
+		ExportText(Path);
 }
 
 void CMainWnd::SaveAs(DWORD FilterIndex)
@@ -427,46 +426,16 @@ void CMainWnd::SaveAs(DWORD FilterIndex)
 
 	CFileDialog dlg(FALSE, _T("airx"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	dlg.m_ofn.nFilterIndex = FilterIndex;
+
 	if (dlg.DoModal()==IDOK)
 	{
-		CString Ext = dlg.GetFileExt().MakeLower();
-		if (Ext==_T("airx"))
-		{
-			m_pItinerary->m_Metadata.CurrentRow = m_pWndDataGrid->GetCurrentRow();
-
-			m_pItinerary->SaveAIRX(dlg.GetPathName());
-			UpdateWindowStatus();
-		}
-
-		if (Ext==_T("bmp"))
-			ExportMap(dlg.GetPathName(), ImageFormatBMP);
-
-		if (Ext==_T("csv"))
-			ExportExcel(dlg.GetPathName());
-
-		if (Ext==_T("ics"))
-			ExportCalendar(dlg.GetPathName());
-
-		if (Ext==_T("kml"))
-			ExportGoogleEarth(dlg.GetPathName(), theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClampHeight);
-
-		if (Ext==_T("jpg"))
-			ExportMap(dlg.GetPathName(), ImageFormatJPEG);
-
-		if (Ext==_T("png"))
-			ExportMap(dlg.GetPathName(), ImageFormatPNG);
-
-		if (Ext==_T("tif"))
-			ExportMap(dlg.GetPathName(), ImageFormatTIFF);
-
-		if (Ext==_T("txt"))
-			ExportText(dlg.GetPathName());
+		Export(dlg.GetPathName(), dlg.GetFileExt().MakeLower());
 
 		HideFileMenu();
 	}
 }
 
-void CMainWnd::Print(PRINTDLGEX pdex)
+void CMainWnd::Print(const PRINTDLGEX& pdex)
 {
 	ASSERT(m_pItinerary);
 
@@ -477,11 +446,13 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 	dc.Attach(pdex.hDC);
 
 	// Landscape
-	LPDEVMODE lp = (LPDEVMODE)GlobalLock(pdex.hDevMode);
-	ASSERT(lp);
-	lp->dmOrientation = DMORIENT_LANDSCAPE;
-	lp->dmFields |= DM_ORIENTATION;
-	dc.ResetDC(lp);
+	ASSERT(pdex.hDevMode);
+	LPDEVMODE lpDevMode = (LPDEVMODE)GlobalLock(pdex.hDevMode);
+
+	lpDevMode->dmOrientation = DMORIENT_LANDSCAPE;
+	lpDevMode->dmFields |= DM_ORIENTATION;
+	dc.ResetDC(lpDevMode);
+
 	GlobalUnlock(pdex.hDevMode);
 
 	// Document
@@ -494,24 +465,24 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 	dc.SetMapMode(MM_TEXT);
 	dc.SetBkMode(TRANSPARENT);
 
-	INT w = dc.GetDeviceCaps(HORZRES);
-	INT h = dc.GetDeviceCaps(VERTRES);
-	const DOUBLE Spacer = (w/40.0);
+	const INT Width = dc.GetDeviceCaps(HORZRES);
+	const INT Height = dc.GetDeviceCaps(VERTRES);
+	const DOUBLE Spacer = (Width/40.0);
 
-	CRect rect(0, 0, w, h);
+	CRect rect(0, 0, Width, Height);
 	rect.DeflateRect((INT)Spacer, (INT)Spacer);
 
-	if (dc.StartDoc(&di)>=0)
+	if (SUCCEEDED(dc.StartDoc(&di)))
 	{
-		if (dc.StartPage()>=0)
+		if (SUCCEEDED(dc.StartPage()))
 		{
 			CRect rectPage(rect);
 
 			theApp.PrintPageHeader(dc, rectPage, Spacer, di);
 
-			CFont fnt;
-			fnt.CreatePointFont(120, _T("Tahoma"), &dc);
-			CFont* pOldFont = dc.SelectObject(&fnt);
+			CFont Font;
+			Font.CreatePointFont(120, _T("Tahoma"), &dc);
+			CFont* pOldFont = dc.SelectObject(&Font);
 
 			CPen pen(PS_SOLID, 4, (COLORREF)0x606060);
 			CPen* pOldPen = dc.SelectObject(&pen);
@@ -522,9 +493,9 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 			INT ColumnWidths[cColumns];
 			INT TotalWidth = 0;
 			for (UINT a=0; a<cColumns; a++)
-				TotalWidth += FMAttributes[ColumnIDs[a]].RecommendedWidth;
+				TotalWidth += FMAttributes[ColumnIDs[a]].DefaultColumnWidth;
 			for (UINT a=0; a<cColumns; a++)
-				ColumnWidths[a] = (INT)((DOUBLE)FMAttributes[ColumnIDs[a]].RecommendedWidth*(DOUBLE)rectPage.Width()/(DOUBLE)TotalWidth);
+				ColumnWidths[a] = (INT)((DOUBLE)FMAttributes[ColumnIDs[a]].DefaultColumnWidth*(DOUBLE)rectPage.Width()/(DOUBLE)TotalWidth);
 
 			const INT TextHeight = dc.GetTextExtent(_T("Wy")).cy;
 			const INT LineHeight = (INT)((DOUBLE)TextHeight*1.2);
@@ -554,9 +525,9 @@ void CMainWnd::Print(PRINTDLGEX pdex)
 				}
 				else
 				{
-					const INT z = rectPage.top-(LineHeight-TextHeight)/2;
-					dc.MoveTo(rectPage.left, z);
-					dc.LineTo(rectPage.right, z);
+					const INT Y = rectPage.top-(LineHeight-TextHeight)/2;
+					dc.MoveTo(rectPage.left, Y);
+					dc.LineTo(rectPage.right, Y);
 				}
 
 				INT Left = rectPage.left;
@@ -598,7 +569,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_NOTIFY(REQUEST_TOOLTIP_DATA, 1, OnRequestTooltipData)
-	ON_REGISTERED_MESSAGE(theApp.m_DistanceSettingChangedMsg, OnDistanceSettingChanged)
+
+	ON_MESSAGE_VOID(WM_DISTANCESETTINGSCHANGED, OnDistanceSettingsChanged)
 
 	ON_COMMAND(IDM_FILE_NEW, OnFileNew)
 	ON_COMMAND(IDM_FILE_NEWSAMPLE1, OnFileNewSample1)
@@ -609,7 +581,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CBackstageWnd)
 	ON_COMMAND(IDM_FILE_SAVEAS, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_SAVEAS_CSV, OnFileSaveCSV)
 	ON_COMMAND(IDM_FILE_SAVEAS_TXT, OnFileSaveTXT)
-	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveOther)
+	ON_COMMAND(IDM_FILE_SAVEAS_OTHER, OnFileSaveAs)
 	ON_COMMAND(IDM_FILE_PRINT, OnFilePrint)
 	ON_COMMAND(IDM_FILE_PRINTQUICK, OnFilePrintQuick)
 	ON_COMMAND(IDM_FILE_CLOSE, OnFileClose)
@@ -677,15 +649,16 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainWnd::OnClose()
 {
-	if (m_pItinerary)
-		if (!CloseFile())
-			return;
+	if (m_pItinerary && !CloseFile())
+		return;
 
 	CBackstageWnd::OnClose();
 }
 
 void CMainWnd::OnDestroy()
 {
+	delete m_pItinerary;
+
 	if (m_pWndDataGrid)
 	{
 		m_pWndDataGrid->DestroyWindow();
@@ -734,14 +707,10 @@ void CMainWnd::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = TRUE;
 }
 
-LRESULT CMainWnd::OnDistanceSettingChanged(WPARAM wParam, LPARAM /*lParam*/)
+void CMainWnd::OnDistanceSettingsChanged()
 {
-	theApp.m_UseStatuteMiles = (BOOL)wParam;
-
 	if (m_pWndDataGrid)
 		m_pWndDataGrid->Invalidate();
-
-	return NULL;
 }
 
 
@@ -790,9 +759,10 @@ void CMainWnd::OnFileOpenRecent()
 {
 	if (m_pWndFileMenu)
 	{
-		CString Path = m_pWndFileMenu->GetSelectedRecentFilePath();
+		LPCWSTR Path = m_pWndFileMenu->GetSelectedFilePath();
+		ASSERT(Path);
 
-		if (!Path.IsEmpty())
+		if (Path[0]!=L'\0')
 			Open(Path);
 	}
 }
@@ -807,9 +777,7 @@ void CMainWnd::OnFileSave()
 	}
 	else
 	{
-		m_pItinerary->m_Metadata.CurrentRow = m_pWndDataGrid->GetCurrentRow();
-
-		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName);
+		m_pItinerary->SaveAIRX(m_pItinerary->m_FileName, m_pWndDataGrid->GetCurrentRow());
 		UpdateWindowStatus();
 
 		HideFileMenu();
@@ -837,13 +805,6 @@ void CMainWnd::OnFileSaveTXT()
 	SaveAs(9);
 }
 
-void CMainWnd::OnFileSaveOther()
-{
-	ASSERT(m_pItinerary);
-
-	SaveAs();
-}
-
 void CMainWnd::OnFilePrint()
 {
 	ASSERT(m_pItinerary);
@@ -853,13 +814,8 @@ void CMainWnd::OnFilePrint()
 		Flags &= ~PD_NOSELECTION;
 
 	CPrintDialogEx dlg(Flags, this);
-	if (SUCCEEDED(dlg.DoModal()))
-	{
-		if (dlg.m_pdex.dwResultAction!=PD_RESULT_PRINT)
-			return;
-
+	if (SUCCEEDED(dlg.DoModal()) && (dlg.m_pdex.dwResultAction==PD_RESULT_PRINT))
 		Print(dlg.m_pdex);
-	}
 }
 
 void CMainWnd::OnFilePrintQuick()
@@ -895,7 +851,6 @@ void CMainWnd::OnFileMenu()
 
 		m_pWndFileMenu = new CFileMenu();
 		m_pWndFileMenu->Create(this, 4, m_pItinerary);
-		m_pWndFileMenu->ShowWindow(SW_SHOW);
 
 		CBackstageWnd::AdjustLayout();
 
@@ -909,24 +864,24 @@ void CMainWnd::OnFileMenu()
 
 void CMainWnd::OnMapOpen()
 {
+	ASSERT(m_pItinerary);
+
 	theApp.ShowNagScreen(NAG_EXPIRED, this);
 
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	CBitmap* pBitmap = GetMap(TRUE, theApp.m_MapMergeMetro);
 
 	CMapWnd* pFrameWnd = new CMapWnd();
 	pFrameWnd->Create();
-	pFrameWnd->SetBitmap(pBitmap, m_pItinerary->m_DisplayName, m_pItinerary->m_Metadata.Title[0]!=L'\0' ? m_pItinerary->m_Metadata.Title : m_pItinerary->m_DisplayName);
-	pFrameWnd->ShowWindow(SW_SHOW);
+	pFrameWnd->SetBitmap(pBitmap, m_pItinerary);
 }
 
 void CMainWnd::OnMapSettings()
 {
 	m_wndSidebar.SetSelection(IDM_SIDEBAR_MAP_SETTINGS);
 
-	MapSettingsDlg dlg(this);
-	dlg.DoModal();
+	MapSettingsDlg(this).DoModal();
 
 	m_wndSidebar.SetSelection();
 }
@@ -935,22 +890,18 @@ void CMainWnd::OnGlobeOpen()
 {
 	ASSERT(m_pItinerary);
 
-	CGlobeWnd* pFrameWnd = new CGlobeWnd();
-
 	CKitchen* pKitchen = GetKitchen(TRUE, TRUE, theApp.m_GlobeMergeMetro);
-	pKitchen->m_DisplayName = m_pItinerary->m_DisplayName;
 
+	CGlobeWnd* pFrameWnd = new CGlobeWnd();
 	pFrameWnd->Create();
 	pFrameWnd->SetFlights(pKitchen);
-	pFrameWnd->ShowWindow(SW_SHOW);
 }
 
 void CMainWnd::OnGlobeSettings()
 {
 	m_wndSidebar.SetSelection(IDM_SIDEBAR_GLOBE_SETTINGS);
 
-	GlobeSettingsDlg dlg(this);
-	dlg.DoModal();
+	GlobeSettingsDlg(this).DoModal();
 
 	m_wndSidebar.SetSelection();
 }
@@ -959,25 +910,26 @@ void CMainWnd::OnGoogleEarthOpen()
 {
 	ASSERT(m_pItinerary);
 
-	// Dateinamen finden
+	// Create file name
 	TCHAR Pathname[MAX_PATH];
 	if (!GetTempPath(MAX_PATH, Pathname))
 		return;
 
-	CString szTempName;
 	srand(rand());
-	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
-	if (ExportGoogleEarth(szTempName, theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClampHeight, TRUE, theApp.m_GoogleEarthMergeMetro))
-		ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
+	CString TempName;
+	TempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
+
+	// Export .kml file and open Google Earth
+	if (ExportGoogleEarth(TempName, TRUE, theApp.m_GoogleEarthMergeMetro))
+		ShellExecute(GetSafeHwnd(), _T("open"), TempName, NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CMainWnd::OnGoogleEarthSettings()
 {
 	m_wndSidebar.SetSelection(IDM_SIDEBAR_GOOGLEEARTH_SETTINGS);
 
-	GoogleEarthSettingsDlg dlg(this);
-	dlg.DoModal();
+	GoogleEarthSettingsDlg(this).DoModal();
 
 	m_wndSidebar.SetSelection();
 }
@@ -988,16 +940,14 @@ void CMainWnd::OnStatisticsOpen()
 
 	theApp.ShowNagScreen(NAG_COUNTER, this);
 
-	StatisticsDlg dlg(m_pItinerary, this);
-	dlg.DoModal();
+	StatisticsDlg(m_pItinerary, this).DoModal();
 }
 
 void CMainWnd::OnStatisticsSettings()
 {
 	m_wndSidebar.SetSelection(IDM_SIDEBAR_STATISTICS_SETTINGS);
 
-	StatisticsSettingsDlg dlg(this);
-	dlg.DoModal();
+	StatisticsSettingsDlg(this).DoModal();
 
 	m_wndSidebar.SetSelection();
 }

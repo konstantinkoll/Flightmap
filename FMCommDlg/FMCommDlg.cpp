@@ -62,7 +62,7 @@ void GetFileVersion(HMODULE hModule, CString& Version, CString* Copyright)
 					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
 
-			delete[] lpInfo;
+			delete lpInfo;
 		}
 	}
 }
@@ -162,7 +162,7 @@ HBITMAP CreateMaskBitmap(LONG Width, LONG Height)
 	DIB.bmiHeader.biCompression = BI_RGB;
 	DIB.bmiHeader.biClrUsed = 16;
 
-	memcpy_s(DIB.bmiColors, sizeof(DIB.bmiColors), DefaultPalette, sizeof(DefaultPalette));
+	memcpy(DIB.bmiColors, DefaultPalette, sizeof(DefaultPalette));
 
 	return CreateDIBSection(NULL, (LPBITMAPINFO)&DIB, DIB_RGB_COLORS, NULL, NULL, 0);
 }
@@ -227,40 +227,6 @@ void DrawLocationIndicator(CDC& dc, INT x, INT y, INT Size)
 	DrawLocationIndicator(g, x, y, Size);
 }
 
-void DrawControlBorder(CWnd* pWnd)
-{
-	CRect rect;
-	pWnd->GetWindowRect(rect);
-
-	rect.bottom -= rect.top;
-	rect.right -= rect.left;
-	rect.left = rect.top = 0;
-
-	CWindowDC dc(pWnd);
-
-	if (FMGetApp()->m_ThemeLibLoaded)
-		if (FMGetApp()->zIsAppThemed())
-		{
-			HTHEME hTheme = FMGetApp()->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
-			if (hTheme)
-			{
-				CRect rectClient(rect);
-				rectClient.DeflateRect(2, 2);
-				dc.ExcludeClipRect(rectClient);
-
-				FMGetApp()->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
-				FMGetApp()->zCloseThemeData(hTheme);
-
-				return;
-			}
-		}
-
-	dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
-
-	rect.DeflateRect(1, 1);
-	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
-}
-
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed)
 {
 	ASSERT(Caption);
@@ -294,16 +260,15 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 			dc.SelectObject(pOldPen);
 		}
 
-	if (Hint)
-		if (Hint[0]!=L'\0')
-		{
-			dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DSHADOW));
+	if (Hint && *Hint)
+	{
+		dc.SetTextColor(Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW));
 
-			rect.top += rectLine.Height();
+		rect.top += rectLine.Height();
 
-			dc.SelectObject(&FMGetApp()->m_DefaultFont);
-			dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_NOPREFIX | (rect.Height()>=2*FMGetApp()->m_DefaultFont.GetFontHeight() ? DT_WORDBREAK : DT_END_ELLIPSIS));
-		}
+		dc.SelectObject(&FMGetApp()->m_DefaultFont);
+		dc.DrawText(Hint, rect, DT_LEFT | DT_TOP | DT_NOPREFIX | (rect.Height()>=2*FMGetApp()->m_DefaultFont.GetFontHeight() ? DT_WORDBREAK : DT_END_ELLIPSIS));
+	}
 
 	dc.SelectObject(pOldFont);
 }
@@ -553,8 +518,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
 
 			rect.left++;
-			rect.top++;
-			rect.bottom = rect.top+rect.Height()/2;
+			rect.bottom = (++rect.top)+rect.Height()/2;
 
 			if (Red)
 			{
@@ -579,7 +543,7 @@ void DrawBackstageButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Hover,
 		else
 		{
 			rect.top++;
-			dc.FillSolidRect(rect, Red ? 0x0000FF : GetSysColor(COLOR_HIGHLIGHT));
+			dc.FillSolidRect(rect, Red ? 0x2020FF : GetSysColor(COLOR_HIGHLIGHT));
 
 			dc.SetTextColor(Red ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
 		}
@@ -864,22 +828,22 @@ UINT FMIATAGetAirportCount()
 	return UseGermanDB ? AirportCount_DE : AirportCount_EN;
 }
 
-const FMCountry* FMIATAGetCountry(UINT CountryID)
+LPCCOUNTRY FMIATAGetCountry(UINT CountryID)
 {
 	return UseGermanDB ? &Countries_DE[CountryID] : &Countries_EN[CountryID];
 }
 
-INT FMIATAGetNextAirport(INT Last, FMAirport*& pAirport)
+INT FMIATAGetNextAirport(INT Last, LPCAIRPORT& lpcAirport)
 {
 	if (Last>=(INT)FMIATAGetAirportCount()-1)
 		return -1;
 
-	pAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+	lpcAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 
 	return Last;
 }
 
-INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport*& pAirport)
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, LPCAIRPORT& lpcAirport)
 {
 	UINT Count = FMIATAGetAirportCount();
 
@@ -888,19 +852,19 @@ INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport*& pAirport)
 		if (Last>=(INT)Count-1)
 			return -1;
 
-		pAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
+		lpcAirport = UseGermanDB ? &Airports_DE[++Last] : &Airports_EN[++Last];
 	}
-	while (pAirport->CountryID!=CountryID);
+	while (lpcAirport->CountryID!=CountryID);
 
 	return Last;
 }
 
-BOOL FMIATAGetAirportByCode(LPCSTR lpszCode, FMAirport*& pAirport)
+BOOL FMIATAGetAirportByCode(LPCSTR lpcszCode, LPCAIRPORT& lpcAirport)
 {
-	if (!lpszCode)
+	if (!lpcszCode)
 		return FALSE;
 
-	if (strlen(lpszCode)!=3)
+	if (strlen(lpcszCode)!=3)
 		return FALSE;
 
 	INT First = 0;
@@ -910,9 +874,9 @@ BOOL FMIATAGetAirportByCode(LPCSTR lpszCode, FMAirport*& pAirport)
 	{
 		const INT Mid = (First+Last)/2;
 
-		pAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
+		lpcAirport = UseGermanDB ? &Airports_DE[Mid] : &Airports_EN[Mid];
 
-		const INT Result = strcmp(pAirport->Code, lpszCode);
+		const INT Result = strcmp(lpcAirport->Code, lpcszCode);
 		if (!Result)
 			return TRUE;
 
@@ -929,9 +893,9 @@ BOOL FMIATAGetAirportByCode(LPCSTR lpszCode, FMAirport*& pAirport)
 	return FALSE;
 }
 
-HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, LONG Width, LONG Height)
+HBITMAP FMIATACreateAirportMap(LPCAIRPORT lpcAirport, LONG Width, LONG Height)
 {
-	ASSERT(pAirport);
+	ASSERT(lpcAirport);
 
 	// Create bitmap
 	CDC dc;
@@ -948,8 +912,8 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, LONG Width, LONG Height)
 	const CSize Size(pMap->GetWidth(), pMap->GetHeight());
 
 	// Map location
-	INT X = (INT)((pAirport->Location.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
-	INT Y = (INT)((pAirport->Location.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
+	INT X = (INT)((lpcAirport->Location.Longitude+180.0)*(DOUBLE)Size.cx/360.0+0.5f);
+	INT Y = (INT)((lpcAirport->Location.Latitude+90.0)*(DOUBLE)Size.cy/180.0+0.5f);
 
 	// Map offset
 	INT OffsX = -X+Width/2;
@@ -978,7 +942,7 @@ HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, LONG Width, LONG Height)
 	// Create font path
 	FontFamily fontFamily(_T("Arial"));
 	WCHAR pszBuf[4];
-	MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
+	MultiByteToWideChar(CP_ACP, 0, lpcAirport->Code, -1, pszBuf, 4);
 
 	StringFormat StrFormat;
 	GraphicsPath TextPath;
@@ -1017,60 +981,83 @@ __forceinline DOUBLE GetSeconds(DOUBLE c)
 	return (c-(DOUBLE)(INT)c)*60.0;
 }
 
-void FMGeoCoordinateToString(const DOUBLE c, LPSTR tmpStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
+void FMGeoCoordinateToString(const DOUBLE Coordinate, LPSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero)
 {
-	sprintf_s(tmpStr, cCount, FillZero ? "%03u°%02u\'%02u\"%c" : "%u°%u\'%u\"%c",
-		(UINT)(fabs(c)+ROUNDOFF),
-		(UINT)GetMinutes(c),
-		(UINT)(GetSeconds(c)+0.5),
-		c>0 ? IsLatitude ? 'S' : 'E' : IsLatitude ? 'N' : 'W');
+	ASSERT(pStr);
+
+	sprintf_s(pStr, cCount, FillZero ? "%03u°%02u\'%02u\"%c" : "%u°%u\'%u\"%c",
+		(UINT)(fabs(Coordinate)+ROUNDOFF),
+		(UINT)GetMinutes(Coordinate),
+		(UINT)(GetSeconds(Coordinate)+0.5),
+		Coordinate>0 ? IsLatitude ? 'S' : 'E' : IsLatitude ? 'N' : 'W');
 }
 
-void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero)
+void FMGeoCoordinatesToString(const FMGeoCoordinates& Coordinates, LPSTR pStr, SIZE_T cCount, BOOL FillZero)
 {
-	CHAR Coordinate[16];
-	FMGeoCoordinateToString(c, Coordinate, 16, IsLatitude, FillZero);
+	ASSERT(pStr);
 
-	tmpStr = Coordinate;
-}
-
-void FMGeoCoordinatesToString(const FMGeoCoordinates& c, LPSTR tmpStr, SIZE_T cCount, BOOL FillZero)
-{
-	if ((c.Latitude==0) && (c.Longitude==0))
+	if ((Coordinates.Latitude==0) && (Coordinates.Longitude==0))
 	{
-		*tmpStr = '\0';
+		*pStr = '\0';
 	}
 	else
 	{
-		FMGeoCoordinateToString(c.Latitude, tmpStr, cCount, TRUE, FillZero);
+		FMGeoCoordinateToString(Coordinates.Latitude, pStr, cCount, TRUE, FillZero);
 
 		CHAR Longitude[16];
-		FMGeoCoordinateToString(c.Longitude, Longitude, 16, FALSE, FillZero);
+		FMGeoCoordinateToString(Coordinates.Longitude, Longitude, 16, FALSE, FillZero);
 
-		strcat_s(tmpStr, cCount, ", ");
-		strcat_s(tmpStr, cCount, Longitude);
+		strcat_s(pStr, cCount, ", ");
+		strcat_s(pStr, cCount, Longitude);
 	}
 }
 
-void FMGeoCoordinatesToString(const FMGeoCoordinates& c, CString& tmpStr, BOOL FillZero)
+CString FMGeoCoordinateToString(const DOUBLE Coordinate, BOOL IsLatitude, BOOL FillZero)
 {
-	if ((c.Latitude==0) && (c.Longitude==0))
-	{
-		tmpStr.Empty();
-	}
-	else
+	CHAR tmpBuf[16];
+	FMGeoCoordinateToString(Coordinate, tmpBuf, 16, IsLatitude, FillZero);
+
+	return CString(tmpBuf);
+}
+
+CString FMGeoCoordinatesToString(const FMGeoCoordinates& Coordinates, BOOL FillZero)
+{
+	CString tmpStr;
+
+	if ((Coordinates.Latitude!=0) || (Coordinates.Longitude!=0))
 	{
 		CHAR Latitude[16];
-		FMGeoCoordinateToString(c.Latitude, Latitude, 16, TRUE, FillZero);
+		FMGeoCoordinateToString(Coordinates.Latitude, Latitude, 16, TRUE, FillZero);
 
 		CHAR Longitude[16];
-		FMGeoCoordinateToString(c.Longitude, Longitude, 16, FALSE, FillZero);
+		FMGeoCoordinateToString(Coordinates.Longitude, Longitude, 16, FALSE, FillZero);
 		CString L(Longitude);
 
 		tmpStr = Latitude;
 		tmpStr.Append(_T(", "));
 		tmpStr.Append(L);
 	}
+
+	return tmpStr;
+}
+
+
+// Date and time
+
+CString FMTimeToString(const FILETIME& Time)
+{
+	SYSTEMTIME stUTC;
+	SYSTEMTIME stLocal;
+	FileTimeToSystemTime(&Time, &stUTC);
+	SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+	WCHAR tmpBuf[256];
+	const INT Size = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, tmpBuf, 256);
+
+	tmpBuf[Size-1] = L' ';
+	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &stLocal, NULL, &tmpBuf[Size], (INT)256-Size);
+
+	return tmpBuf;
 }
 
 
@@ -1101,35 +1088,25 @@ void ParseInput(LPSTR pStr, FMLicense* pLicense)
 		{
 			*(pSeparator++) = '\0';
 
-			if (strcmp(pStr, LICENSE_ID)==0)
+			if (strcmp(pStr, LICENSE_PRODUCT)==0)
 			{
-				strcpy_s(pLicense->PurchaseID, 256, pSeparator);
+				strcpy_s(pLicense->ProductID, 256, pSeparator);
 			}
 			else
-				if (strcmp(pStr, LICENSE_PRODUCT)==0)
+				if (strcmp(pStr, LICENSE_DATE)==0)
 				{
-					strcpy_s(pLicense->ProductID, 256, pSeparator);
+					strcpy_s(pLicense->PurchaseDate, 256, pSeparator);
 				}
 				else
-					if (strcmp(pStr, LICENSE_DATE)==0)
+					if (strcmp(pStr, LICENSE_QUANTITY)==0)
 					{
-						strcpy_s(pLicense->PurchaseDate, 256, pSeparator);
+						strcpy_s(pLicense->Quantity, 256, pSeparator);
 					}
 					else
-						if (strcmp(pStr, LICENSE_QUANTITY)==0)
+						if (strcmp(pStr, LICENSE_NAME)==0)
 						{
-							strcpy_s(pLicense->Quantity, 256, pSeparator);
+							strcpy_s(pLicense->RegName, 256, pSeparator);
 						}
-						else
-							if (strcmp(pStr, LICENSE_NAME)==0)
-							{
-								strcpy_s(pLicense->RegName, 256, pSeparator);
-							}
-							else
-								if (strcmp(pStr, LICENSE_VERSION)==0)
-								{
-									sscanf_s(pSeparator, "%u.%u.%u", &pLicense->Version.Major, &pLicense->Version.Minor, &pLicense->Version.Build);
-								}
 		}
 
 		pStr = pChar+1;
@@ -1241,16 +1218,16 @@ BOOL FMIsSharewareExpired()
 	}
 
 	// Check
-	FILETIME ft;
-	GetSystemTimeAsFileTime(&ft);
+	FILETIME FileTime;
+	GetSystemTimeAsFileTime(&FileTime);
+
+	ULARGE_INTEGER Now;
+	Now.HighPart = FileTime.dwHighDateTime;
+	Now.LowPart = FileTime.dwLowDateTime;
 
 	ULARGE_INTEGER FirstInstall;
 	FirstInstall.HighPart = ExpireBuffer.dwHighDateTime;
 	FirstInstall.LowPart = ExpireBuffer.dwLowDateTime;
-
-	ULARGE_INTEGER Now;
-	Now.HighPart = ft.dwHighDateTime;
-	Now.LowPart = ft.dwLowDateTime;
 
 #define SECOND ((ULONGLONG)10000000)
 #define MINUTE (60*SECOND)
@@ -1267,9 +1244,7 @@ BOOL FMIsSharewareExpired()
 
 INT FMMessageBox(CWnd* pParentWnd, const CString& Text, const CString& Caption, UINT Type)
 {
-	FMMessageBoxDlg dlg(pParentWnd, Text, Caption, Type);
-
-	return (INT)dlg.DoModal();
+	return (INT)FMMessageBoxDlg(pParentWnd, Text, Caption, Type).DoModal();
 }
 
 void FMErrorBox(CWnd* pParentWnd, UINT nID)

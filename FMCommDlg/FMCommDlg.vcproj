@@ -347,6 +347,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CBackstageDropTarget.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CBackstageShadow.cpp"
 				>
 			</File>
@@ -391,7 +395,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFrontstageItemView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFrontstagePane.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrontstageScroller.cpp"
 				>
 			</File>
 			<File
@@ -439,6 +451,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMAboutDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.cpp"
 				>
 			</File>
@@ -460,6 +476,10 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FMMemorySort.cpp"
 				>
 			</File>
 			<File
@@ -545,6 +565,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CBackstageDropTarget.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CBackstageShadow.h"
 				>
 			</File>
@@ -589,7 +613,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFrontstageItemView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFrontstagePane.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrontstageScroller.h"
 				>
 			</File>
 			<File
@@ -637,6 +669,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FMAboutDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FMApplication.h"
 				>
 			</File>
@@ -662,6 +698,10 @@
 			</File>
 			<File
 				RelativePath=".\FMLicenseDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FMMemorySort.h"
 				>
 			</File>
 			<File

@@ -19,15 +19,13 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CItinerary* pItinerary=NULL);
-	void SetItinerary(CItinerary* pItinerary=NULL);
-	CString GetSelectedRecentFilePath() const;
+	LPCWSTR GetSelectedFilePath() const;
 
 protected:
 	void Update();
 	void AdjustLayout();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSettingChange(UINT nFlags, LPCTSTR lpszSection);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -53,8 +51,8 @@ private:
 	BOOL m_Resizing;
 };
 
-inline CString CFileMenu::GetSelectedRecentFilePath() const
+inline LPCWSTR CFileMenu::GetSelectedFilePath() const
 {
-	return m_wndRecentFilesPane.GetSelectedRecentFilePath();
+	return m_wndRecentFilesPane.GetSelectedFilePath();
 }
 

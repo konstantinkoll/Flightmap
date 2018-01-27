@@ -18,13 +18,14 @@ struct GlobeParameters
 
 struct GlobeItemData
 {
-	RECT Rect;
+	ItemData Hdr;
 	GLfloat World[3];
 	INT ScreenPoint[2];
 	GLfloat Alpha;
-	FMAirport* pAirport;
-	CHAR NameString[130];
 	CHAR CoordString[32];
+
+	LPCAIRPORT lpcAirport;
+	CHAR NameString[130];
 	WCHAR CountStringLarge[64];
 	WCHAR CountStringSmall[8];
 };
@@ -33,24 +34,25 @@ struct GlobeItemData
 // CGlobeView
 //
 
-class CGlobeView : public CFrontstageWnd
+class CGlobeView sealed : public CFrontstageItemView
 {
 public:
 	CGlobeView();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen=TRUE);
+	void SetFlights(CKitchen* pKitchen);
 	void UpdateViewOptions(BOOL Force=FALSE);
 
 protected:
 	virtual INT ItemAtPosition(CPoint point) const;
-	virtual void InvalidateItem(INT Index);
 	virtual void ShowTooltip(const CPoint& point);
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+	virtual void GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL Themed) const;
+	virtual BOOL DrawNothing() const;
 
-	void SelectItem(INT Index, BOOL Select);
-	void CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4]);
+	void CalcAndDrawSpots(const GLmatrix& ModelView, const GLmatrix& Projection);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeItemData* pData, LPCSTR Caption, LPCSTR Subcaption, LPCSTR Coordinates, LPCWSTR Description, BOOL Focused, BOOL Hot, BOOL Themed);
+	void DrawLabel(GlobeItemData* pData, LPCSTR Caption, LPCSTR Subcaption, LPCSTR Coordinates, LPCWSTR Description, BOOL Selected, BOOL Hot, BOOL Themed);
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -61,30 +63,28 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 
 	afx_msg void OnJumpToLocation();
+	afx_msg void OnShowLocations();
+	afx_msg void OnShowAirportIATA();
+	afx_msg void OnShowAirportNames();
+	afx_msg void OnShowCoordinates();
+	afx_msg void OnShowDescriptions();
+	afx_msg void OnDarkBackground();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
 	afx_msg void OnSaveAs();
 	afx_msg void OnGoogleEarth();
 	afx_msg void OnLiquidFolders();
-	afx_msg void OnSettings();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	FMDynArray<GlobeItemData, 64, 64> m_Airports;
-	FMDynArray<FlightSegments*, 128, 128> m_Routes;
-	UINT m_MinRouteCount;
-	UINT m_MaxRouteCount;
-
-	INT m_FocusItem;
-	BOOL m_IsSelected;
+	CKitchen* m_pKitchen;
+	BOOL m_HasRoutes;
 
 	GlobeParameters m_GlobeTarget;
 	GlobeParameters m_GlobeCurrent;
@@ -109,13 +109,14 @@ protected:
 	GLcolor m_TopColorSelected;
 
 private:
+	GlobeItemData* GetGlobeItemData(INT Index) const;
 	BOOL CursorOnGlobe(const CPoint& point) const;
 	void UpdateCursor();
-	void RenderScene(BOOL Themed);
+	void RenderScene();
 
 	CString m_DisplayName;
 	static CString m_strFlightCountSingular;
-	static CString m_FlightCount_Plural;
+	static CString m_strFlightCountPlural;
 	static const GLcolor m_lAmbient;
 	static const GLcolor m_lDiffuse;
 	static const GLcolor m_lSpecular;
@@ -136,3 +137,8 @@ private:
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
 };
+
+inline GlobeItemData* CGlobeView::GetGlobeItemData(INT Index) const
+{
+	return (GlobeItemData*)GetItemData(Index);
+}

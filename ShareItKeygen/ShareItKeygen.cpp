@@ -13,7 +13,6 @@
 #define ERC_EXPIRED          15
 #define ERC_INTENAL          16
 
-#define VERSION "2.0.0"
 #define PRODUCT "Flightmap"
 
 char* n = "677085883040394331688570333377767695119671712512083434059528353754560033694591049061201209797395551894503819202786118921144167773531480249549334860535587729188461269633368144074142410191991825789317089507732335118005174575981046999650747204904573316311747574418394100647266984314883856762401810850517725369369312442712786949893638812875664428840233397180906478896311138092374550604342908484026901612764076340393090750130869987901928694525115652071061067946427802582682353995030622395549260092920885717079018306793778696931528069177410572722700379823625160283051668274004965875876083908201130177783610610417898321219849233028817122323965938052450525299474409115105471423275517732060548499857454724731949257103279342856512067188778813745346304689332770001576020711940974480383875829689815572555429459919998181453447896952351950105505906202024278770099672075754601074409510918531448288487849102192484100291069098446047492850214953085906226731086863049147460384108831179220519130075352506339330781986225289808262743848011070853033928165863801245010514393309413470116317612433324938050068689790531474030013439742900179443199754755961937530375097971295589285864719559221786871735111334987792944096096937793086861538051306485745703623856809.";
@@ -24,13 +23,10 @@ class ShareITData
 {
 public:
 	bool utf8;
-	string purchaseId;
-	string runningNo;
 	string purchaseDate;
 	string productId;
 	string quantity;
 	string regName;
-	string language;
 };
 
 ShareITData parseInput(char* filename)
@@ -59,35 +55,25 @@ ShareITData parseInput(char* filename)
 					result.utf8 = true;
 				}
 				else
-					if (name=="PURCHASE_ID")
+					if (name=="PURCHASE_DATE")
 					{
-						result.purchaseId = value;
+						result.purchaseDate = value;
 					}
 					else
-						if (name=="RUNNING_NO")
+						if (name=="PRODUCT_ID")
 						{
-							result.runningNo = value;
+							result.productId = value;
 						}
 						else
-							if (name=="PURCHASE_DATE")
+							if (name=="QUANTITY")
 							{
-								result.purchaseDate = value;
+								result.quantity = value;
 							}
 							else
-								if (name=="PRODUCT_ID")
+								if (name=="REG_NAME")
 								{
-									result.productId = value;
+									result.regName = value;
 								}
-								else
-									if (name=="QUANTITY")
-									{
-										result.quantity = value;
-									}
-									else
-										if (name=="REG_NAME")
-										{
-											result.regName = value;
-										}
 			}
 		}
 
@@ -112,12 +98,10 @@ int main(int argc, char* argv[])
 	RSA::PrivateKey privateKey(params);
 
 	stringstream ss;
-	ss << LICENSE_ID << "=" << input.purchaseId << ":" << input.runningNo << endl;
-	ss << LICENSE_DATE << "="<< input.purchaseDate << endl;
-	ss << LICENSE_PRODUCT << "="<< PRODUCT << endl;
-	ss << LICENSE_QUANTITY << "="<< input.quantity << endl;
-	ss << LICENSE_VERSION << "="<< VERSION << endl;
-	ss << LICENSE_NAME << "="<< input.regName << endl;
+	ss << LICENSE_DATE << "=" << input.purchaseDate << endl;
+	ss << LICENSE_PRODUCT << "=" << PRODUCT << endl;
+	ss << LICENSE_QUANTITY << "=" << input.quantity << endl;
+	ss << LICENSE_NAME << "=" << input.regName << endl;
 	string message = ss.str();
 
 	////////////////////////////////////////////////

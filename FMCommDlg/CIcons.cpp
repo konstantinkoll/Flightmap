@@ -93,10 +93,19 @@ INT CIcons::Load(UINT nID, UINT Flags, FMFont* pFont)
 
 INT CIcons::LoadSmall(UINT nID)
 {
-	INT Size = GetSystemMetrics(SM_CXSMICON);
+	const INT Size = GetSystemMetrics(SM_CXSMICON);
 	ASSERT(Size==GetSystemMetrics(SM_CYSMICON));
 
-	INT Level = (Size>=32) ? 2 : (Size>=24) ? 1 : 0;
+	const INT Level = (Size>=32) ? 2 : (Size>=24) ? 1 : 0;
+
+	Load(nID+Level, m_IconSizes[Level]);
+
+	return m_IconSizes[Level];
+}
+
+INT CIcons::LoadForSize(UINT nID, INT Height)
+{
+	const UINT Level = (Height>=64) ? 4 : (Height>=48) ? 3 : (Height>=32) ? 2 : (Height>=24) ? 1 : 0;
 
 	Load(nID+Level, m_IconSizes[Level]);
 
@@ -208,7 +217,7 @@ void CIcons::Draw(CDC& dc, INT x, INT y, INT nImage, BOOL Hot, BOOL Disabled, BO
 	}
 }
 
-HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage)
+HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage, BOOL WhiteBackground)
 {
 	INT cx = 128;
 	INT cy = 128;
@@ -219,6 +228,9 @@ HBITMAP CIcons::ExtractBitmap(CImageList& ImageList, INT nImage)
 
 	HBITMAP hBitmap = CreateTransparentBitmap(cx, cy);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBitmap);
+
+	if (WhiteBackground)
+		dc.FillSolidRect(0, 0, cx, cy, 0xFFFFFF);
 
 	ImageList.DrawEx(&dc, nImage, CPoint(0, 0), CSize(cx, cy), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 

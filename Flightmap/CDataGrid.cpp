@@ -17,11 +17,9 @@
 //
 
 #define FLAGCOUNT          7
-#define ITEMPADDING        2
 #define LEFTMARGIN         (BACKSTAGEBORDER-1)
 #define MINCOLUMNWIDTH     50
 #define MAXAUTOWIDTH       400
-#define SPACER             (4*ITEMPADDING+1)
 
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
 
@@ -29,34 +27,27 @@ CIcons CDataGrid::m_LargeIcons;
 CIcons CDataGrid::m_SmallIcons;
 
 CDataGrid::CDataGrid()
-	: CFrontstageWnd()
+	: CFrontstageScroller(FRONTSTAGE_COMPLEXBACKGROUND)
 {
 	p_Itinerary = NULL;
 	m_pWndEdit = NULL;
-	m_HeaderItemClicked = m_HoverPart = m_SelectionAnchor = -1;
-	m_IgnoreHeaderItemChange = FALSE;
+	m_HoverPart = m_SelectionAnchor = -1;
 	m_ViewParameters = theApp.m_ViewParameters;
 
 	m_FindReplaceSettings = theApp.m_FindReplaceSettings;
 	m_FindReplaceSettings.FirstAction = FALSE;
 }
 
-CDataGrid::~CDataGrid()
-{
-	DestroyEdit();
-}
-
 BOOL CDataGrid::Create(CItinerary* pItinerary, CWnd* pParentWnd, UINT nID)
 {
 	ASSERT(pItinerary);
 
-	p_Itinerary = pItinerary;
 	m_FocusItem.x = 0;
-	m_FocusItem.y = pItinerary->m_Metadata.CurrentRow;
+	m_FocusItem.y = (p_Itinerary=pItinerary)->m_Metadata.CurrentRow;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
-	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageScroller::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
@@ -108,17 +99,17 @@ BOOL CDataGrid::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CFrontstageWnd::PreTranslateMessage(pMsg);
+	return CFrontstageScroller::PreTranslateMessage(pMsg);
 }
 
 void CDataGrid::SetItinerary(CItinerary* pItinerary)
 {
+	ASSERT(pItinerary);
+
 	if (p_Itinerary!=pItinerary)
 	{
-		p_Itinerary = pItinerary;
-
 		m_FocusItem.x = 0;
-		m_FocusItem.y = pItinerary->m_Metadata.CurrentRow;
+		m_FocusItem.y = (p_Itinerary=pItinerary)->m_Metadata.CurrentRow;
 		m_SelectionAnchor = -1;
 
 		AdjustLayout();
@@ -140,12 +131,22 @@ BOOL CDataGrid::HasSelection(BOOL CurrentLineIfNoneSelected) const
 
 BOOL CDataGrid::IsSelected(UINT Index) const
 {
-	return (Index<p_Itinerary->m_Flights.m_ItemCount) ? (p_Itinerary->m_Flights[Index].Flags & AIRX_Selected ) : FALSE;
+	return (Index<p_Itinerary->m_Flights.m_ItemCount) && (p_Itinerary->m_Flights[Index].Flags & AIRX_Selected);
 }
 
-UINT CDataGrid::GetCurrentRow() const
+void CDataGrid::DoDelete()
 {
-	return IsPointValid(m_FocusItem.y) ? (UINT)m_FocusItem.y : 0;
+	if (HasSelection())
+	{
+		p_Itinerary->DeleteSelectedFlights();
+
+		m_SelectionAnchor = -1;
+		AdjustLayout();
+	}
+	else
+	{
+		FinishEdit(L"", m_FocusItem);
+	}
 }
 
 void CDataGrid::DoCopy(BOOL Cut)
@@ -156,6 +157,7 @@ void CDataGrid::DoCopy(BOOL Cut)
 
 		// Text erstellen
 		CString Text;
+
 		if (HasSelection())
 		{
 			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
@@ -166,7 +168,7 @@ void CDataGrid::DoCopy(BOOL Cut)
 				}
 		}
 		else
-			if ((m_FocusItem.y>=0) && (m_FocusItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount))
+			if (m_FocusItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 			{
 				WCHAR tmpBuf[256];
 				AttributeToString(p_Itinerary->m_Flights[m_FocusItem.y], m_ViewParameters.ColumnOrder[m_FocusItem.x], tmpBuf, 256);
@@ -178,9 +180,9 @@ void CDataGrid::DoCopy(BOOL Cut)
 
 		// CF_UNICODETEXT
 		SIZE_T Size = (Text.GetLength()+1)*sizeof(WCHAR);
-		HGLOBAL hClipBuffer = GlobalAlloc(GMEM_DDESHARE, Size);
+		HGLOBAL hClipBuffer;
 
-		if (hClipBuffer)
+		if ((hClipBuffer=GlobalAlloc(GMEM_MOVEABLE, Size))!=NULL)
 		{
 			LPWSTR pBuffer = (LPWSTR)GlobalLock(hClipBuffer);
 			wcscpy_s((LPWSTR)pBuffer, Size/sizeof(WCHAR), Text);
@@ -195,7 +197,7 @@ void CDataGrid::DoCopy(BOOL Cut)
 		{
 			Size = Count*sizeof(AIRX_Flight);
 
-			if ((hClipBuffer=GlobalAlloc(GMEM_DDESHARE, Size))!=NULL)
+			if ((hClipBuffer=GlobalAlloc(GMEM_MOVEABLE, Size))!=NULL)
 			{
 				AIRX_Flight* pFlight = (AIRX_Flight*)GlobalLock(hClipBuffer);
 
@@ -216,88 +218,37 @@ void CDataGrid::DoCopy(BOOL Cut)
 	}
 }
 
-void CDataGrid::DoDelete()
+CRect CDataGrid::GetItemRect(const CPoint& Item, BOOL Inflate) const
 {
-	if (HasSelection())
-	{
-		p_Itinerary->DeleteSelectedFlights();
+	INT x = -m_HScrollPos+LEFTMARGIN;
+	for (INT Col=0; Col<Item.x; Col++)
+		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Col]];
 
-		m_SelectionAnchor = -1;
-		AdjustLayout();
-	}
-	else
-	{
-		FinishEdit(L"", m_FocusItem);
-	}
-}
-
-void CDataGrid::AdjustLayout()
-{
-	if (m_FocusItem.y>(INT)p_Itinerary->m_Flights.m_ItemCount)
-		m_FocusItem.y = p_Itinerary->m_Flights.m_ItemCount;
-
-	// Header
 	CRect rect;
-	GetWindowRect(rect);
+	rect.right = (rect.left=x)+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]-1;
+	rect.bottom = (rect.top=(Item.y*m_ItemHeight-m_VScrollPos+(INT)m_HeaderHeight))+m_ItemHeight-1;
 
-	WINDOWPOS wp;
-	HDLAYOUT HdLayout;
-	HdLayout.prc = &rect;
-	HdLayout.pwpos = &wp;
-	m_wndHeader.Layout(&HdLayout);
+	if (Inflate)
+		rect.InflateRect(2, 2);
 
-	wp.x = LEFTMARGIN;
-	wp.y = 0;
-	m_HeaderHeight = wp.cy;
-
-	AdjustScrollbars();
-	Invalidate();
-
-	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+	return rect;
 }
 
-void CDataGrid::AdjustHeader()
+void CDataGrid::EnsureVisible(const CPoint& Item)
 {
-	m_IgnoreHeaderItemChange = TRUE;
-	SetRedraw(FALSE);
+	ASSERT(IsPointValid(Item));
+	ASSERT(Item.x<FMAttributeCount);
+	ASSERT(Item.y<=(INT)(p_Itinerary->m_Flights.m_ItemCount));
 
-	// Set column order
-	VERIFY(m_wndHeader.SetOrderArray(FMAttributeCount, m_ViewParameters.ColumnOrder));
-
-	// Set column properties
-	for (UINT a=0; a<FMAttributeCount; a++)
-	{
-		HDITEM HdItem;
-		HdItem.mask = HDI_WIDTH;
-		HdItem.cxy = m_ViewParameters.ColumnWidth[a];
-
-		if (HdItem.cxy)
-			if ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor) || (FMAttributes[a].Type==FMTypeFlags))
-			{
-				HdItem.cxy = m_ViewParameters.ColumnWidth[a] = theApp.m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
-			}
-			else
-				if (HdItem.cxy<MINCOLUMNWIDTH)
-				{
-					m_ViewParameters.ColumnWidth[a] = theApp.m_ViewParameters.ColumnWidth[a] = HdItem.cxy = MINCOLUMNWIDTH;
-				}
-
-		m_wndHeader.SetItem(a, &HdItem);
-	}
-
-	SetRedraw(TRUE);
-	m_wndHeader.Invalidate();
-
-	m_IgnoreHeaderItemChange = FALSE;
+	CFrontstageScroller::EnsureVisible(GetItemRect(Item, FALSE));
 }
 
-void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint Item)
+void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar)
 {
-	if ((Item.x==-1) || (Item.y==-1))
-		Item = m_FocusItem;
+	ASSERT(IsPointValid(m_FocusItem));
+	ASSERT(m_FocusItem.y<=(INT)(p_Itinerary->m_Flights.m_ItemCount));
 
-	if ((Item.x==-1) || (Item.y==-1) || (Item.x>=FMAttributeCount) || (Item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
-		return;
+	const CPoint Item = m_FocusItem;
 
 	const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
 	if (!FMAttributes[Attr].Editable)
@@ -308,6 +259,7 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 	const LPVOID pData = NewLine ? NULL : (((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset);
 	Delete |= NewLine;
 
+	// Special cell types
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeColor:
@@ -319,8 +271,6 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 				if (NewLine)
 				{
 					p_Itinerary->AddFlight();
-					Item.y = p_Itinerary->m_Flights.m_ItemCount-1;
-
 					AdjustLayout();
 				}
 
@@ -391,29 +341,23 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 		return;
 	}
 
-	INT x = -m_HScrollPos+LEFTMARGIN;
-
-	for (INT a=0; a<Item.x; a++)
-		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
-
-	INT y = Item.y*m_RowHeight+m_HeaderHeight-m_VScrollPos;
-
-	WCHAR tmpBuf[256] = L"";
+	// Create edit control
+	WCHAR tmpBuf[256];
 	if (PushChar)
 	{
 		tmpBuf[0] = PushChar;
 		tmpBuf[1] = L'\0';
 	}
 	else
-		if (!Delete)
-		{
-			AttributeToString(p_Itinerary->m_Flights[Item.y], Attr, tmpBuf, 256);
-		}
+	{
+		tmpBuf[0] = L'\0';
 
-	CRect rect(x-2, y-2, x+m_ViewParameters.ColumnWidth[Attr]+1, y+m_RowHeight+1);
+		if (!Delete)
+			AttributeToString(p_Itinerary->m_Flights[Item.y], Attr, tmpBuf, 256);
+	}
 
 	m_pWndEdit = new CMFCMaskedEdit();
-	m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
+	m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, GetItemRect(Item), this, 2);
 
 	PrepareEditCtrl(m_pWndEdit, Attr);
 	m_EditAllowCursor = AllowCursor;
@@ -424,13 +368,10 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar, CPoint I
 	m_pWndEdit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
 }
 
-void CDataGrid::EditFlight(CPoint Item, INT SelectTab)
+void CDataGrid::EditFlight(const CPoint& Item, INT SelectTab)
 {
-	if ((Item.x==-1) || (Item.y==-1))
-		Item = m_FocusItem;
-
-	if ((Item.x==-1) || (Item.y==-1) || (Item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
-		return;
+	ASSERT(IsPointValid(Item));
+	ASSERT(Item.y<=(INT)(p_Itinerary->m_Flights.m_ItemCount));
 
 	EnsureVisible(Item);
 	const BOOL NewLine = (Item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount);
@@ -441,8 +382,6 @@ void CDataGrid::EditFlight(CPoint Item, INT SelectTab)
 		if (NewLine)
 		{
 			p_Itinerary->AddFlight();
-			Item.y = p_Itinerary->m_Flights.m_ItemCount-1;
-
 			AdjustLayout();
 		}
 		else
@@ -451,140 +390,36 @@ void CDataGrid::EditFlight(CPoint Item, INT SelectTab)
 		}
 
 		p_Itinerary->m_Flights[Item.y] = dlg.m_Flight;
+		p_Itinerary->UpdateFlight(Item.y);
+
 		p_Itinerary->m_IsModified = TRUE;
 	}
 	else
 		if (NewLine)
 		{
-			p_Itinerary->DeleteAttachments(&dlg.m_Flight);
+			p_Itinerary->DeleteAttachments(dlg.m_Flight);
 		}
 		else
 		{
 			p_Itinerary->m_Flights[Item.y].AttachmentCount = dlg.m_Flight.AttachmentCount;
-			memcpy_s(p_Itinerary->m_Flights[Item.y].Attachments, AIRX_MaxAttachmentCount*sizeof(UINT), dlg.m_Flight.Attachments, AIRX_MaxAttachmentCount*sizeof(UINT));
+			memcpy(p_Itinerary->m_Flights[Item.y].Attachments, dlg.m_Flight.Attachments, AIRX_MaxAttachmentCount*sizeof(UINT));
 		}
-}
-
-void CDataGrid::EnsureVisible(CPoint Item)
-{
-	if ((Item.x==-1) || (Item.y==-1))
-		Item = m_FocusItem;
-
-	if ((Item.x==-1) || (Item.y==-1) || (Item.x>=FMAttributeCount) || (Item.y>(INT)(p_Itinerary->m_Flights.m_ItemCount)))
-		return;
-
-	CRect rect;
-	GetClientRect(rect);
-
-	// Vertikal
-	INT nInc = 0;
-
-	if ((INT)((Item.y+1)*m_RowHeight)>m_VScrollPos+rect.Height()-(INT)m_HeaderHeight)
-		nInc = (Item.y+1)*m_RowHeight-rect.Height()+(INT)m_HeaderHeight-m_VScrollPos;
-
-	if ((INT)(Item.y*m_RowHeight)<m_VScrollPos+nInc)
-		nInc = Item.y*m_RowHeight-m_VScrollPos;
-
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-	}
-
-	// Horizontal
-	INT x = LEFTMARGIN;
-	for (INT a=0; a<Item.x; a++)
-		x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
-
-	nInc = 0;
-
-	if (x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]>m_HScrollPos+rect.Width())
-		nInc = x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Item.x]]-rect.Width()-m_HScrollPos+LEFTMARGIN;
-
-	if (x<m_HScrollPos+nInc)
-		nInc = x-m_HScrollPos;
-
-	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
-	if (nInc)
-	{
-		m_HScrollPos += nInc;
-		ScrollWindow(-nInc, 0);
-		SetScrollPos(SB_HORZ, m_HScrollPos);
-	}
-}
-
-void CDataGrid::ResetScrollbars()
-{
-	ScrollWindow(m_HScrollPos, m_VScrollPos);
-
-	SetScrollPos(SB_VERT, m_VScrollPos=0);
-	SetScrollPos(SB_HORZ, m_HScrollPos=0);
-}
-
-void CDataGrid::AdjustScrollbars()
-{
-	INT ScrollHeight = (p_Itinerary->m_Flights.m_ItemCount+1)*m_RowHeight-1;
-	INT ScrollWidth = LEFTMARGIN-1;
-
-	for (UINT a=0; a<FMAttributeCount; a++)
-		ScrollWidth += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
-
-	// Dimensions
-	CRect rect;
-	GetWindowRect(rect);
-
-	BOOL HScroll = FALSE;
-	if (ScrollWidth>rect.Width())
-	{
-		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-		HScroll = TRUE;
-	}
-
-	if (ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
-		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
-
-	if ((ScrollWidth>rect.Width()) && (!HScroll))
-		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-
-	// Set vertical bars
-	m_VScrollMax = max(0, ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
-	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
-
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(SCROLLINFO);
-	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
-	si.nPage = rect.Height()-m_HeaderHeight;
-	si.nMax = ScrollHeight-1;
-	si.nPos = m_VScrollPos;
-	SetScrollInfo(SB_VERT, &si);
-
-	// Set horizontal bars
-	m_HScrollMax = max(0, ScrollWidth-rect.Width());
-	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
-
-	si.nPage = rect.Width();
-	si.nMax = ScrollWidth-1;
-	si.nPos = m_HScrollPos;
-	SetScrollInfo(SB_HORZ, &si);
 }
 
 CPoint CDataGrid::PointAtPosition(CPoint point) const
 {
 	point.y -= m_HeaderHeight-m_VScrollPos;
 
-	const INT Row = (point.y>=0) ? point.y/m_RowHeight : -1;
+	const INT Row = (point.y>=0) ? point.y/m_ItemHeight : -1;
 	if ((Row!=-1) && (Row<=(INT)p_Itinerary->m_Flights.m_ItemCount))
 	{
 		INT x = -m_HScrollPos+LEFTMARGIN;
 
-		for (UINT a=0; a<FMAttributeCount; a++)
+		for (UINT Col=0; Col<FMAttributeCount; Col++)
 		{
-			const UINT Attr = m_ViewParameters.ColumnOrder[a];
+			const UINT Attr = m_ViewParameters.ColumnOrder[Col];
 			if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[Attr]))
-				return CPoint(a, Row);
+				return CPoint(Col, Row);
 
 			x += m_ViewParameters.ColumnWidth[Attr];
 		}
@@ -597,12 +432,12 @@ INT CDataGrid::PartAtPosition(const CPoint& point) const
 {
 	INT x = -m_HScrollPos+LEFTMARGIN;
 
-	for (UINT a=0; a<FMAttributeCount; a++)
+	for (UINT Col=0; Col<FMAttributeCount; Col++)
 	{
-		const UINT Attr = m_ViewParameters.ColumnOrder[a];
+		const UINT Attr = m_ViewParameters.ColumnOrder[Col];
 		if ((point.x>=x) && (point.x<x+m_ViewParameters.ColumnWidth[Attr]))
 		{
-			if ((x=point.x-x-2*ITEMPADDING)>0)
+			if ((x=point.x-x-ITEMCELLPADDINGX)>0)
 				switch (FMAttributes[Attr].Type)
 				{
 				case FMTypeFlags:
@@ -621,31 +456,20 @@ INT CDataGrid::PartAtPosition(const CPoint& point) const
 	return -1;
 }
 
-void CDataGrid::InvalidatePoint(const CPoint& Point)
+void CDataGrid::InvalidatePoint(const CPoint& point)
 {
-	if (IsPointValid(Point))
-	{
-		INT x = -m_HScrollPos+LEFTMARGIN;
-		for (UINT a=0; a<(UINT)Point.x; a++)
-			x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
-
-		InvalidateRect(CRect(x-2, m_HeaderHeight+Point.y*m_RowHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Point.x]]+1, m_HeaderHeight-m_VScrollPos+(Point.y+1)*m_RowHeight+1));
-	}
-}
-
-void CDataGrid::InvalidatePoint(UINT Row, UINT Attr)
-{
-	for (UINT a=0; a<FMAttributeCount; a++)
-		if (m_ViewParameters.ColumnOrder[a]==(INT)Attr)
-			InvalidatePoint(CPoint(a, Row));
+	if (IsPointValid(point))
+		InvalidateRect(GetItemRect(point));
 }
 
 void CDataGrid::InvalidateRow(UINT Row)
 {
-	CRect rect;
-	GetClientRect(rect);
+	CRect rectClient;
+	GetClientRect(rectClient);
 
-	InvalidateRect(CRect(rect.left, m_HeaderHeight+Row*m_RowHeight-m_VScrollPos-2, rect.right, m_HeaderHeight-m_VScrollPos+(Row+1)*m_RowHeight+1));
+	CRect rectItem = GetItemRect(CPoint(0, Row));
+
+	InvalidateRect(CRect(rectClient.left, rectItem.top, rectClient.right, rectItem.bottom));
 }
 
 void CDataGrid::SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect)
@@ -669,9 +493,8 @@ void CDataGrid::SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect)
 			SelectItem(a, FALSE, TRUE);
 	}
 
-	m_FocusItem = FocusItem;
 	Invalidate();
-	EnsureVisible();
+	EnsureVisible(m_FocusItem=FocusItem);
 }
 
 void CDataGrid::SelectItem(UINT Index, BOOL Select, BOOL InternalCall)
@@ -721,16 +544,16 @@ __forceinline void CDataGrid::DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, 
 		}
 
 	// Foreground
-	rectItem.left += 2*ITEMPADDING;
-	rectItem.right -= 2*ITEMPADDING+1;
+	rectItem.left += ITEMCELLPADDINGX;
+	rectItem.right -= ITEMCELLPADDINGX+1;
 
 	switch (FMAttributes[Attr].Type)
 	{
 	case FMTypeColor:
 		if (*((COLORREF*)(((LPBYTE)&Flight)+FMAttributes[Attr].Offset))!=(COLORREF)-1)
 		{
-			rectItem.InflateRect(ITEMPADDING, 0);
-			rectItem.DeflateRect(0, ITEMPADDING);
+			rectItem.InflateRect(ITEMCELLPADDINGX-ITEMCELLPADDINGY, 0);
+			rectItem.DeflateRect(0, ITEMCELLPADDINGY);
 			dc.Draw3dRect(rectItem, 0x000000, 0x000000);
 
 			rectItem.DeflateRect(1, 1);
@@ -794,13 +617,10 @@ INT CDataGrid::GetMaxAttributeWidth(UINT Attr) const
 
 	for (UINT Row=0; Row<p_Itinerary->m_Flights.m_ItemCount; Row++)
 	{
-		INT cx = SPACER;
-
 		WCHAR tmpStr[256];
 		AttributeToString(p_Itinerary->m_Flights[Row], Attr, tmpStr, 256);
 
-		cx += dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
-
+		const INT cx = dc.GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx+ITEMCELLSPACER;
 		if (cx>Width)
 		{
 			Width = cx;
@@ -826,7 +646,7 @@ void CDataGrid::AutosizeColumn(UINT Attr)
 	theApp.m_ViewParameters.ColumnWidth[Attr] = m_ViewParameters.ColumnWidth[Attr] = GetMaxAttributeWidth(Attr);
 }
 
-void CDataGrid::FinishEdit(LPWSTR pStr, const CPoint& Item)
+void CDataGrid::FinishEdit(LPCWSTR pStr, const CPoint& Item)
 {
 	const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
 	StringToAttribute(pStr, p_Itinerary->m_Flights[Item.y], Attr);
@@ -837,13 +657,9 @@ void CDataGrid::FinishEdit(LPWSTR pStr, const CPoint& Item)
 	switch (Attr)
 	{
 	case 0:
-	case 3:
-		CalcDistance(p_Itinerary->m_Flights[Item.y], TRUE);
-		InvalidatePoint(Item.y, 6);
-		break;
-
 	case 1:
-		CalcFuture(p_Itinerary->m_Flights[Item.y]);
+	case 3:
+		p_Itinerary->UpdateFlight(Item.y);
 
 	case 20:
 		InvalidateRow(Item.y);
@@ -904,43 +720,6 @@ void CDataGrid::FindReplace(INT SelectTab)
 
 			OnFindReplaceAgain();
 		}
-	}
-}
-
-void CDataGrid::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpClipRect*/)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	rect.top = m_HeaderHeight;
-
-	if (dx!=0)
-	{
-		CRect rectWindow;
-		GetWindowRect(rectWindow);
-
-		WINDOWPOS wp;
-		HDLAYOUT HdLayout;
-		HdLayout.prc = &rectWindow;
-		HdLayout.pwpos = &wp;
-		m_wndHeader.Layout(&HdLayout);
-
-		wp.x = BACKSTAGEBORDER-1;
-		wp.y = 0;
-
-		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
-	}
-
-	if (IsCtrlThemed() && (dy!=0))
-	{
-		rect.bottom -= BACKSTAGERADIUS;
-
-		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
-		RedrawWindow(CRect(rect.left, rect.bottom, rect.right, rect.bottom+BACKSTAGERADIUS), NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		ScrollWindowEx(dx, dy, rect, rect, NULL, NULL, SW_INVALIDATE);
 	}
 }
 
@@ -1045,7 +824,7 @@ void CDataGrid::ShowTooltip(const CPoint& point)
 								break;
 
 							case FMTypeDateTime:
-								F = *((FILETIME*)pData);
+								F = *((LPFILETIME)pData);
 								if ((F.dwHighDateTime!=0) || (F.dwLowDateTime!=0))
 								{
 									if ((F.dwHighDateTime<FMin.dwHighDateTime) || ((F.dwHighDateTime==FMin.dwHighDateTime) && (F.dwLowDateTime<FMin.dwLowDateTime)))
@@ -1110,7 +889,7 @@ void CDataGrid::ShowTooltip(const CPoint& point)
 				{
 					CSize szText = theApp.m_DefaultFont.GetTextExtent(tmpStr);
 
-					if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-SPACER) || (FMAttributes[Attr].Type==FMTypeColor))
+					if ((szText.cx>m_ViewParameters.ColumnWidth[Attr]-ITEMCELLSPACER) || (FMAttributes[Attr].Type==FMTypeColor))
 						theApp.ShowTooltip(this, point, _T(""), tmpStr);
 				}
 			}
@@ -1118,19 +897,181 @@ void CDataGrid::ShowTooltip(const CPoint& point)
 	}
 }
 
+BOOL CDataGrid::GetContextMenu(CMenu& Menu, const CPoint& /*point*/)
+{
+	Menu.LoadMenu(IDM_DATAGRID);
 
-BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageWnd)
+	return FALSE;
+}
+
+void CDataGrid::GetHeaderContextMenu(CMenu& Menu)
+{
+	Menu.LoadMenu(IDM_DETAILS);
+}
+
+BOOL CDataGrid::AllowHeaderColumnDrag(UINT /*Attr*/) const
+{
+	return TRUE;
+}
+
+BOOL CDataGrid::AllowHeaderColumnTrack(UINT Attr) const
+{
+	return
+		(FMAttributes[Attr].Type!=FMTypeRating) &&			// Variable width
+		(FMAttributes[Attr].Type!=FMTypeColor) &&
+		(FMAttributes[Attr].Type!=FMTypeFlags);
+}
+
+void CDataGrid::UpdateHeaderColumnOrder(UINT Attr, INT Position)
+{
+	CFrontstageScroller::UpdateHeaderColumnOrder(Attr, Position, theApp.m_ViewParameters.ColumnOrder, theApp.m_ViewParameters.ColumnWidth);
+
+	UpdateHeader();
+	AdjustLayout();
+}
+
+void CDataGrid::UpdateHeaderColumnWidth(UINT Attr, INT Width)
+{
+	if (Width<MINCOLUMNWIDTH)
+		Width = ((Attr==0) || (Attr==3)) ? MINCOLUMNWIDTH : 0;
+
+	if (Width!=theApp.m_ViewParameters.ColumnWidth[Attr])
+	{
+		theApp.m_ViewParameters.ColumnWidth[Attr] = Width;
+
+		UpdateHeader();
+		AdjustLayout();
+	}
+}
+
+void CDataGrid::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+{
+	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
+	HeaderItem.cxy = theApp.m_ViewParameters.ColumnWidth[Attr];
+	HeaderItem.fmt = HDF_STRING | HDF_CENTER;
+
+	if (HeaderItem.cxy)
+		if ((FMAttributes[Attr].Type==FMTypeRating) || (FMAttributes[Attr].Type==FMTypeColor) || (FMAttributes[Attr].Type==FMTypeFlags))
+		{
+			HeaderItem.cxy = FMAttributes[Attr].DefaultColumnWidth;
+		}
+		else
+		{
+			if (HeaderItem.cxy<MINCOLUMNWIDTH)
+				HeaderItem.cxy = MINCOLUMNWIDTH;
+		}
+}
+
+void CDataGrid::UpdateHeader()
+{
+	m_ViewParameters = theApp.m_ViewParameters;
+
+	CFrontstageScroller::UpdateHeader(m_ViewParameters.ColumnOrder, m_ViewParameters.ColumnWidth);
+}
+
+void CDataGrid::AdjustLayout()
+{
+	m_ScrollHeight = (p_Itinerary->m_Flights.m_ItemCount+1)*m_ItemHeight-1;
+	m_ScrollWidth = LEFTMARGIN-1;
+
+	for (UINT a=0; a<FMAttributeCount; a++)
+		m_ScrollWidth += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[a]];
+
+	if (m_FocusItem.y>(INT)p_Itinerary->m_Flights.m_ItemCount)
+		m_FocusItem.y = p_Itinerary->m_Flights.m_ItemCount;
+
+	CFrontstageScroller::AdjustLayout();
+}
+
+void CDataGrid::DrawStage(CDC& dc, Graphics& /*g*/, const CRect& rect, const CRect& rectUpdate, BOOL Themed)
+{
+	const COLORREF clrLines = Themed ? 0xEAE9E8 : GetSysColor(COLOR_3DFACE);
+	const COLORREF clrText = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+	const COLORREF clrDisabled = Themed ? 0xA0A0A0 : GetSysColor(COLOR_GRAYTEXT);
+
+	// Cells
+	INT Start = m_VScrollPos/m_ItemHeight;
+	INT y = m_HeaderHeight-(m_VScrollPos % m_ItemHeight);
+	for (UINT Row=Start; Row<=p_Itinerary->m_Flights.m_ItemCount; Row++)
+	{
+		const BOOL Selected = (Row<p_Itinerary->m_Flights.m_ItemCount) && (p_Itinerary->m_Flights[Row].Flags & AIRX_Selected);
+
+		INT x = -m_HScrollPos+LEFTMARGIN;
+		for (UINT Col=0; Col<FMAttributeCount; Col++)
+		{
+			const UINT Attr = m_ViewParameters.ColumnOrder[Col];
+			const INT Width = m_ViewParameters.ColumnWidth[Attr];
+			if (Width)
+			{
+				CRect rectItem(x, y, x+Width, y+m_ItemHeight-1);
+				CRect rectIntersect;
+				if (rectIntersect.IntersectRect(rectItem, rectUpdate))
+				{
+					if (Selected)
+					{
+						dc.FillSolidRect(rectItem, Themed ? 0xFF9018 : GetSysColor(COLOR_HIGHLIGHT));
+					}
+					else
+						if (!FMAttributes[Attr].Editable)
+						{
+							dc.FillSolidRect(rectItem, Themed ? 0xF7F6F5 : clrLines);
+						}
+
+					if (Row<p_Itinerary->m_Flights.m_ItemCount)
+					{
+						const DWORD Flags = p_Itinerary->m_Flights[Row].Flags;
+						dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x2020FF : (Flags & AIRX_Cancelled) ? clrDisabled : (Flags & AIRX_FutureFlight) ? 0x008000 : clrText);
+
+						DrawCell(dc, p_Itinerary->m_Flights[Row], Attr, rectItem, Selected);
+					}
+				}
+
+				x += Width;
+			}
+		}
+
+		// Horizontal lines
+		y += m_ItemHeight;
+		dc.FillSolidRect(-m_HScrollPos+LEFTMARGIN, y-1, x-(-m_HScrollPos+LEFTMARGIN), 1, clrLines);
+
+		if (y>rect.Height())
+			break;
+	}
+
+	// Vertical lines
+	INT x = -m_HScrollPos+LEFTMARGIN;
+	dc.FillSolidRect(x, 0, 1, y-1, clrLines);
+
+	for (UINT Col=0; Col<FMAttributeCount; Col++)
+	{
+		const INT Width = m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Col]];
+		if (Width)
+		{
+			x += Width;
+			dc.FillSolidRect(x-1, 0, 1, y-1, clrLines);
+		}
+	}
+
+	// Focus cell
+	if (IsPointValid(m_FocusItem))
+	{
+		CRect rectItem = GetItemRect(m_FocusItem);
+
+		for (UINT a=0; a<3; a++)
+		{
+			dc.Draw3dRect(rectItem, clrText, clrText);
+			rectItem.DeflateRect(1, 1);
+		}
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageScroller)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
-	ON_WM_PAINT()
-	ON_WM_SIZE()
-	ON_WM_VSCROLL()
-	ON_WM_HSCROLL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEWHEEL()
-	ON_WM_MOUSEHWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_CHAR()
 	ON_WM_LBUTTONDOWN()
@@ -1138,10 +1079,7 @@ BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageWnd)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_RBUTTONUP()
-	ON_WM_CONTEXTMENU()
 	ON_WM_SETCURSOR()
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
 
 	ON_COMMAND(IDM_DATAGRID_CUT, OnCut)
 	ON_COMMAND(IDM_DATAGRID_COPY, OnCopy)
@@ -1165,50 +1103,35 @@ BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageWnd)
 
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
-	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
-	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
+
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
 INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageScroller::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Header
-	if (!m_wndHeader.Create(this, 1, TRUE))
-		return -1;
-
-	m_IgnoreHeaderItemChange = TRUE;
-
 	for (UINT a=0; a<FMAttributeCount; a++)
-	{
-		CString tmpStr((LPCSTR)FMAttributes[a].nNameID);
+		VERIFY(AddHeaderColumn(TRUE, FMAttributes[a].nNameID));
 
-		HDITEM HdItem;
-		HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
-		HdItem.fmt = HDF_STRING | HDF_CENTER;
-		HdItem.cxy = m_ViewParameters.ColumnWidth[a];
-		HdItem.pszText = tmpStr.GetBuffer();
-		m_wndHeader.InsertItem(a, &HdItem);
-	}
-
-	VERIFY(m_wndHeader.SetOrderArray(FMAttributeCount, m_ViewParameters.ColumnOrder));
-	m_IgnoreHeaderItemChange = FALSE;
+	UpdateHeader();
 
 	// Time
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	m_wDay = st.wDay;
+	SYSTEMTIME stLocal;
+	GetLocalTime(&stLocal);
+
+	m_wDay = stLocal.wDay;
 
 	// Items
 	m_LargeIcons.Load(IDB_FLAGS_16, LI_FORTOOLTIPS);
 	m_SmallIcons.Load(IDB_FLAGS_16, LI_NORMAL, &theApp.m_DefaultFont);
 
-	m_RowHeight = (max(m_SmallIcons.GetIconSize(), theApp.m_DefaultFont.GetFontHeight())+2*ITEMPADDING+1) & ~1;
+	SetItemHeight((max(m_SmallIcons.GetIconSize(), theApp.m_DefaultFont.GetFontHeight())+2*ITEMCELLPADDINGY+1) & ~1);
+	m_szScrollStep.cy = m_ItemHeight;
 
-	ResetScrollbars();
-
+	// Timer
 	SetTimer(1, 1000, NULL);
 
 	return 0;
@@ -1216,290 +1139,41 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CDataGrid::OnDestroy()
 {
+	DestroyEdit();
+
 	KillTimer(1);
 
-	CFrontstageWnd::OnDestroy();
+	CFrontstageScroller::OnDestroy();
 }
 
 void CDataGrid::OnTimer(UINT_PTR nIDEvent)
 {
 	if (nIDEvent==1)
 	{
-		SYSTEMTIME st;
-		GetLocalTime(&st);
+		SYSTEMTIME stLocal;
+		GetLocalTime(&stLocal);
 
-		if (st.wDay!=m_wDay)
+		if (stLocal.wDay!=m_wDay)
 		{
-			m_wDay = st.wDay;
+			m_wDay = stLocal.wDay;
 
 			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-				CalcFuture(p_Itinerary->m_Flights[a], &st);
+				p_Itinerary->UpdateFlight(a, &stLocal);
 
 			Invalidate();
 		}
 	}
 
-	CFrontstageWnd::OnTimer(nIDEvent);
+	CFrontstageScroller::OnTimer(nIDEvent);
 
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
-void CDataGrid::OnPaint()
-{
-	CRect rectUpdate;
-	GetUpdateRect(rectUpdate);
-
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	const BOOL Themed = IsCtrlThemed();
-
-	const COLORREF clrBackground = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	const COLORREF clrLines = Themed ? 0xEAE9E8 : GetSysColor(COLOR_3DFACE);
-	const COLORREF clrText = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
-	const COLORREF clrDisabled = Themed ? 0xA0A0A0 : GetSysColor(COLOR_GRAYTEXT);
-
-	dc.FillSolidRect(CRect(0, m_HeaderHeight, rect.right, rect.bottom), clrBackground);
-
-	// Cells
-	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-
-	INT Start = m_VScrollPos/m_RowHeight;
-	INT y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
-	for (UINT Row=Start; Row<=p_Itinerary->m_Flights.m_ItemCount; Row++)
-	{
-		const BOOL Selected = (Row<p_Itinerary->m_Flights.m_ItemCount) && (p_Itinerary->m_Flights[Row].Flags & AIRX_Selected);
-
-		INT x = -m_HScrollPos+LEFTMARGIN;
-		for (UINT Col=0; Col<FMAttributeCount; Col++)
-		{
-			const UINT Attr = m_ViewParameters.ColumnOrder[Col];
-			const INT Width = m_ViewParameters.ColumnWidth[Attr];
-			if (Width)
-			{
-				CRect rectItem(x, y, x+Width, y+m_RowHeight-1);
-				CRect rectIntersect;
-				if (rectIntersect.IntersectRect(rectItem, rectUpdate))
-				{
-					if (Selected)
-					{
-						dc.FillSolidRect(rectItem, Themed ? 0xFF9018 : GetSysColor(COLOR_HIGHLIGHT));
-					}
-					else
-						if (!FMAttributes[Attr].Editable)
-						{
-							dc.FillSolidRect(rectItem, Themed ? 0xF7F6F5 : clrLines);
-						}
-
-					if (Row<p_Itinerary->m_Flights.m_ItemCount)
-					{
-						const DWORD Flags = p_Itinerary->m_Flights[Row].Flags;
-						dc.SetTextColor(Selected ? Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT) : ((Attr==0) && (Flags & AIRX_UnknownFrom)) || ((Attr==3) && (Flags & AIRX_UnknownTo)) ? 0x0000FF : (Flags & AIRX_Cancelled) ? clrDisabled : (Flags & AIRX_FutureFlight) ? 0x008000 : clrText);
-
-						DrawCell(dc, p_Itinerary->m_Flights[Row], Attr, rectItem, Selected);
-					}
-				}
-
-				x += Width;
-			}
-		}
-
-		// Horizontal lines
-		y += m_RowHeight;
-		dc.FillSolidRect(-m_HScrollPos+LEFTMARGIN, y-1, x-(-m_HScrollPos+LEFTMARGIN), 1, clrLines);
-
-		if (y>rect.Height())
-			break;
-	}
-
-	// Vertical lines
-	INT x = -m_HScrollPos+LEFTMARGIN;
-	dc.FillSolidRect(x, 0, 1, y-1, clrLines);
-
-	for (UINT Col=0; Col<FMAttributeCount; Col++)
-	{
-		const UINT Attr = m_ViewParameters.ColumnOrder[Col];
-		const INT Width = m_ViewParameters.ColumnWidth[Attr];
-		if (Width)
-		{
-			x += Width;
-			dc.FillSolidRect(x-1, 0, 1, y-1, clrLines);
-		}
-	}
-
-	// Focus cell
-	if (IsPointValid(m_FocusItem))
-	{
-		INT x = -m_HScrollPos+LEFTMARGIN;
-		for (INT Col=0; Col<m_FocusItem.x; Col++)
-			x += m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[Col]];
-
-		CRect rect(x-2, m_FocusItem.y*m_RowHeight+m_HeaderHeight-m_VScrollPos-2, x+m_ViewParameters.ColumnWidth[m_ViewParameters.ColumnOrder[m_FocusItem.x]]+1, m_FocusItem.y*m_RowHeight+m_HeaderHeight-m_VScrollPos+m_RowHeight+1);
-
-		for (UINT a=0; a<3; a++)
-		{
-			dc.Draw3dRect(rect, clrText, clrText);
-			rect.DeflateRect(1, 1);
-		}
-	}
-
-	// Header
-	dc.FillSolidRect(0, 0, rect.Width(), m_HeaderHeight, Themed ? clrBackground : GetSysColor(COLOR_3DFACE));
-
-	if (Themed)
-	{
-		Bitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP);
-
-		Graphics g(dc);
-		g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+GetScrollPos(SB_HORZ)+BACKSTAGEBORDER-1, m_HeaderHeight-(INT)pDivider->GetHeight());
-
-		CTaskbar::DrawTaskbarShadow(g, rect);
-	}
-
-	dc.SelectObject(pOldFont);
-
-	CFrontstageWnd::DrawWindowEdge(dc, Themed);
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(pOldBitmap);
-}
-
-void CDataGrid::OnSize(UINT nType, INT cx, INT cy)
-{
-	CFrontstageWnd::OnSize(nType, cx, cy);
-
-	AdjustLayout();
-}
-
-void CDataGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	SCROLLINFO si;
-
-	INT nInc = 0;
-	switch (nSBCode)
-	{
-	case SB_TOP:
-		nInc = -m_VScrollPos;
-		break;
-
-	case SB_BOTTOM:
-		nInc = m_VScrollMax-m_VScrollPos;
-		break;
-
-	case SB_LINEUP:
-		nInc = -((INT)m_RowHeight);
-		break;
-
-	case SB_LINEDOWN:
-		nInc = m_RowHeight;
-		break;
-
-	case SB_PAGEUP:
-		nInc = min(-1, -(rect.Height()-(INT)m_HeaderHeight));
-		break;
-
-	case SB_PAGEDOWN:
-		nInc = max(1, rect.Height()-(INT)m_HeaderHeight);
-		break;
-
-	case SB_THUMBTRACK:
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_TRACKPOS;
-		GetScrollInfo(SB_VERT, &si);
-
-		nInc = si.nTrackPos-m_VScrollPos;
-		break;
-	}
-
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		if (m_pWndEdit)
-		{
-			CRect rect;
-			m_pWndEdit->GetWindowRect(rect);
-			ScreenToClient(rect);
-
-			rect.OffsetRect(0, -nInc);
-			m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-		}
-	}
-
-	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
-}
-
-void CDataGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	SCROLLINFO si;
-
-	INT nInc = 0;
-	switch (nSBCode)
-	{
-	case SB_TOP:
-		nInc = -m_HScrollPos;
-		break;
-
-	case SB_BOTTOM:
-		nInc = m_HScrollMax-m_HScrollPos;
-		break;
-
-	case SB_PAGEUP:
-	case SB_LINEUP:
-		nInc = -64;
-		break;
-
-	case SB_PAGEDOWN:
-	case SB_LINEDOWN:
-		nInc = 64;
-		break;
-
-	case SB_THUMBTRACK:
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_TRACKPOS;
-		GetScrollInfo(SB_HORZ, &si);
-
-		nInc = si.nTrackPos-m_HScrollPos;
-		break;
-	}
-
-	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
-	if (nInc)
-	{
-		m_HScrollPos += nInc;
-		ScrollWindow(-nInc, 0);
-		SetScrollPos(SB_HORZ, m_HScrollPos);
-
-		UpdateWindow();
-	}
-
-	CFrontstageWnd::OnHScroll(nSBCode, nPos, pScrollBar);
-}
-
 void CDataGrid::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CFrontstageWnd::OnMouseMove(nFlags, point);
+	CFrontstageScroller::OnMouseMove(nFlags, point);
 
 	const INT Part = IsPointValid(m_HoverPoint) ? PartAtPosition(point) : -1;
 	if (Part!=m_HoverPart)
@@ -1515,56 +1189,7 @@ void CDataGrid::OnMouseLeave()
 {
 	m_HoverPart = -1;
 
-	CFrontstageWnd::OnMouseLeave();
-}
-
-BOOL CDataGrid::OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt)
-{
-	CRect rect;
-	GetWindowRect(rect);
-	if (!rect.PtInRect(pt))
-		return FALSE;
-
-	INT nScrollLines;
-	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
-	if (nScrollLines<1)
-		nScrollLines = 1;
-
-	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		HideTooltip();
-
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		ScreenToClient(&pt);
-		OnMouseMove(nFlags, pt);
-	}
-
-	return TRUE;
-}
-
-void CDataGrid::OnMouseHWheel(UINT nFlags, SHORT zDelta, CPoint pt)
-{
-	CRect rect;
-	GetWindowRect(rect);
-	if (!rect.PtInRect(pt))
-		return;
-
-	INT nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
-	if (nInc)
-	{
-		HideTooltip();
-
-		m_HScrollPos += nInc;
-		ScrollWindow(-nInc, 0);
-		SetScrollPos(SB_HORZ, m_HScrollPos);
-
-		ScreenToClient(&pt);
-		OnMouseMove(nFlags, pt);
-	}
+	CFrontstageScroller::OnMouseLeave();
 }
 
 void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -1629,7 +1254,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 
 	case VK_PRIOR:
-		Item.y -= (rect.Height()-m_HeaderHeight)/(INT)m_RowHeight;
+		Item.y -= (rect.Height()-m_HeaderHeight)/(INT)m_ItemHeight;
 		if (Item.y<0)
 			Item.y = 0;
 
@@ -1642,7 +1267,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 
 	case VK_NEXT:
-		Item.y += (rect.Height()-m_HeaderHeight)/(INT)m_RowHeight;
+		Item.y += (rect.Height()-m_HeaderHeight)/(INT)m_ItemHeight;
 		if (Item.y>(INT)p_Itinerary->m_Flights.m_ItemCount)
 			Item.y = p_Itinerary->m_Flights.m_ItemCount;
 
@@ -1689,7 +1314,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 
 	default:
-		CFrontstageWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		CFrontstageScroller::OnKeyDown(nChar, nRepCnt, nFlags);
 		return;
 	}
 
@@ -1698,14 +1323,15 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
-	if (!m_pWndEdit)
-		if (nChar>=L' ')
-			EditCell(FALSE, FALSE, (WCHAR)nChar);
+	const BOOL Plain = (GetKeyState(VK_CONTROL)>=0);
+
+	if (Plain && (nChar>=32u) && !m_pWndEdit)
+		EditCell(FALSE, FALSE, (WCHAR)nChar);
 }
 
 void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	DestroyEdit();
+	DestroyEdit(TRUE);
 
 	const CPoint Item = PointAtPosition(point);
 	if (IsPointValid(Item))
@@ -1771,8 +1397,7 @@ void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
 				SetFocusItem(Item, nFlags & MK_SHIFT);
 			}
 
-	if (GetFocus()!=this)
-		SetFocus();
+	CFrontstageScroller::OnLButtonDown(nFlags, point);
 }
 
 void CDataGrid::OnLButtonUp(UINT nFlags, CPoint point)
@@ -1813,8 +1438,7 @@ void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
 			else
 			{
 				InvalidatePoint(m_FocusItem);
-				m_FocusItem = Item;
-				EnsureVisible();
+				EnsureVisible(m_FocusItem=Item);
 				InvalidatePoint(m_FocusItem);
 			}
 	}
@@ -1835,8 +1459,7 @@ void CDataGrid::OnRButtonUp(UINT nFlags, CPoint point)
 
 		if (!IsSelected(Item.y))
 		{
-			m_FocusItem = Item;
-			EnsureVisible();
+			EnsureVisible(m_FocusItem=Item);
 
 			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
 				SelectItem(a, FALSE, TRUE);
@@ -1855,48 +1478,7 @@ void CDataGrid::OnRButtonUp(UINT nFlags, CPoint point)
 
 	GetParent()->UpdateWindow();
 
-	CFrontstageWnd::OnRButtonUp(nFlags, point);
-}
-
-void CDataGrid::OnContextMenu(CWnd* pWnd, CPoint point)
-{
-	if (pWnd->GetSafeHwnd()==m_wndHeader)
-	{
-		CMenu Menu;
-		Menu.LoadMenu(IDM_DETAILS);
-
-		CMenu* pPopup = Menu.GetSubMenu(0);
-		ASSERT_VALID(pPopup);
-
-		CPoint pt(point);
-		ScreenToClient(&pt);
-
-		HDHITTESTINFO htt;
-		htt.pt = pt;
-		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
-
-		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
-
-		return;
-	}
-
-	if ((point.x<0) || (point.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		point.x = (rect.left+rect.right)/2;
-		point.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&point);
-	}
-
-	CMenu Menu;
-	Menu.LoadMenu(IDM_DATAGRID);
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+	CFrontstageScroller::OnRButtonUp(nFlags, point);
 }
 
 BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
@@ -1904,16 +1486,6 @@ BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 	SetCursor(theApp.LoadStandardCursor(m_HoverPart==-1 ? IDC_ARROW : IDC_HAND));
 
 	return TRUE;
-}
-
-void CDataGrid::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	InvalidatePoint(m_FocusItem);
-}
-
-void CDataGrid::OnKillFocus(CWnd* /*pNewWnd*/)
-{
-	InvalidatePoint(m_FocusItem);
 }
 
 
@@ -1967,7 +1539,7 @@ void CDataGrid::OnPaste()
 				AdjustLayout();
 			}
 
-			FinishEdit((WCHAR*)pBuffer, m_FocusItem);
+			FinishEdit((LPWSTR)pBuffer, m_FocusItem);
 
 			GlobalUnlock(hClipBuffer);
 		}
@@ -1998,7 +1570,7 @@ void CDataGrid::OnDelete()
 
 void CDataGrid::OnEditFlight()
 {
-	EditFlight();
+	EditFlight(m_FocusItem);
 }
 
 void CDataGrid::OnAddRoute()
@@ -2018,15 +1590,12 @@ void CDataGrid::OnAddRoute()
 			From = To;
 			To = resToken;
 
-			if ((!From.IsEmpty()) && (!To.IsEmpty()))
+			if (!From.IsEmpty() && !To.IsEmpty())
 			{
-				StringToAttribute(From.GetBuffer(), dlg.m_FlightTemplate, 0);
-				StringToAttribute(To.GetBuffer(), dlg.m_FlightTemplate, 3);
+				StringToAttribute(From, dlg.m_FlightTemplate, 0);
+				StringToAttribute(To, dlg.m_FlightTemplate, 3);
 
-				CalcDistance(dlg.m_FlightTemplate, TRUE);
-				CalcFuture(dlg.m_FlightTemplate);
-
-				p_Itinerary->m_Flights.AddItem(dlg.m_FlightTemplate);
+				p_Itinerary->AddFlight(dlg.m_FlightTemplate);
 
 				Added = TRUE;
 			}
@@ -2091,7 +1660,7 @@ void CDataGrid::OnFindReplaceAgain()
 	CPoint Item = m_FocusItem;
 
 Again:
-	// If not called from dialog, goto next cell
+	// If not called from dialog, go to next cell
 	if (!m_FindReplaceSettings.FirstAction)
 	{
 		if ((m_FindReplaceSettings.Flags & FRS_MATCHCOLUMNONLY)==0)
@@ -2114,7 +1683,7 @@ Again:
 
 			if (StartOver)
 			{
-				FMMessageBox(this, CString((LPCSTR)((m_FindReplaceSettings.DoReplace && Replaced) ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND)), CString((LPCSTR)IDS_FINDREPLACE), (m_FindReplaceSettings.DoReplace && Replaced) ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
+				FMMessageBox(this, CString((LPCSTR)(Replaced ? IDS_ALLREPLACED : IDS_SEARCHTERMNOTFOUND)), CString((LPCSTR)IDS_FINDREPLACE), Replaced ? MB_OK : MB_ICONEXCLAMATION | MB_OK);
 
 				return;
 			}
@@ -2186,48 +1755,40 @@ void CDataGrid::OnFilter()
 				if ((strcmp(dlg.m_Filter.Airport, pFlight->From.Code)!=0) && (strcmp(dlg.m_Filter.Airport, pFlight->To.Code)!=0))
 					continue;
 
-			if (dlg.m_Filter.Carrier[0])
-				if (wcscmp(dlg.m_Filter.Carrier, pFlight->Carrier)!=0)
-					continue;
+			if (dlg.m_Filter.Carrier[0] && wcscmp(dlg.m_Filter.Carrier, pFlight->Carrier))
+				continue;
 
-			if (dlg.m_Filter.Equipment[0])
-				if (wcscmp(dlg.m_Filter.Equipment, pFlight->Equipment)!=0)
-					continue;
+			if (dlg.m_Filter.Equipment[0] && wcscmp(dlg.m_Filter.Equipment, pFlight->Equipment))
+				continue;
 
-			if (dlg.m_Filter.Business)
-				if ((pFlight->Flags & AIRX_BusinessTrip)==0)
-					continue;
+			if (dlg.m_Filter.Business && ((pFlight->Flags & AIRX_BusinessTrip)==0))
+				continue;
 
-			if (dlg.m_Filter.Leisure)
-				if ((pFlight->Flags & AIRX_LeisureTrip)==0)
-					continue;
+			if (dlg.m_Filter.Leisure && ((pFlight->Flags & AIRX_LeisureTrip)==0))
+				continue;
 
 			if (pFlight->Flags>>28<dlg.m_Filter.Rating)
 				continue;
 
 			if (dlg.m_Filter.DepartureMonth | dlg.m_Filter.DepartureYear)
 			{
-				SYSTEMTIME st;
-				FileTimeToSystemTime(&pFlight->From.Time, &st);
+				SYSTEMTIME SystemTime;
+				FileTimeToSystemTime(&pFlight->From.Time, &SystemTime);
 
-				if (dlg.m_Filter.DepartureMonth)
-					if (dlg.m_Filter.DepartureMonth!=st.wMonth)
-						continue;
+				if (dlg.m_Filter.DepartureMonth && (dlg.m_Filter.DepartureMonth!=SystemTime.wMonth))
+					continue;
 
-				if (dlg.m_Filter.DepartureYear)
-					if (dlg.m_Filter.DepartureYear!=st.wYear)
-						continue;
+				if (dlg.m_Filter.DepartureYear && (dlg.m_Filter.DepartureYear!=SystemTime.wYear))
+					continue;
 			}
 
 			pItinerary->AddFlight(p_Itinerary, a);
 		}
 
 		if (dlg.m_Filter.SortBy>=0)
-			pItinerary->Sort((UINT)dlg.m_Filter.SortBy, dlg.m_Filter.Descending);
+			pItinerary->SortItems((UINT)dlg.m_Filter.SortBy, dlg.m_Filter.Descending);
 
-		CMainWnd* pFrame = new CMainWnd();
-		pFrame->Create(pItinerary);
-		pFrame->ShowWindow(SW_SHOW);
+		(new CMainWnd())->Create(pItinerary);
 	}
 }
 
@@ -2255,23 +1816,22 @@ void CDataGrid::OnUpdateEditCommands(CCmdUI* pCmdUI)
 
 	case IDM_DATAGRID_PASTE:
 		{
-			COleDataObject dobj;
-			if (dobj.AttachClipboard())
-				bEnable &= dobj.IsDataAvailable(theApp.CF_FLIGHTS) || dobj.IsDataAvailable(CF_UNICODETEXT);
+			COleDataObject DataObject;
+			if (DataObject.AttachClipboard())
+				bEnable &= DataObject.IsDataAvailable(theApp.CF_FLIGHTS) || DataObject.IsDataAvailable(CF_UNICODETEXT);
 		}
 
 		break;
 
 	case IDM_DATAGRID_FINDREPLACEAGAIN:
-		bEnable &= (m_FindReplaceSettings.SearchTerm[0]!=L'\0');
+		bEnable = (m_FindReplaceSettings.SearchTerm[0]!=L'\0');
 
 	case IDM_DATAGRID_FIND:
 	case IDM_DATAGRID_REPLACE:
 	case IDM_DATAGRID_FINDREPLACE:
 	case IDM_DATAGRID_FILTER:
 	case IDM_DATAGRID_SELECTALL:
-			bEnable &= (p_Itinerary->m_Flights.m_ItemCount!=0);
-
+		bEnable &= (p_Itinerary->m_Flights.m_ItemCount!=0);
 		break;
 	}
 
@@ -2287,7 +1847,7 @@ void CDataGrid::OnAutosizeAll()
 		if (m_ViewParameters.ColumnWidth[a])
 			AutosizeColumn(a);
 
-	AdjustHeader();
+	UpdateHeader();
 	AdjustLayout();
 }
 
@@ -2297,15 +1857,14 @@ void CDataGrid::OnAutosize()
 	{
 		AutosizeColumn(m_HeaderItemClicked);
 
-		AdjustHeader();
+		UpdateHeader();
 		AdjustLayout();
 	}
 }
 
 void CDataGrid::OnChooseDetails()
 {
-	ChooseDetailsDlg dlg(&m_ViewParameters, this);
-	if (dlg.DoModal()==IDOK)
+	if (ChooseDetailsDlg(&m_ViewParameters, this).DoModal()==IDOK)
 	{
 		theApp.m_ViewParameters = m_ViewParameters;
 
@@ -2316,7 +1875,7 @@ void CDataGrid::OnChooseDetails()
 				break;
 			}
 
-		AdjustHeader();
+		UpdateHeader();
 		AdjustLayout();
 	}
 }
@@ -2325,96 +1884,32 @@ void CDataGrid::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = (pCmdUI->m_nID!=IDM_DETAILS_AUTOSIZE);
 
-	if (pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE)
-		if (m_HeaderItemClicked!=-1)
-			bEnable = (FMAttributes[m_HeaderItemClicked].Type!=FMTypeRating) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeColor) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeFlags) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeFlags);
+	if ((pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE) && (m_HeaderItemClicked!=-1))
+		bEnable = (FMAttributes[m_HeaderItemClicked].Type!=FMTypeRating) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeColor) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeFlags) && (FMAttributes[m_HeaderItemClicked].Type!=FMTypeFlags);
 
 	pCmdUI->Enable(bEnable);
 }
 
 
-// Header
+
+// Header notifications
 
 void CDataGrid::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+	OnDestroyEdit();
 
-	DestroyEdit(TRUE);
-
-	*pResult = (pHdr->iItem<0) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
-}
-
-void CDataGrid::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
-
-	if (pHdr->pitem->mask & HDI_ORDER)
-	{
-		if (pHdr->pitem->iOrder==-1)
-		{
-			theApp.m_ViewParameters.ColumnWidth[pHdr->iItem] = m_ViewParameters.ColumnWidth[pHdr->iItem] = 0;
-		}
-		else
-		{
-			// 1: remove column at old position
-			for (UINT a=0; a<FMAttributeCount; a++)
-				if (m_ViewParameters.ColumnOrder[a]==pHdr->iItem)
-				{
-					for (UINT b=a; b<FMAttributeCount-1; b++)
-						m_ViewParameters.ColumnOrder[b] = m_ViewParameters.ColumnOrder[b+1];
-
-					break;
-				}
-
-			// 2: insert column at new position
-			for (INT a=FMAttributeCount-1; a>pHdr->pitem->iOrder; a--)
-				m_ViewParameters.ColumnOrder[a] = m_ViewParameters.ColumnOrder[a-1];
-
-			m_ViewParameters.ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
-
-			memcpy_s(theApp.m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder), m_ViewParameters.ColumnOrder, sizeof(theApp.m_ViewParameters.ColumnOrder));
-		}
-
-		AdjustHeader();
-		AdjustLayout();
-
-		*pResult = FALSE;
-	}
+	CFrontstageScroller::OnBeginDrag(pNMHDR, pResult);
 }
 
 void CDataGrid::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+	OnDestroyEdit();
 
-	if (pHdr->pitem->mask & HDI_WIDTH)
-	{
-		DestroyEdit(TRUE);
-
-		// Do not track rating columns, hidden columns or the preview column
-		*pResult = (FMAttributes[pHdr->iItem].Type==FMTypeRating) || (FMAttributes[pHdr->iItem].Type==FMTypeColor) || (FMAttributes[pHdr->iItem].Type==FMTypeFlags) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
-	}
+	CFrontstageScroller::OnBeginTrack(pNMHDR, pResult);
 }
 
-void CDataGrid::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
-	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_WIDTH))
-	{
-		// Guarantee MINCOLUMNWIDTH, or hide column
-		const INT Width = (pHdr->pitem->cxy<MINCOLUMNWIDTH) ? (pHdr->iItem==0) || (pHdr->iItem==3) ? MINCOLUMNWIDTH : 0 : pHdr->pitem->cxy;
-
-		if (Width!=m_ViewParameters.ColumnWidth[pHdr->iItem])
-		{
-			theApp.m_ViewParameters.ColumnWidth[pHdr->iItem] = m_ViewParameters.ColumnWidth[pHdr->iItem] = Width;
-
-			AdjustHeader();
-			AdjustLayout();
-		}
-
-		*pResult = TRUE;
-	}
-}
+// Label edit
 
 void CDataGrid::OnDestroyEdit()
 {

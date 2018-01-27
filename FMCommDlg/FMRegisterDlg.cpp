@@ -153,8 +153,7 @@ void FMRegisterDlg::OnTimer(UINT_PTR nIDEvent)
 
 void FMRegisterDlg::OnEnterLicenseKey(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	FMLicenseDlg dlg(this);
-	dlg.DoModal();
+	FMLicenseDlg(this).DoModal();
 
 	if (FMIsLicensed())
 		EndDialog(IDOK);

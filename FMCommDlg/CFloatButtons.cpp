@@ -92,7 +92,7 @@ void CFloatButton::OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult)
 		// Icon
 		if ((m_IconID>=0) && (rect.Width()>=p_ButtonIcons->GetIconSize()+PADDING/2+rect.Height()))
 		{
-			p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left, rect.top+(rect.Height()-p_ButtonIcons->GetIconSize())/2, m_IconID, m_HoverItem>=0, Disabled);
+			p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left, rect.top+(rect.Height()-p_ButtonIcons->GetIconSize())/2, m_IconID, pDrawButtonForeground->Themed && pDrawButtonForeground->Hover, Disabled);
 
 			rect.left += p_ButtonIcons->GetIconSize()+PADDING/2;
 		}
@@ -103,7 +103,7 @@ void CFloatButton::OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 	{
 		// Icon
-		p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left+(rect.Width()-p_ButtonIcons->GetIconSize())/2, rect.top+PADDING, m_IconID, m_HoverItem>=0, Disabled);
+		p_ButtonIcons->Draw(*pDrawButtonForeground->pDC, rect.left+(rect.Width()-p_ButtonIcons->GetIconSize())/2, rect.top+PADDING, m_IconID, pDrawButtonForeground->Themed && pDrawButtonForeground->Hover, Disabled);
 
 		rect.DeflateRect(PADDING, PADDING);
 		rect.top += p_ButtonIcons->GetIconSize()+PADDING-2;
@@ -339,10 +339,8 @@ void CButtonGroup::GetPreferredSize(LPSIZE lpSize, INT MaxWidth)
 		if ((m_Items[a].Size.cy) && m_Items[a].Bullet && (y>m_Top))
 			y -= INNERBORDER;
 
-		m_Items[a].Rect.left = x;
-		m_Items[a].Rect.top = y;
-		m_Items[a].Rect.right = x+m_Items[a].Size.cx;
-		m_Items[a].Rect.bottom = y+m_Items[a].Size.cy;
+		m_Items[a].Rect.right = (m_Items[a].Rect.left=x)+m_Items[a].Size.cx;
+		m_Items[a].Rect.bottom = (m_Items[a].Rect.top=y)+m_Items[a].Size.cy;
 
 		if (m_Items[a].Size.cy)
 		{
@@ -354,7 +352,7 @@ void CButtonGroup::GetPreferredSize(LPSIZE lpSize, INT MaxWidth)
 		}
 	}
 
-	delete[] CumulativeColumnWidths;
+	delete CumulativeColumnWidths;
 }
 
 void CButtonGroup::AdjustLayout(INT VScrollPos)
@@ -432,11 +430,6 @@ void CButtonGroup::Draw(CDC& dc, Graphics& g, INT VScrollPos, BOOL Themed) const
 			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(m_Alert ? COLOR_INFOTEXT : COLOR_WINDOWTEXT));
 			dc.DrawText(m_Items[a].Text, -1, rectItem, DT_LEFT | DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
 		}
-		else
-		{
-			if (Themed)
-				DrawWhiteButtonBorder(g, rectItem);
-		}
 	}
 
 	dc.SelectObject(pOldFont);
@@ -471,12 +464,12 @@ BOOL CButtonGroup::SetFocus()
 #define GROUPMARGIN     2*BACKSTAGEBORDER
 
 CFloatButtons::CFloatButtons()
-	: CFrontstageWnd()
+	: CFrontstageScroller(FRONTSTAGE_WHITEBACKGROUND)
 {
 	m_Indent = FMGetApp()->m_DefaultFont.GetFontHeight()*9/8;
 
 	hBackgroundBrush = NULL;
-	m_BackBufferL = m_BackBufferH = m_VScrollMax = m_VScrollPos = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 	m_Destroying = FALSE;
 }
 
@@ -489,15 +482,15 @@ BOOL CFloatButtons::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIc
 	p_LargeIcons = &LargeIcons;
 	LargeIcons.Load(ResID, LI_FORTOOLTIPS);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageScroller::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 BOOL CFloatButtons::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// Route commands to owner
-	if (!CFrontstageWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (!CFrontstageScroller::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return GetOwner()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 
 	return TRUE;
@@ -560,6 +553,13 @@ void CFloatButtons::SetText(UINT nGroup, UINT nID, UINT ResID, BOOL Bullet)
 	ASSERT(nGroup<m_ButtonGroups.m_ItemCount);
 
 	SetText(nGroup, nID, ResID ? CString((LPCSTR)ResID) : _T(""), Bullet);
+}
+
+void CFloatButtons::AdjustButtonGroups()
+{
+	// Adjust group layout
+	for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
+		m_ButtonGroups[a]->AdjustLayout(m_VScrollPos);
 }
 
 void CFloatButtons::AdjustLayout()
@@ -634,43 +634,26 @@ Restart:
 			m_ButtonGroups[a]->m_Rect.right = rectWindow.Width();
 	}
 
-	// Adjust scrollbars
-	m_VScrollMax = max(0, m_ScrollHeight-rectWindow.Height());
-	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
+	CFrontstageScroller::AdjustLayout();
 
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(SCROLLINFO);
-	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
-	si.nPage = rectWindow.Height();
-	si.nMax = m_ScrollHeight-1;
-	si.nPos = m_VScrollPos;
-	SetScrollInfo(SB_VERT, &si);
-
-	AdjustScrollbars();
+	AdjustButtonGroups();
 }
 
-void CFloatButtons::AdjustScrollbars()
+void CFloatButtons::ScrollWindow(INT /*dx*/, INT /*dy*/, LPCRECT /*lpRect*/, LPCRECT /*lpClipRect*/)
 {
-	// Adjust group layout
-	for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
-		m_ButtonGroups[a]->AdjustLayout(m_VScrollPos);
+	AdjustButtonGroups();
 
 	// Redraw
 	m_BackBufferL = m_BackBufferH = 0;
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
 }
 
 
-BEGIN_MESSAGE_MAP(CFloatButtons, CFrontstageWnd)
+BEGIN_MESSAGE_MAP(CFloatButtons, CFrontstageScroller)
 	ON_WM_DESTROY()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()
-	ON_WM_SIZE()
-	ON_WM_VSCROLL()
-	ON_WM_MOUSEWHEEL()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 END_MESSAGE_MAP()
@@ -685,12 +668,7 @@ void CFloatButtons::OnDestroy()
 
 	DeleteObject(hBackgroundBrush);
 
-	CFrontstageWnd::OnDestroy();
-}
-
-BOOL CFloatButtons::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
+	CFrontstageScroller::OnDestroy();
 }
 
 void CFloatButtons::OnPaint()
@@ -725,7 +703,7 @@ void CFloatButtons::OnPaint()
 		for (UINT a=0; a<m_ButtonGroups.m_ItemCount; a++)
 			m_ButtonGroups[a]->Draw(dc, g, m_VScrollPos, Themed);
 
-		CFrontstageWnd::DrawWindowEdge(g, Themed);
+		CFrontstageScroller::DrawWindowEdge(g, Themed);
 
 		dc.SelectObject(pOldBitmap);
 
@@ -745,7 +723,7 @@ LRESULT CFloatButtons::OnThemeChanged()
 HBRUSH CFloatButtons::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = CFrontstageScroller::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	if (hBackgroundBrush)
 		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
@@ -760,93 +738,6 @@ HBRUSH CFloatButtons::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		}
 
 	return hBrush;
-}
-
-void CFloatButtons::OnSize(UINT nType, INT cx, INT cy)
-{
-	CFrontstageWnd::OnSize(nType, cx, cy);
-
-	OnIdleUpdateCmdUI();
-	AdjustLayout();
-}
-
-void CFloatButtons::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	SCROLLINFO si;
-
-	INT nInc = 0;
-	switch (nSBCode)
-	{
-	case SB_TOP:
-		nInc = -m_VScrollPos;
-		break;
-
-	case SB_BOTTOM:
-		nInc = m_VScrollMax-m_VScrollPos;
-		break;
-
-	case SB_LINEUP:
-		nInc = -rect.Height()/8;
-		break;
-
-	case SB_LINEDOWN:
-		nInc = rect.Height()/8;
-		break;
-
-	case SB_PAGEUP:
-		nInc = min(-1, -rect.Height());
-		break;
-
-	case SB_PAGEDOWN:
-		nInc = max(1, rect.Height());
-		break;
-
-	case SB_THUMBTRACK:
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_TRACKPOS;
-		GetScrollInfo(SB_VERT, &si);
-
-		nInc = si.nTrackPos-m_VScrollPos;
-		break;
-	}
-
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		AdjustScrollbars();
-	}
-
-	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
-}
-
-BOOL CFloatButtons::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint pt)
-{
-	CRect rect;
-	GetWindowRect(rect);
-
-	if (!rect.PtInRect(pt))
-		return FALSE;
-
-	INT nInc = max(-m_VScrollPos, min(-zDelta*rect.Height()/8, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc);
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		AdjustScrollbars();
-		FMGetApp()->HideTooltip();
-	}
-
-	return TRUE;
 }
 
 void CFloatButtons::OnSetFocus(CWnd* /*pOldWnd*/)

@@ -32,7 +32,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, 
 	p_TooltipIcons = &LargeIcons;
 	LargeIcons.Load(ResID, LI_FORTOOLTIPS);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
@@ -75,6 +75,37 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	m_Buttons.AddItem(pTaskButton);
 
 	return pTaskButton;
+}
+
+BOOL CTaskbar::GetContextMenu(CMenu& Menu, INT /*Index*/)
+{
+	if (Menu.CreatePopupMenu())
+	{
+		BOOL NeedsSeparator = FALSE;
+
+		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
+		{
+			if ((INT)a==m_FirstRight)
+				NeedsSeparator = (Menu.GetMenuItemCount()>0);
+
+			CTaskButton* pTaskButton = m_Buttons[a];
+			if (pTaskButton->IsWindowEnabled())
+			{
+				if (NeedsSeparator)
+				{
+					Menu.AppendMenu(MF_SEPARATOR);
+					NeedsSeparator = FALSE;
+				}
+
+				CString tmpStr;
+				pTaskButton->GetWindowText(tmpStr);
+
+				Menu.AppendMenu(0, pTaskButton->GetDlgCtrlID(), _T("&")+tmpStr);
+			}
+		}
+	}
+
+	return FALSE;
 }
 
 void CTaskbar::AdjustLayout()
@@ -172,7 +203,6 @@ BEGIN_MESSAGE_MAP(CTaskbar, CFrontstageWnd)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
@@ -262,8 +292,8 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (hBackgroundBrush)
-		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		if (hBackgroundBrush)
 		{
 			CRect rect;
 			pWnd->GetWindowRect(rect);
@@ -272,6 +302,12 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 			pDC->SetBrushOrg(-rect.left, -rect.top);
 
 			hBrush = hBackgroundBrush;
+		}
+		else
+		{
+			pDC->SetDCBrushColor(GetSysColor(COLOR_3DFACE));
+
+			hBrush = (HBRUSH)GetStockObject(DC_BRUSH);
 		}
 
 	return hBrush;
@@ -314,46 +350,4 @@ void CTaskbar::OnIdleUpdateCmdUI()
 
 	if (Update)
 		AdjustLayout();
-}
-
-void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
-{
-	if ((pos.x<0) || (pos.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		pos.x = (rect.left+rect.right)/2;
-		pos.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&pos);
-	}
-
-	CMenu Menu;
-	if (!Menu.CreatePopupMenu())
-		return;
-
-	BOOL NeedsSeparator = FALSE;
-
-	for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
-	{
-		if ((INT)a==m_FirstRight)
-			NeedsSeparator = (Menu.GetMenuItemCount()>0);
-
-		CTaskButton* pTaskButton = m_Buttons[a];
-		if (pTaskButton->IsWindowEnabled())
-		{
-			if (NeedsSeparator)
-			{
-				Menu.AppendMenu(MF_SEPARATOR);
-				NeedsSeparator = FALSE;
-			}
-
-			CString tmpStr;
-			pTaskButton->GetWindowText(tmpStr);
-
-			Menu.AppendMenu(0, pTaskButton->GetDlgCtrlID(), _T("&")+tmpStr);
-		}
-	}
-
-	Menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
 }

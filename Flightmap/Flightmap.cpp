@@ -9,8 +9,7 @@
 #include "Flightmap.h"
 
 
-GUID theAppID =	// {8269ADBF-A534-469d-A58D-7EBA84634B70}
-	{ 0x8269ADBF, 0xA534, 0x469D, { 0xA5, 0x8D, 0x7E, 0xBA, 0x84, 0x63, 0x4B, 0x70 } };
+const GUID theAppID = { 0x8269ADBF, 0xA534, 0x469D, { 0xA5, 0x8D, 0x7E, 0xBA, 0x84, 0x63, 0x4B, 0x70 } };
 
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
@@ -21,16 +20,19 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 	if (SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, NULL, SMTO_NORMAL, 500, &Result))
 		if (Result==24878)
 		{
-			CDS_Wakeup cdsw;
-			ZeroMemory(&cdsw, sizeof(cdsw));
-			cdsw.AppID = theAppID;
-			if (lParam)
-				wcscpy_s(cdsw.Command, MAX_PATH, (LPCWSTR)lParam);
+			CDSWAKEUP CDSW;
+			ZeroMemory(&CDSW, sizeof(CDSW));
 
-			COPYDATASTRUCT cds;
-			cds.cbData = sizeof(cdsw);
-			cds.lpData = &cdsw;
-			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&cds))
+			CDSW.AppID = theAppID;
+
+			if (lParam)
+				wcscpy_s(CDSW.Command, MAX_PATH, (LPCWSTR)lParam);
+
+			COPYDATASTRUCT CDS;
+			CDS.cbData = sizeof(CDSW);
+			CDS.lpData = &CDSW;
+
+			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&CDS))
 				return FALSE;
 		}
 
@@ -38,14 +40,9 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 }
 
 
-// CFlightmapApp
+// CFlightmapApp object
 
-BEGIN_MESSAGE_MAP(CFlightmapApp, FMApplication)
-	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
-END_MESSAGE_MAP()
-
-
-// CFlightmapApp-Erstellung
+CFlightmapApp theApp;
 
 CFlightmapApp::CFlightmapApp()
 	: FMApplication(theAppID)
@@ -55,13 +52,7 @@ CFlightmapApp::CFlightmapApp()
 	CF_FLIGHTS = (CLIPFORMAT)RegisterClipboardFormat(_T("liquidFOLDERS.Flightmap"));
 }
 
-
-// Das einzige CFlightmapApp-Objekt
-
-CFlightmapApp theApp;
-
-
-// CFlightmapApp-Initialisierung
+// CFlightmapApp initialization
 
 BOOL CFlightmapApp::InitInstance()
 {
@@ -71,16 +62,20 @@ BOOL CFlightmapApp::InitInstance()
 	if (!FMApplication::InitInstance())
 		return FALSE;
 
+	// User Model ID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"app.liquidFOLDERS.Flightmap");
+
 	// RestartManager
 	if (m_KernelLibLoaded)
 		zRegisterApplicationRestart(L"", 11);	// RESTART_NO_CRASH | RESTART_NO_HANG | RESTART_NO_REBOOT
 
-	// Pfad zu Google Earth
+	// Path to Google Earth
 	DWORD dwSize = sizeof(m_PathGoogleEarth)/sizeof(WCHAR);
 	if (FAILED(AssocQueryString(ASSOCF_REMAPRUNDLL | ASSOCF_INIT_IGNOREUNKNOWN, ASSOCSTR_EXECUTABLE, L".kml", NULL, m_PathGoogleEarth, &dwSize)))
 		m_PathGoogleEarth[0] = L'\0';
 
-	// Pfad zu liquidFOLDERS
+	// Path to liquidFOLDERS
 	HKEY hKey;
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\liquidFOLDERS"), 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 	{
@@ -94,7 +89,7 @@ BOOL CFlightmapApp::InitInstance()
 		RegCloseKey(hKey);
 	}
 
-	// Registry auslesen
+	// Registry
 	SetRegistryBase();
 
 	m_ModelQuality = (GLModelQuality)GetInt(_T("ModelQuality"), MODELULTRA);
@@ -110,11 +105,11 @@ BOOL CFlightmapApp::InitInstance()
 	m_GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_GlobeZoom = GetInt(_T("GlobeZoom"), 600);
 	m_GlobeMergeMetro = GetInt(_T("GlobeMergeMetro"), FALSE);
-	m_GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
+	m_GlobeShowLocations = GetInt(_T("GlobeShowLocations"), TRUE);
 	m_GlobeShowAirportIATA = GetInt(_T("GlobeShowAirportIATA"), TRUE);
 	m_GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
-	m_GlobeShowGPS = GetInt(_T("GlobeShowGPS"), FALSE);
-	m_GlobeShowMovements = GetInt(_T("GlobeShowMovements"), FALSE);
+	m_GlobeShowCoordinates = GetInt(_T("GlobeShowCoordinates"), FALSE);
+	m_GlobeShowDescriptions = GetInt(_T("GlobeShowDescriptions"), FALSE);
 	m_GlobeDarkBackground = GetInt(_T("GlobeDarkBackground"), FALSE);
 	m_GoogleEarthMergeMetro = GetInt(_T("GoogleEarthMergeMetro"), FALSE);
 	m_GoogleEarthUseCount = GetInt(_T("GoogleEarthUseCount"), FALSE);
@@ -159,13 +154,13 @@ BOOL CFlightmapApp::InitInstance()
 	for (UINT a=0; a<FMAttributeCount; a++)
 	{
 		m_ViewParameters.ColumnOrder[a] = a;
-		m_ViewParameters.ColumnWidth[a] = FMAttributes[a].DefaultVisible ? FMAttributes[a].RecommendedWidth : 0;
+		m_ViewParameters.ColumnWidth[a] = FMAttributes[a].DefaultVisible ? FMAttributes[a].DefaultColumnWidth : 0;
 	}
 	GetBinary(_T("ColumnOrder"), &m_ViewParameters.ColumnOrder, sizeof(m_ViewParameters.ColumnOrder));
 	GetBinary(_T("ColumnWidth"), &m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
 	for (UINT a=0; a<FMAttributeCount; a++)
 		if (((m_ViewParameters.ColumnWidth[a]!=0) && ((FMAttributes[a].Type==FMTypeRating) || (FMAttributes[a].Type==FMTypeColor)) || (FMAttributes[a].Type==FMTypeFlags)) || ((m_ViewParameters.ColumnWidth[a]==0) && ((a==0) || (a==3))))
-			m_ViewParameters.ColumnWidth[a] = FMAttributes[a].RecommendedWidth;
+			m_ViewParameters.ColumnWidth[a] = FMAttributes[a].DefaultColumnWidth;
 
 	for (UINT a=0; a<20; a++)
 	{
@@ -173,18 +168,15 @@ BOOL CFlightmapApp::InitInstance()
 		CString tmpValue;
 
 		tmpName.Format(_T("RecentFile%u"), a);
-		tmpValue = GetString(tmpName);
-		if (!tmpValue.IsEmpty())
+		if (!(tmpValue=GetString(tmpName)).IsEmpty())
 			m_RecentFiles.AddTail(tmpValue);
 
 		tmpName.Format(_T("RecentSearchTerm%u"), a);
-		tmpValue = GetString(tmpName);
-		if (!tmpValue.IsEmpty())
+		if (!(tmpValue=GetString(tmpName)).IsEmpty())
 			m_RecentSearchTerms.AddTail(tmpValue);
 
 		tmpName.Format(_T("RecentReplaceTerm%u"), a);
-		tmpValue = GetString(tmpName);
-		if (!tmpValue.IsEmpty())
+		if (!(tmpValue=GetString(tmpName)).IsEmpty())
 			m_RecentReplaceTerms.AddTail(tmpValue);
 	}
 
@@ -201,26 +193,22 @@ BOOL CFlightmapApp::InitInstance()
 	// Execute
 	CheckForUpdate();
 
-	CWnd* pFrameWnd = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
-	if (pFrameWnd)
-		ShowNagScreen(NAG_FORCE, pFrameWnd);
+	if (OpenCommandLine(__argc==2 ? __wargv[1] : NULL))
+		ShowNagScreen(NAG_FORCE, m_pActiveWnd);
 
 	m_AppInitialized = TRUE;
 
 	return TRUE;
 }
 
-CWnd* CFlightmapApp::OpenCommandLine(LPWSTR pCmdLine)
+BOOL CFlightmapApp::OpenCommandLine(LPWSTR pCmdLine)
 {
-	if (pCmdLine)
-		if (_wcsicmp(pCmdLine, L"/CHECKUPDATE")==0)
-			return NULL;
+	if (pCmdLine && (_wcsicmp(pCmdLine, L"/CHECKUPDATE")==0))
+		return FALSE;
 
-	CMainWnd* pFrameWnd = new CMainWnd();
-	pFrameWnd->Create(new CItinerary(pCmdLine));
-	pFrameWnd->ShowWindow(SW_SHOW);
+	(new CMainWnd())->Create(new CItinerary(pCmdLine));
 
-	return pFrameWnd;
+	return TRUE;
 }
 
 INT CFlightmapApp::ExitInstance()
@@ -240,11 +228,11 @@ INT CFlightmapApp::ExitInstance()
 		WriteInt(_T("GlobeLongitude"), m_GlobeLongitude);
 		WriteInt(_T("GlobeZoom"), m_GlobeZoom);
 		WriteInt(_T("GlobeMergeMetro"), m_GlobeMergeMetro);
-		WriteInt(_T("GlobeShowSpots"), m_GlobeShowSpots);
+		WriteInt(_T("GlobeShowLocations"), m_GlobeShowLocations);
 		WriteInt(_T("GlobeShowAirportIATA"), m_GlobeShowAirportIATA);
 		WriteInt(_T("GlobeShowAirportNames"), m_GlobeShowAirportNames);
-		WriteInt(_T("GlobeShowGPS"), m_GlobeShowGPS);
-		WriteInt(_T("GlobeShowMovements"), m_GlobeShowMovements);
+		WriteInt(_T("GlobeShowCoordinates"), m_GlobeShowCoordinates);
+		WriteInt(_T("GlobeShowDescriptions"), m_GlobeShowDescriptions);
 		WriteInt(_T("GlobeDarkBackground"), m_GlobeDarkBackground);
 		WriteInt(_T("GoogleEarthMergeMetro"), m_GoogleEarthMergeMetro);
 		WriteInt(_T("GoogleEarthUseCount"), m_GoogleEarthUseCount);
@@ -289,9 +277,8 @@ INT CFlightmapApp::ExitInstance()
 		WriteBinary(_T("ColumnWidth"), (LPBYTE)&m_ViewParameters.ColumnWidth, sizeof(m_ViewParameters.ColumnWidth));
 
 		CString tmpName;
-		UINT a;
+		UINT a = 0;
 
-		a = 0;
 		for (POSITION p=m_RecentFiles.GetHeadPosition(); p && (a<20); )
 		{
 			tmpName.Format(_T("RecentFile%u"), a++);
@@ -334,6 +321,7 @@ void CFlightmapApp::AddStringToList(CList<CString>& List, const CString& Str)
 	for (POSITION p=List.GetHeadPosition(); p; )
 	{
 		POSITION pl = p;
+
 		if (List.GetNext(p)==Str)
 			List.RemoveAt(pl);
 	}
@@ -341,9 +329,9 @@ void CFlightmapApp::AddStringToList(CList<CString>& List, const CString& Str)
 	List.AddHead(Str);
 }
 
-void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
+void CFlightmapApp::OpenAirportGoogleEarth(LPCAIRPORT lpcAirport)
 {
-	ASSERT(pAirport);
+	ASSERT(lpcAirport);
 
 	if (m_PathGoogleEarth[0]==L'\0')
 		return;
@@ -358,8 +346,8 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	szTempName.Format(_T("%sFlightmap%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	// Datei erzeugen
-	CGoogleEarthFile f;
-	if (!f.Open(szTempName))
+	CGoogleEarthFile File;
+	if (!File.Open(szTempName))
 	{
 		FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
 	}
@@ -367,24 +355,24 @@ void CFlightmapApp::OpenAirportGoogleEarth(FMAirport* pAirport)
 	{
 		try
 		{
-			f.WriteAirport(pAirport);
-			f.Close();
+			File.WriteAirport(lpcAirport);
+			File.Close();
 
 			ShellExecute(GetForegroundWindow(), _T("open"), szTempName, NULL, NULL, SW_SHOWNORMAL);
 		}
 		catch(CFileException ex)
 		{
 			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
-			f.Close();
+			File.Close();
 		}
 	}
 }
 
 void CFlightmapApp::OpenAirportGoogleEarth(LPCSTR Code)
 {
-	FMAirport* pAirport;
-	if (FMIATAGetAirportByCode(Code, pAirport))
-		OpenAirportGoogleEarth(pAirport);
+	LPCAIRPORT lpcAirport;
+	if (FMIATAGetAirportByCode(Code, lpcAirport))
+		OpenAirportGoogleEarth(lpcAirport);
 }
 
 void CFlightmapApp::OpenAirportLiquidFolders(LPCSTR Code)
@@ -419,17 +407,16 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	dc.SetTextColor(0x404040);
 	dc.DrawText(di.lpszDocName, -1, rectTitle, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP);
 
-	dc.SelectObject(&fntSubtitle);
 	CString Subtitle;
 	if (FMIsLicensed())
 	{
-		SYSTEMTIME st;
-		GetLocalTime(&st);
+		SYSTEMTIME SystemTime;
+		GetLocalTime(&SystemTime);
 
-		WCHAR Date[256] = L"";
-		WCHAR Time[256] = L"";
-		GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, Date, 256);
-		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, Time, 256);
+		WCHAR Date[256];
+		WCHAR Time[256];
+		GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &SystemTime, NULL, Date, 256);
+		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &SystemTime, NULL, Time, 256);
 
 		Subtitle.Format(IDS_PRINTED_REGISTERED, Date, Time);
 	}
@@ -437,6 +424,8 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	{
 		ENSURE(Subtitle.LoadString(IDS_PRINTED_UNREGISTERED));
 	}
+
+	dc.SelectObject(&fntSubtitle);
 
 	CRect rectSubtitle((INT)(Spacer*3.5), (INT)(Spacer*2.15), rect.right, (INT)(Spacer*3.0));
 	dc.SetTextColor(0x000000);
@@ -448,17 +437,18 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 }
 
 
+BEGIN_MESSAGE_MAP(CFlightmapApp, FMApplication)
+	ON_COMMAND(IDM_BACKSTAGE_ABOUT, OnBackstageAbout)
+END_MESSAGE_MAP()
+
 void CFlightmapApp::OnBackstageAbout()
 {
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	AboutDlg dlg(m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
 	{
-		if (m_UseStatuteMiles!=dlg.m_UseStatuteMiles)
-		{
-			m_UseStatuteMiles = dlg.m_UseStatuteMiles;
-			PostMessage(HWND_BROADCAST, m_DistanceSettingChangedMsg, (WPARAM)m_UseStatuteMiles, NULL);
-		}
+		Broadcast(WM_DISTANCESETTINGSCHANGED);
+		Broadcast(WM_3DSETTINGSCHANGED);
 	}
 }

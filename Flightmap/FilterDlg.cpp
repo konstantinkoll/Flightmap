@@ -7,6 +7,79 @@
 #include "Flightmap.h"
 
 
+// CSortList
+//
+
+CSortList::CSortList()
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM, sizeof(AttributeItemData))
+{
+	WNDCLASS wndcls;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.hCursor = FMGetApp()->LoadStandardCursor(IDC_ARROW);
+	wndcls.lpszClassName = L"CSortList";
+
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CSortList", &wndcls)))
+	{
+		wndcls.hInstance = AfxGetInstanceHandle();
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+
+	// Item
+	CFrontstageScroller::SetItemHeight(FMGetApp()->m_DialogFont.GetFontHeight()+2*ITEMCELLPADDINGY);
+}
+
+void CSortList::AddAttribute(UINT Attr, LPCWSTR Name)
+{
+	AttributeItemData Data;
+
+	Data.Attr = Attr;
+	wcscpy_s(Data.Name, 256, Name);
+
+	AddItem(&Data);
+}
+
+void CSortList::SetAttributes()
+{
+	SetItemCount(FMAttributeCount, FALSE);
+
+	for (UINT a=0; a<FMAttributeCount; a++)
+		if (FMAttributes[a].Sortable)
+			AddAttribute(a, CString((LPCSTR)FMAttributes[a].nNameID));
+
+	LastItem();
+	AdjustLayout();
+}
+
+INT CSortList::GetSelectedSortAttribute() const
+{
+	const INT Index = GetSelectedItem();
+
+	return (Index<0) ? -1 : GetAttributeItemData(Index)->Attr;
+}
+
+void CSortList::AdjustLayout()
+{
+	AdjustLayoutColumns();
+}
+
+void CSortList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
+{
+	const AttributeItemData* pData = GetAttributeItemData(Index);
+
+	CRect rect(rectItem);
+	rect.DeflateRect(ITEMCELLPADDINGX, ITEMCELLPADDINGY);
+
+	// Text
+	CFont* pOldFont = dc.SelectObject(&FMGetApp()->m_DialogFont);
+	dc.DrawText(pData->Name, -1, rect, DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	dc.SelectObject(pOldFont);
+}
+
+
 // FilterDlg
 //
 
@@ -34,7 +107,7 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		CString tmpStr;
 		m_wndFilterAirport.GetWindowText(tmpStr);
-		WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, m_Filter.Airport, 4, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, m_Filter.Airport, 4, NULL, NULL);
 
 		m_wndFilterCarrier.GetWindowText(m_Filter.Carrier, 256);
 		m_wndFilterEquipment.GetWindowText(m_Filter.Equipment, 256);
@@ -43,17 +116,14 @@ void FilterDlg::DoDataExchange(CDataExchange* pDX)
 		m_Filter.Leisure = ((CButton*)GetDlgItem(IDC_FILTER_LEISURETRIP))->GetCheck();
 		m_Filter.Rating = m_wndFilterRating.GetRating();
 
-		m_Filter.DepartureMonth = m_wndFilterMonth.GetCurSel();
-		if (m_Filter.DepartureMonth==CB_ERR)
+		if ((m_Filter.DepartureMonth=m_wndFilterMonth.GetCurSel())==CB_ERR)
 			m_Filter.DepartureMonth = 0;
 
 		GetDlgItem(IDC_FILTER_YEAR)->GetWindowText(tmpStr);
-		if (swscanf_s(tmpStr.GetBuffer(), L"%u", &m_Filter.DepartureYear)!=1)
+		if (swscanf_s(tmpStr, L"%u", &m_Filter.DepartureYear)!=1)
 			m_Filter.DepartureYear = 0;
 
-		const INT Index = m_wndSortAttributes.GetNextItem(-1, LVIS_SELECTED);
-		m_Filter.SortBy = (Index==-1) ? -1 : (INT)m_wndSortAttributes.GetItemData(Index);
-
+		m_Filter.SortBy = GetSelectedSortAttribute();
 		m_Filter.Descending = m_wndSortDirection.GetCurSel();
 	}
 }
@@ -63,29 +133,13 @@ BOOL FilterDlg::InitDialog()
 	GetDlgItem(IDC_INSTRUCTIONS)->SetFont(&theApp.m_DefaultFont);
 
 	// Filter
-	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);
-	PrepareEquipmentCtrl(&m_wndFilterEquipment, p_Itinerary, FALSE);
+	p_Itinerary->PrepareCarrierCtrl(m_wndFilterCarrier, FALSE);
+	p_Itinerary->PrepareEquipmentCtrl(m_wndFilterEquipment, FALSE);
+
 	m_wndFilterRating.SetRating(0);
 
-	// Sort attributes
-	m_wndSortAttributes.AddColumn(0);
-
-	LVITEM lvi;
-	ZeroMemory(&lvi, sizeof(lvi));
-	lvi.mask = LVIF_TEXT | LVIF_PARAM;
-
-	for (UINT a=0; a<FMAttributeCount; a++)
-		if (FMAttributes[a].Sortable)
-		{
-			CString tmpStr((LPCSTR)FMAttributes[a].nNameID);
-
-			lvi.lParam = (LPARAM)a;
-			lvi.pszText = tmpStr.GetBuffer();
-			lvi.iItem = m_wndSortAttributes.GetItemCount();
-			m_wndSortAttributes.InsertItem(&lvi);
-		}
-
-	// Sort direction
+	// Sorting
+	m_wndSortAttributes.SetAttributes();
 	m_wndSortDirection.SetCurSel(0);
 
 	return TRUE;
@@ -93,7 +147,7 @@ BOOL FilterDlg::InitDialog()
 
 
 BEGIN_MESSAGE_MAP(FilterDlg, FMDialog)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWATTRIBUTES, OnSelectionChange)
+	ON_NOTIFY(IVN_SELECTIONCHANGED, IDC_VIEWATTRIBUTES, OnSelectionChanged)
 	ON_BN_CLICKED(IDD_SELECTLOCATIONIATA, OnSelectIATA)
 END_MESSAGE_MAP()
 
@@ -110,12 +164,9 @@ void FilterDlg::OnSelectIATA()
 		m_wndFilterAirport.SetWindowText(CString(dlg.p_Airport->Code));
 }
 
-void FilterDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
+void FilterDlg::OnSelectionChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-
-	if (pNMListView->uChanged & LVIF_STATE)
-		m_wndSortDirection.EnableWindow(pNMListView->uNewState & LVIS_SELECTED);
+	m_wndSortDirection.EnableWindow(GetSelectedSortAttribute()!=-1);
 
 	*pResult = 0;
 }

@@ -29,7 +29,8 @@ CColorHistory::CColorHistory()
 			AfxThrowResourceException();
 	}
 
-	memcpy_s(m_Colors, sizeof(m_Colors), FMGetApp()->m_ColorHistory, sizeof(FMGetApp()->m_ColorHistory));
+	ASSERT(sizeof(m_Colors)==sizeof(FMGetApp()->m_ColorHistory));
+	memcpy(m_Colors, FMGetApp()->m_ColorHistory, sizeof(m_Colors));
 
 	m_FocusItem = 0;
 

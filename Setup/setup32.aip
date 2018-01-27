@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="11.8" Modules="enterprise" RootPath="." Language="en" Id="{F82D6E19-537F-4491-B239-058F8FBB0E3C}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
-    <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiAssemblyComponent;MsiDriverPackagesComponent;MsiServInstComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;MsiClassComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent;MsiInstExSeqComponent;MsiDirectEditorComponent"/>
+    <ROW Name="HiddenItems" Value="UpdaterComponent;SerValComponent;MsiJavaComponent;MsiAssemblyComponent;MsiDriverPackagesComponent;MsiServInstComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;MsiClassComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent;MsiInstExSeqComponent"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
@@ -33,10 +33,10 @@
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{9E423B00-1669-49FC-9C29-71362E21D0C9} 1031:{E4C03F05-ED61-4809-B9D0-0DED8AEB9DEB} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{AAFDE7F7-FB21-4C52-BB58-524091166BA8} 1031:{961C938C-1D1D-4F43-92C9-F80786B9D593} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Flightmap" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.3.1" Type="32"/>
+    <ROW Property="ProductVersion" Value="2.4.0" Type="32"/>
     <ROW Property="RemoveIcon" Value="Remove.ico" Type="1" MsiKey="RemoveIcon"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -67,13 +67,16 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="File_Type_Associations" Feature_Parent="Flightmap" Title="File Type Associations" Description="Description" Display="3" Level="1" Directory_="APPDIR" Attributes="0" Options="13" Components="AI_CustomARPName AI_DisableModify ApplicationDescription"/>
     <ROW Feature="Flightmap" Title="Flightmap" Description="Flightmap" Display="1" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify ApplicationDescription Flightmap.exe SHORTCUTDIR"/>
-    <ROW Feature="air" Feature_Parent="File_Type_Associations" Title=".air" Description="Description" Display="5" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="AI_CustomARPName AI_DisableModify ApplicationDescription Flightmap.exe"/>
-    <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title=".airx" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Options="27" Components="AI_CustomARPName AI_DisableModify ApplicationDescription Flightmap.exe"/>
-    <ROW Feature="csv" Feature_Parent="File_Type_Associations" Title=".csv" Description="Description" Display="9" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="AI_CustomARPName AI_DisableModify ApplicationDescription Flightmap.exe"/>
+    <ROW Feature="airx" Feature_Parent="File_Type_Associations" Title=".airx" Description="Description" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Options="27" Components="AI_CustomARPName AI_DisableModify ApplicationDescription"/>
+    <ROW Feature="csv" Feature_Parent="File_Type_Associations" Title=".csv" Description="Description" Display="9" Level="4" Directory_="APPDIR" Attributes="0" Options="27" Components="AI_CustomARPName AI_DisableModify ApplicationDescription"/>
     <ATTRIBUTE name="CurrentFeature" value="Flightmap"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Flightmap.exe" Component_="Flightmap.exe" FileName="Flight~1.exe|Flightmap.exe" Attributes="0" SourcePath="..\Release\Win32\Flightmap.exe" SelfReg="false"/>
+    <ROW File="Flightmap.exe" Component_="Flightmap.exe" FileName="Flight~1.exe|Flightmap.exe" Attributes="0" SourcePath="..\Release\Win32\Flightmap.exe" SelfReg="false" DigSign="true"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
+    <ROW MsiShortcutProperty="Flightmap" Shortcut_="Flightmap" PropertyKey="System.AppUserModel.ID" PropVariantValue="app.liquidFOLDERS.Flightmap"/>
+    <ROW MsiShortcutProperty="Flightmap_1" Shortcut_="Flightmap_1" PropertyKey="System.AppUserModel.ID" PropVariantValue="app.liquidFOLDERS.Flightmap"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
@@ -91,10 +94,9 @@
     <ATTRIBUTE name="Folder" value="..\Temp"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DefaultProgramsComponent">
-    <ROW ApplicationDescription="Flightmap" ApplicationName="[ProductName]" CapabilitiesPath="SOFTWARE\[ProductName]" Defaults="air|airx|csv" RegistryKey="ApplicationDescription" RegistryAppName="ApplicationName" RegistryRegisterApp="ProductName_2"/>
+    <ROW ApplicationDescription="Flightmap" ApplicationName="[ProductName]" CapabilitiesPath="SOFTWARE\[ProductName]" Defaults="airx" RegistryKey="ApplicationDescription" RegistryAppName="ApplicationName" RegistryRegisterApp="ProductName_2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DefaultProgramsExtComponent">
-    <ROW DefaultProgram="ApplicationDescription" Extension="air" Component_="Flightmap.exe" Registry="air"/>
     <ROW DefaultProgram="ApplicationDescription" Extension="airx" Component_="Flightmap.exe" Registry="airx"/>
     <ROW DefaultProgram="ApplicationDescription" Extension="csv" Component_="Flightmap.exe" Registry="csv"/>
   </COMPONENT>
@@ -109,7 +111,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
-    <ROW Fragment="FileAssociationsDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\FileAssociationsDlg.aip"/>
     <ROW Fragment="LicenseAgreementDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\LicenseAgreementDlg.aip"/>
     <ROW Fragment="MaintenanceTypeDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\MaintenanceTypeDlg.aip"/>
     <ROW Fragment="MaintenanceWelcomeDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\MaintenanceWelcomeDlg.aip"/>
@@ -159,9 +160,6 @@
     <ATTRIBUTE name="DeletedRows" value="info@completi@repairic@background@optionslogoicon@applogoicon@exitbackground@insticon@shortcutlogoicon@custicon@exclamic@installlogoicon@waitlogoicon@minbackground@removico"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
-    <ROW Property="AIR_CHECKBOX" Value="1"/>
-    <ROW Property="AIRX_CHECKBOX" Value="1"/>
-    <ROW Property="CSV_CHECKBOX" Value="1"/>
     <ATTRIBUTE name="DeletedRows" value="AI_LOG_CHECKBOX"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
@@ -219,13 +217,13 @@
     <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
     <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="50" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
     <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
-    <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="1" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
     <ROW Dialog_="ExitDialog" Control="LaunchProdCheckBox" Type="PushButton" X="110" Y="285" Width="95" Height="26" Attributes="3" Property="RUNAPPLICATION" Text="Run [ProductName]" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#LaunchProdCheckBox" MsiKey="ExitDialog#LaunchProdCheckBox" Options="1"/>
     <ROW Dialog_="ExitDialog" Control="ViewReadmeCheckBox" Type="PushButton" X="245" Y="285" Width="95" Height="26" Attributes="3" Property="VIEWREADME" Text="View Readme File" TextStyle="DlgFont8" Order="300" TextLocId="Azure.Control.Text.ExitDialog#ViewReadmeCheckBox" MsiKey="ExitDialog#ViewReadmeCheckBox" Options="1"/>
@@ -240,14 +238,6 @@
     <ROW Dialog_="FatalError" Control="Description2" Type="Text" X="30" Y="295" Width="390" Height="15" Attributes="196611" Text="Click the &quot;Finish&quot; button to exit the [Wizard]." Order="500" TextLocId="Control.Text.FatalError#Description2" MsiKey="FatalError#Description2"/>
     <ROW Dialog_="FatalError" Control="Description1" Type="Text" X="30" Y="250" Width="390" Height="45" Attributes="196611" Text="[ProductName] setup ended prematurely because of an error.  Your system has not been modified.  To install this program at a later time, please run the installation again." Order="600" TextLocId="Control.Text.FatalError#Description1" MsiKey="FatalError#Description1"/>
     <ROW Dialog_="FatalError" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="TitleFont" Order="700" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="FileAssociationsDlgDialogInitializer" Type="DialogInitializer" X="0" Y="0" Width="0" Height="0" Attributes="0" Order="-1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="Bitmap" Type="Bitmap" X="0" Y="1" Width="450" Height="360" Attributes="1048577" Text="[Background]" Order="100" MsiKey="FileAssociationsDlg#Bitmap"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="Next" Type="PushButton" X="385" Y="335" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="FileAssociationsDlg#Next"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="Back" Type="PushButton" X="321" Y="335" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="FileAssociationsDlg#Back" Options="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="Text" Type="Text" X="30" Y="200" Width="390" Height="30" Attributes="65539" Text="Please select the file types you want to automatically open with [ProductName]:" Order="500" TextLocId="Control.Text.FileAssociationsDlg#Text" MsiKey="FileAssociationsDlg#Text"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_1" Type="CheckBox" X="30" Y="234" Width="390" Height="16" Attributes="3" Property="AIR_CHECKBOX" Text=".air" Order="600"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_2" Type="CheckBox" X="30" Y="252" Width="390" Height="16" Attributes="3" Property="AIRX_CHECKBOX" Text=".airx" Order="700"/>
-    <ROW Dialog_="FileAssociationsDlg" Control="CheckBox_3" Type="CheckBox" X="30" Y="270" Width="390" Height="16" Attributes="3" Property="CSV_CHECKBOX" Text=".csv" Order="800"/>
     <ROW Dialog_="FilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="1" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="FilesInUse#Bitmap"/>
     <ROW Dialog_="FilesInUse" Control="Retry" Type="PushButton" X="385" Y="335" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="FilesInUse#Retry"/>
     <ROW Dialog_="FilesInUse" Control="Ignore" Type="PushButton" X="321" Y="335" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="FilesInUse#Ignore"/>
@@ -328,7 +318,7 @@
     <ROW Dialog_="ShortcutsDlg" Control="Back" Type="PushButton" X="321" Y="335" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="ShortcutsDlg#Back" Options="1"/>
     <ROW Dialog_="ShortcutsDlg" Control="DesktopShortcutsCheckBox" Type="CheckBox" X="30" Y="252" Width="390" Height="16" Attributes="3" Property="AI_DESKTOP_SH" Text="Desktop" Order="500" TextLocId="Control.Text.ShortcutsDlg#DesktopShortcutsCheckBox" MsiKey="ShortcutsDlg#DesktopShortcutsCheckBox" Options="1"/>
     <ROW Dialog_="ShortcutsDlg" Control="StartmenuShortcutsCheckBox" Type="CheckBox" X="30" Y="270" Width="390" Height="16" Attributes="3" Property="AI_STARTMENU_SH" Text="Start Menu Programs folder" Order="600" TextLocId="Control.Text.ShortcutsDlg#StartmenuShortcutsCheckBox" MsiKey="ShortcutsDlg#StartmenuShortcutsCheckBox" Options="1"/>
-    <ROW Dialog_="ShortcutsDlg" Control="QuickLaunchShorcutsCheckBox" Type="CheckBox" X="30" Y="288" Width="390" Height="16" Attributes="2" Property="AI_QUICKLAUNCH_SH" Text="Quick Launch toolbar" Order="700" TextLocId="Control.Text.ShortcutsDlg#QuickLaunchShorcutsCheckBox" MsiKey="ShortcutsDlg#QuickLaunchShorcutsCheckBox" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="QuickLaunchShorcutsCheckBox" Type="CheckBox" X="30" Y="288" Width="390" Height="16" Attributes="3" Property="AI_QUICKLAUNCH_SH" Text="Quick Launch toolbar" Order="700" TextLocId="Control.Text.ShortcutsDlg#QuickLaunchShorcutsCheckBox" MsiKey="ShortcutsDlg#QuickLaunchShorcutsCheckBox" Options="1"/>
     <ROW Dialog_="ShortcutsDlg" Control="StartupShorcutsCheckBox" Type="CheckBox" X="30" Y="306" Width="390" Height="16" Attributes="2" Property="AI_STARTUP_SH" Text="Startup folder" Order="800" TextLocId="Control.Text.ShortcutsDlg#StartupShorcutsCheckBox" MsiKey="ShortcutsDlg#StartupShorcutsCheckBox" Options="1"/>
     <ROW Dialog_="ShortcutsDlg" Control="ShortcutsDlgText" Type="Text" X="30" Y="218" Width="390" Height="30" Attributes="65539" Text="Create shortcuts for [ProductName] in the following locations:" Order="900" TextLocId="Control.Text.ShortcutsDlg#ShortcutsDlgText" MsiKey="ShortcutsDlg#ShortcutsDlgText"/>
     <ROW Dialog_="UserExit" Control="Bitmap" Type="Bitmap" X="0" Y="1" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="UserExit#Bitmap"/>
@@ -360,7 +350,7 @@
     <ROW Dialog_="WelcomeDlg" Control="Next" Type="PushButton" X="385" Y="335" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="WelcomeDlg#Next"/>
     <ROW Dialog_="WelcomeDlg" Control="Back" Type="PushButton" X="321" Y="335" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="500" TextLocId="-" MsiKey="WelcomeDlg#Back" Options="1"/>
     <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]." Order="600" TextLocId="Control.Text.WelcomeDlg#DescriptionNoClose" MsiKey="WelcomeDlg#Description"/>
-    <ATTRIBUTE name="DeletedRows" value="ExitDialog#HorizontalLine@FileAssociationsDlg#Title@VerifyReadyDlg#Title@WelcomeDlg#Title@PatchWelcomeDlg#Title@ProgressDlg#TitleIcon@AdminWelcomeDlg#Title@LicenseAgreementDlg#TitleIcon@PrepareDlg#TitleIcon@ShortcutsDlg#TitleIcon@ProgressDlg#Title@PrepareDlg#Title@ResumeDlg#Title@ShortcutsDlg#Title@CustomizeDlg#TitleIcon@LicenseAgreementDlg#Title@MaintenanceWelcomeDlg#Title@FatalError#LogCheckBoxLabel@FatalError#LogCheckBox@VerifyRepairDlg#Title@VerifyRemoveDlg#Title"/>
+    <ATTRIBUTE name="DeletedRows" value="ExitDialog#HorizontalLine@VerifyReadyDlg#Title@WelcomeDlg#Title@PatchWelcomeDlg#Title@ProgressDlg#TitleIcon@AdminWelcomeDlg#Title@LicenseAgreementDlg#TitleIcon@PrepareDlg#TitleIcon@ShortcutsDlg#TitleIcon@ProgressDlg#Title@PrepareDlg#Title@ResumeDlg#Title@ShortcutsDlg#Title@CustomizeDlg#TitleIcon@LicenseAgreementDlg#Title@MaintenanceWelcomeDlg#Title@FatalError#LogCheckBoxLabel@FatalError#LogCheckBox@VerifyRepairDlg#Title@VerifyRemoveDlg#Title"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
     <ROW Dialog_="ShortcutsDlg" Control_="QuickLaunchShorcutsCheckBox" Action="Hide" Condition="(Not Installed) AND (VersionNT&lt;&quot;601&quot;)"/>
@@ -374,31 +364,10 @@
     <ROW Dialog_="MaintenanceWelcomeDlg" Control_="Next" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="2"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
     <ROW Dialog_="PatchWelcomeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_PATCH" Ordering="3"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Back" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="NewDialog" Argument="ShortcutsDlg" Condition="AI_INSTALL" Ordering="11"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="AddLocal" Argument="air" Condition="AIR_CHECKBOX" Ordering="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="Remove" Argument="air" Condition="NOT (AIR_CHECKBOX)" Ordering="2"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIR_CHECKBOX]" Argument="1" Condition="AI_INSTALL AND ( &amp;air = 3 )" Ordering="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIR_CHECKBOX]" Argument="{}" Condition="AI_INSTALL AND ( &amp;air &lt;&gt; 3 )" Ordering="2"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIR_CHECKBOX]" Argument="1" Condition="AI_MAINT AND ( ( ( !air = 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;air = 3 ) AND AI_EXT_SELECTED ) )" Ordering="3"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIR_CHECKBOX]" Argument="{}" Condition="AI_MAINT AND ( ( ( !air &lt;&gt; 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;air &lt;&gt; 3 ) AND AI_EXT_SELECTED ) )" Ordering="4"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="AddLocal" Argument="airx" Condition="AIRX_CHECKBOX" Ordering="3"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="Remove" Argument="airx" Condition="NOT (AIRX_CHECKBOX)" Ordering="4"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIRX_CHECKBOX]" Argument="1" Condition="AI_INSTALL AND ( &amp;airx = 3 )" Ordering="5"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIRX_CHECKBOX]" Argument="{}" Condition="AI_INSTALL AND ( &amp;airx &lt;&gt; 3 )" Ordering="6"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIRX_CHECKBOX]" Argument="1" Condition="AI_MAINT AND ( ( ( !airx = 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;airx = 3 ) AND AI_EXT_SELECTED ) )" Ordering="7"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AIRX_CHECKBOX]" Argument="{}" Condition="AI_MAINT AND ( ( ( !airx &lt;&gt; 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;airx &lt;&gt; 3 ) AND AI_EXT_SELECTED ) )" Ordering="8"/>
-    <ROW Dialog_="ShortcutsDlg" Control_="Back" Event="NewDialog" Argument="FileAssociationsDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control_="Back" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="ShortcutsDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control_="Next" Event="NewDialog" Argument="FileAssociationsDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="AddLocal" Argument="csv" Condition="CSV_CHECKBOX" Ordering="5"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="Next" Event="Remove" Argument="csv" Condition="NOT (CSV_CHECKBOX)" Ordering="6"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="1" Condition="AI_INSTALL AND ( &amp;csv = 3 )" Ordering="9"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="{}" Condition="AI_INSTALL AND ( &amp;csv &lt;&gt; 3 )" Ordering="10"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="1" Condition="AI_MAINT AND ( ( ( !csv = 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;csv = 3 ) AND AI_EXT_SELECTED ) )" Ordering="11"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[CSV_CHECKBOX]" Argument="{}" Condition="AI_MAINT AND ( ( ( !csv &lt;&gt; 3 ) AND NOT (AI_EXT_SELECTED) ) OR ( ( &amp;csv &lt;&gt; 3 ) AND AI_EXT_SELECTED ) )" Ordering="12"/>
-    <ROW Dialog_="FileAssociationsDlg" Control_="FileAssociationsDlgDialogInitializer" Event="[AI_EXT_SELECTED]" Argument="1" Condition="AI_MAINT AND NOT (AI_EXT_SELECTED)" Ordering="13"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control_="Next" Event="NewDialog" Argument="ShortcutsDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="CustomizeDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="1"/>
     <ROW Dialog_="CustomizeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_MAINT" Ordering="101"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="ChangeButton" Event="NewDialog" Argument="CustomizeDlg" Condition="AI_MAINT" Ordering="501"/>
@@ -428,8 +397,8 @@
     <ROW Action="AI_BACKUP_DEFAULTS" Type="1" Source="defaultPrograms.dll" Target="GetAllOldDefaults" AdditionalSeq="AI_DATA_SETTER_3"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_DEL_EMPTY_SHORTCUTDIR" Target="[SHORTCUTDIR]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="[ProductName]&#2;air&#4;airx&#4;csv"/>
-    <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="[ProductName]&#2;air&#4;airx&#4;csv"/>
+    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="[ProductName]&#2;airx"/>
+    <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="[ProductName]&#2;airx"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Type="1" Source="aicustact.dll" Target="DeleteShortcuts"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Type="3073" Source="aicustact.dll" Target="DeleteEmptyDirectory" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
@@ -464,9 +433,8 @@
     <ROW Dialog="ErrorDlg" HCentering="50" VCentering="50" Width="300" Height="115" Attributes="65539" Title="Installer Information" TitleLocId="Dialog.ErrorDlg" MsiKey="ErrorDlg"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiExtComponent">
-    <ROW Extension="air" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="air" Options="43"/>
-    <ROW Extension="airx" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="airx" Options="39"/>
-    <ROW Extension="csv" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="csv" Options="43"/>
+    <ROW Extension="airx" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="Flightmap"/>
+    <ROW Extension="csv" Component_="Flightmap.exe" ProgId_="[|Manufacturer].[|ProductName]" Feature_="Flightmap"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="Flightmap_1.exe" SourcePath="Flightmap.ico" Index="0"/>
@@ -564,7 +532,6 @@
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#2" Component_="AI_CustomARPName"/>
     <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#1" Component_="AI_CustomARPName"/>
-    <ROW Registry="air" Root="2" Key="SOFTWARE\[ProductName]\Capabilities\FileAssociations" Name=".air" Value="liquidFOLDERS.Flightmap" Component_="ApplicationDescription"/>
     <ROW Registry="airx" Root="2" Key="SOFTWARE\[ProductName]\Capabilities\FileAssociations" Name=".airx" Value="liquidFOLDERS.Flightmap" Component_="ApplicationDescription"/>
     <ROW Registry="csv" Root="2" Key="SOFTWARE\[ProductName]\Capabilities\FileAssociations" Name=".csv" Value="liquidFOLDERS.Flightmap" Component_="ApplicationDescription"/>
   </COMPONENT>
@@ -590,7 +557,6 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="[|ProductVersion]" Attributes="2" ActionProperty="AI_NEWERPRODUCTFOUND"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiVerbComponent">
-    <ROW Extension_="air" Component_="Flightmap.exe" Verb="open" Sequence="0" Command="&amp;Open" Argument="&quot;%1&quot;"/>
     <ROW Extension_="airx" Component_="Flightmap.exe" Verb="open" Sequence="0" Command="&amp;Open" Argument="&quot;%1&quot;"/>
     <ROW Extension_="csv" Component_="Flightmap.exe" Verb="open" Sequence="0" Command="&amp;Open" Argument="&quot;%1&quot;"/>
   </COMPONENT>

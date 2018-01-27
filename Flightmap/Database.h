@@ -68,9 +68,10 @@ static const WCHAR Carriers[CARRIERCOUNT][30] = {
 // Equipment
 //
 
-#define EQUIPMENTCOUNT     32
+#define EQUIPMENTCOUNT     31
 
 static const WCHAR Equipment[EQUIPMENTCOUNT][21] = {
+	L"Airbus A220",
 	L"Airbus A300",
 	L"Airbus A310",
 	L"Airbus A318",
@@ -91,8 +92,6 @@ static const WCHAR Equipment[EQUIPMENTCOUNT][21] = {
 	L"Boeing 767",
 	L"Boeing 777",
 	L"Boeing 787",
-	L"Bombardier C100",
-	L"Bombardier C300",
 	L"Canadair CRJ-200",
 	L"Canadair CRJ-300",
 	L"Canadair CRJ-900",

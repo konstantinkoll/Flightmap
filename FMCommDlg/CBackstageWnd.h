@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CBackstageDropTarget.h"
 #include "CBackstageShadow.h"
 #include "CBackstageSidebar.h"
 #include "CBackstageWidgets.h"
@@ -32,7 +33,8 @@ public:
 	virtual void GetLayoutRect(LPRECT lpRect);
 	virtual void PostNcDestroy();
 
-	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), const CSize& Size=CSize(0, 0), BOOL ShowCaption=FALSE);
+	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), const CSize& Size=CSize(0, 0), BOOL ShowCaption=FALSE, CBackstageDropTarget* pDropTarget=new CBackstageDropTarget());
+	void DisableTaskbarPinning(LPCWSTR UserModelID);
 	void SetSidebar(CBackstageSidebar* pSidebarWnd);
 	void GetCaptionButtonMargins(LPSIZE lpSize) const;
 
@@ -66,8 +68,7 @@ protected:
 	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg LRESULT OnTaskbarButtonCreated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLicenseActivated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSetProgress(WPARAM wParam, LPARAM lParam);
@@ -77,6 +78,7 @@ protected:
 
 	CString m_PlacementPrefix;
 	HACCEL hAccelerator;
+	CBackstageDropTarget* m_pDropTarget;
 	CBackstageSidebar* m_pSidebarWnd;
 	BOOL m_WantsBitmap;
 	INT m_SidebarWidth;

@@ -34,9 +34,9 @@ CPictureCtrl::CPictureCtrl()
 
 BOOL CPictureCtrl::Create(CWnd* pParentWnd, const CRect& rect, UINT nID, UINT nPictureID, UINT nTooltipID)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	if (CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_VISIBLE | WS_BORDER, rect, pParentWnd, nID))
+	if (CFrontstageWnd::CreateEx(WS_EX_CLIENTEDGE, className, _T(""), WS_CHILD | WS_VISIBLE | WS_BORDER, rect, pParentWnd, nID))
 	{
 		SetPicture(nPictureID, nTooltipID);
 
@@ -72,7 +72,7 @@ void CPictureCtrl::SetPicture(UINT nPictureID, UINT nTooltipID, BOOL ScaleToFit)
 	{
 		ENSURE(Caption.LoadString(nTooltipID));
 
-		INT Pos = Caption.Find(L'\n');
+		const INT Pos = Caption.Find(L'\n');
 		if (Pos!=-1)
 		{
 			Hint = Caption.Mid(Pos+1);
@@ -105,7 +105,7 @@ void CPictureCtrl::SetColor(COLORREF clr, UINT nTooltipID)
 	{
 		ENSURE(Caption.LoadString(nTooltipID));
 
-		INT Pos = Caption.Find(L'\n');
+		const INT Pos = Caption.Find(L'\n');
 		if (Pos!=-1)
 		{
 			Hint = Caption.Mid(Pos+1);
@@ -129,23 +129,8 @@ void CPictureCtrl::ShowTooltip(const CPoint& point)
 
 
 BEGIN_MESSAGE_MAP(CPictureCtrl, CFrontstageWnd)
-	ON_WM_NCCALCSIZE()
-	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
-
-void CPictureCtrl::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* lpncsp)
-{
-	lpncsp->rgrc[0].top += 2;
-	lpncsp->rgrc[0].left += 2;
-	lpncsp->rgrc[0].bottom -= 2;
-	lpncsp->rgrc[0].right -= 2;
-}
-
-void CPictureCtrl::OnNcPaint()
-{
-	DrawControlBorder(this);
-}
 
 void CPictureCtrl::OnPaint()
 {

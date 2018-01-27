@@ -53,7 +53,7 @@ BOOL GLRenderer::Initialize()
 		return TRUE;
 
 	// Create dummy window
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	CWnd wndDummy;
 	wndDummy.CreateEx(0, className, _T(""), WS_POPUP, CRect(0, 0, 16, 16), NULL, 0);
@@ -152,7 +152,7 @@ BOOL GLRenderer::Initialize()
 	return m_Initialized;
 }
 
-void GLRenderer::MatrixMultiplication4f(GLfloat Result[4][4], const GLfloat Left[4][4], const GLfloat Right[4][4])
+void GLRenderer::MatrixMultiplication4f(GLmatrix& Result, const GLmatrix& Left, const GLmatrix& Right)
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
@@ -315,7 +315,7 @@ GLuint GLRenderer::CreateGlobe(UINT cx) const
 	glEnd();
 	glEndList();
 
-	delete[] pGrid;
+	delete pGrid;
 
 	return Index;
 }
@@ -436,7 +436,7 @@ void GLRenderer::CreateTexture(UINT nResID, UINT& nPictureID, IPicture*& pPictur
 					{
 						IStream* pStream = SHCreateMemStream((LPBYTE)pResourceData, Size);
 
-						OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&pPicture);
+						OleLoadPicture(pStream, 0, FALSE, IID_PPV_ARGS(&pPicture));
 
 						pStream->Release();
 					}
@@ -582,8 +582,8 @@ void GLRenderer::BeginRender(CWnd* pWnd, GLRenderContext& RenderContext) const
 	CRect rectClient;
 	pWnd->GetClientRect(rectClient);
 
-	INT Width = rectClient.Width();
-	INT Height = rectClient.Height();
+	const INT Width = rectClient.Width();
+	const INT Height = rectClient.Height();
 	ASSERT(Width<=RenderContext.MaxWidth);
 	ASSERT(Height<=RenderContext.MaxHeight);
 

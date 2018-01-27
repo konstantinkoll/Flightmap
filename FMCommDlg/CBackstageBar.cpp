@@ -9,13 +9,10 @@
 // CBackstageBar
 //
 
-#define NOPART     -2
-#define VIEW       -1
-
 HBITMAP BackstageBarIcons[2][3][6] = { NULL };
 
 CBackstageBar::CBackstageBar(BOOL Small)
-	: CWnd()
+	: CFrontstageWnd()
 {
 	if (Small)
 	{
@@ -44,7 +41,7 @@ CBackstageBar::CBackstageBar(BOOL Small)
 	}
 
 	m_Small = Small;
-	m_Hover = m_Pressed = NOPART;
+	m_HoverItem = m_PressedItem = -1;
 }
 
 BOOL CBackstageBar::Create(CWnd* pParentWnd, UINT nID, INT Spacer, BOOL ReverseOrder)
@@ -52,9 +49,9 @@ BOOL CBackstageBar::Create(CWnd* pParentWnd, UINT nID, INT Spacer, BOOL ReverseO
 	m_Spacer = Spacer;
 	m_ReverseOrder = ReverseOrder;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
-	return CWnd::CreateEx(WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageWnd::CreateEx(WS_EX_NOACTIVATE, className, _T(""), WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 UINT CBackstageBar::GetPreferredHeight()
@@ -64,18 +61,13 @@ UINT CBackstageBar::GetPreferredHeight()
 
 UINT CBackstageBar::GetPreferredWidth() const
 {
-	UINT Width = m_BarItems.m_ItemCount*m_ButtonSize+2;
-
-	if (m_BarItems.m_ItemCount)
-		Width += m_BarItems.m_ItemCount*m_Spacer;
-
-	return Width;
+	return HasButtons() ? m_BarItems.m_ItemCount*m_ButtonSize+(m_BarItems.m_ItemCount-1)*m_Spacer+2 : 0;
 }
 
 void CBackstageBar::Reset()
 {
 	m_BarItems.m_ItemCount = 0;
-	m_Hover = m_Pressed = NOPART;
+	m_HoverItem = m_PressedItem = -1;
 }
 
 void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL Red, LPCWSTR pName, BOOL Enabled)
@@ -95,9 +87,34 @@ void CBackstageBar::AddItem(UINT Command, INT IconID, INT PreferredWidth, BOOL R
 	m_BarItems.AddItem(Item);
 }
 
+INT CBackstageBar::ItemAtPosition(CPoint point) const
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	if ((point.y>=1) && (point.y<rectClient.bottom-1))
+		for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
+			if (m_BarItems[a].Enabled && ((m_PressedItem<0) || (m_PressedItem==(INT)a)))
+				if ((point.x>=m_BarItems[a].Left) && (point.x<m_BarItems[a].Right))
+					return a;
+
+	return -1;
+}
+
+void CBackstageBar::InvalidateItem(INT Index)
+{
+	if (Index>=0)
+	{
+		CRect rectClient;
+		GetClientRect(rectClient);
+
+		InvalidateRect(CRect(m_BarItems[Index].Left, 1, m_BarItems[Index].Right, rectClient.bottom-1));
+	}
+}
+
 void CBackstageBar::AdjustLayout()
 {
-	if (!m_BarItems.m_ItemCount)
+	if (!HasButtons())
 		return;
 
 	CRect rect;
@@ -107,6 +124,7 @@ void CBackstageBar::AdjustLayout()
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 		m_BarItems[a].Width = 0;
 
+	ASSERT(m_BarItems.m_ItemCount>=1);
 	INT UnallocatedWidth = rect.Width()-2-(m_BarItems.m_ItemCount-1)*m_Spacer;
 
 	// Calc layout
@@ -116,7 +134,7 @@ Iterate:
 
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 	{
-		INT Diff = m_BarItems[a].PreferredWidth-m_BarItems[a].Width;
+		const INT Diff = m_BarItems[a].PreferredWidth-m_BarItems[a].Width;
 
 		if (Diff>0)
 		{
@@ -149,30 +167,34 @@ Iterate:
 		BarItem* pBarItem = &m_BarItems[m_ReverseOrder ? m_BarItems.m_ItemCount-a-1 : a];
 
 		pBarItem->Left = Left;
-		pBarItem->Right = pBarItem->Left+pBarItem->Width;
-
-		Left += pBarItem->Width+m_Spacer;
+		Left = (pBarItem->Right=pBarItem->Left+pBarItem->Width)+m_Spacer;
 	}
 
 	Invalidate();
 }
 
-INT CBackstageBar::HitTest(const CPoint& point) const
+void CBackstageBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL /*Themed*/)
 {
-	CRect rect;
-	GetClientRect(rect);
+	ASSERT(State<3);
 
-	if (!rect.PtInRect(point))
-		return NOPART;
+	const INT IconID = m_BarItems[Index].IconID;
+	if ((IconID>=0) && (IconID<6))
+	{
+		// Icon
+		HBITMAP* pBitmap = &BackstageBarIcons[m_Small ? 0 : 1][State][IconID];
 
-	if ((point.y>=1) && (point.y<rect.bottom-1))
-		for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
-			if ((m_Pressed<0) || (m_Pressed==(INT)a))
-				if (m_BarItems[a].Enabled)
-					if ((point.x>=m_BarItems[a].Left) && (point.x<m_BarItems[a].Right))
-						return a;
+		if (!*pBitmap)
+			*pBitmap = LoadMaskedIcon(IDI_BACKSTAGEBAR_FIRST+IconID, m_IconSize, dc.GetTextColor());
 
-	return VIEW;
+		CDC dcIcon;
+		dcIcon.CreateCompatibleDC(&dc);
+		HBITMAP hOldBitmap = (HBITMAP)dcIcon.SelectObject(*pBitmap);
+
+		const BLENDFUNCTION BF = { AC_SRC_OVER, 0, State<2 ? 0xFF : 0xA0, AC_SRC_ALPHA };
+		AlphaBlend(dc, rectItem.left+(rectItem.Width()-m_IconSize)/2, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_IconSize, m_IconSize, dcIcon, 0, 0, m_IconSize, m_IconSize, BF);
+
+		dcIcon.SelectObject(hOldBitmap);
+	}
 }
 
 HBITMAP CBackstageBar::LoadMaskedIcon(UINT nID, INT Size, COLORREF clr)
@@ -226,41 +248,15 @@ HBITMAP CBackstageBar::LoadMaskedIcon(UINT nID, INT Size, COLORREF clr)
 	return hBitmap;
 }
 
-void CBackstageBar::DrawItem(CDC& dc, CRect& rectItem, UINT Index, UINT State, BOOL /*Themed*/)
-{
-	ASSERT(State<3);
 
-	const INT IconID = m_BarItems[Index].IconID;
-	if ((IconID>=0) && (IconID<6))
-	{
-		// Icon
-		HBITMAP* pBitmap = &BackstageBarIcons[m_Small ? 0 : 1][State][IconID];
-
-		if (!*pBitmap)
-			*pBitmap = LoadMaskedIcon(IDI_BACKSTAGEBAR_FIRST+IconID, m_IconSize, dc.GetTextColor());
-
-		CDC dcIcon;
-		dcIcon.CreateCompatibleDC(&dc);
-		HBITMAP hOldBitmap = (HBITMAP)dcIcon.SelectObject(*pBitmap);
-
-		const BLENDFUNCTION BF = { AC_SRC_OVER, 0, State<2 ? 0xFF : 0xA0, AC_SRC_ALPHA };
-		AlphaBlend(dc, rectItem.left+(rectItem.Width()-m_IconSize)/2, rectItem.top+(rectItem.Height()-m_IconSize)/2, m_IconSize, m_IconSize, dcIcon, 0, 0, m_IconSize, m_IconSize, BF);
-
-		dcIcon.SelectObject(hOldBitmap);
-	}
-}
-
-
-BEGIN_MESSAGE_MAP(CBackstageBar, CWnd)
+BEGIN_MESSAGE_MAP(CBackstageBar, CFrontstageWnd)
 	ON_WM_NCCALCSIZE()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_NCPAINT()
 	ON_WM_THEMECHANGED()
-	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
-	ON_WM_RBUTTONUP()
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
@@ -268,13 +264,15 @@ void CBackstageBar::OnNcCalcSize(BOOL /*bCalcValidRects*/, NCCALCSIZE_PARAMS* /*
 {
 }
 
-BOOL CBackstageBar::OnEraseBkgnd(CDC* /*pDC*/)
+void CBackstageBar::OnNcPaint()
 {
-	return TRUE;
 }
 
 void CBackstageBar::OnPaint()
 {
+	CRect rectUpdate;
+	GetUpdateRect(rectUpdate);
+
 	CPaintDC pDC(this);
 
 	CRect rect;
@@ -301,13 +299,18 @@ void CBackstageBar::OnPaint()
 	// Items
 	CFont* pOldFont = dc.SelectObject(p_Font);
 
+	RECT rectIntersect;
+
 	for (UINT a=0; a<m_BarItems.m_ItemCount; a++)
 	{
 		const BarItem* pBarItem = &m_BarItems[a];
 		CRect rectItem(pBarItem->Left, 0, pBarItem->Right, rect.bottom-1);
 
-		DrawBackstageButtonBackground(dc, g, rectItem, m_Hover==(INT)a, m_Pressed==(INT)a, pBarItem->Enabled, Themed, pBarItem->Red);
-		DrawItem(dc, rectItem, a, pBarItem->Enabled ? (m_Hover==(INT)a) || (m_Pressed==(INT)a) ? 1 : 0 : 2, Themed);
+		if (IntersectRect(&rectIntersect, rectItem, rectUpdate))
+		{
+			DrawBackstageButtonBackground(dc, g, rectItem, m_HoverItem==(INT)a, m_PressedItem==(INT)a, pBarItem->Enabled, Themed, pBarItem->Red);
+			DrawItem(dc, rectItem, a, pBarItem->Enabled ? (m_HoverItem==(INT)a) || (m_PressedItem==(INT)a) ? 1 : 0 : 2, Themed);
+		}
 	}
 
 	dc.SelectObject(pOldFont);
@@ -331,74 +334,36 @@ LRESULT CBackstageBar::OnThemeChanged()
 	return NULL;
 }
 
-void CBackstageBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
-{
-	if (m_Hover==NOPART)
-	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE;
-		tme.dwHoverTime = HOVERTIME;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-
-	INT Hover = HitTest(point);
-	if (Hover!=m_Hover)
-	{
-		m_Hover = Hover;
-		Invalidate();
-	}
-}
-
 void CBackstageBar::OnMouseLeave()
 {
-	m_Hover = m_Pressed = NOPART;
-	Invalidate();
+	m_PressedItem = -1;
+
+	CFrontstageWnd::OnMouseLeave();
 }
 
 void CBackstageBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	m_Hover = m_Pressed = HitTest(point);
-	Invalidate();
+	InvalidateItem(m_HoverItem=m_PressedItem=ItemAtPosition(point));
 
-	if (m_Hover>=0)
+	if (m_HoverItem>=0)
 		SetCapture();
 }
 
 void CBackstageBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
-	INT ID = HitTest(point);
-	if ((ID==m_Pressed) && (ID>=0))
-		OnClickButton(ID);
+	const INT Index = ItemAtPosition(point);
+	if ((Index>=0) && (Index==m_PressedItem))
+		OnClickButton(Index);
 
-	m_Hover = ID;
-	m_Pressed = NOPART;
-	Invalidate();
+	m_PressedItem = -1;
+	Invalidate(m_HoverItem=Index);
 
 	ReleaseCapture();
-}
-
-void CBackstageBar::OnRButtonUp(UINT nFlags, CPoint point)
-{
-	m_Hover = m_Pressed = NOPART;
-	ReleaseCapture();
-
-	Invalidate();
-	UpdateWindow();
-
-	CRect rect;
-	GetWindowRect(rect);
-
-	point += rect.TopLeft();
-	GetParent()->ScreenToClient(&point);
-
-	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | (point.x & 0xFFFF)));
 }
 
 void CBackstageBar::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CFrontstageWnd::OnSize(nType, cx, cy);
 
 	AdjustLayout();
 }

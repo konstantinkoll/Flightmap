@@ -22,7 +22,7 @@ FMTooltip::FMTooltip()
 
 BOOL FMTooltip::Create()
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_LAYERED, className, _T(""), WS_POPUP, 0, 0, 0, 0, NULL, NULL);
 }
@@ -273,8 +273,11 @@ void FMTooltip::ShowTooltip(const CPoint& point, const CString& strCaption, cons
 			{
 				dc.BitBlt(rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight, &dcBitmap, 0, 0, SRCCOPY);
 
+				g.SetPixelOffsetMode(PixelOffsetModeNone);
+				g.SetSmoothingMode(SmoothingModeNone);
+
 				Pen pen(Color(0x40FFFFFF));
-				g.DrawRectangle(&pen, rect.left, rect.top, Bitmap.bmWidth, Bitmap.bmHeight);
+				g.DrawRectangle(&pen, rect.left, rect.top, Bitmap.bmWidth-1, Bitmap.bmHeight-1);
 			}
 
 			SelectObject(dcBitmap, hOldBitmap);

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "CFrontstageWnd.h"
+#include "CFrontstageScroller.h"
 #include "CHoverButton.h"
 #include "FMDynArray.h"
 
@@ -19,7 +19,7 @@ public:
 	BOOL IsSmall() const;
 
 protected:
-	void OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDrawButtonForeground(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
@@ -52,7 +52,7 @@ struct ButtonGroupItem
 
 class CFloatButtons;
 
-class CButtonGroup
+class CButtonGroup sealed
 {
 public:
 	CButtonGroup(CFloatButtons* pFloatButtons, LPCWSTR Caption, BOOL Alert=FALSE);
@@ -88,7 +88,7 @@ private:
 // CFloatButtons
 //
 
-class CFloatButtons : public CFrontstageWnd
+class CFloatButtons : public CFrontstageScroller
 {
 friend class CButtonGroup;
 
@@ -96,6 +96,8 @@ public:
 	CFloatButtons();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
+	virtual void AdjustLayout();
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
 
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID);
 	void BeginGroup(LPCWSTR Caption, BOOL Alert=FALSE);
@@ -107,29 +109,22 @@ public:
 	void SetGroupAlert(UINT nGroup, BOOL Alert=TRUE);
 	void SetText(UINT nGroup, UINT nID, LPCWSTR Text, BOOL Bullet=FALSE);
 	void SetText(UINT nGroup, UINT nID, UINT ResID, BOOL Bullet=FALSE);
-	void AdjustLayout();
-	void AdjustScrollbars();
 
 protected:
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, SHORT zDelta, CPoint pt);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnIdleUpdateCmdUI();
 	DECLARE_MESSAGE_MAP()
 
 	FMDynArray<CButtonGroup*, 32, 32> m_ButtonGroups;
 	INT m_Indent;
-	INT m_ScrollHeight;
-	INT m_VScrollPos;
-	INT m_VScrollMax;
 
 private:
+	void AdjustButtonGroups();
+
 	CIcons* p_SmallIcons;
 	CIcons* p_LargeIcons;
 	INT m_BackBufferL;

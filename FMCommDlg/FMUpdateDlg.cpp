@@ -78,7 +78,7 @@ void FMUpdateDlg::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayou
 			rectLine.left += m_FeatureItemHeight+MARGIN+MARGIN/2;
 
 			dc.SelectObject(a<3 ? &FMGetApp()->m_DialogBoldFont : &FMGetApp()->m_DialogFont);
-			dc.SetTextColor(a<3 ? 0x0000FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetTextColor(a<3 ? 0x2020FF : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 			dc.DrawText(CString((LPCSTR)IDS_UPDATE_FIRST+a), rectLine, DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
 
 			rectText.OffsetRect(0, m_FeatureItemHeight+MARGIN);
@@ -128,6 +128,7 @@ BOOL FMUpdateDlg::AddTrayIcon() const
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
+
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = GetSafeHwnd();
 	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_GUID | NIF_SHOWTIP;
@@ -135,8 +136,13 @@ BOOL FMUpdateDlg::AddTrayIcon() const
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WM_TRAYMENU;
 	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+
 	GetWindowText(nid.szTip, 128);
 
+	// Delete abandoned tray icon
+	Shell_NotifyIcon(NIM_DELETE, &nid);
+
+	// Add tray icon and set version
 	if (Shell_NotifyIcon(NIM_ADD, &nid))
 		return Shell_NotifyIcon(NIM_SETVERSION, &nid);
 
@@ -147,6 +153,7 @@ BOOL FMUpdateDlg::RemoveTrayIcon() const
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
+
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = GetSafeHwnd();
 	nid.uFlags = NIF_GUID;
@@ -155,27 +162,22 @@ BOOL FMUpdateDlg::RemoveTrayIcon() const
 	return Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
-void FMUpdateDlg::ShowMenu()
+inline void FMUpdateDlg::ShowMenu()
 {
 	CMenu Menu;
 	Menu.LoadMenu(IDM_UPDATE);
-	ASSERT_VALID(&Menu);
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
 
 	MENUITEMINFO mii;
 	mii.cbSize = sizeof(mii);
 	mii.fMask = MIIM_BITMAP;
 	mii.hbmpItem = HBMMENU_POPUP_RESTORE;
 
-	pPopup->SetMenuItemInfo(0, &mii, TRUE);
-	pPopup->SetDefaultItem(0, TRUE);
+	Menu.SetMenuItemInfo(0, &mii, TRUE);
 
-	CPoint pt;
-	GetCursorPos(&pt);
+	CPoint pos;
+	GetCursorPos(&pos);
 
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, this);
+	TrackPopupMenu(Menu, pos, this);
 }
 
 BOOL FMUpdateDlg::InitDialog()
@@ -192,11 +194,7 @@ BOOL FMUpdateDlg::InitDialog()
 	SetIcon(FMGetApp()->LoadIcon(IDR_APPLICATION), FALSE);
 	SetIcon(FMGetApp()->LoadIcon(IDR_APPLICATION), TRUE);
 
-	// Version
-	CRect rectWnd;
-	m_wndVersionInfo.GetWindowRect(rectWnd);
-	ScreenToClient(rectWnd);
-
+	// Version info
 	CString Caption;
 	m_wndVersionInfo.GetWindowText(Caption);
 
@@ -205,24 +203,28 @@ BOOL FMUpdateDlg::InitDialog()
 
 	m_wndVersionInfo.SetWindowText(Text);
 
-	// Hintergrund
-	const INT Height = rectWnd.Height();
-	const INT LineGap = Height/6;
-	const INT HeightCaption = 4*LineGap;
-	const INT HeightVersion = 2*LineGap;
+	// Background
+	CRect rectWnd;
+	m_wndVersionInfo.GetWindowRect(rectWnd);
+	ScreenToClient(rectWnd);
+
+	const INT WindowHeight = rectWnd.Height();
+	const INT LineHeight = WindowHeight/6;
+	const INT CaptionHeight = 4*LineHeight;
+	const INT VersionHeight = 2*LineHeight;
 
 	CRect rectLayout;
 	GetLayoutRect(rectLayout);
 
-	m_CaptionFont.CreateFont(HeightCaption, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
-	m_VersionFont.CreateFont(HeightVersion);
+	m_CaptionFont.CreateFont(CaptionHeight, ANTIALIASED_QUALITY, FW_NORMAL, 0, _T("DIN Mittelschrift"));
+	m_VersionFont.CreateFont(VersionHeight);
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-HeightCaption-HeightVersion)/2-4;
-	m_IconTop = rectWnd.top-rectLayout.top+(rectWnd.Height()-62)/2-3;
+	m_CaptionTop = rectWnd.top-rectLayout.top+(WindowHeight-CaptionHeight-VersionHeight)/2-4;
+	m_IconTop = rectWnd.top-rectLayout.top+(WindowHeight-62)/2-3;
 
 	rectWnd.left = rectLayout.left+82;
-	rectWnd.top = rectLayout.top+m_CaptionTop+HeightCaption;
+	rectWnd.top = rectLayout.top+m_CaptionTop+CaptionHeight;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Feature-Liste
@@ -358,9 +360,7 @@ void FMUpdateDlg::OnHide(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void FMUpdateDlg::OnDownload()
 {
-	CString URL((LPCSTR)IDS_UPDATEURL);
-
-	ShellExecute(GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_UPDATEURL), NULL, NULL, SW_SHOWNORMAL);
 
 	EndDialog(IDOK);
 }

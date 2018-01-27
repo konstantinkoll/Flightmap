@@ -10,60 +10,93 @@
 // CKitchen
 //
 
-CKitchen::CKitchen(const CString& DisplayName, BOOL MergeMetro)
+template <typename T>
+FMDynArray<T, 128, 128>* ConvertToList(CMap<CStringA, LPCSTR, T, const T&>& Map)
 {
-	m_DisplayName = DisplayName;
+	FMDynArray<T, 128, 128>* pDynArray = new FMDynArray<T, 128, 128>((UINT)Map.GetCount());
+
+	for (const CMap<CStringA, LPCSTR, T, const T&>::CPair* pPair = Map.PGetFirstAssoc(); pPair; pPair = Map.PGetNextAssoc(pPair))
+		pDynArray->AddItem(pPair->value);
+
+	Map.RemoveAll();
+
+	return pDynArray;
+}
+
+CKitchen::CKitchen(CItinerary* pItinerary, BOOL MergeMetro)
+{
+	if (pItinerary)
+		m_DisplayName = pItinerary->m_DisplayName;
+
+	m_AirportMap.InitHashTable(2048);
+	m_RouteMap.InitHashTable(4096);
 	m_MaxRouteCount = m_MinRouteCount = m_WaypointCount = 0;
 	m_MergeMetro = MergeMetro;
 
-	m_FlightAirports.InitHashTable(2048);
-	m_FlightAirportCounts.InitHashTable(2048);
-	m_FlightRoutes.InitHashTable(4096);
+	m_pAirportList = NULL;
+	m_pRouteList = NULL;
 }
 
-FMAirport* CKitchen::AddAirport(const LPCSTR Code)
+CKitchen::~CKitchen()
+{
+	delete m_pAirportList;
+
+	if (m_pRouteList)
+	{
+		for (UINT a=0; a<m_pRouteList->m_ItemCount; a++)
+			delete (*m_pRouteList)[a].pSegments;
+
+		delete m_pRouteList;
+	}
+}
+
+LPCAIRPORT CKitchen::AddAirport(const LPCSTR Code)
 {
 	ASSERT(Code);
 
 	if (strlen(Code)!=3)
 		return NULL;
 
-	FMAirport* pAirport;
-	if (!FMIATAGetAirportByCode(Code, pAirport))
+	LPCAIRPORT lpcAirport;
+	if (!FMIATAGetAirportByCode(Code, lpcAirport))
 		return NULL;
 
-	if ((m_MergeMetro) && (pAirport->MetroCode[0]!='\0'))
-		if (strcmp(pAirport->Code, pAirport->MetroCode)!=0)
-			FMIATAGetAirportByCode(pAirport->MetroCode, pAirport);
+	if (m_MergeMetro && (lpcAirport->MetroCode[0]!='\0'))
+		if (strcmp(lpcAirport->Code, lpcAirport->MetroCode)!=0)
+			VERIFY(FMIATAGetAirportByCode(lpcAirport->MetroCode, lpcAirport));
 
 	FlightAirport Airport;
-	if (m_FlightAirports.Lookup(pAirport->Code, Airport))
+	if (m_AirportMap.Lookup(lpcAirport->Code, Airport))
 	{
-		m_FlightAirportCounts[pAirport->Code]++;
+		Airport.FlightCount++;
 	}
 	else
 	{
-		ZeroMemory(&Airport, sizeof(Airport));
-		Airport.pAirport = pAirport;
-
-		m_FlightAirports[pAirport->Code] = Airport;
-		m_FlightAirportCounts[pAirport->Code] = 1;
+		Airport.lpcAirport = lpcAirport;
+		Airport.FlightCount = 1;
+		Airport.X = Airport.Y = 0.0f;
 	}
 
-	return pAirport;
+	m_AirportMap[lpcAirport->Code] = Airport;
+
+	return lpcAirport;
 }
 
 void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 {
-	FMAirport* pFrom = AddAirport(Flight.From.Code);
-	FMAirport* pTo = AddAirport(Flight.To.Code);
-	BYTE Arrow = ARROW_FT;
+	LPCAIRPORT pFrom = AddAirport(Flight.From.Code);
+	LPCAIRPORT pTo = AddAirport(Flight.To.Code);
 
 	if (pFrom && pTo)
 	{
+		BYTE Arrow = ARROW_FT;
+
 		if (pFrom>pTo)
 		{
-			std::swap(pFrom, pTo);
+			LPCAIRPORT Temp = pFrom;
+			pFrom = pTo;
+			pTo = Temp;
+
 			Arrow <<= 1;
 		}
 
@@ -79,7 +112,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 		}
 
 		FlightRoute Route;
-		if (m_FlightRoutes.Lookup(ID, Route))
+		if (m_RouteMap.Lookup(ID, Route))
 		{
 			Route.Count++;
 			Route.Arrows |= Arrow;
@@ -93,7 +126,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 				Route.FlightTimeCount++;
 			}
 
-			if ((!Route.CarrierMultiple) && (Flight.Carrier[0]!=L'\0'))
+			if (!Route.CarrierMultiple && (Flight.Carrier[0]!=L'\0'))
 				if (Route.Carrier[0]==L'\0')
 				{
 					wcscpy_s(Route.Carrier, 256, Flight.Carrier);
@@ -103,7 +136,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 					Route.CarrierMultiple = (_wcsicmp(Route.Carrier, Flight.Carrier)!=0);
 				}
 
-			if ((!Route.EquipmentMultiple) && (Flight.Equipment[0]!=L'\0'))
+			if (!Route.EquipmentMultiple && (Flight.Equipment[0]!=L'\0'))
 				if (Route.Equipment[0]==L'\0')
 				{
 					wcscpy_s(Route.Equipment, 256, Flight.Equipment);
@@ -126,13 +159,13 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 		else
 		{
 			ZeroMemory(&Route, sizeof(Route));
-			Route.pFrom = pFrom;
-			Route.pTo = pTo;
+			Route.lpcFrom = pFrom;
+			Route.lpcTo = pTo;
 			Route.Waypoint = Flight.Waypoint;
-			Route.Count = 1;
 			Route.Color = Flight.Color;
+			Route.Count = 1;
 			Route.Arrows = Arrow;
-			Route.LabelX = Route.LabelY = -1.0f;
+			Route.ptLabel.x = Route.ptLabel.y = -1.0f;
 			Route.DistanceNM = 0.0;
 
 			if (Flight.FlightTime)
@@ -153,7 +186,7 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 		if ((Route.DistanceNM==0.0) && (Flight.Flags & AIRX_DistanceValid))
 			Route.DistanceNM = Flight.DistanceNM;
 
-		m_FlightRoutes[ID] = Route;
+		m_RouteMap[ID] = Route;
 
 		if (Route.Count>m_MaxRouteCount)
 			m_MaxRouteCount = Route.Count;
@@ -163,7 +196,41 @@ void CKitchen::AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath)
 	}
 }
 
-FlightSegments* CKitchen::ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile)
+INT CKitchen::CompareAirports(FlightAirport* pData1, FlightAirport* pData2, const SortParameters& /*Parameters*/)
+{
+	const INT Result = (INT)pData2->FlightCount-(INT)pData1->FlightCount;
+
+	return Result ? Result : strcmp(pData1->lpcAirport->Code, pData2->lpcAirport->Code);
+}
+
+INT CKitchen::CompareRoutes(FlightRoute* pData1, FlightRoute* pData2, const SortParameters& /*Parameters*/)
+{
+	return (INT)pData2->Count-(INT)pData1->Count;
+}
+
+AirportList* CKitchen::GetAirports()
+{
+	if (!m_pAirportList)
+		(m_pAirportList=ConvertToList<FlightAirport>(m_AirportMap))->SortItems((PFNCOMPARE)CompareAirports);
+
+	return m_pAirportList;
+}
+
+RouteList* CKitchen::GetRoutes(BOOL Tesselate)
+{
+	if (!m_pRouteList)
+	{
+		(m_pRouteList=ConvertToList<FlightRoute>(m_RouteMap))->SortItems((PFNCOMPARE)CompareRoutes);
+
+		if (Tesselate)
+			for (UINT a=0; a<m_pRouteList->m_ItemCount; a++)
+				TesselateRoute((*m_pRouteList)[a]);
+	}
+
+	return m_pRouteList;
+}
+
+FlightSegments* CKitchen::ParseGPX(CGPXFile* pGPXFile)
 {
 	if (!pGPXFile)
 		return NULL;
@@ -172,7 +239,7 @@ FlightSegments* CKitchen::ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile)
 	if (!pRootNode)
 		return NULL;
 
-	// Anzahl Wegpunkte
+	// Number of waypoints
 	UINT PointCount = 0;
 
 	for (xml_node<>* pTrkNode = pRootNode->first_node("trk"); pTrkNode; pTrkNode = pTrkNode->next_sibling())
@@ -183,12 +250,11 @@ FlightSegments* CKitchen::ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile)
 	if (!PointCount)
 		return NULL;
 
-	// FlightSegments allokieren
+	// Allocate FlightSegments
 	FlightSegments* pSegments = (FlightSegments*)malloc(sizeof(FlightSegments)+3*sizeof(DOUBLE)*(PointCount-1));
-	pSegments->Route = Route;
 	pSegments->PointCount = PointCount;
 
-	// Punkte extrahieren
+	// Extract waypoints
 	UINT Ptr = 0;
 
 	for (xml_node<>* pTrkNode = pRootNode->first_node("trk"); pTrkNode; pTrkNode = pTrkNode->next_sibling())
@@ -222,38 +288,36 @@ FlightSegments* CKitchen::ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile)
 	return pSegments;
 }
 
-FlightSegments* CKitchen::Tesselate(FlightRoute& Route)
+void CKitchen::TesselateRoute(FlightRoute& Route)
 {
-	ASSERT(Route.pFrom);
-	ASSERT(Route.pTo);
+	ASSERT(Route.lpcFrom);
+	ASSERT(Route.lpcTo);
 
-	const BOOL UseWaypoint = (Route.pFrom==Route.pTo) && ((Route.Waypoint.Latitude!=0) || (Route.Waypoint.Longitude!=0));
+	const BOOL UseWaypoint = (Route.lpcFrom==Route.lpcTo) && ((Route.Waypoint.Latitude!=0) || (Route.Waypoint.Longitude!=0));
 
 	if (!Route.GPSPathMultiple && Route.pGPSPath)
 	{
 		CGPXFile* pGPXFile = CItinerary::DecodeGPXAttachment(*Route.pGPSPath);
 		if (pGPXFile)
 		{
-			FlightSegments* pSegments = ParseGPX(Route, pGPXFile);
+			Route.pSegments = ParseGPX(pGPXFile);
 			delete pGPXFile;
 
-			if (pSegments)
-				return pSegments;
+			return;
 		}
 	}
 
-	const DOUBLE Lat1 = PI*Route.pFrom->Location.Latitude/180;
-	const DOUBLE Lon1 = PI*Route.pFrom->Location.Longitude/180;
-	const DOUBLE Lat2 = PI*(UseWaypoint ? Route.Waypoint.Latitude : Route.pTo->Location.Latitude)/180;
-	const DOUBLE Lon2 = PI*(UseWaypoint ? Route.Waypoint.Longitude : Route.pTo->Location.Longitude)/180;
+	const DOUBLE Lat1 = PI*Route.lpcFrom->Location.Latitude/180.0;
+	const DOUBLE Lon1 = PI*Route.lpcFrom->Location.Longitude/180.0;
+	const DOUBLE Lat2 = PI*(UseWaypoint ? Route.Waypoint.Latitude : Route.lpcTo->Location.Latitude)/180.0;
+	const DOUBLE Lon2 = PI*(UseWaypoint ? Route.Waypoint.Longitude : Route.lpcTo->Location.Longitude)/180.0;
 
 	const DOUBLE D = 2*asin(sqrt(pow(sin((Lat1-Lat2)/2),2)+cos(Lat1)*cos(Lat2)*pow(sin((Lon1-Lon2)/2),2)));
 	const UINT PointCount = (D<=0.1) ? 10 : (D<=0.5) ? 40 : 100;
 
-	// FlightSegments allokieren
-	FlightSegments* pSegments = (FlightSegments*)malloc(sizeof(FlightSegments)+3*sizeof(DOUBLE)*(PointCount-1));
-	pSegments->Route = Route;
-	pSegments->PointCount = PointCount;
+	// Allocate FlightSegments
+	Route.pSegments = (FlightSegments*)malloc(sizeof(FlightSegments)+3*sizeof(DOUBLE)*(PointCount-1));
+	Route.pSegments->PointCount = PointCount;
 
 	const DOUBLE MinH = 1.01;
 	const DOUBLE Elevation = min(D/2, 0.25);
@@ -270,10 +334,8 @@ FlightSegments* CKitchen::Tesselate(FlightRoute& Route)
 		const DOUBLE Y = V*Matrix[2]+W*Matrix[3];
 		const DOUBLE Z = V*Matrix[4]+W*Matrix[5];
 
-		pSegments->Points[a][0] = atan2(Z, sqrt(X*X+Y*Y));
-		pSegments->Points[a][1] = atan2(Y, X);
-		pSegments->Points[a][2] = MinH+Elevation*sin(ElevationEase*a/(PointCount-1));
+		Route.pSegments->Points[a][0] = atan2(Z, sqrt(X*X+Y*Y));
+		Route.pSegments->Points[a][1] = atan2(Y, X);
+		Route.pSegments->Points[a][2] = MinH+Elevation*sin(ElevationEase*a/(PointCount-1));
 	}
-
-	return pSegments;
 }

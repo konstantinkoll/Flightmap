@@ -205,9 +205,9 @@ void FMSelectLocationIATADlg::OnRequestTextColor(NMHDR* pNMHDR, LRESULT* pResult
 
 	if (pTextColor->Item!=-1)
 	{
-		const FMAirport* pAirport = p_Airports[pTextColor->Item];
+		LPCAIRPORT lpcAirport = p_Airports[pTextColor->Item];
 
-		if (strcmp(pAirport->Code, pAirport->MetroCode)==0)
+		if (strcmp(lpcAirport->Code, lpcAirport->MetroCode)==0)
 			pTextColor->Color = 0x208040;
 	}
 
@@ -220,16 +220,13 @@ void FMSelectLocationIATADlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResu
 
 	if (pTooltipData->Item!=-1)
 	{
-		FMAirport* pAirport = p_Airports[pTooltipData->Item];
+		LPCAIRPORT lpcAirport = p_Airports[pTooltipData->Item];
 
-		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, pAirport->Name);
-		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(pAirport->CountryID)->Name);
+		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_NAME, lpcAirport->Name);
+		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(lpcAirport->CountryID)->Name);
+		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, FMGeoCoordinatesToString(lpcAirport->Location, FALSE));
 
-		CString tmpStr;
-		FMGeoCoordinatesToString(pAirport->Location, tmpStr, FALSE);
-		FMTooltip::AppendAttribute(pTooltipData->Hint, 4096, IDS_AIRPORT_LOCATION, tmpStr);
-
-		pTooltipData->hBitmap = FMIATACreateAirportMap(pAirport, 192, 192);
+		pTooltipData->hBitmap = FMIATACreateAirportMap(lpcAirport, 192, 192);
 
 		*pResult = TRUE;
 	}

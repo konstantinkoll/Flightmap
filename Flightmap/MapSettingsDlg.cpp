@@ -161,8 +161,6 @@ BOOL MapSettingsDlg::InitSidebar(LPSIZE pszTabArea)
 
 BOOL MapSettingsDlg::InitDialog()
 {
-	BOOL Result = FMTabbedDialog::InitDialog();
-
 	// Tab 0
 	CString tmpStr;
 
@@ -250,7 +248,7 @@ BOOL MapSettingsDlg::InitDialog()
 	m_wndColorIndicatorNoteInner.SetColor(m_clrNoteInner=theApp.m_MapSettings.NoteInnerColor);
 	m_wndColorIndicatorNoteOuter.SetColor(m_clrNoteOuter=theApp.m_MapSettings.NoteOuterColor);
 
-	return Result;
+	return FMTabbedDialog::InitDialog();
 }
 
 
@@ -300,10 +298,10 @@ void MapSettingsDlg::OnUserDefinedResolution()
 
 void MapSettingsDlg::OnBackground()
 {
-	INT Background = m_wndBackground.GetCurSel();
+	const INT Background = m_wndBackground.GetCurSel();
 	ASSERT(Background>=0);
 
-	BOOL bColor = (Background>=3);
+	const BOOL bColor = (Background>=3);
 
 	GetDlgItem(IDC_BACKGROUNDCOLOR_CHOOSE)->EnableWindow(bColor);
 	m_wndColorIndicatorBackground.EnableWindow(bColor);
@@ -334,7 +332,7 @@ void MapSettingsDlg::OnChangeMergeMetropolitan()
 
 void MapSettingsDlg::OnShowLocations()
 {
-	BOOL bEnable = ((CButton*)GetDlgItem(IDC_SHOWLOCATIONS))->GetCheck();
+	const BOOL bEnable = ((CButton*)GetDlgItem(IDC_SHOWLOCATIONS))->GetCheck();
 
 	GetDlgItem(IDC_LOCATIONS_INNER_CHOOSE)->EnableWindow(bEnable);
 	m_wndColorIndicatorLocationsInner.EnableWindow(bEnable);
@@ -355,7 +353,7 @@ void MapSettingsDlg::OnChooseColorLocationsOuter()
 
 void MapSettingsDlg::OnShowIATACodes()
 {
-	BOOL bEnable = ((CButton*)GetDlgItem(IDC_SHOWIATACODES))->GetCheck();
+	const BOOL bEnable = ((CButton*)GetDlgItem(IDC_SHOWIATACODES))->GetCheck();
 
 	GetDlgItem(IDC_IATACODES_INNER_CHOOSE)->EnableWindow(bEnable);
 	m_wndColorIndicatorIATACodesInner.EnableWindow(bEnable);

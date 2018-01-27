@@ -41,9 +41,12 @@ typedef HRESULT(__stdcall* PFNDWMSETWINDOWATTRIBUTE)(HWND hWnd, DWORD dwAttribut
 
 typedef HRESULT(__stdcall* PFNREGISTERAPPLICATIONRESTART)(PCWSTR CommandLine, DWORD Flags);
 
+typedef HRESULT(__stdcall* PFNGETPROPERTYSTOREFORWINDOW)(HWND hwnd, REFIID riid, void** ppv);
+typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
+
 typedef HRESULT(__stdcall* PFNCHANGEWINDOWMESSAGEFILTER)(HWND hWnd, UINT message, DWORD action);
 
-struct CDS_Wakeup
+struct CDSWAKEUP
 {
 	GUID AppID;
 	WCHAR Command[MAX_PATH];
@@ -56,8 +59,7 @@ struct ResourceCacheItem
 };
 
 
-// FMApplication:
-// Siehe FMApplication.cpp für die Implementierung dieser Klasse
+// FMApplication
 //
 
 class FMUpdateDlg;
@@ -65,11 +67,11 @@ class FMUpdateDlg;
 class FMApplication : public CWinAppEx
 {
 public:
-	FMApplication(GUID& AppID);
+	FMApplication(const GUID& AppID);
 	virtual ~FMApplication();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(LPWSTR pCmdLine=NULL);
+	virtual BOOL OpenCommandLine(LPWSTR pCmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void AddFrame(CWnd* pFrame);
@@ -81,7 +83,7 @@ public:
 	static HRESULT SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
 	static void AddFileExtension(CString& Extensions, UINT nID, const CString& Extension, BOOL Last=FALSE);
 
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT Size);
+	void GetBinary(LPCTSTR lpszEntry, LPVOID pData, UINT Size);
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0);
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue);
@@ -93,9 +95,11 @@ public:
 	static HANDLE LoadFontFromResource(UINT nID);
 
 	void ShowTooltip(CWnd* pWndOwner, CPoint point, const CString& Caption, const CString& Hint, HICON hIcon=NULL, HBITMAP hBitmap=NULL);
-	void ShowTooltip(CWnd* pWndOwner, CPoint point, FMAirport* pAirport, const CString& Hint);
+	void ShowTooltip(CWnd* pWndOwner, CPoint point, LPCAIRPORT lpcAirport, const CString& Hint);
 	void ShowTooltip(CWnd* pWndOwner, CPoint point, LPCSTR Code, const CString& Hint);
 	void HideTooltip(const CWnd* pWndOwner=NULL);
+
+	void OpenFolderAndSelectItem(LPCWSTR Path);
 
 	static void PlayAsteriskSound();
 	static void PlayDefaultSound();
@@ -110,6 +114,7 @@ public:
 	void WriteUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	void CheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
 
+	CImageList m_CoreImageListJumbo;
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListExtraLarge;
 	HBITMAP hRatingBitmaps[MAXRATING+1];
@@ -152,6 +157,10 @@ public:
 	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
 	BOOL m_KernelLibLoaded;
 
+	PFNGETPROPERTYSTOREFORWINDOW zGetPropertyStoreForWindow;
+	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
+	BOOL m_ShellLibLoaded;
+
 	PFNCHANGEWINDOWMESSAGEFILTER zChangeWindowMessageFilter;
 	BOOL m_UserLibLoaded;
 
@@ -182,8 +191,8 @@ private:
 	ULONG_PTR m_GdiPlusToken;
 	HMODULE hModThemes;
 	HMODULE hModDwm;
-	HMODULE hModShell;
 	HMODULE hModKernel;
+	HMODULE hModShell;
 	HMODULE hModUser;
 	HANDLE hFontDinMittelschrift;
 };

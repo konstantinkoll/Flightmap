@@ -14,8 +14,8 @@ class CExcelFile : public CStdioFile
 public:
 	CExcelFile();
 
-	BOOL Open(LPCTSTR lpszFileName);
-	void WriteRoute(AIRX_Flight& Flight);
+	BOOL Open(LPCTSTR lpszPath);
+	void WriteFlight(const AIRX_Flight& Flight);
 	void Close();
 
 protected:

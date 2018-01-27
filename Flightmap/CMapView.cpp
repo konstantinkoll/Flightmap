@@ -14,24 +14,18 @@
 #define BORDER     3*CARDPADDING
 
 CMapView::CMapView()
-	: CFrontstageWnd()
+	: CFrontstageScroller()
 {
 	p_BitmapOriginal = m_pBitmapScaled = NULL;
 
-	m_ScrollWidth = m_ScrollHeight = 0;
 	m_ZoomFactor = theApp.m_MapZoomFactor;
-}
-
-CMapView::~CMapView()
-{
-	DeleteScaledBitmap();
 }
 
 BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
-	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CFrontstageScroller::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CMapView::DeleteScaledBitmap()
@@ -100,12 +94,6 @@ void CMapView::ScaleBitmap()
 	AdjustLayout();
 }
 
-void CMapView::AdjustLayout()
-{
-	AdjustScrollbars();
-	Invalidate();
-}
-
 void CMapView::GetCardRect(const CRect& rectClient, CRect& rectCard) const
 {
 	const INT PosX = m_ScrollWidth<rectClient.Width() ? (rectClient.Width()-m_ScrollWidth)/2 : -m_HScrollPos;
@@ -115,56 +103,6 @@ void CMapView::GetCardRect(const CRect& rectClient, CRect& rectCard) const
 	rectCard.right = PosX+m_ScrollWidth-(BORDER-CARDPADDING);
 	rectCard.top = PosY+(BORDER-CARDPADDING);
 	rectCard.bottom = PosY+m_ScrollHeight-(BORDER-CARDPADDING);
-}
-
-void CMapView::ResetScrollbars()
-{
-	ScrollWindow(m_HScrollPos, m_VScrollPos);
-
-	SetScrollPos(SB_VERT, m_VScrollPos=0);
-	SetScrollPos(SB_HORZ, m_HScrollPos=0);
-}
-
-void CMapView::AdjustScrollbars()
-{
-	// Dimensions
-	CRect rect;
-	GetWindowRect(rect);
-
-	BOOL HScroll = FALSE;
-	if (m_ScrollWidth>rect.Width())
-	{
-		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-		HScroll = TRUE;
-	}
-
-	if (m_ScrollHeight>rect.Height())
-		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
-
-	if ((m_ScrollWidth>rect.Width()) && (!HScroll))
-		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-
-	// Set vertical bars
-	m_VScrollMax = max(0, m_ScrollHeight-rect.Height());
-	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
-
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(SCROLLINFO);
-	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
-	si.nPage = rect.Height();
-	si.nMax = m_ScrollHeight-1;
-	si.nPos = m_VScrollPos;
-	SetScrollInfo(SB_VERT, &si);
-
-	// Set horizontal bars
-	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
-	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
-
-	si.nPage = rect.Width();
-	si.nMax = m_ScrollWidth-1;
-	si.nPos = m_HScrollPos;
-	SetScrollInfo(SB_HORZ, &si);
 }
 
 INT CMapView::ItemAtPosition(CPoint point) const
@@ -204,209 +142,63 @@ void CMapView::ShowTooltip(const CPoint& point)
 	}
 }
 
+BOOL CMapView::GetContextMenu(CMenu& Menu, INT /*Index*/)
+{
+	Menu.LoadMenu(IDM_MAPWND);
 
-BEGIN_MESSAGE_MAP(CMapView, CFrontstageWnd)
-	ON_WM_CREATE()
-	ON_WM_PAINT()
-	ON_WM_SIZE()
-	ON_WM_VSCROLL()
-	ON_WM_HSCROLL()
-	ON_WM_LBUTTONDOWN()
+	return FALSE;
+}
+
+BOOL CMapView::DrawNothing() const
+{
+	return !m_pBitmapScaled;
+}
+
+void CMapView::DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& /*rectUpdate*/, BOOL Themed)
+{
+	CRect rectCard;
+	GetCardRect(rect, rectCard);
+
+	DrawCardForeground(dc, g, rectCard, Themed);
+
+	// Map picture (either pre-scaled or streched)
+	const CSize Size = m_pBitmapScaled->GetBitmapDimension();
+
+	CRect rectMap(rectCard);
+	rectMap.DeflateRect(CARDPADDING, CARDPADDING);
+
+	CDC dcMap;
+	dcMap.CreateCompatibleDC(&dc);
+
+	CBitmap* pOldBitmap = dcMap.SelectObject(m_pBitmapScaled);
+
+	if ((Size.cx<rectMap.Width()) || (Size.cy<rectMap.Height()))
+	{
+		dc.StretchBlt(rectMap.left, rectMap.top, rectMap.Width(), rectMap.Height(), &dcMap, 0, 0, Size.cx, Size.cy, SRCCOPY);
+	}
+	else
+	{
+		dc.BitBlt(rectMap.left, rectMap.top, rectMap.Width(), rectMap.Height(), &dcMap, 0, 0, SRCCOPY);
+	}
+
+	dcMap.SelectObject(pOldBitmap);
+}
+
+
+BEGIN_MESSAGE_MAP(CMapView, CFrontstageScroller)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
-	ON_WM_CONTEXTMENU()
 
 	ON_COMMAND(IDM_MAPWND_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_MAPWND_ZOOMOUT, OnZoomOut)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_MAPWND_ZOOMIN, IDM_MAPWND_ZOOMOUT, OnUpdateCommands)
 END_MESSAGE_MAP()
 
-INT CMapView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+void CMapView::OnDestroy()
 {
-	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
+	DeleteScaledBitmap();
 
-	ResetScrollbars();
-
-	return 0;
-}
-
-void CMapView::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap MemBitmap;
-	MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-	Graphics g(dc);
-
-	// Background
-	const BOOL Themed = IsCtrlThemed();
-
-	DrawCardBackground(dc, g, rect, Themed);
-
-	// Card
-	if (m_pBitmapScaled)
-	{
-		CRect rectCard;
-		GetCardRect(rect, rectCard);
-
-		DrawCardForeground(dc, g, rectCard, Themed);
-
-		// Map picture (either pre-scaled or streched)
-		const CSize Size = m_pBitmapScaled->GetBitmapDimension();
-
-		CRect rectMap(rectCard);
-		rectMap.DeflateRect(CARDPADDING, CARDPADDING);
-
-		CDC dcMap;
-		dcMap.CreateCompatibleDC(&pDC);
-
-		CBitmap* pOldBitmap = dcMap.SelectObject(m_pBitmapScaled);
-
-		if ((Size.cx<rectMap.Width()) || (Size.cy<rectMap.Height()))
-		{
-			dc.StretchBlt(rectMap.left, rectMap.top, rectMap.Width(), rectMap.Height(), &dcMap, 0, 0, Size.cx, Size.cy, SRCCOPY);
-		}
-		else
-		{
-			dc.BitBlt(rectMap.left, rectMap.top, rectMap.Width(), rectMap.Height(), &dcMap, 0, 0, SRCCOPY);
-		}
-
-		dcMap.SelectObject(pOldBitmap);
-	}
-
-	DrawWindowEdge(g, Themed);
-
-	if (Themed)
-		CTaskbar::DrawTaskbarShadow(g, rect);
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(pOldBitmap);
-}
-
-void CMapView::OnSize(UINT nType, INT cx, INT cy)
-{
-	CFrontstageWnd::OnSize(nType, cx, cy);
-
-	AdjustLayout();
-}
-
-void CMapView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	SCROLLINFO si;
-
-	INT nInc = 0;
-	switch (nSBCode)
-	{
-	case SB_TOP:
-		nInc = -m_VScrollPos;
-		break;
-
-	case SB_BOTTOM:
-		nInc = m_VScrollMax-m_VScrollPos;
-		break;
-
-	case SB_LINEUP:
-		nInc = -64;
-		break;
-
-	case SB_LINEDOWN:
-		nInc = 64;
-		break;
-
-	case SB_PAGEUP:
-		nInc = min(-1, -rect.Height());
-		break;
-
-	case SB_PAGEDOWN:
-		nInc = max(1, rect.Height());
-		break;
-
-	case SB_THUMBTRACK:
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_TRACKPOS;
-		GetScrollInfo(SB_VERT, &si);
-
-		nInc = si.nTrackPos-m_VScrollPos;
-		break;
-	}
-
-	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
-	if (nInc)
-	{
-		m_VScrollPos += nInc;
-		SetScrollPos(SB_VERT, m_VScrollPos);
-
-		Invalidate();
-	}
-
-	CFrontstageWnd::OnVScroll(nSBCode, nPos, pScrollBar);
-}
-
-void CMapView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	SCROLLINFO si;
-
-	INT nInc = 0;
-	switch (nSBCode)
-	{
-	case SB_TOP:
-		nInc = -m_HScrollPos;
-		break;
-
-	case SB_BOTTOM:
-		nInc = m_HScrollMax-m_HScrollPos;
-		break;
-
-	case SB_PAGEUP:
-	case SB_LINEUP:
-		nInc = -64;
-		break;
-
-	case SB_PAGEDOWN:
-	case SB_LINEDOWN:
-		nInc = 64;
-		break;
-
-	case SB_THUMBTRACK:
-		ZeroMemory(&si, sizeof(si));
-		si.cbSize = sizeof(SCROLLINFO);
-		si.fMask = SIF_TRACKPOS;
-		GetScrollInfo(SB_HORZ, &si);
-
-		nInc = si.nTrackPos-m_HScrollPos;
-		break;
-	}
-
-	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
-	if (nInc)
-	{
-		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
-		SetScrollPos(SB_HORZ, m_HScrollPos);
-	}
-
-	CFrontstageWnd::OnHScroll(nSBCode, nPos, pScrollBar);
-}
-
-void CMapView::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
-	if (GetFocus()!=this)
-		SetFocus();
+	CFrontstageScroller::OnDestroy();
 }
 
 BOOL CMapView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
@@ -471,29 +263,6 @@ void CMapView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 		OnZoomOut();
 	}
 }
-
-void CMapView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
-{
-	if ((pos.x<0) || (pos.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		pos.x = (rect.left+rect.right)/2;
-		pos.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&pos);
-	}
-
-	CMenu Menu;
-	Menu.LoadMenu(IDM_MAPWND);
-	ASSERT_VALID(&Menu);
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
-}
-
 
 void CMapView::OnZoomIn()
 {

@@ -1,6 +1,7 @@
 
 #pragma once
 #include "CBackstageBar.h"
+#include "CBackstageDropTarget.h"
 #include "CBackstageShadow.h"
 #include "CBackstageSidebar.h"
 #include "CBackstageWidgets.h"
@@ -12,7 +13,9 @@
 #include "CDesktopDimmer.h"
 #include "CExplorerList.h"
 #include "CFloatButtons.h"
+#include "CFrontstageItemView.h"
 #include "CFrontstagePane.h"
+#include "CFrontstageScroller.h"
 #include "CFrontstageWnd.h"
 #include "CHeaderArea.h"
 #include "CHeaderButton.h"
@@ -23,12 +26,14 @@
 #include "CTaskBar.h"
 #include "CTaskButton.h"
 #include "CTooltipHeader.h"
+#include "FMAboutDialog.h"
 #include "FMDynArray.h"
 #include "FMApplication.h"
 #include "FMColorDlg.h"
 #include "FMDialog.h"
 #include "FMFont.h"
 #include "FMLicenseDlg.h"
+#include "FMMemorySort.h"
 #include "FMMessageBoxDlg.h"
 #include "FMRegisterDlg.h"
 #include "FMSelectLocationGPSDlg.h"
@@ -46,19 +51,11 @@
 
 #define FMCATEGORYPADDING     2
 
-#define REQUEST_TEXTCOLOR                1
-#define REQUEST_TOOLTIP_DATA             2
-#define REQUEST_DRAWBUTTONFOREGROUND     3
-
 #define COLORREF2RGB(clr)             (0xFF000000 | (((clr) & 0xFF)<<16) | ((clr) & 0xFF00) | ((clr)>>16))
 #define COLORREF2ARGB(clr, alpha)     (((alpha)<<24) | (((clr) & 0xFF)<<16) | ((clr) & 0xFF00) | ((clr)>>16))
 
-struct NM_TEXTCOLOR
-{
-	NMHDR hdr;
-	INT Item;
-	COLORREF Color;
-};
+#define REQUEST_TOOLTIP_DATA             1
+#define REQUEST_DRAWBUTTONFOREGROUND     2
 
 struct NM_TOOLTIPDATA
 {
@@ -75,6 +72,8 @@ struct NM_DRAWBUTTONFOREGROUND
 	NMHDR hdr;
 	LPDRAWITEMSTRUCT lpDrawItemStruct;
 	CDC* pDC;
+	BOOL Hover;
+	BOOL Themed;
 };
 
 struct PROGRESSDATA
@@ -101,7 +100,6 @@ HBITMAP CreateTruecolorBitmap(LONG Width, LONG Height);
 CBitmap* CreateTruecolorBitmapObject(LONG Width, LONG Height);
 void DrawLocationIndicator(Graphics& g, INT x, INT y, INT Size=16);
 void DrawLocationIndicator(CDC& dc, INT x, INT y, INT Size=16);
-void DrawControlBorder(CWnd* pWnd);
 void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Themed);
 void DrawListItemBackground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected, COLORREF TextColor=(COLORREF)-1, BOOL ShowFocusRect=TRUE);
 void DrawListItemForeground(CDC& dc, LPCRECT rectItem, BOOL Themed, BOOL WinFocused, BOOL Hover, BOOL Focused, BOOL Selected);
@@ -120,15 +118,20 @@ void DrawColor(CDC& dc, CRect rect, BOOL Themed, COLORREF Color, BOOL Enabled=TR
 
 UINT FMIATAGetCountryCount();
 UINT FMIATAGetAirportCount();
-const FMCountry* FMIATAGetCountry(UINT ID);
-INT FMIATAGetNextAirport(INT Last, FMAirport*& pAirport);
-INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, FMAirport*& pAirport);
-BOOL FMIATAGetAirportByCode(LPCSTR Code, FMAirport*& pAirport);
-HBITMAP FMIATACreateAirportMap(FMAirport* pAirport, LONG Width, LONG Height);
-void FMGeoCoordinateToString(const DOUBLE c, LPSTR tmpStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
-void FMGeoCoordinateToString(const DOUBLE c, CString& tmpStr, BOOL IsLatitude, BOOL FillZero);
-void FMGeoCoordinatesToString(const FMGeoCoordinates& c, LPSTR tmpStr, SIZE_T cCount, BOOL FillZero);
-void FMGeoCoordinatesToString(const FMGeoCoordinates& c, CString& tmpStr, BOOL FillZero=FALSE);
+LPCCOUNTRY FMIATAGetCountry(UINT ID);
+INT FMIATAGetNextAirport(INT Last, LPCAIRPORT& lpcAirport);
+INT FMIATAGetNextAirportByCountry(INT CountryID, INT Last, LPCAIRPORT& lpcAirport);
+BOOL FMIATAGetAirportByCode(LPCSTR Code, LPCAIRPORT& lpcAirport);
+HBITMAP FMIATACreateAirportMap(LPCAIRPORT lpcAirport, LONG Width, LONG Height);
+void FMGeoCoordinateToString(const DOUBLE Coordinate, LPSTR pStr, SIZE_T cCount, BOOL IsLatitude, BOOL FillZero);
+void FMGeoCoordinatesToString(const FMGeoCoordinates& Coordinates, LPSTR pStr, SIZE_T cCount, BOOL FillZero);
+CString FMGeoCoordinateToString(const DOUBLE Coordinate, BOOL IsLatitude, BOOL FillZero);
+CString FMGeoCoordinatesToString(const FMGeoCoordinates& Coordinates, BOOL FillZero=FALSE);
+
+
+// Date and time
+
+CString FMTimeToString(const FILETIME& FileTime);
 
 
 // License

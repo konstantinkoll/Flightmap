@@ -28,8 +28,6 @@ protected:
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void ShowTooltip(const CPoint& point);
 
-	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
-	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 

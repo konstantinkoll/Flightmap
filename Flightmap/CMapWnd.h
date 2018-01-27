@@ -15,18 +15,18 @@ class CMapWnd : public CBackstageWnd
 {
 public:
 	CMapWnd();
-	virtual ~CMapWnd();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout(const CRect& rectLayout, UINT nFlags);
 
 	BOOL Create();
-	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName, const CString& Title);
+	void SetBitmap(CBitmap* pBitmap, CItinerary* pItinerary);
 
 protected:
 	void PrintMap(PRINTDLGEX pdex);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 	afx_msg void OnMapWndSaveAs();

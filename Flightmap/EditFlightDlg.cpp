@@ -21,7 +21,7 @@ EditFlightDlg::EditFlightDlg(AIRX_Flight* pFlight, CWnd* pParentWnd, CItinerary*
 	}
 	else
 	{
-		ResetFlight(m_Flight);
+		CItinerary::ResetFlight(m_Flight);
 	}
 
 	p_Itinerary = pItinerary;
@@ -73,9 +73,6 @@ void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		// Tab 0
-		CalcDistance(m_Flight, TRUE);
-		CalcFuture(m_Flight);
-
 		m_Flight.Flags &= ~AIRX_GroundTransportation;
 
 		if (((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->GetCheck())
@@ -84,10 +81,10 @@ void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
 		// Tab 1
 		CString tmpStr;
 		m_wndCarrier.GetWindowText(tmpStr);
-		StringToAttribute(tmpStr.GetBuffer(), m_Flight, 7);
+		StringToAttribute(tmpStr, m_Flight, 7);
 
 		m_wndEquipment.GetWindowText(tmpStr);
-		StringToAttribute(tmpStr.GetBuffer(), m_Flight, 10);
+		StringToAttribute(tmpStr, m_Flight, 10);
 
 		DDX_Radio(pDX, IDC_CLASS_Y, Class);
 		m_Flight.Class = (Class==0) ? AIRX_Economy : (Class==1) ? AIRX_PremiumEconomy : (Class==2) ? AIRX_Business : (Class==3) ? AIRX_First : (Class==4) ? AIRX_Crew : (Class==5) ? AIRX_Charter : AIRX_Unknown;
@@ -119,13 +116,15 @@ void EditFlightDlg::GetIATACode(UINT nID, LPSTR pIATA)
 	CString tmpStr;
 	GetDlgItem(nID)->GetWindowText(tmpStr);
 
-	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, pIATA, 4, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, pIATA, 4, NULL, NULL);
 }
 
-void EditFlightDlg::DisplayAirport(UINT nID, FMAirport* pAirport)
+void EditFlightDlg::DisplayAirport(UINT nID, LPCAIRPORT lpcAirport)
 {
-	CString tmpStr1(pAirport->Name);
-	CString tmpStr2(FMIATAGetCountry(pAirport->CountryID)->Name);
+	ASSERT(lpcAirport);
+
+	CString tmpStr1(lpcAirport->Name);
+	CString tmpStr2(FMIATAGetCountry(lpcAirport->CountryID)->Name);
 
 	tmpStr1.Append(_T(", "));
 	tmpStr1.Append(tmpStr2);
@@ -137,10 +136,10 @@ void EditFlightDlg::DisplayAirport(UINT nID, LPCSTR pIATA)
 {
 	ASSERT(pIATA);
 
-	FMAirport* pAirport;
-	if (FMIATAGetAirportByCode(pIATA, pAirport))
+	LPCAIRPORT lpcAirport;
+	if (FMIATAGetAirportByCode(pIATA, lpcAirport))
 	{
-		DisplayAirport(nID, pAirport);
+		DisplayAirport(nID, lpcAirport);
 	}
 	else
 	{
@@ -176,10 +175,7 @@ void EditFlightDlg::SelectAirport(UINT nEditID, LPSTR pIATA)
 
 void EditFlightDlg::DisplayLocation(const FMGeoCoordinates& Location)
 {
-	CString tmpStr;
-	FMGeoCoordinatesToString(Location, tmpStr);
-
-	GetDlgItem(IDC_WAYPOINT_DISPLAY)->SetWindowText(tmpStr);
+	GetDlgItem(IDC_WAYPOINT_DISPLAY)->SetWindowText(FMGeoCoordinatesToString(Location));
 }
 
 BOOL EditFlightDlg::InitSidebar(LPSIZE pszTabArea)
@@ -196,8 +192,6 @@ BOOL EditFlightDlg::InitSidebar(LPSIZE pszTabArea)
 
 BOOL EditFlightDlg::InitDialog()
 {
-	BOOL Result = FMTabbedDialog::InitDialog();
-
 	// Airports
 	DisplayLocation(m_Flight.Waypoint);
 	OnCheckAirports();
@@ -206,13 +200,13 @@ BOOL EditFlightDlg::InitDialog()
 	((CButton*)GetDlgItem(IDC_GROUNDTRANSPORTATION))->SetCheck(m_Flight.Flags & AIRX_GroundTransportation);
 
 	// Carrier
-	PrepareCarrierCtrl(&m_wndCarrier, p_Itinerary);
+	p_Itinerary->PrepareCarrierCtrl(m_wndCarrier);
 
 	if (m_wndCarrier.SelectString(-1, m_Flight.Carrier)==-1)
 		m_wndCarrier.SetWindowText(m_Flight.Carrier);
 
 	// Equipment
-	PrepareEquipmentCtrl(&m_wndEquipment, p_Itinerary);
+	p_Itinerary->PrepareEquipmentCtrl(m_wndEquipment);
 
 	if (m_wndEquipment.SelectString(-1, m_Flight.Equipment)==-1)
 		m_wndEquipment.SetWindowText(m_Flight.Equipment);
@@ -231,9 +225,9 @@ BOOL EditFlightDlg::InitDialog()
 	m_wndRating.SetRating((m_Flight.Flags>>FMAttributes[21].DataParameter) & 0xF);
 
 	// Attachments
-	m_wndFileView.SetItinerary(p_Itinerary, &m_Flight);
+	m_wndFileView.SetAttachments(p_Itinerary, &m_Flight);
 
-	return Result;
+	return FMTabbedDialog::InitDialog();
 }
 
 
@@ -258,7 +252,7 @@ void EditFlightDlg::OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		INT64 FileSize = 0;
 		for (UINT a=0; a<m_Flight.AttachmentCount; a++)
-			FileSize += p_Itinerary->m_Attachments[m_Flight.Attachments[a]].Size;
+			FileSize += p_Itinerary->m_Attachments[m_Flight.Attachments[a]].FileSize;
 
 		WCHAR tmpBuf[256];
 		StrFormatByteSize(FileSize, tmpBuf, 256);
@@ -308,12 +302,12 @@ void EditFlightDlg::OnCheckAirports()
 	// Waypoint
 	CHAR Code[4];
 
-	FMAirport* pFrom;
+	LPCAIRPORT pFrom;
 	GetIATACode(IDC_FROM_IATA, Code);
 	if (!FMIATAGetAirportByCode(Code, pFrom))
 		goto SetActive;
 
-	FMAirport* pTo;
+	LPCAIRPORT pTo;
 	GetIATACode(IDC_TO_IATA, Code);
 	if (!FMIATAGetAirportByCode(Code, pTo))
 		goto SetActive;

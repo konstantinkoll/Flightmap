@@ -3,48 +3,75 @@
 #include "FMCommDlg.h"
 
 
-// CRecentFilesPane
+// CRecentFilesList
 //
 
-#define MAXRECENTFILES     20
-
-struct RecentFile
+struct FileItemData
 {
+	ItemData Hdr;
 	WCHAR Path[MAX_PATH];
+	WCHAR DisplayName[MAX_PATH];
 	FILETIME Created;
 	FILETIME Modified;
 	INT64 FileSize;
-	INT IconID;
+	INT iIcon;
 	BOOL IsValid;
 };
+
+class CRecentFilesList sealed : public CFrontstageItemView
+{
+public:
+	CRecentFilesList();
+
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
+
+	LPCWSTR GetSelectedFilePath(BOOL OnlyValid=TRUE) const;
+	void SetFiles();
+
+protected:
+	virtual void ShowTooltip(const CPoint& point);
+	virtual void AdjustLayout();
+	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual void FireSelectedItem() const;
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
+
+private:
+	FileItemData* GetFileItemData(INT Index) const;
+	void AddFile(LPCWSTR Path, const WIN32_FIND_DATA& FindFileData, INT iIcon, BOOL IsValid);
+
+	static CString m_SubitemNames[3];
+};
+
+inline FileItemData* CRecentFilesList::GetFileItemData(INT Index) const
+{
+	return (FileItemData*)GetItemData(Index);
+}
+
+
+// CRecentFilesPane
+//
 
 class CRecentFilesPane : public CFrontstagePane
 {
 public:
-	CRecentFilesPane();
-
 	virtual void AdjustLayout(CRect rectLayout);
 
-	CString GetSelectedRecentFilePath() const;
+	LPCWSTR GetSelectedFilePath(BOOL OnlyValid=TRUE) const;
 
 protected:
-	void UpdateList();
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRequestTextColor(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
 
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileViewInFolder();
 	afx_msg void OnFileRemove();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	CExplorerList m_wndExplorerList;
-
-private:
-	RecentFile m_RecentFiles[MAXRECENTFILES];
-	UINT m_RecentFileCount;
+	CRecentFilesList m_wndFileList;
 };
+
+inline LPCWSTR CRecentFilesPane::GetSelectedFilePath(BOOL OnlyValid) const
+{
+	return m_wndFileList.GetSelectedFilePath(OnlyValid);
+}

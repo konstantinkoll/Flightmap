@@ -15,7 +15,7 @@ CIcons CGlobeWnd::m_SmallIcons;
 
 BOOL CGlobeWnd::Create()
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_GLOBE));
+	const CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_GLOBE));
 
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_GLOBE), _T("Globe"), CSize(0, 0), TRUE);
 }
@@ -39,17 +39,15 @@ void CGlobeWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 
 void CGlobeWnd::SetFlights(CKitchen* pKitchen)
 {
-	CString Caption((LPCSTR)IDR_GLOBE);
+	ASSERT(pKitchen);
 
-	if (pKitchen)
-		if (!pKitchen->m_DisplayName.IsEmpty())
-		{
-			Caption.Insert(0, _T(" - "));
-			Caption.Insert(0, pKitchen->m_DisplayName);
-		}
+	// Set window caption
+	CString Caption((LPCSTR)IDR_GLOBE);
+	pKitchen->InsertDisplayName(Caption);
 
 	SetWindowText(Caption);
 
+	// Set flights
 	m_wndGlobeView.SetFlights(pKitchen);
 }
 
@@ -89,6 +87,9 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Globe view
 	if (!m_wndGlobeView.Create(this, 2))
 		return -1;
+
+	// Taskbar
+	DisableTaskbarPinning(L"app.liquidFOLDERS.Flightmap.Globe");
 
 	return 0;
 }

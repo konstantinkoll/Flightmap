@@ -17,7 +17,7 @@ class FMSelectLocationIATADlg : public FMDialog
 public:
 	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR pAirport=NULL, UINT nIDTemplate=IDD_SELECTLOCATIONIATA);
 
-	FMAirport* p_Airport;
+	LPCAIRPORT p_Airport;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -39,18 +39,18 @@ protected:
 	BOOL m_LastSortDirection;
 
 	CExplorerList m_wndAirportList;
-	FMAirport* p_Airports[MaxAirportsPerCountry];
+	LPCAIRPORT p_Airports[MaxAirportsPerCountry];
 	INT m_AirportCount;
 
 private:
 	INT Compare(INT n1, INT n2);
-	static void Swap(FMAirport*& Eins, FMAirport*& Zwei);
+	static void Swap(LPCAIRPORT& Eins, LPCAIRPORT& Zwei);
 	void Heap(INT Element, INT Count);
 };
 
-inline void FMSelectLocationIATADlg::Swap(FMAirport*& Eins, FMAirport*& Zwei)
+inline void FMSelectLocationIATADlg::Swap(LPCAIRPORT& Eins, LPCAIRPORT& Zwei)
 {
-	FMAirport* pAirport = Eins;
+	LPCAIRPORT lpcAirport = Eins;
 	Eins = Zwei;
-	Zwei = pAirport;
+	Zwei = lpcAirport;
 }

@@ -16,13 +16,13 @@
 struct ControlOnTab
 {
 	HWND hWnd;
-	UINT Index;
+	USHORT TabMask;
 };
 
 class FMTabbedDialog : public FMDialog
 {
 public:
-	FMTabbedDialog(UINT nCaptionID, CWnd* pParentWnd=NULL, UINT* pLastTab=NULL);
+	FMTabbedDialog(UINT nCaptionID, CWnd* pParentWnd=NULL, UINT* pLastTab=NULL, BOOL WantsBitmap=FALSE);
 
 protected:
 	virtual void ShowTab(UINT Index);
@@ -31,6 +31,9 @@ protected:
 
 	BOOL AddTab(const CString& Caption);
 	BOOL AddTab(UINT nResID, LPSIZE pszTabArea);
+	void AddControl(const ControlOnTab& Ctrl);
+	void AddControl(HWND hWnd, UINT Index);
+	void ShowControlOnTabs(HWND hWnd, USHORT Mask);
 	void SelectTab(UINT Index);
 
 	afx_msg void OnDestroy();
@@ -40,13 +43,18 @@ protected:
 	afx_msg void OnUpdateTabCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	CString m_DialogCaption;
 	UINT m_CurrentTab;
 
 private:
 	CBackstageSidebar m_wndSidebar;
-	CString m_Caption;
 	UINT m_TabCount;
 	UINT* p_LastTab;
 	FMDynArray<ControlOnTab, 16, 16>m_ControlsOnTab;
 	WCHAR m_TabHints[MAXTABS][4096];
 };
+
+inline void FMTabbedDialog::AddControl(const ControlOnTab& Ctrl)
+{
+	m_ControlsOnTab.AddItem(Ctrl);
+}

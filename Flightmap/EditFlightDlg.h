@@ -67,7 +67,7 @@ protected:
 
 private:
 	void GetIATACode(UINT nID, LPSTR pIATA);
-	void DisplayAirport(UINT nID, FMAirport* pAirport);
+	void DisplayAirport(UINT nID, LPCAIRPORT lpcAirport);
 	void DisplayAirport(UINT nID, LPCSTR pIATA);
 	void DisplayAirport(UINT nDisplayID, UINT nEditID);
 };

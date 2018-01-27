@@ -27,7 +27,7 @@ BOOL CFileMenu::Create(CWnd* pParentWnd, UINT nID, CItinerary* pItinerary)
 {
 	p_Itinerary = pItinerary;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
@@ -39,13 +39,6 @@ BOOL CFileMenu::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 		return GetOwner()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 
 	return TRUE;
-}
-
-void CFileMenu::SetItinerary(CItinerary* pItinerary)
-{
-	p_Itinerary = pItinerary;
-
-	Update();
 }
 
 void CFileMenu::Update()
@@ -91,7 +84,7 @@ void CFileMenu::Update()
 		{
 			INT64 FileSize = 0;
 			for (UINT a=0; a<p_Itinerary->m_Attachments.m_ItemCount; a++)
-				FileSize += p_Itinerary->m_Attachments[a].Size;
+				FileSize += p_Itinerary->m_Attachments[a].FileSize;
 
 			StrFormatByteSize(FileSize, tmpBuf, 256);
 
@@ -146,7 +139,6 @@ void CFileMenu::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CFileMenu, CFrontstageWnd)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETTINGCHANGE()
 	ON_WM_SETFOCUS()
@@ -218,13 +210,9 @@ INT CFileMenu::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndRecentFilesPane.SetOwner(GetOwner());
 
 	Update();
+	ShowWindow(SW_SHOW);
 
 	return 0;
-}
-
-BOOL CFileMenu::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CFileMenu::OnSize(UINT nType, INT cx, INT cy)
@@ -254,23 +242,15 @@ void CFileMenu::OnAdjustLayout()
 void CFileMenu::OnFileViewInFolder()
 {
 	assert(p_Itinerary);
-	assert(p_Itinerary->m_FileName[0]!=L'\0');
 
-	LPITEMIDLIST pidlFQ;
-	if (SUCCEEDED(SHParseDisplayName(p_Itinerary->m_FileName, NULL, &pidlFQ, 0, NULL)))
-	{
-		SHOpenFolderAndSelectItems(pidlFQ, 0, NULL, 0);
-
-		theApp.GetShellManager()->FreeItem(pidlFQ);
-	}
+	theApp.OpenFolderAndSelectItem(p_Itinerary->m_FileName);
 }
 
 void CFileMenu::OnFileProperties()
 {
 	ASSERT(p_Itinerary);
 
-	PropertiesDlg dlg(p_Itinerary, this);
-	if (dlg.DoModal()==IDOK)
+	if (PropertiesDlg(p_Itinerary, this).DoModal()==IDOK)
 		Update();
 }
 
@@ -278,8 +258,7 @@ void CFileMenu::OnFileAttachments()
 {
 	ASSERT(p_Itinerary);
 
-	AttachmentsDlg dlg(p_Itinerary, this);
-	dlg.DoModal();
+	AttachmentsDlg(p_Itinerary, this).DoModal();
 }
 
 void CFileMenu::OnUpdateFileCommands(CCmdUI* pCmdUI)

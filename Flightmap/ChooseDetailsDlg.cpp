@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "ChooseDetailsDlg.h"
-#include "Flightmap.h"
 
 
 // ChooseDetailsDlg
@@ -37,7 +36,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 			if (m_wndAttributes.GetCheck(a) || (Attr==0) || (Attr==3))
 			{
-				p_ViewParameters->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : FMAttributes[Attr].RecommendedWidth;
+				p_ViewParameters->ColumnWidth[Attr] = OldWidth[Attr] ? OldWidth[Attr] : FMAttributes[Attr].DefaultColumnWidth;
 				p_ViewParameters->ColumnOrder[Index++] = Attr;
 			}
 			else

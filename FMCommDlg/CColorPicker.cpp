@@ -29,7 +29,7 @@ BOOL CHueWheel::Create(CWnd* pParentWnd, const CRect& rect, UINT nID)
 {
 	ASSERT(rect.Width()==rect.Height());
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
 }
@@ -405,7 +405,7 @@ UINT CHueWheel::OnGetDlgCode()
 
 void CHueWheel::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
-	BOOL Ctrl = (GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0);
+	const BOOL Ctrl = (GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0);
 	INT Hue = (INT)m_Hue;
 
 	switch (nChar)
@@ -480,9 +480,7 @@ CGradationPyramid::CGradationPyramid()
 
 BOOL CGradationPyramid::Create(CWnd* pParentWnd, const CRect& rect, UINT nID)
 {
-	ASSERT(rect.Width()==rect.Height());
-
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
 }
@@ -550,7 +548,7 @@ inline void CGradationPyramid::CreateBitmaps(GradationPyramidBitmaps* pBitmaps)
 
 GradationPyramidBitmaps* CGradationPyramid::GetBitmaps(BOOL Themed)
 {
-	COLORREF WindowColor= Themed ? (COLORREF)-1 : GetSysColor(COLOR_WINDOW);
+	const COLORREF WindowColor= Themed ? (COLORREF)-1 : GetSysColor(COLOR_WINDOW);
 
 	// Search bitmap
 	for (UINT a=0; a<m_Bitmaps.m_ItemCount; a++)
@@ -658,10 +656,13 @@ CPoint CGradationPyramid::PointAtPosition(CPoint point) const
 
 	const REAL AdjustedX = (REAL)point.x-(m_Height-point.y+1)*m_Slope;
 	INT Column = 2*(INT)(AdjustedX/m_BaseWidth);
+
 	if (AdjustedX-Column*m_HalfWidth>point.y-Row*m_RowHeight)
 		Column++;
+
 	if (Column<0)
 		Column = 0;
+
 	if ((UINT)Column>ColumnsPerRow(Row)-1)
 		Column = ColumnsPerRow(Row)-1;
 
@@ -676,7 +677,6 @@ void CGradationPyramid::ShowTooltip(const CPoint& point)
 
 BEGIN_MESSAGE_MAP(CGradationPyramid, CFrontstageWnd)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
@@ -702,11 +702,6 @@ INT CGradationPyramid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Slope = m_Width/(m_Height*2.0f);
 
 	return 0;
-}
-
-BOOL CGradationPyramid::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CGradationPyramid::OnPaint()
@@ -945,13 +940,6 @@ void CColorPicker::PreSubclassWindow()
 {
 	CWnd::PreSubclassWindow();
 
-	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
-	if (!pThreadState->m_pWndInit)
-		Init();
-}
-
-void CColorPicker::Init()
-{
 	ModifyStyle(WS_BORDER, 0);
 	ModifyStyleEx(0, WS_EX_CONTROLPARENT);
 
@@ -964,7 +952,7 @@ void CColorPicker::Init()
 	// Create gradation pyramid
 	// Width = Height*2/Sqrt(3)
 	// Keep width odd for a nice, pointed pyramid
-	m_wndGradationPyramid.Create(this, CRect(rect.right-((INT)(rect.bottom*1.1547) | 1), 0, rect.right, rect.bottom), 2);
+	m_wndGradationPyramid.Create(this, CRect(rect.right-((INT)(rect.bottom*1.1547) | 1), 0, rect.right, rect.bottom), GetDlgCtrlID());
 	m_wndGradationPyramid.SetOwner(GetOwner());
 }
 
@@ -976,22 +964,11 @@ void CColorPicker::SetColor(COLORREF clr)
 
 
 BEGIN_MESSAGE_MAP(CColorPicker, CWnd)
-	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 
 	ON_NOTIFY(HUEWHEEL_UPDATE_HUE, 1, OnUpdateHue)
 END_MESSAGE_MAP()
-
-INT CColorPicker::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	Init();
-
-	return 0;
-}
 
 BOOL CColorPicker::OnEraseBkgnd(CDC* /*pDC*/)
 {

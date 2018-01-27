@@ -25,7 +25,8 @@
 // Siehe Flightmap.cpp für die Implementierung dieser Klasse
 //
 
-#define WM_3DSETTINGSCHANGED     WM_USER+100
+#define WM_3DSETTINGSCHANGED           WM_USER+100
+#define WM_DISTANCESETTINGSCHANGED     WM_USER+101
 
 struct MapSettings
 {
@@ -68,15 +69,15 @@ public:
 	CFlightmapApp();
 
 	virtual BOOL InitInstance();
-	virtual CWnd* OpenCommandLine(LPWSTR CmdLine=NULL);
+	virtual BOOL OpenCommandLine(LPWSTR CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void Broadcast(UINT Message);
 	static void AddStringToList(CList<CString>& List, const CString& Str);
-	void AddToRecentFiles(const CString& Filename);
+	void AddToRecentFiles(const CString& Path);
 	void AddToRecentSearchTerms(const CString& Str);
 	void AddToRecentReplaceTerms(const CString& Str);
-	void OpenAirportGoogleEarth(FMAirport* pAirport);
+	void OpenAirportGoogleEarth(LPCAIRPORT lpcAirport);
 	void OpenAirportGoogleEarth(LPCSTR Code);
 	void OpenAirportLiquidFolders(LPCSTR Code);
 	void PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, const DOCINFO& di);
@@ -110,11 +111,11 @@ public:
 	INT m_GlobeLongitude;
 	INT m_GlobeZoom;
 
-	BOOL m_GlobeShowSpots;
+	BOOL m_GlobeShowLocations;
 	BOOL m_GlobeShowAirportIATA;
 	BOOL m_GlobeShowAirportNames;
-	BOOL m_GlobeShowGPS;
-	BOOL m_GlobeShowMovements;
+	BOOL m_GlobeShowCoordinates;
+	BOOL m_GlobeShowDescriptions;
 	BOOL m_GlobeDarkBackground;
 
 	// Google Earth
@@ -138,11 +139,11 @@ protected:
 
 extern CFlightmapApp theApp;
 
-inline void CFlightmapApp::AddToRecentFiles(const CString& Filename)
+inline void CFlightmapApp::AddToRecentFiles(const CString& Path)
 {
-	ASSERT(!Filename.IsEmpty());
+	ASSERT(!Path.IsEmpty());
 
-	theApp.AddStringToList(m_RecentFiles, Filename);
+	theApp.AddStringToList(m_RecentFiles, Path);
 }
 
 inline void CFlightmapApp::AddToRecentSearchTerms(const CString& Str)

@@ -16,13 +16,12 @@ CExcelFile::CExcelFile()
 	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLIST, m_Separator, 4);
 }
 
-BOOL CExcelFile::Open(LPCTSTR lpszFileName)
+BOOL CExcelFile::Open(LPCTSTR lpszPath)
 {
 	if (m_IsOpen)
 		return FALSE;
 
-	m_IsOpen = CStdioFile::Open(lpszFileName, CFile::modeCreate | CFile::modeWrite);
-	if (m_IsOpen)
+	if ((m_IsOpen=CStdioFile::Open(lpszPath, CFile::modeCreate | CFile::modeWrite))==TRUE)
 	{
 		CString tmpStr(_T("From;Dept. time;Dept. gate;To;Arr. time;Arr. gate;Distance;Carrier;Flight;Codeshares;Equipment;Registration;Aircraft name;Class;Seat;Color;Etix code;Fare;Award miles;Status miles;Flags;Rating;Comments;Flight time;Voucher\n"));
 		tmpStr.Replace(_T(";"), m_Separator);
@@ -33,7 +32,7 @@ BOOL CExcelFile::Open(LPCTSTR lpszFileName)
 	return m_IsOpen;
 }
 
-void CExcelFile::WriteRoute(AIRX_Flight& Flight)
+void CExcelFile::WriteFlight(const AIRX_Flight& Flight)
 {
 	CString tmpStr;
 
@@ -68,6 +67,7 @@ void CExcelFile::Close()
 	if (m_IsOpen)
 	{
 		CStdioFile::Close();
+
 		m_IsOpen = FALSE;
 	}
 }

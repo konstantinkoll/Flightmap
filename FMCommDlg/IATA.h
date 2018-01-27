@@ -16,6 +16,8 @@ struct FMCountry
 	CHAR Name[31];
 };
 
+typedef const FMCountry* LPCCOUNTRY;
+
 struct FMAirport
 {
 	INT CountryID;
@@ -24,5 +26,7 @@ struct FMAirport
 	CHAR Name[44];
 	FMGeoCoordinates Location;
 };
+
+typedef const FMAirport* LPCAIRPORT;
 
 #pragma pack(pop)

@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "FMCommDlg.h"
 #include <dwmapi.h>
+#include <propkey.h>
+#include <propsys.h>
 
 
 // CBackstageWnd
@@ -18,7 +20,11 @@
 HBRUSH hBackgroundTop = NULL;
 HBRUSH hBackgroundBottom = NULL;
 
-const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
+const FMTID AppUserModel = { 0x9F4C2855, 0x9F79, 0x4B39, { 0xA8, 0xD0, 0xE1, 0xD4, 0x2D, 0xE1, 0xD5, 0xF3 } };
+const FMTID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
+
+const PROPERTYKEY AppUserModelID = { AppUserModel, 5 };
+const PROPERTYKEY AppUserModelPreventPinning = { AppUserModel, 9 };
 
 CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	: CFrontstageWnd()
@@ -27,6 +33,7 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	m_WantsBitmap = WantsBitmap;
 
 	hAccelerator = NULL;
+	m_pDropTarget = NULL;
 	m_pSidebarWnd = NULL;
 	m_ShowExpireCaption = FALSE;
 	m_SidebarWidth = m_BottomDivider = m_BackBufferL = m_BackBufferH = m_RegionWidth = m_RegionHeight = 0;
@@ -34,11 +41,12 @@ CBackstageWnd::CBackstageWnd(BOOL IsDialog, BOOL WantsBitmap)
 	m_pTaskbarList3 = NULL;
 }
 
-BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, const CSize& Size, BOOL ShowCaption)
+BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, const CSize& Size, BOOL ShowCaption, CBackstageDropTarget* pDropTarget)
 {
 	m_PlacementPrefix = lpszPlacementPrefix;
 	m_ShowCaption = ShowCaption;
 	m_ShowExpireCaption = FMIsSharewareExpired();
+	m_pDropTarget = pDropTarget;
 
 	// Get size of work area
 	CRect rect;
@@ -84,11 +92,8 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 		else
 			if ((Size.cx>0) && (Size.cy>0))
 			{
-				rect.left = (rect.left+rect.right)/2-Size.cx;
-				rect.right = rect.left+Size.cx;
-
-				rect.top = (rect.top+rect.bottom)/2-Size.cy;
-				rect.bottom = rect.top+Size.cy;
+				rect.right = (rect.left=(rect.left+rect.right)/2-Size.cx)+Size.cx;
+				rect.bottom = (rect.top=(rect.top+rect.bottom)/2-Size.cy)+Size.cy;
 			}
 	}
 
@@ -102,6 +107,9 @@ BOOL CBackstageWnd::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWin
 
 	// Adjust layout
 	AdjustLayout();
+
+	// Show completed window
+	ShowWindow(SW_SHOW);
 
 	return TRUE;
 }
@@ -185,7 +193,7 @@ BOOL CBackstageWnd::PreTranslateMessage(MSG* pMsg)
 
 LRESULT CBackstageWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// Prevent default caption bar from drawn
+	// Prevent default caption bar from being drawn
 	if (message==WM_SETTEXT)
 	{
 		LONG lStyle = GetWindowLong(m_hWnd, GWL_STYLE);
@@ -211,6 +219,35 @@ BOOL CBackstageWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERIN
 	return FMGetApp()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
+void CBackstageWnd::DisableTaskbarPinning(LPCWSTR UserModelID)
+{
+	if (FMGetApp()->m_ShellLibLoaded)
+	{
+		ASSERT(UserModelID);
+
+		IPropertyStore *pPropertyStore;
+		if (SUCCEEDED(FMGetApp()->zGetPropertyStoreForWindow(GetSafeHwnd(), IID_PPV_ARGS(&pPropertyStore))))
+		{
+			// User Model ID
+			PROPVARIANT VariantID;
+			VariantID.vt = VT_BSTR;
+			VariantID.pwszVal = (LPWSTR)UserModelID;
+
+			pPropertyStore->SetValue(AppUserModelID, VariantID);
+
+			// Prevent pinning
+			PROPVARIANT VariantPinning;
+			VariantPinning.vt = VT_BOOL;
+			VariantPinning.boolVal = VARIANT_TRUE;
+
+			pPropertyStore->SetValue(AppUserModelPreventPinning, VariantPinning);
+
+			// Release property store
+			pPropertyStore->Release();
+		}
+	}
+}
+
 void CBackstageWnd::SetSidebar(CBackstageSidebar* pSidebarWnd)
 {
 	ASSERT(pSidebarWnd);
@@ -224,7 +261,7 @@ void CBackstageWnd::GetCaptionButtonMargins(LPSIZE lpSize) const
 	ASSERT(lpSize);
 
 	lpSize->cx = 0;
-	lpSize->cy = BACKSTAGEBORDER-2;
+	lpSize->cy = BACKSTAGEBORDER;
 
 	m_wndWidgets.AddWidgetSize(lpSize);
 
@@ -276,10 +313,17 @@ void CBackstageWnd::AdjustLayout(UINT nFlags)
 	}
 
 	// Widgets
-	CSize Size(0, 0);
-	m_wndWidgets.AddWidgetSize(&Size);
+	if (m_wndWidgets.HasButtons())
+	{
+		CSize Size(0, 0);
+		m_wndWidgets.AddWidgetSize(&Size);
 
-	m_wndWidgets.SetWindowPos(NULL, rectClient.right-Size.cx, -1, Size.cx+1, Size.cy+1, nFlags);
+		m_wndWidgets.SetWindowPos(NULL, rectClient.right-Size.cx, -1, Size.cx+1, Size.cy+1, nFlags | SWP_SHOWWINDOW);
+	}
+	else
+	{
+		m_wndWidgets.ShowWindow(SW_HIDE);
+	}
 
 	// Frontstage
 	AdjustLayout(rectLayout, nFlags);
@@ -540,7 +584,7 @@ void CBackstageWnd::PaintCaption(CPaintDC& pDC, CRect& rect)
 
 		rectText.OffsetRect(0, 1);
 
-		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4840F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x0000FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
+		dc.SetTextColor(Themed ? m_ShowExpireCaption ? 0x4840F0 : IsWindowEnabled() ? 0xDACCC4 : 0x998981 : m_ShowExpireCaption ? 0x2020FF : GetSysColor(IsWindowEnabled() ? COLOR_3DFACE : COLOR_3DSHADOW));
 		dc.DrawText(Caption, rectText, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 		dc.SelectObject(pOldFont);
@@ -673,8 +717,7 @@ BEGIN_MESSAGE_MAP(CBackstageWnd, CFrontstageWnd)
 	ON_WM_WINDOWPOSCHANGED()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
-	ON_WM_RBUTTONUP()
-	ON_WM_INITMENUPOPUP()
+	ON_WM_CONTEXTMENU()
 	ON_REGISTERED_MESSAGE(FMGetApp()->m_TaskbarButtonCreated, OnTaskbarButtonCreated)
 	ON_REGISTERED_MESSAGE(FMGetApp()->m_LicenseActivatedMsg, OnLicenseActivated)
 	ON_REGISTERED_MESSAGE(FMGetApp()->m_SetProgressMsg, OnSetProgress)
@@ -722,8 +765,12 @@ INT CBackstageWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndWidgets.Create(this, (UINT)-1);
 
 	// Message filter
-	if (FMGetApp()->zChangeWindowMessageFilter)
+	if (FMGetApp()->m_UserLibLoaded)
 		FMGetApp()->zChangeWindowMessageFilter(GetSafeHwnd(), FMGetApp()->m_TaskbarButtonCreated, MSGFLT_ADD);
+
+	// Drop target
+	if (m_pDropTarget)
+		m_pDropTarget->Register(this);
 
 	// Finish
 	OnCompositionChanged();
@@ -740,7 +787,7 @@ void CBackstageWnd::OnClose()
 		WindowPlacement.length = sizeof(WindowPlacement);
 
 		if (GetWindowPlacement(&WindowPlacement))
-			FMGetApp()->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
+			FMGetApp()->WriteBinary(m_PlacementPrefix+_T("WindowPlacement"), (LPBYTE)&WindowPlacement, sizeof(WindowPlacement));
 	}
 
 	CFrontstageWnd::OnClose();
@@ -749,6 +796,12 @@ void CBackstageWnd::OnClose()
 void CBackstageWnd::OnDestroy()
 {
 	FMGetApp()->HideTooltip();
+
+	if (m_pDropTarget)
+	{
+		m_pDropTarget->Revoke();
+		delete m_pDropTarget;
+	}
 
 	if (m_pTaskbarList3)
 		m_pTaskbarList3->Release();
@@ -762,15 +815,16 @@ void CBackstageWnd::OnDestroy()
 
 LRESULT CBackstageWnd::OnNcCalcSize(WPARAM wParam, LPARAM lParam)
 {
+	// Valid for !wParam and wParam
 	NCCALCSIZE_PARAMS* lpncsp = (NCCALCSIZE_PARAMS*)lParam;
 
 	if (IsZoomed())
 	{
-		INT cx = GetSystemMetrics(SM_CXFRAME);
+		const INT cx = GetSystemMetrics(SM_CXFRAME);
 		lpncsp->rgrc[0].left += cx;
 		lpncsp->rgrc[0].right -= cx;
 
-		INT cy = GetSystemMetrics(SM_CYFRAME);
+		const INT cy = GetSystemMetrics(SM_CYFRAME);
 		lpncsp->rgrc[0].top += cy;
 		lpncsp->rgrc[0].bottom -= cy;
 	}
@@ -854,13 +908,14 @@ void CBackstageWnd::OnNcPaint()
 {
 	if (!IsCtrlThemed())
 	{
-		CWindowDC pDC(this);
+		CWindowDC dc(this);
 
 		CRect rect;
 		GetWindowRect(rect);
+
 		rect.OffsetRect(-rect.left, -rect.top);
 
-		pDC.Draw3dRect(rect, 0x000000, 0x000000);
+		dc.Draw3dRect(rect, 0x000000, 0x000000);
 	}
 }
 
@@ -941,9 +996,9 @@ void CBackstageWnd::OnCompositionChanged()
 HBRUSH CBackstageWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
-	HBRUSH hBrush = CFrontstageWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+	HBRUSH hBrush = (HBRUSH)CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_EDIT))
+	if ((nCtlColor==CTLCOLOR_STATIC) || (nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_EDIT))
 	{
 		if (hBackgroundBrush)
 		{
@@ -1058,48 +1113,52 @@ void CBackstageWnd::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	}
 }
 
-void CBackstageWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
+void CBackstageWnd::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
+	// Handle click position
+	if ((pWnd!=this) || (pos.x<0) || (pos.y<0))
+		return;
+
+	CPoint posClient(pos);
+	ScreenToClient(&posClient);
+
 	// Do not show context menu on document sheet
-	CRect rectLayout;
-	GetLayoutRect(rectLayout);
-
 	if (HasDocumentSheet())
-		if ((point.x>=rectLayout.left) && (point.y>=rectLayout.top))
+	{
+		CRect rectLayout;
+		GetLayoutRect(rectLayout);
+
+		if ((posClient.x>=rectLayout.left) && (posClient.y>=rectLayout.top))
 			return;
-
-	ClientToScreen(&point);
-
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu)
-	{
-		pSysMenu->EnableMenuItem(SC_MAXIMIZE, MF_BYCOMMAND | (IsZoomed() ? MF_GRAYED : MF_ENABLED));
-		pSysMenu->EnableMenuItem(SC_MINIMIZE, MF_BYCOMMAND | (IsIconic() ? MF_GRAYED : MF_ENABLED));
-		pSysMenu->EnableMenuItem(SC_MOVE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
-		pSysMenu->EnableMenuItem(SC_RESTORE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_ENABLED : MF_GRAYED));
-		pSysMenu->EnableMenuItem(SC_SIZE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
-
-		SendMessage(WM_SYSCOMMAND, (WPARAM)pSysMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this));
 	}
-}
 
-void CBackstageWnd::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
-{
-	ASSERT(pPopupMenu);
+	// Get menu
+	CMenu Menu;
+	BOOL SetDefaultItem = FALSE;
 
-	CCmdUI cmdUI;
-	cmdUI.m_pMenu = cmdUI.m_pParentMenu = pPopupMenu;
-	cmdUI.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+	SetDefaultItem |= GetContextMenu(Menu, ItemAtPosition(posClient));
+	SetDefaultItem |= GetContextMenu(Menu, PtrAtPosition(posClient));
+	SetDefaultItem |= GetContextMenu(Menu, PointAtPosition(posClient));
 
-	ASSERT(!cmdUI.m_pOther);
-	ASSERT(cmdUI.m_pMenu);
-
-	for (cmdUI.m_nIndex=0; cmdUI.m_nIndex<cmdUI.m_nIndexMax; cmdUI.m_nIndex++)
+	if (IsMenu(Menu))
 	{
-		cmdUI.m_nID = pPopupMenu->GetMenuItemID(cmdUI.m_nIndex);
+		TrackPopupMenu(Menu, pos, this, SetDefaultItem);
+	}
+	else
+	{
+		// System menu
+		CMenu* pSystemMenu = GetSystemMenu(FALSE);
 
-		if ((cmdUI.m_nID) && (cmdUI.m_nID!=(UINT)-1))
-			cmdUI.DoUpdate(this, FALSE);
+		if (pSystemMenu)
+		{
+			pSystemMenu->EnableMenuItem(SC_MAXIMIZE, MF_BYCOMMAND | (IsZoomed() ? MF_GRAYED : MF_ENABLED));
+			pSystemMenu->EnableMenuItem(SC_MINIMIZE, MF_BYCOMMAND | (IsIconic() ? MF_GRAYED : MF_ENABLED));
+			pSystemMenu->EnableMenuItem(SC_MOVE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
+			pSystemMenu->EnableMenuItem(SC_RESTORE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_ENABLED : MF_GRAYED));
+			pSystemMenu->EnableMenuItem(SC_SIZE, MF_BYCOMMAND | (IsZoomed() || IsIconic() ? MF_GRAYED : MF_ENABLED));
+
+			SendMessage(WM_SYSCOMMAND, (WPARAM)pSystemMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, pos.x, pos.y, this));
+		}
 	}
 }
 
@@ -1167,10 +1226,10 @@ LRESULT CBackstageWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 BOOL CBackstageWnd::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 {
-	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
+	if (pCopyDataStruct->cbData!=sizeof(CDSWAKEUP))
 		return FALSE;
 
-	CDS_Wakeup* pCDS = (CDS_Wakeup*)pCopyDataStruct->lpData;
+	CDSWAKEUP* pCDS = (CDSWAKEUP*)pCopyDataStruct->lpData;
 	if (pCDS->AppID!=FMGetApp()->m_AppID)
 		return FALSE;
 

@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CGlobeView.h"
 #include "CGoogleEarthFile.h"
-#include "GlobeOptionsDlg.h"
 #include "Flightmap.h"
 #include <math.h>
 
@@ -13,19 +12,19 @@
 // CGlobeView
 //
 
-#define DISTANCENEAR           3.0f
-#define DISTANCEFAR            17.0f
-#define DOLLY                  0.09f
-#define BLENDOUT               0.075f
-#define BLENDIN                0.275f
-#define ARROWSIZE              8
-#define ANIMLENGTH             200
-#define MOVEDELAY              10
-#define MOVEDIVIDER            8.0f
-#define WHITE                  100
+#define DISTANCENEAR     3.0f
+#define DISTANCEFAR      17.0f
+#define DOLLY            0.09f
+#define BLENDOUT         0.075f
+#define BLENDIN          0.275f
+#define ARROWSIZE        8
+#define ANIMLENGTH       200
+#define MOVEDELAY        10
+#define MOVEDIVIDER      8.0f
+#define WHITEHEIGHT      100
 
 CString CGlobeView::m_strFlightCountSingular;
-CString CGlobeView::m_FlightCount_Plural;
+CString CGlobeView::m_strFlightCountPlural;
 
 const GLfloat CGlobeView::m_lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 const GLfloat CGlobeView::m_lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -33,7 +32,7 @@ const GLfloat CGlobeView::m_lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat CGlobeView::m_FogColor[] = { 0.65f, 0.75f, 0.95f, 1.0f };
 
 CGlobeView::CGlobeView()
-	: CFrontstageWnd()
+	: CFrontstageItemView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLESELECTION, sizeof(GlobeItemData), CSize(0, ARROWSIZE))
 {
 	m_RenderContext.pDC = NULL;
 	m_RenderContext.hRC = NULL;
@@ -42,25 +41,22 @@ CGlobeView::CGlobeView()
 	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
 	m_CursorPos.x = m_CursorPos.y = 0;
 
-	m_FocusItem = -1;
-
 	m_nTextureBlueMarble = m_nTextureClouds = m_nTextureLocationIndicator = m_nRouteModel = m_nGlobeModel = m_nHaloModel = 0;
 	m_GlobeRadius = m_Momentum = 0.0f;
-	m_IsSelected = m_Grabbed = FALSE;
-	m_MinRouteCount = m_MaxRouteCount = m_AnimCounter = m_MoveCounter = 0;
+	m_pKitchen = NULL;
+	m_HasRoutes = m_Grabbed = FALSE;
+	m_AnimCounter = m_MoveCounter = 0;
 
 	if (m_strFlightCountSingular.IsEmpty())
+	{
 		ENSURE(m_strFlightCountSingular.LoadString(IDS_FLIGHTCOUNT_SINGULAR));
-
-	if (m_FlightCount_Plural.IsEmpty())
-		ENSURE(m_FlightCount_Plural.LoadString(IDS_FLIGHTCOUNT_PLURAL));
+		ENSURE(m_strFlightCountPlural.LoadString(IDS_FLIGHTCOUNT_PLURAL));
+	}
 }
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_OWNDC, theApp.LoadStandardCursor(IDC_ARROW));
-
-	if (!CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID))
+	if (!CFrontstageItemView::Create(pParentWnd, nID, CRect(0, 0, 0, 0), CS_OWNDC))
 		return FALSE;
 
 	UpdateViewOptions(TRUE);
@@ -68,33 +64,41 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 	return TRUE;
 }
 
-void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
+void CGlobeView::SetFlights(CKitchen* pKitchen)
 {
+	ASSERT(pKitchen);
+
+	const AirportList* pAirportList = pKitchen->GetAirports();
+	const RouteList* pRouteList = pKitchen->GetRoutes();
+
+	m_HasRoutes = (pRouteList->m_ItemCount>0);
+
 	// Reset
-	m_Airports.m_ItemCount = 0;
-	m_DisplayName = pKitchen->m_DisplayName;
+	m_DisplayName = (m_pKitchen=pKitchen)->GetDisplayName();
+
+	SetItemCount(pAirportList->m_ItemCount, FALSE);
 
 	// Airports
-	CFlightAirports::CPair* pPair1 = pKitchen->m_FlightAirports.PGetFirstAssoc();
-	while (pPair1)
+	for (UINT a=0; a<pAirportList->m_ItemCount; a++)
 	{
+		const FlightAirport* pAirport = &((*pAirportList)[a]);
+
 		GlobeItemData Data;
 		ZeroMemory(&Data, sizeof(GlobeItemData));
-		Data.pAirport = pPair1->value.pAirport;
 
-		strcpy_s(Data.NameString, 130, Data.pAirport->Name);
-		const FMCountry* pCountry = FMIATAGetCountry(Data.pAirport->CountryID);
+		strcpy_s(Data.NameString, 130, (Data.lpcAirport=pAirport->lpcAirport)->Name);
+		LPCCOUNTRY pCountry = FMIATAGetCountry(Data.lpcAirport->CountryID);
 		if (pCountry)
 		{
 			strcat_s(Data.NameString, 130, ", ");
 			strcat_s(Data.NameString, 130, pCountry->Name);
 		}
 
-		FMGeoCoordinatesToString(Data.pAirport->Location, Data.CoordString, 32, FALSE);
+		FMGeoCoordinatesToString(Data.lpcAirport->Location, Data.CoordString, 32, FALSE);
 
 		// Calculate world coordinates
-		const DOUBLE LatitudeRad = -theRenderer.DegToRad(Data.pAirport->Location.Latitude);
-		const DOUBLE LongitudeRad = theRenderer.DegToRad(Data.pAirport->Location.Longitude);
+		const DOUBLE LatitudeRad = -theRenderer.DegToRad(Data.lpcAirport->Location.Latitude);
+		const DOUBLE LongitudeRad = theRenderer.DegToRad(Data.lpcAirport->Location.Longitude);
 
 		const DOUBLE D = cos(LatitudeRad);
 
@@ -103,35 +107,13 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 		Data.World[2] = (GLfloat)(cos(LongitudeRad)*D);
 
 		// Other properties
-		UINT Count = 0;
-		pKitchen->m_FlightAirportCounts.Lookup(Data.pAirport->Code, Count);
+		swprintf_s(Data.CountStringLarge, 64, pAirport->FlightCount==1 ? m_strFlightCountSingular : m_strFlightCountPlural, pAirport->FlightCount);
+		swprintf_s(Data.CountStringSmall, 8, L"%u", pAirport->FlightCount);
 
-		CString tmpStr;
-		tmpStr.Format(Count==1 ? m_strFlightCountSingular : m_FlightCount_Plural, Count);
-		wcscpy_s(Data.CountStringLarge, 64, tmpStr.GetBuffer());
-
-		tmpStr.Format(_T("%u"), Count);
-		wcscpy_s(Data.CountStringSmall, 8, tmpStr.GetBuffer());
-
-		m_Airports.AddItem(Data);
-		pPair1 = pKitchen->m_FlightAirports.PGetNextAssoc(pPair1);
+		AddItem(&Data);
 	}
 
-	// Routes
-	m_MinRouteCount = pKitchen->m_MinRouteCount;
-	m_MaxRouteCount = pKitchen->m_MaxRouteCount;
-
-	CFlightRoutes::CPair* pPair2 = pKitchen->m_FlightRoutes.PGetFirstAssoc();
-	while (pPair2)
-	{
-		m_Routes.AddItem(pKitchen->Tesselate(pPair2->value));
-
-		pPair2 = pKitchen->m_FlightRoutes.PGetNextAssoc(pPair2);
-	}
-
-	// Finish
-	if (DeleteKitchen)
-		delete pKitchen;
+	LastItem();
 
 	// Create display list for routes
 	if (!m_RenderContext.hRC)
@@ -145,21 +127,23 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 	glNewList(m_nRouteModel, GL_COMPILE);
 	theRenderer.SetColor(0xFFFFFF);
 
-	for (UINT a=0; a<m_Routes.m_ItemCount; a++)
+	for (UINT a=0; a<pRouteList->m_ItemCount; a++)
 	{
 		glBegin(GL_LINE_STRIP);
-		DOUBLE* pPoints = &m_Routes[a]->Points[0][0];
 
-		for (UINT b=0; b<m_Routes[a]->PointCount; b++)
+		const FlightRoute* pRoute = &((*pRouteList)[a]);
+		const FlightSegments* pSegments = pRoute->pSegments;
+		ASSERT(pSegments);
+
+		for (UINT b=0; b<pSegments->PointCount; b++)
 		{
-			const DOUBLE H = pPoints[2];
-			const DOUBLE D = cos(pPoints[0]);
-			const DOUBLE X = H*sin(pPoints[1])*D;
-			const DOUBLE Y = -H*sin(pPoints[0]);
-			const DOUBLE Z = H*cos(pPoints[1])*D;
+			const DOUBLE H = pSegments->Points[b][2];
+			const DOUBLE D = cos(pSegments->Points[b][0]);
+			const DOUBLE X = H*sin(pSegments->Points[b][1])*D;
+			const DOUBLE Y = -H*sin(pSegments->Points[b][0]);
+			const DOUBLE Z = H*cos(pSegments->Points[b][1])*D;
 
 			glVertex3d(X, Y, Z);
-			pPoints += 3;
 		}
 
 		glEnd();
@@ -170,7 +154,7 @@ void CGlobeView::SetFlights(CKitchen* pKitchen, BOOL DeleteKitchen)
 
 void CGlobeView::UpdateViewOptions(BOOL Force)
 {
-	// Settings
+	// Position
 	if (Force)
 	{
 		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = theApp.m_GlobeLatitude/1000.0f;
@@ -181,7 +165,7 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 	// Textures and halo
 	if (m_RenderContext.hRC)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 
 		theRenderer.MakeCurrent(m_RenderContext);
 
@@ -189,13 +173,15 @@ void CGlobeView::UpdateViewOptions(BOOL Force)
 		theRenderer.CreateTextureClouds(m_nTextureClouds);
 		theRenderer.CreateTextureLocationIndicator(m_nTextureLocationIndicator);
 
+		// Reset halo model for change of background color
 		if (m_nHaloModel)
 		{
 			glDeleteLists(m_nHaloModel, 1);
 			m_nHaloModel = 0;
 		}
 
-		Invalidate();
+		if (!Force)
+			Invalidate();
 	}
 }
 
@@ -204,42 +190,49 @@ INT CGlobeView::ItemAtPosition(CPoint point) const
 	INT Result = -1;
 	GLfloat Alpha = 0.0f;
 
-	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
+	for (INT Index=0; Index<m_ItemCount; Index++)
 	{
-		const GlobeItemData* pData = &m_Airports[a];
+		const GlobeItemData* pData = GetGlobeItemData(Index);
 
-		if ((pData->Alpha>0.75f) || ((pData->Alpha>0.1f) && (pData->Alpha>Alpha-0.05f)))
-			if (PtInRect(&pData->Rect, point))
-			{
-				Alpha = pData->Alpha;
-				Result = (INT)a;
-			}
+		if (pData->Hdr.Valid)
+			if ((pData->Alpha>0.75f) || ((pData->Alpha>0.1f) && (pData->Alpha>Alpha-0.05f)))
+				if (PtInRect(&pData->Hdr.Rect, point))
+				{
+					Alpha = pData->Alpha;
+					Result = Index;
+				}
 	}
 
 	return Result;
 }
 
-void CGlobeView::InvalidateItem(INT Index)
+void CGlobeView::ShowTooltip(const CPoint& point)
 {
-	if ((Index>=0) && (Index<(INT)m_Airports.m_ItemCount))
+	if (m_Momentum==0.0f)
 	{
-		RECT rect = m_Airports[Index].Rect;
-		InflateRect(&rect, 0, ARROWSIZE);
-		InvalidateRect(&rect);
+		const GlobeItemData* pData = GetGlobeItemData(m_HoverItem);
+
+		theApp.ShowTooltip(this, point, pData->lpcAirport, pData->CountStringLarge);
 	}
 }
 
-void CGlobeView::SelectItem(INT Index, BOOL Select)
+void CGlobeView::GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL /*Themed*/) const
 {
-	if ((Index!=m_FocusItem) || (Select!=m_IsSelected))
-	{
-		InvalidateItem(m_FocusItem);
+	ENSURE(strMessage.LoadString(IDS_NORENDERINGCONTEXT));
 
-		m_FocusItem = Index;
-		m_IsSelected = Select;
+	clrMessage = 0x2020FF;
+}
 
-		InvalidateItem(m_FocusItem);
-	}
+BOOL CGlobeView::DrawNothing() const
+{
+	return !m_RenderContext.hRC;
+}
+
+BOOL CGlobeView::GetContextMenu(CMenu& Menu, INT Index)
+{
+	Menu.LoadMenu(Index!=-1 ? IDM_GLOBEWND_ITEM : IDM_GLOBEWND);
+
+	return FALSE;
 }
 
 BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const
@@ -262,60 +255,67 @@ void CGlobeView::UpdateCursor()
 // OpenGL
 //
 
-__forceinline void CGlobeView::CalcAndDrawSpots(const GLfloat ModelView[4][4], const GLfloat Projection[4][4])
+__forceinline void CGlobeView::CalcAndDrawSpots(const GLmatrix& ModelView, const GLmatrix& Projection)
 {
 	GLfloat SizeX = m_RenderContext.Width/2.0f;
 	GLfloat SizeY = m_RenderContext.Height/2.0f;
 
-	GLfloat MVP[4][4];
+	GLmatrix MVP;
 	theRenderer.MatrixMultiplication4f(MVP, ModelView, Projection);
 
-	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
+	for (INT a=0; a<m_ItemCount; a++)
 	{
-		GlobeItemData* pData = &m_Airports[a];
+		GlobeItemData* pData = GetGlobeItemData(a);
 
-		pData->Alpha = 0.0f;
-
-		const GLfloat Z = ModelView[0][2]*pData->World[0] + ModelView[1][2]*pData->World[1] + ModelView[2][2]*pData->World[2];
-		if (Z>BLENDOUT)
+		if (pData->Hdr.Valid)
 		{
-			const GLfloat W = MVP[0][3]*pData->World[0] + MVP[1][3]*pData->World[1] + MVP[2][3]*pData->World[2] + MVP[3][3];
-			const GLfloat X = (MVP[0][0]*pData->World[0] + MVP[1][0]*pData->World[1] + MVP[2][0]*pData->World[2] + MVP[3][0])*SizeX/W + SizeX + 0.5f;
-			const GLfloat Y = -(MVP[0][1]*pData->World[0] + MVP[1][1]*pData->World[1] + MVP[2][1]*pData->World[2] + MVP[3][1])*SizeY/W + SizeY + 0.5f;
+			pData->Alpha = 0.0f;
 
-			pData->ScreenPoint[0] = (INT)X;
-			pData->ScreenPoint[1] = (INT)Y;
-			pData->Alpha = (Z<BLENDIN) ? (GLfloat)((Z-BLENDOUT)/(BLENDIN-BLENDOUT)) : 1.0f;
+			const GLfloat Z = ModelView[0][2]*pData->World[0] + ModelView[1][2]*pData->World[1] + ModelView[2][2]*pData->World[2];
+			if (Z>BLENDOUT)
+			{
+				const GLfloat W = MVP[0][3]*pData->World[0] + MVP[1][3]*pData->World[1] + MVP[2][3]*pData->World[2] + MVP[3][3];
+				const GLfloat X = (MVP[0][0]*pData->World[0] + MVP[1][0]*pData->World[1] + MVP[2][0]*pData->World[2] + MVP[3][0])*SizeX/W + SizeX + 0.5f;
+				const GLfloat Y = -(MVP[0][1]*pData->World[0] + MVP[1][1]*pData->World[1] + MVP[2][1]*pData->World[2] + MVP[3][1])*SizeY/W + SizeY + 0.5f;
 
-			if (theApp.m_GlobeShowSpots)
-				theRenderer.DrawIcon(X, Y, 6.0f+8.0f*pData->Alpha, pData->Alpha);
+				pData->ScreenPoint[0] = (INT)X;
+				pData->ScreenPoint[1] = (INT)Y;
+				pData->Alpha = (Z<BLENDIN) ? (GLfloat)((Z-BLENDOUT)/(BLENDIN-BLENDOUT)) : 1.0f;
+
+				if (theApp.m_GlobeShowLocations)
+					theRenderer.DrawIcon(X, Y, 6.0f+8.0f*pData->Alpha, pData->Alpha);
+			}
 		}
 	}
 }
 
 __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 {
-	if (!(theApp.m_GlobeShowAirportIATA | theApp.m_GlobeShowAirportNames | theApp.m_GlobeShowGPS | theApp.m_GlobeShowMovements))
-		return;
+	const BOOL NoLabel = !(theApp.m_GlobeShowAirportIATA | theApp.m_GlobeShowAirportNames | theApp.m_GlobeShowCoordinates | theApp.m_GlobeShowDescriptions);
 
-	for (UINT a=0; a<m_Airports.m_ItemCount; a++)
+	for (INT a=0; a<m_ItemCount; a++)
 	{
-		GlobeItemData* pData = &m_Airports[a];
+		GlobeItemData* pData = GetGlobeItemData(a);
 
-		if (pData->Alpha>0.0f)
-		{
-			// Beschriftung
-			LPCSTR pCaption = (theApp.m_GlobeShowAirportIATA ? pData->pAirport->Code : theApp.m_GlobeShowAirportNames ? pData->NameString : NULL);
-			LPCSTR pSubcaption = ((theApp.m_GlobeShowAirportIATA && theApp.m_GlobeShowAirportNames) ? pData->NameString : NULL);
-			LPCSTR pCoordinates = (theApp.m_GlobeShowGPS ? pData->CoordString : NULL);
-			LPCWSTR pCount = (theApp.m_GlobeShowMovements ? (theApp.m_GlobeShowAirportNames || theApp.m_GlobeShowGPS) ? pData->CountStringLarge : pData->CountStringSmall : NULL);
+		if (pData->Hdr.Valid && (pData->Alpha>0.0f))
+			if (NoLabel)
+			{
+				ZeroMemory(&pData->Hdr.Rect, sizeof(RECT));
+			}
+			else
+			{
+				// Label text
+				LPCSTR pCaption = (theApp.m_GlobeShowAirportIATA ? pData->lpcAirport->Code : theApp.m_GlobeShowAirportNames ? pData->NameString : NULL);
+				LPCSTR pSubcaption = ((theApp.m_GlobeShowAirportIATA && theApp.m_GlobeShowAirportNames) ? pData->NameString : NULL);
+				LPCSTR pCoordinates = (theApp.m_GlobeShowCoordinates ? pData->CoordString : NULL);
+				LPCWSTR pCount = (theApp.m_GlobeShowDescriptions ? (theApp.m_GlobeShowAirportNames || theApp.m_GlobeShowCoordinates) ? pData->CountStringLarge : pData->CountStringSmall : NULL);
 
-			DrawLabel(pData, pCaption, pSubcaption, pCoordinates, pCount, m_FocusItem==(INT)a, m_HoverItem==(INT)a, Themed);
-		}
+				DrawLabel(pData, pCaption, pSubcaption, pCoordinates, pCount, m_FocusItem==(INT)a, m_HoverItem==(INT)a, Themed);
+			}
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, LPCSTR pSubcaption, LPCSTR pCoordinates, LPCWSTR pDescription, BOOL Focused, BOOL Hot, BOOL Themed)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, LPCSTR pSubcaption, LPCSTR pCoordinates, LPCWSTR pDescription, BOOL Selected, BOOL Hot, BOOL Themed)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -336,10 +336,10 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, 
 	// Position and bounding rectangle
 	INT Top = (pData->ScreenPoint[1]<m_RenderContext.Height/2) ? -1 : 1;
 
-	INT x = pData->Rect.left = pData->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_RenderContext.Width-pData->ScreenPoint[0])/m_RenderContext.Width);
-	INT y = pData->Rect.top = pData->ScreenPoint[1]+(ARROWSIZE-2)*Top-(Top<0 ? (INT)Height : 0);
-	pData->Rect.right = x+Width;
-	pData->Rect.bottom = y+Height;
+	INT x = pData->Hdr.Rect.left = pData->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_RenderContext.Width-pData->ScreenPoint[0])/m_RenderContext.Width);
+	INT y = pData->Hdr.Rect.top = pData->ScreenPoint[1]+(ARROWSIZE-2)*Top-(Top<0 ? (INT)Height : 0);
+	pData->Hdr.Rect.right = x+Width;
+	pData->Hdr.Rect.bottom = y+Height;
 
 	// Visible?
 	if ((x+Width+6<0) || (x-1>m_RenderContext.Width) || (y+Height+ARROWSIZE+6<0) || (y-ARROWSIZE-6>m_RenderContext.Height))
@@ -350,10 +350,10 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, 
 
 	// Colors
 	GLcolor BorderColor;
-	theRenderer.ColorRef2GLColor(BorderColor, Themed ? Focused ? 0xE08010 : Hot ? 0xF0C08A : 0xD5D1D0 : GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_3DSHADOW));
+	theRenderer.ColorRef2GLColor(BorderColor, Themed ? Selected ? 0xE08010 : Hot ? 0xF0C08A : 0xD5D1D0 : GetSysColor(Selected ? COLOR_HIGHLIGHT : COLOR_3DSHADOW));
 
 	GLcolor BackgroundColor;
-	theRenderer.ColorRef2GLColor(BackgroundColor, Themed ? 0xFFFFFF : GetSysColor(Focused ? COLOR_HIGHLIGHT : COLOR_WINDOW));
+	theRenderer.ColorRef2GLColor(BackgroundColor, Themed ? 0xFFFFFF : GetSysColor(Selected ? COLOR_HIGHLIGHT : COLOR_WINDOW));
 
 	// Shadow
 	if (Themed)
@@ -370,19 +370,19 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, 
 	}
 
 	// Inner
-	if (Themed && (Hot | Focused))
+	if (Themed && (Hot | Selected))
 	{
 		glBegin(GL_QUADS);
-		theRenderer.SetColor(*(Focused ? &m_TopColorSelected : &m_TopColorHot), pData->Alpha);
+		theRenderer.SetColor(*(Selected ? &m_TopColorSelected : &m_TopColorHot), pData->Alpha);
 		glVertex2i(x+1, y+1);
 		glVertex2i(x+Width-1, y+1);
 
-		theRenderer.SetColor(*(Focused ? &m_BottomColorSelected : &m_BottomColorHot), pData->Alpha);
+		theRenderer.SetColor(*(Selected ? &m_BottomColorSelected : &m_BottomColorHot), pData->Alpha);
 		glVertex2i(x+Width-1, y+Height-1);
 		glVertex2i(x+1, y+Height-1);
 		glEnd();
 
-		glColor4f(1.0f, 1.0f, 1.0f, (((Hot && !Focused) ? 0x60 : 0x48)*pData->Alpha)/255.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, (((Hot && !Selected) ? 0x60 : 0x48)*pData->Alpha)/255.0f);
 
 		glBegin(GL_LINE_LOOP);
 		glVertex2i(x+1, y+1);
@@ -391,7 +391,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, 
 		glVertex2i(x+1, y+Height-2);
 		glEnd();
 
-		theRenderer.SetColor(*(Top>0 ? Focused ? &m_TopColorSelected : &m_TopColorHot : Focused ? &m_BottomColorSelected : &m_BottomColorHot), pData->Alpha);
+		theRenderer.SetColor(*(Top>0 ? Selected ? &m_TopColorSelected : &m_TopColorHot : Selected ? &m_BottomColorSelected : &m_BottomColorHot), pData->Alpha);
 	}
 	else
 	{
@@ -482,12 +482,12 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, 
 	y += 3;
 
 	// Caption
-	m_Fonts[1].Begin(*(Focused ? &m_SelectedColor : &m_CaptionColor), pData->Alpha);
+	m_Fonts[1].Begin(*(Selected ? &m_SelectedColor : &m_CaptionColor), pData->Alpha);
 	y += m_Fonts[1].Render(pCaption, x, y);
 	m_Fonts[1].End();
 
 	// Hints
-	m_Fonts[0].Begin(*(Focused ? &m_SelectedColor : &m_TextColor), pData->Alpha);
+	m_Fonts[0].Begin(*(Selected ? &m_SelectedColor : &m_TextColor), pData->Alpha);
 
 	if (pSubcaption)
 		y += m_Fonts[0].Render(pSubcaption, x, y);
@@ -498,7 +498,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* pData, LPCSTR pCaption, 
 	// Description
 	if (pDescription)
 	{
-		if (!Focused)
+		if (!Selected)
 			m_Fonts[0].SetColor(m_AttrColor, pData->Alpha);
 
 		y += m_Fonts[0].Render(pDescription, x, y);
@@ -590,13 +590,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	if (Result)
 	{
 		if (!m_Grabbed)
-		{
-			CPoint point;
-			GetCursorPos(&point);
-			ScreenToClient(&point);
-
-			OnMouseMove(0, point);
-		}
+			UpdateHoverItem();
 
 		Invalidate();
 	}
@@ -604,8 +598,10 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	return Result;
 }
 
-__forceinline void CGlobeView::RenderScene(BOOL Themed)
+__forceinline void CGlobeView::RenderScene()
 {
+	const BOOL Themed = IsCtrlThemed();
+
 	theRenderer.BeginRender(this, m_RenderContext);
 
 	//Clear background
@@ -614,7 +610,7 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	theRenderer.ColorRef2GLColor(BackColor, theApp.m_GlobeDarkBackground ? Themed ? 0x141312 : 0x181818 : Themed ? 0xF8F5F4 : GetSysColor(COLOR_WINDOW));
 
 	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
-	glClearDepth(DISTANCEFAR+25.0);
+	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// White top gradient
@@ -624,8 +620,8 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 		glBegin(GL_QUADS);
 
 		theRenderer.SetColor(BackColor);
-		glVertex2i(0, WHITE-1);
-		glVertex2i(m_RenderContext.Width, WHITE-1);
+		glVertex2i(0, WHITEHEIGHT-1);
+		glVertex2i(m_RenderContext.Width, WHITEHEIGHT-1);
 
 		glColor3f(1.0, 1.0, 1.0);
 		glVertex2i(m_RenderContext.Width, 0);
@@ -722,8 +718,8 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	glRotatef(m_GlobeCurrent.Longitude+90.0f, 0.0f, 1.0f, 0.0f);
 
 	// Store matrices for later
-	GLfloat MatrixModelView[4][4];
-	GLfloat MatrixProjection[4][4];
+	GLmatrix MatrixModelView;
+	GLmatrix MatrixProjection;
 	glGetFloatv(GL_MODELVIEW_MATRIX, &MatrixModelView[0][0]);
 	glGetFloatv(GL_PROJECTION_MATRIX, &MatrixProjection[0][0]);
 
@@ -855,7 +851,7 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	theRenderer.Project2D();
 
 	// Draw locations
-	if (m_Airports.m_ItemCount)
+	if (m_ItemCount)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, m_nTextureLocationIndicator);
@@ -869,7 +865,7 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	}
 
 	// Draw routes
-	if (m_Routes.m_ItemCount)
+	if (m_HasRoutes)
 	{
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(&MatrixProjection[0][0]);
@@ -899,7 +895,7 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	}
 
 	// Draw label
-	if (m_Airports.m_ItemCount)
+	if (m_ItemCount)
 		CalcAndDrawLabel(Themed);
 
 	// Taskbar shadow
@@ -915,14 +911,8 @@ __forceinline void CGlobeView::RenderScene(BOOL Themed)
 	theRenderer.EndRender(this, m_RenderContext, Themed);
 }
 
-void CGlobeView::ShowTooltip(const CPoint& point)
-{
-	if (m_Momentum==0.0f)
-		theApp.ShowTooltip(this, point, m_Airports[m_HoverItem].pAirport, m_Airports[m_HoverItem].CountStringLarge);
-}
 
-
-BEGIN_MESSAGE_MAP(CGlobeView, CFrontstageWnd)
+BEGIN_MESSAGE_MAP(CGlobeView, CFrontstageItemView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_PAINT()
@@ -931,26 +921,29 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFrontstageWnd)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
-	ON_WM_RBUTTONDOWN()
-	ON_WM_RBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_TIMER()
 	ON_WM_CONTEXTMENU()
 
 	ON_COMMAND(IDM_GLOBEWND_JUMPTOLOCATION, OnJumpToLocation)
+	ON_COMMAND(IDM_GLOBEWND_SHOWLOCATIONS, OnShowLocations)
+	ON_COMMAND(IDM_GLOBEWND_SHOWAIRPORTIATA, OnShowAirportIATA)
+	ON_COMMAND(IDM_GLOBEWND_SHOWAIRPORTNAMES, OnShowAirportNames)
+	ON_COMMAND(IDM_GLOBEWND_SHOWCOORDINATES, OnShowCoordinates)
+	ON_COMMAND(IDM_GLOBEWND_SHOWDESCRIPTIONS, OnShowDescriptions)
+	ON_COMMAND(IDM_GLOBEWND_DARKBACKGROUND, OnDarkBackground)
 	ON_COMMAND(IDM_GLOBEWND_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBEWND_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBEWND_AUTOSIZE, OnAutosize)
 	ON_COMMAND(IDM_GLOBEWND_SAVEAS, OnSaveAs)
 	ON_COMMAND(IDM_GLOBEWND_GOOGLEEARTH, OnGoogleEarth)
 	ON_COMMAND(IDM_GLOBEWND_LIQUIDFOLDERS, OnLiquidFolders)
-	ON_COMMAND(IDM_GLOBEWND_SETTINGS, OnSettings)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBEWND_JUMPTOLOCATION, IDM_GLOBEWND_LIQUIDFOLDERS, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrontstageWnd::OnCreate(lpCreateStruct)==-1)
+	if (CFrontstageItemView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	if (!theRenderer.Initialize())
@@ -975,6 +968,9 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CGlobeView::OnDestroy()
 {
+	// Kitchen
+	delete m_pKitchen;
+
 	// OpenGL
 	if (m_RenderContext.hRC)
 	{
@@ -1000,55 +996,20 @@ void CGlobeView::OnDestroy()
 	theApp.m_GlobeLongitude = (INT)(m_GlobeTarget.Longitude*1000.0f);
 	theApp.m_GlobeZoom = m_GlobeTarget.Zoom;
 
-	CFrontstageWnd::OnDestroy();
+	CFrontstageItemView::OnDestroy();
 }
 
 void CGlobeView::OnPaint()
 {
-	CPaintDC pDC(this);
-
-	const BOOL Themed = IsCtrlThemed();
-
 	if (m_RenderContext.hRC)
 	{
-		RenderScene(Themed);
+		CPaintDC pDC(this);
+
+		RenderScene();
 	}
 	else
 	{
-		CRect rect;
-		GetClientRect(rect);
-
-		CDC dc;
-		dc.CreateCompatibleDC(&pDC);
-		dc.SetBkMode(TRANSPARENT);
-
-		CBitmap MemBitmap;
-		MemBitmap.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-		CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
-
-		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-
-		CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-
-		CRect rectText(rect);
-		rectText.top += 6;
-
-		dc.SetTextColor(0x0000FF);
-		dc.DrawText(CString((LPCSTR)IDS_NORENDERINGCONTEXT), rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-
-		DrawWindowEdge(dc, Themed);
-
-		if (Themed)
-		{
-			Graphics g(dc);
-
-			CTaskbar::DrawTaskbarShadow(g, rect);
-		}
-
-		pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-		dc.SelectObject(pOldFont);
-		dc.SelectObject(pOldBitmap);
+		CFrontstageItemView::OnPaint();
 	}
 }
 
@@ -1061,7 +1022,7 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/
 
 void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CFrontstageWnd::OnMouseMove(nFlags, m_CursorPos=point);
+	CFrontstageItemView::OnMouseMove(nFlags, m_CursorPos=point);
 
 	if (m_Grabbed)
 	{
@@ -1085,6 +1046,8 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, SHORT zDelta, CPoint /*pt*/)
 {
+	HideTooltip();
+
 	if (zDelta<0)
 	{
 		OnZoomOut();
@@ -1125,11 +1088,11 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		SelectItem(Index, (nFlags & MK_CONTROL) && (m_FocusItem==Index) && m_IsSelected ? !m_IsSelected : TRUE);
+		CFrontstageItemView::OnLButtonDown(nFlags, point);
 	}
 }
 
-void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_Grabbed)
 	{
@@ -1143,46 +1106,14 @@ void CGlobeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	}
 	else
 	{
-		const INT Index = ItemAtPosition(point);
-		if (Index!=-1)
-		{
-			if (GetFocus()!=this)
-				SetFocus();
-		}
-		else
-		{
-			SelectItem(-1, FALSE);
-		}
+		CFrontstageItemView::OnLButtonUp(nFlags, point);
 	}
 }
 
-void CGlobeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
+void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	const INT Index = ItemAtPosition(point);
-	if (Index!=-1)
-	{
-		SelectItem(Index, TRUE);
-	}
-	else
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-	}
-}
+	CFrontstageItemView::OnKeyDown(nChar, nRepCnt, nFlags);
 
-void CGlobeView::OnRButtonUp(UINT nFlags, CPoint point)
-{
-	const INT Index = ItemAtPosition(point);
-	if ((Index!=-1) && (GetFocus()!=this))
-		SetFocus();
-
-	SelectItem(Index, Index!=-1);
-
-	CFrontstageWnd::OnRButtonUp(nFlags, point);
-}
-
-void CGlobeView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
-{
 	switch (nChar)
 	{
 	case VK_ADD:
@@ -1217,35 +1148,18 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 	if (m_MoveCounter<1000)
 		m_MoveCounter++;
 
-	CFrontstageWnd::OnTimer(nIDEvent);
+	CFrontstageItemView::OnTimer(nIDEvent);
 
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
-void CGlobeView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+void CGlobeView::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
 	m_Momentum = 0.0f;
 
-	if ((pos.x<0) || (pos.y<0))
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		pos.x = (rect.left+rect.right)/2;
-		pos.y = (rect.top+rect.bottom)/2;
-		ClientToScreen(&pos);
-	}
-
-	CMenu Menu;
-	Menu.LoadMenu(((m_FocusItem!=-1) && m_IsSelected) ? IDM_GLOBEWND_ITEM : IDM_GLOBEWND);
-	ASSERT_VALID(&Menu);
-
-	CMenu* pPopup = Menu.GetSubMenu(0);
-	ASSERT_VALID(pPopup);
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
+	CFrontstageItemView::OnContextMenu(pWnd, pos);
 }
 
 
@@ -1267,13 +1181,54 @@ void CGlobeView::OnJumpToLocation()
 	}
 }
 
+void CGlobeView::OnShowLocations()
+{
+	theApp.m_GlobeShowLocations = !theApp.m_GlobeShowLocations;
+
+	theApp.Broadcast(WM_3DSETTINGSCHANGED);
+}
+
+void CGlobeView::OnShowAirportIATA()
+{
+	theApp.m_GlobeShowAirportIATA = !theApp.m_GlobeShowAirportIATA;
+
+	theApp.Broadcast(WM_3DSETTINGSCHANGED);
+}
+
+void CGlobeView::OnShowAirportNames()
+{
+	theApp.m_GlobeShowAirportNames = !theApp.m_GlobeShowAirportNames;
+
+	theApp.Broadcast(WM_3DSETTINGSCHANGED);
+}
+
+void CGlobeView::OnShowCoordinates()
+{
+	theApp.m_GlobeShowCoordinates = !theApp.m_GlobeShowCoordinates;
+
+	theApp.Broadcast(WM_3DSETTINGSCHANGED);
+}
+
+void CGlobeView::OnShowDescriptions()
+{
+	theApp.m_GlobeShowDescriptions = !theApp.m_GlobeShowDescriptions;
+
+	theApp.Broadcast(WM_3DSETTINGSCHANGED);
+}
+
+void CGlobeView::OnDarkBackground()
+{
+	theApp.m_GlobeDarkBackground = !theApp.m_GlobeDarkBackground;
+
+	theApp.Broadcast(WM_3DSETTINGSCHANGED);
+}
+
 void CGlobeView::OnZoomIn()
 {
 	if (m_GlobeTarget.Zoom>0)
 	{
 		m_GlobeTarget.Zoom -= 100;
 
-		HideTooltip();
 		UpdateScene();
 	}
 }
@@ -1284,7 +1239,6 @@ void CGlobeView::OnZoomOut()
 	{
 		m_GlobeTarget.Zoom += 100;
 
-		HideTooltip();
 		UpdateScene();
 	}
 }
@@ -1304,9 +1258,9 @@ void CGlobeView::OnSaveAs()
 	CFileDialog dlg(FALSE, _T("kml"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		CGoogleEarthFile f;
+		CGoogleEarthFile File;
 
-		if (!f.Open(dlg.GetPathName(), m_DisplayName))
+		if (!File.Open(dlg.GetPathName(), m_DisplayName))
 		{
 			FMErrorBox(this, IDS_DRIVENOTREADY);
 		}
@@ -1314,39 +1268,31 @@ void CGlobeView::OnSaveAs()
 		{
 			try
 			{
-				for (UINT a=0; a<m_Routes.m_ItemCount; a++)
-					f.WriteRoute(m_Routes[a], m_MinRouteCount, m_MaxRouteCount, theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClampHeight, FALSE);
-
-				for (UINT a=0; a<m_Airports.m_ItemCount; a++)
-					f.WriteAirport(m_Airports[a].pAirport);
-
-				f.Close();
+				File.WriteRoutes(m_pKitchen, theApp.m_GoogleEarthUseCount, theApp.m_GoogleEarthUseColors, theApp.m_GoogleEarthClampHeight);
+				File.WriteAirports(m_pKitchen);
 			}
 			catch(CFileException ex)
 			{
-				f.Close();
 				FMErrorBox(this, IDS_DRIVENOTREADY);
 			}
+
+			File.Close();
 		}
 	}
 }
 
 void CGlobeView::OnGoogleEarth()
 {
-	if ((m_FocusItem!=-1) && (m_IsSelected))
-		theApp.OpenAirportGoogleEarth(m_Airports[m_FocusItem].pAirport);
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+		theApp.OpenAirportGoogleEarth(GetGlobeItemData(Index)->lpcAirport);
 }
 
 void CGlobeView::OnLiquidFolders()
 {
-	if ((m_FocusItem!=-1) && (m_IsSelected))
-		theApp.OpenAirportLiquidFolders(m_Airports[m_FocusItem].pAirport->Code);
-}
-
-void CGlobeView::OnSettings()
-{
-	GlobeOptionsDlg dlg(this);
-	dlg.DoModal();
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+		theApp.OpenAirportLiquidFolders(GetGlobeItemData(Index)->lpcAirport->Code);
 }
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -1355,6 +1301,30 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_GLOBEWND_SHOWLOCATIONS:
+		pCmdUI->SetCheck(theApp.m_GlobeShowLocations);
+		break;
+
+	case IDM_GLOBEWND_SHOWAIRPORTIATA:
+		pCmdUI->SetCheck(theApp.m_GlobeShowAirportIATA);
+		break;
+
+	case IDM_GLOBEWND_SHOWAIRPORTNAMES:
+		pCmdUI->SetCheck(theApp.m_GlobeShowAirportNames);
+		break;
+
+	case IDM_GLOBEWND_SHOWCOORDINATES:
+		pCmdUI->SetCheck(theApp.m_GlobeShowCoordinates);
+		break;
+
+	case IDM_GLOBEWND_SHOWDESCRIPTIONS:
+		pCmdUI->SetCheck(theApp.m_GlobeShowDescriptions);
+		break;
+
+	case IDM_GLOBEWND_DARKBACKGROUND:
+		pCmdUI->SetCheck(theApp.m_GlobeDarkBackground);
+		break;
+
 	case IDM_GLOBEWND_ZOOMIN:
 		bEnable &= m_GlobeTarget.Zoom>0;
 		break;
@@ -1367,20 +1337,16 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		bEnable &= m_GlobeTarget.Zoom!=600;
 		break;
 
-	case IDM_GLOBEWND_SETTINGS:
-		bEnable = TRUE;
-		break;
-
 	case IDM_GLOBEWND_SAVEAS:
-		bEnable = m_Routes.m_ItemCount>0;
+		bEnable = m_HasRoutes;
 		break;
 
 	case IDM_GLOBEWND_GOOGLEEARTH:
-		bEnable = (m_FocusItem!=-1) && (m_IsSelected) && (theApp.m_PathGoogleEarth[0]!=L'\0');
+		bEnable = (GetSelectedItem()!=-1) && (theApp.m_PathGoogleEarth[0]!=L'\0');
 		break;
 
 	case IDM_GLOBEWND_LIQUIDFOLDERS:
-		bEnable = (m_FocusItem!=-1) && (m_IsSelected) && (!theApp.m_PathLiquidFolders.IsEmpty());
+		bEnable = (GetSelectedItem()!=-1) && !theApp.m_PathLiquidFolders.IsEmpty();
 		break;
 	}
 

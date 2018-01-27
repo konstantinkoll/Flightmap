@@ -7,7 +7,7 @@
 #include "StatisticsDlg.h"
 
 
-struct SortParameters
+struct SParameters
 {
 	CListCtrl* pList;
 	INT Column;
@@ -16,19 +16,19 @@ struct SortParameters
 
 INT CALLBACK SortFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
-	SortParameters* pSortParameters = (SortParameters*)lParamSort;
+	SParameters* pSParameters = (SParameters*)lParamSort;
 
-	CString item1= pSortParameters->pList->GetItemText((INT)lParam1, pSortParameters->Column);
-	CString item2= pSortParameters->pList->GetItemText((INT)lParam2, pSortParameters->Column);
+	CString item1= pSParameters->pList->GetItemText((INT)lParam1, pSParameters->Column);
+	CString item2= pSParameters->pList->GetItemText((INT)lParam2, pSParameters->Column);
 
-	if (pSortParameters->ConvertToNumber)
+	if (pSParameters->ConvertToNumber)
 	{
 		LONG i1;
-		if (swscanf_s(item1.GetBuffer(), _T("%i"), &i1)<1)
+		if (swscanf_s(item1, _T("%i"), &i1)<1)
 			return 0;
 
 		LONG i2;
-		if (swscanf_s(item2.GetBuffer(), _T("%i"), &i2)<1)
+		if (swscanf_s(item2, _T("%i"), &i2)<1)
 			return 0;
 
 		return i2-i1;
@@ -84,6 +84,112 @@ __forceinline void Finish(CListCtrl& wndList, INT Count)
 }
 
 
+// CClassesList
+//
+
+#define CLASSESCOUNT     10
+
+CString CClassesList::m_MaskFlightsSingular;
+CString CClassesList::m_MaskFlightsPlural;
+CString CClassesList::m_Names[6];
+CIcons CClassesList::m_SeatIcons;
+
+CClassesList::CClassesList()
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING, sizeof(ClassItemData))
+{
+	WNDCLASS wndcls;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.hCursor = theApp.LoadStandardCursor(IDC_ARROW);
+	wndcls.lpszClassName = L"CClassesList";
+
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CClassesList", &wndcls)))
+	{
+		wndcls.hInstance = AfxGetInstanceHandle();
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+
+	// Strings
+	if (m_MaskFlightsSingular.IsEmpty())
+	{
+		ENSURE(m_MaskFlightsSingular.LoadString(IDS_FLIGHTS_SINGULAR));
+		ENSURE(m_MaskFlightsPlural.LoadString(IDS_FLIGHTS_PLURAL));
+
+		for (UINT a=0; a<6; a++)
+			ENSURE(m_Names[a].LoadString(IDS_CLASS_F+a));
+	}
+
+	// Icons
+	m_SeatIcons.Load(IDB_CLASSICONS, 64);
+
+	// Item
+	SetItemHeight(m_SeatIcons, 3);
+
+	// Categories
+	AddItemCategory(CString((LPCSTR)IDS_REVENUEFLIGHTS));
+	AddItemCategory(CString((LPCSTR)IDS_NONREVFLIGHTS));
+}
+
+void CClassesList::AddClass(UINT nID, UINT Flights, DOUBLE Distance)
+{
+	ClassItemData Data;
+
+	Data.DisplayName = m_Names[Data.iIcon=nID%6];
+	Data.Flights = Flights;
+	Data.Distance = Distance;
+	Data.Category = nID<5 ? 0 : 1;
+
+	AddItem(&Data);
+}
+
+void CClassesList::SetClasses(UINT* pFlights, DOUBLE* pDistances)
+{
+	ASSERT(pFlights);
+	ASSERT(pDistances);
+
+	// Add Files
+	SetItemCount(CLASSESCOUNT, FALSE);
+
+	for (UINT a=0; a<CLASSESCOUNT; a++)
+#ifndef _DEBUG
+		if (pFlights[a])
+#endif
+		AddClass(a, pFlights[a], pDistances[a]);
+
+	LastItem();
+
+	AdjustLayout();
+}
+
+void CClassesList::AdjustLayout()
+{
+	AdjustLayoutColumns();
+}
+
+INT CClassesList::GetItemCategory(INT Index) const
+{
+	return GetClassItemData(Index)->Category;
+}
+
+void CClassesList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+{
+	const ClassItemData* pData = GetClassItemData(Index);
+
+	CString tmpStr;
+	tmpStr.Format(pData->Flights==1 ? m_MaskFlightsSingular : m_MaskFlightsPlural, pData->Flights);
+
+	WCHAR Distance[256];
+	DistanceToString(Distance, 256, pData->Distance);
+
+	DrawTile(dc, rectItem, m_SeatIcons, pData->iIcon,
+		GetDarkTextColor(dc, Index, Themed), 3,
+		pData->DisplayName, tmpStr, Distance);
+}
+
+
 // StatisticsDlg
 //
 
@@ -123,7 +229,7 @@ void StatisticsDlg::UpdateStatistics()
 {
 	ASSERT(p_Itinerary);
 
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	// Reset
 	UINT FlightCount = 0;
@@ -145,7 +251,7 @@ void StatisticsDlg::UpdateStatistics()
 	m_wndFilterAirport.GetWindowText(tmpStr);
 
 	CHAR FilterAirport[4];
-	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, FilterAirport, 4, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, FilterAirport, 4, NULL, NULL);
 
 	CString FilterCarrier;
 	m_wndFilterCarrier.GetWindowText(FilterCarrier);
@@ -180,21 +286,17 @@ void StatisticsDlg::UpdateStatistics()
 			if ((strcmp(FilterAirport, pFlight->From.Code)!=0) && (strcmp(FilterAirport, pFlight->To.Code)!=0))
 				continue;
 
-		if (!FilterCarrier.IsEmpty())
-			if (wcscmp(FilterCarrier, pFlight->Carrier)!=0)
-				continue;
+		if (!FilterCarrier.IsEmpty() && (wcscmp(FilterCarrier, pFlight->Carrier)!=0))
+			continue;
 
-		if (!FilterEquipment.IsEmpty())
-			if (wcscmp(FilterEquipment, pFlight->Equipment)!=0)
-				continue;
+		if (!FilterEquipment.IsEmpty() && (wcscmp(FilterEquipment, pFlight->Equipment)!=0))
+			continue;
 
-		if (FilterBusiness)
-			if ((pFlight->Flags & AIRX_BusinessTrip)==0)
-				continue;
+		if (FilterBusiness && ((pFlight->Flags & AIRX_BusinessTrip)==0))
+			continue;
 
-		if (FilterLeisure)
-			if ((pFlight->Flags & AIRX_LeisureTrip)==0)
-				continue;
+		if (FilterLeisure && ((pFlight->Flags & AIRX_LeisureTrip)==0))
+			continue;
 
 		if (pFlight->Flags>>28<FilterRating)
 			continue;
@@ -234,21 +336,27 @@ void StatisticsDlg::UpdateStatistics()
 		case AIRX_First:
 			Class = IsAwardFlight ? 6 : 0;
 			break;
+
 		case AIRX_Business:
 			Class = IsAwardFlight ? 7 : 1;
 			break;
+
 		case AIRX_PremiumEconomy:
 			Class = theApp.m_StatisticsMergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 8 : 2;
 			break;
+
 		case AIRX_Economy:
 			Class = IsAwardFlight ? 9 : 3;
 			break;
+
 		case AIRX_Charter:
 			Class = theApp.m_StatisticsMergeClasses ? IsAwardFlight ? 9 : 3 : IsAwardFlight ? 9 : 4;
 			break;
+
 		case AIRX_Crew:
 			Class = 5;
 			break;
+
 		default:
 			Class = -1;
 		}
@@ -256,6 +364,7 @@ void StatisticsDlg::UpdateStatistics()
 		if (Class>=0)
 		{
 			FlightsByClass[Class]++;
+
 			if (pFlight->Flags & AIRX_DistanceValid)
 				DistanceNMByClass[Class] += pFlight->DistanceNM;
 		}
@@ -270,15 +379,15 @@ void StatisticsDlg::UpdateStatistics()
 
 		if (theApp.m_StatisticsMergeMetro)
 		{
-			FMAirport* pAirport;
+			LPCAIRPORT lpcAirport;
 
-			if (FMIATAGetAirportByCode(From, pAirport))
-				if ((pAirport->MetroCode[0]!='\0') && (strcmp(pAirport->Code, pAirport->MetroCode)!=0))
-					strcpy_s(From, 4, pAirport->MetroCode);
+			if (FMIATAGetAirportByCode(From, lpcAirport))
+				if ((lpcAirport->MetroCode[0]!='\0') && (strcmp(lpcAirport->Code, lpcAirport->MetroCode)!=0))
+					strcpy_s(From, 4, lpcAirport->MetroCode);
 
-			if (FMIATAGetAirportByCode(To, pAirport))
-				if ((pAirport->MetroCode[0]!='\0') && (strcmp(pAirport->Code, pAirport->MetroCode)!=0))
-					strcpy_s(To, 4, pAirport->MetroCode);
+			if (FMIATAGetAirportByCode(To, lpcAirport))
+				if ((lpcAirport->MetroCode[0]!='\0') && (strcmp(lpcAirport->Code, lpcAirport->MetroCode)!=0))
+					strcpy_s(To, 4, lpcAirport->MetroCode);
 		}
 
 		if ((strlen(From)==3) && (strlen(To)==3))
@@ -311,10 +420,7 @@ void StatisticsDlg::UpdateStatistics()
 	}
 
 	// Display
-	CString MaskFlightsSingular((LPCSTR)IDS_FLIGHTS_SINGULAR);
-	CString MaskFlightsPlural((LPCSTR)IDS_FLIGHTS_PLURAL);
-
-	tmpStr.Format(FlightCount==1 ? MaskFlightsSingular : MaskFlightsPlural, FlightCount);
+	tmpStr.Format(FlightCount==1 ? IDS_FLIGHTS_SINGULAR :IDS_FLIGHTS_PLURAL, FlightCount);
 	GetDlgItem(IDC_FLIGHTCOUNT)->SetWindowText(tmpStr);
 
 	WCHAR tmpBuf[256];
@@ -333,46 +439,20 @@ void StatisticsDlg::UpdateStatistics()
 	swprintf_s(tmpBuf, 256, L"%lu", Spent);
 	GetDlgItem(IDC_TOTALMONEYSPENT)->SetWindowText(Spent ? tmpBuf : L"—");
 
-	MilesToString(tmpStr, Miles[0][0], Miles[0][1]);
-	GetDlgItem(IDC_TOTALMILESEARNED)->SetWindowText(tmpStr);
+	MilesToString(tmpBuf, 256, Miles[0][0], Miles[0][1]);
+	GetDlgItem(IDC_TOTALMILESEARNED)->SetWindowText(tmpBuf);
 
-	MilesToString(tmpStr, Miles[1][0], Miles[1][1]);
-	GetDlgItem(IDC_TOTALMILESSPENT)->SetWindowText(tmpStr);
+	MilesToString(tmpBuf, 256, Miles[1][0], Miles[1][1]);
+	GetDlgItem(IDC_TOTALMILESSPENT)->SetWindowText(tmpBuf);
 
-	m_wndListClass.DeleteAllItems();
-
-	UINT Columns1[1] = { 1 };
-	UINT Columns2[2] = { 1, 2 };
-	LVITEM Item;
-	ZeroMemory(&Item, sizeof(Item));
-	Item.mask = LVIF_TEXT | LVIF_GROUPID | LVIF_IMAGE | LVIF_COLUMNS;
-	Item.cColumns = 2;
-	Item.puColumns = Columns2;
-
-	for (UINT a=0; a<10; a++)
-#ifndef _DEBUG
-		if (FlightsByClass[a])
-#endif
-		{
-			ENSURE(tmpStr.LoadString(IDS_CLASS_F+a%6));
-
-			Item.pszText = tmpStr.GetBuffer();
-			Item.iGroupId = a<5 ? 0 : 1;
-			Item.iImage = a%6;
-
-			const INT Index = m_wndListClass.InsertItem(&Item);
-
-			tmpStr.Format(FlightsByClass[a]==1 ? MaskFlightsSingular : MaskFlightsPlural, FlightsByClass[a]);
-			m_wndListClass.SetItemText(Index, 1, tmpStr);
-
-			DistanceToString(tmpBuf, 256, DistanceNMByClass[a]);
-			m_wndListClass.SetItemText(Index, 2, tmpBuf);
-		}
-
-	m_wndListClass.SetItemsPerRow(1);
+	m_wndListClass.SetClasses(FlightsByClass, DistanceNMByClass);
 
 	// Routes
 	Start(m_wndListRoute);
+
+	LVITEM Item;
+	UINT Columns1[1] = { 1 };
+	UINT Columns2[2] = { 1, 2 };
 
 	ZeroMemory(&Item, sizeof(Item));
 	Item.mask = LVIF_TEXT | LVIF_COLUMNS;
@@ -416,20 +496,20 @@ void StatisticsDlg::UpdateStatistics()
 		CHAR Code[4];
 		strcpy_s(Code, 4, pPair2->key);
 
-		FMAirport* pAirport;
-		if (FMIATAGetAirportByCode(Code, pAirport))
+		LPCAIRPORT lpcAirport;
+		if (FMIATAGetAirportByCode(Code, lpcAirport))
 		{
 			tmpStr.Format(_T("%5d"), pPair2->value);
 			Item.pszText = tmpStr.GetBuffer();
 
 			const INT Index = m_wndListAirport.InsertItem(&Item);
 
-			tmpStr = pAirport->Code;
+			tmpStr = lpcAirport->Code;
 			m_wndListAirport.SetItemText(Index, 1, tmpStr);
 
-			tmpStr = pAirport->Name;
+			tmpStr = lpcAirport->Name;
 			tmpStr += _T(", ");
-			tmpStr += FMIATAGetCountry(pAirport->CountryID)->Name;
+			tmpStr += FMIATAGetCountry(lpcAirport->CountryID)->Name;
 			m_wndListAirport.SetItemText(Index, 2, tmpStr);
 			m_wndListAirport.SetItemData(Index, Index);
 		}
@@ -509,26 +589,11 @@ BOOL StatisticsDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// Filter
-	PrepareCarrierCtrl(&m_wndFilterCarrier, p_Itinerary, FALSE);
-	PrepareEquipmentCtrl(&m_wndFilterEquipment, p_Itinerary, FALSE);
+	p_Itinerary->PrepareCarrierCtrl(m_wndFilterCarrier, FALSE);
+	p_Itinerary->PrepareEquipmentCtrl(m_wndFilterEquipment, FALSE);
 	m_wndFilterCarrier.InsertString(0, _T(""));
 	m_wndFilterEquipment.InsertString(0, _T(""));
 	m_wndFilterRating.SetRating(0);
-
-	// Class
-	m_wndListClass.AddCategory(0, CString((LPCSTR)IDS_REVENUEFLIGHTS), _T(""));
-	m_wndListClass.AddCategory(1, CString((LPCSTR)IDS_NONREVFLIGHTS), CString((LPCSTR)IDS_INCLUDESCREW), TRUE);
-
-	m_wndListClass.AddColumn(0, _T(""));
-	m_wndListClass.AddColumn(1, _T(""));
-	m_wndListClass.AddColumn(2, _T(""));
-
-	SeatIcons.Load(IDB_SEATICONS, 32);
-	m_SeatIcons.Attach(SeatIcons.ExtractImageList());
-	m_wndListClass.SetImageList(&m_SeatIcons, LVSIL_NORMAL);
-
-	m_wndListClass.EnableGroupView(TRUE);
-	m_wndListClass.SetView(LV_VIEW_TILE);
 
 	// Route
 	Prepare(m_wndListRoute);
@@ -573,7 +638,7 @@ void StatisticsDlg::OnSelectIATA()
 	m_wndFilterAirport.GetWindowText(tmpStr);
 
 	CHAR Code[4];
-	WideCharToMultiByte(CP_ACP, 0, tmpStr.GetBuffer(), -1, Code, 4, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, Code, 4, NULL, NULL);
 
 	FMSelectLocationIATADlg dlg(this, Code);
 	if (dlg.DoModal()==IDOK)
@@ -589,7 +654,7 @@ void StatisticsDlg::OnSortLists(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
 
-	SortParameters sp;
+	SParameters sp;
 	sp.pList = (CListCtrl*)CListCtrl::FromHandle(pLV->hdr.hwndFrom)->GetParent();
 	sp.Column = pLV->iItem;
 	sp.ConvertToNumber = (sp.Column==0) || ((sp.Column==1) && (sp.pList==&m_wndListCarrier));

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CItinerary.h"
+#include "FMDynArray.h"
 #include <hash_map>
 
 
@@ -13,26 +14,48 @@
 #define ARROW_FT     1
 #define ARROW_TF     2
 
+typedef struct _RENDERPOINT
+{
+	REAL x;
+	REAL y;
+
+	friend BOOL operator==(const _RENDERPOINT& ptA, const _RENDERPOINT& ptB) { return (ptA.x==ptB.x) && (ptA.y==ptB.y); }
+	friend BOOL operator!=(const _RENDERPOINT& ptA, const _RENDERPOINT& ptB) { return (ptA.x!=ptB.x) || (ptA.y!=ptB.y); }
+} RENDERPOINT;
+
 struct FlightAirport
 {
-	FMAirport* pAirport;	// Airport
-	LPVOID lpAirportData;	// Additonal data, e.g. from map factory
+	LPCAIRPORT lpcAirport;	// Airport
+	UINT FlightCount;		// Number of movements
+	union
+	{
+		struct
+		{
+			REAL X;
+			REAL Y;
+		};
+
+		RENDERPOINT Point;
+	};
+};
+
+struct FlightSegments
+{
+	UINT PointCount;
+	DOUBLE Points[1][3];
 };
 
 struct FlightRoute
 {
-	FMAirport* pFrom;		// Airport
-	FMAirport* pTo;			// Airport
-	LPVOID lpFrom;			// Additonal data, e.g. from map factory
-	LPVOID lpTo;			// Additonal data, e.g. from map factory
+	LPCAIRPORT lpcFrom;		// Airport
+	LPCAIRPORT lpcTo;		// Airport
 	FMGeoCoordinates Waypoint;
 	COLORREF Color;
 	UINT Count;
 	BYTE Arrows;
 
 	// Annotations
-	REAL LabelX;
-	REAL LabelY;
+	RENDERPOINT ptLabel;
 	DOUBLE DistanceNM;
 	ULONG FlightTime;
 	UINT FlightTimeCount;
@@ -42,31 +65,28 @@ struct FlightRoute
 	BOOL EquipmentMultiple;
 	AIRX_Attachment* pGPSPath;
 	BOOL GPSPathMultiple;
+
+	// Segments
+	FlightSegments* pSegments;
 };
 
-struct FlightSegments
-{
-	FlightRoute Route;
-	UINT PointCount;
-	DOUBLE Points[1][3];
-};
-
-typedef CMap<CStringA, LPCSTR, FlightAirport, FlightAirport> CFlightAirports;
-typedef CMap<CStringA, LPCSTR, UINT, UINT> CFlightCounts;
-typedef CMap<CStringA, LPCSTR, FlightRoute, FlightRoute&> CFlightRoutes;
+typedef FMDynArray<FlightAirport, 128, 128> AirportList;
+typedef FMDynArray<FlightRoute, 128, 128> RouteList;
+typedef CMap<CStringA, LPCSTR, FlightAirport, const FlightAirport&> AirportMap;
+typedef CMap<CStringA, LPCSTR, FlightRoute, const FlightRoute&> RouteMap;
 
 class CKitchen
 {
 public:
-	CKitchen(const CString& DisplayName, BOOL MergeMetro=FALSE);
+	CKitchen(CItinerary* pItinerary, BOOL MergeMetro=FALSE);
+	~CKitchen();
 
+	LPCWSTR GetDisplayName() const;
+	void InsertDisplayName(CString& Caption) const;
 	void AddFlight(const AIRX_Flight& Flight, AIRX_Attachment* pGPSPath);
-	static FlightSegments* Tesselate(FlightRoute& Route);
+	AirportList* GetAirports();
+	RouteList* GetRoutes(BOOL Tesselate=TRUE);
 
-	CString m_DisplayName;
-	CFlightAirports m_FlightAirports;
-	CFlightCounts m_FlightAirportCounts;
-	CFlightRoutes m_FlightRoutes;
 	UINT m_MaxRouteCount;
 	UINT m_MinRouteCount;
 
@@ -75,6 +95,27 @@ protected:
 	UINT m_WaypointCount;
 
 private:
-	FMAirport* AddAirport(const LPCSTR Code);
-	static FlightSegments* ParseGPX(FlightRoute& Route, CGPXFile* pGPXFile);
+	LPCAIRPORT AddAirport(const LPCSTR Code);
+	static INT __stdcall CompareAirports(FlightAirport* pData1, FlightAirport* pData2, const SortParameters& Parameters);
+	static INT __stdcall CompareRoutes(FlightRoute* pData1, FlightRoute* pData2, const SortParameters& Parameters);
+	static FlightSegments* ParseGPX(CGPXFile* pGPXFile);
+	static void TesselateRoute(FlightRoute& Route);
+
+	CString m_DisplayName;
+	AirportMap m_AirportMap;
+	RouteMap m_RouteMap;
+
+	AirportList* m_pAirportList;
+	RouteList* m_pRouteList;
 };
+
+inline LPCWSTR CKitchen::GetDisplayName() const
+{
+	return m_DisplayName;
+}
+
+inline void CKitchen::InsertDisplayName(CString& Caption) const
+{
+	if (!m_DisplayName.IsEmpty())
+		Caption.Insert(0, m_DisplayName+_T(" - "));
+}

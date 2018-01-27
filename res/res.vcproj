@@ -1404,10 +1404,34 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\air.ico"
+		<Filter
+			Name="Classes"
 			>
-		</File>
+			<File
+				RelativePath=".\Classes\C_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Classes\F_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Classes\H_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Classes\J_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Classes\Y+_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Classes\Y_64.png"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\airx.ico"
 			>
@@ -1578,38 +1602,6 @@
 		</File>
 		<File
 			RelativePath=".\Santa.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Seat_256.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Seat_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SeatC_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SeatF_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SeatH_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SeatJ_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SeatY_32.png"
-			>
-		</File>
-		<File
-			RelativePath=".\SeatYP_32.png"
 			>
 		</File>
 		<File

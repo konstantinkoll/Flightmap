@@ -490,10 +490,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GlobeOptionsDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GlobeSettingsDlg.cpp"
 				>
 			</File>
@@ -656,10 +652,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GlobeOptionsDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GlobeSettingsDlg.h"
 				>
 			</File>
@@ -727,6 +719,10 @@
 			</File>
 			<File
 				RelativePath=".\res\BlueMarble_8192.jpg"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Classes.png"
 				>
 			</File>
 			<File
@@ -811,10 +807,6 @@
 			</File>
 			<File
 				RelativePath=".\res\ResolutionPresets_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\SeatIcons.png"
 				>
 			</File>
 			<File

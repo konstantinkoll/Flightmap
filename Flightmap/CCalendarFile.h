@@ -14,8 +14,8 @@ class CCalendarFile : public CStdioFile
 public:
 	CCalendarFile();
 
-	BOOL Open(LPCTSTR lpszFileName, LPCTSTR lpszComment=NULL, LPCTSTR lpszDescription=NULL);
-	void WriteRoute(AIRX_Flight& Flight);
+	BOOL Open(LPCTSTR lpszPath, LPCTSTR lpszComment=NULL, LPCTSTR lpszDescription=NULL);
+	void WriteFlight(const AIRX_Flight& Flight);
 	void Close();
 
 private:

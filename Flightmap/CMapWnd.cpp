@@ -20,14 +20,9 @@ CMapWnd::CMapWnd()
 	m_pBitmap = NULL;
 }
 
-CMapWnd::~CMapWnd()
-{
-	delete m_pBitmap;
-}
-
 BOOL CMapWnd::Create()
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_MAP));
+	const CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, theApp.LoadIcon(IDR_MAP));
 
 	return CBackstageWnd::Create(WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, CString((LPCSTR)IDR_MAP), _T("Map"), CSize(0, 0), TRUE);
 }
@@ -49,23 +44,19 @@ void CMapWnd::AdjustLayout(const CRect& rectLayout, UINT nFlags)
 	m_wndMapView.SetWindowPos(NULL, rectLayout.left, rectLayout.top+TaskHeight, rectLayout.Width(), rectLayout.Height()-TaskHeight, nFlags);
 }
 
-void CMapWnd::SetBitmap(CBitmap* pBitmap, const CString& DisplayName, const CString& Title)
+void CMapWnd::SetBitmap(CBitmap* pBitmap, CItinerary* pItinerary)
 {
-	// Bitmap
-	delete m_pBitmap;
-	m_wndMapView.SetBitmap(m_pBitmap=pBitmap, Title);
+	ASSERT(pItinerary);
 
-	// Caption and title
+	// Set window caption
 	CString Caption((LPCSTR)IDR_MAP);
-	if (!DisplayName.IsEmpty())
-	{
-		Caption.Insert(0, _T(" - "));
-		Caption.Insert(0, DisplayName);
-	}
+	pItinerary->InsertDisplayName(Caption);
 
 	SetWindowText(Caption);
 
-	m_Title = Title;
+	// Set bitmap and title
+	delete m_pBitmap;
+	m_wndMapView.SetBitmap(m_pBitmap=pBitmap, m_Title=pItinerary->GetTitle());
 }
 
 void CMapWnd::PrintMap(PRINTDLGEX pdex)
@@ -150,6 +141,7 @@ void CMapWnd::PrintMap(PRINTDLGEX pdex)
 
 BEGIN_MESSAGE_MAP(CMapWnd, CBackstageWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 
 	ON_COMMAND(IDM_MAPWND_SAVEAS, OnMapWndSaveAs)
@@ -186,7 +178,17 @@ INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndMapView.Create(this, 2))
 		return -1;
 
+	// Taskbar
+	DisableTaskbarPinning(L"app.liquidFOLDERS.Flightmap.Map");
+
 	return 0;
+}
+
+void CMapWnd::OnDestroy()
+{
+	delete m_pBitmap;
+
+	CBackstageWnd::OnDestroy();
 }
 
 void CMapWnd::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -213,7 +215,7 @@ void CMapWnd::OnMapWndSaveAs()
 
 	if (dlg.DoModal()==IDOK)
 	{
-		CWaitCursor csr;
+		CWaitCursor WaitCursor;
 	
 		CString Ext = dlg.GetFileExt();
 
@@ -242,16 +244,15 @@ void CMapWnd::OnMapWndSaveAs()
 void CMapWnd::OnMapWndPrint()
 {
 	CPrintDialogEx dlg(PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_NOSELECTION | PD_NOCURRENTPAGE | PD_RETURNDC, this);
-	if (SUCCEEDED(dlg.DoModal()))
-		if (dlg.m_pdex.dwResultAction==PD_RESULT_PRINT)
-			PrintMap(dlg.m_pdex);
+	if (SUCCEEDED(dlg.DoModal()) && (dlg.m_pdex.dwResultAction==PD_RESULT_PRINT))
+		PrintMap(dlg.m_pdex);
 }
 
 void CMapWnd::OnMapWndCopy()
 {
 	ASSERT(m_pBitmap);
 
-	CWaitCursor csr;
+	CWaitCursor WaitCursor;
 
 	if (!OpenClipboard())
 		return;
@@ -288,7 +289,7 @@ void CMapWnd::OnMapWndCopy()
 		} Hdr;
 
 		Hdr.Ptr = GlobalLock(hDIB);
-		memcpy_s(Hdr.Ptr, sizeof(BITMAPINFOHEADER), &DIB.bmiHeader, sizeof(BITMAPINFOHEADER));
+		memcpy(Hdr.Ptr, &DIB.bmiHeader, sizeof(BITMAPINFOHEADER));
 
 		// Convert/copy the image bits
 		if (GetDIBits(hDC, *m_pBitmap, 0, Size.cy, Hdr.pByte+sizeof(BITMAPINFOHEADER), Hdr.pInfo, DIB_RGB_COLORS))

@@ -10,50 +10,58 @@
 // CMapFactory
 //
 
-#define BGWIDTH        8192
-#define BGHEIGHT       4096
+#define BGWIDTH      8192
+#define BGHEIGHT     4096
 
-class CMapFactory
+typedef struct _BACKGROUNDPOINT : RENDERPOINT
+{
+	_BACKGROUNDPOINT() {}
+
+	_BACKGROUNDPOINT(LPCAIRPORT lpcAirport, INT MapOffset)
+	{
+		if ((x=(REAL)(lpcAirport->Location.Longitude*BGWIDTH)/360.0f+(BGWIDTH/2+MapOffset))>=BGWIDTH)
+			x -= BGWIDTH;
+
+		y = (REAL)(lpcAirport->Location.Latitude*BGHEIGHT)/180.0f+BGHEIGHT/2;
+	}
+} BACKGROUNDPOINT;
+
+typedef struct _MAPPOINT : BACKGROUNDPOINT
+{
+	_MAPPOINT() {}
+	_MAPPOINT(const BACKGROUNDPOINT& ptBackground, INT MinX, INT MinY) { x = ptBackground.x-MinX; y = ptBackground.y-MinY; }
+	_MAPPOINT(const DOUBLE* Point, INT MinX, INT MinY) { x = (REAL)(Point[1]*(BGWIDTH/2)/PI+BGWIDTH/2)-MinX; y = (REAL)(Point[0]*BGHEIGHT/PI+BGHEIGHT/2)-MinY; }
+} MAPPOINT;
+
+typedef struct _DRAWPOINT : MAPPOINT
+{
+	_DRAWPOINT() {}
+	_DRAWPOINT(const MAPPOINT& ptMap, REAL Scale) { x = ptMap.x*Scale; y = ptMap.y*Scale; }
+	_DRAWPOINT(const MAPPOINT& ptMap, REAL OffsetX, REAL Scale) { x = (ptMap.x+OffsetX)*Scale; y = ptMap.y*Scale; }
+} DRAWPOINT;
+
+typedef struct _PIXELPOINT : POINT
+{
+	_PIXELPOINT() {}
+	_PIXELPOINT(const DRAWPOINT& ptDraw) { x = (INT)(ptDraw.x+0.5f); y = (INT)(ptDraw.y+0.5f); }
+	_PIXELPOINT(const DRAWPOINT& ptDraw, REAL Offset) { x = (INT)(ptDraw.x+Offset+0.5f); y = (INT)(ptDraw.y+Offset+0.5f); }
+} PIXELPOINT;
+
+class CMapFactory sealed
 {
 public:
-	CMapFactory(MapSettings* pSettings);
+	CMapFactory(const MapSettings& Settings);
 
 	CBitmap* RenderMap(CKitchen* pKitchen);
 
-protected:
+private:
 	static void AppendLabel(CString& strNote, UINT nID, UINT MaxLines);
 	CBitmap* LoadBackground(INT Left, INT Top, INT Right, INT Bottom, INT Width, INT Height, INT MapOffset) const;
 	COLORREF PreparePen(Pen& pen, const FlightRoute& Route, const CKitchen* pKitchen, DOUBLE GfxScale) const;
-	void DrawLine(CDC& dcMask, Graphics& g, Pen& pen, REAL x1, REAL y1, REAL x2, REAL y2, REAL Scale, INT MinS, INT MinZ, REAL* pLabelX=NULL, REAL* pLabelY=NULL) const;
-	static void DrawArrow(Graphics& g, Brush& brush, REAL x1, REAL y1, REAL x2, REAL y2, REAL Scale, REAL GfxScale, INT MinS, INT MinZ);
-	static REAL MapX(REAL X);
-	static REAL MapX(DOUBLE X);
-	static REAL MapY(REAL Y);
-	static REAL MapY(DOUBLE Y);
+	void DrawLine(CDC& dcMask, Graphics& g, const Pen& pen, const DRAWPOINT& ptA, const DRAWPOINT& ptB) const;
+	void DrawLine(CDC& dcMask, Graphics& g, const Pen& pen, const MAPPOINT& ptA, const MAPPOINT& ptB, REAL Scale, RENDERPOINT* pptLabel=NULL) const;
+	static void DrawArrow(Graphics& g, const Brush& brush, const DRAWPOINT& ptA, const DRAWPOINT& ptB, REAL GfxScale);
 	static INT ScanMask(const CDC& dc, CRect& rect, UINT Border, INT Width, INT Height);
 
 	MapSettings m_Settings;
-
-private:
-	void DrawLine(CDC& dcMask, Graphics& g, Pen& pen, REAL x1, REAL y1, REAL x2, REAL y2, REAL Scale) const;
 };
-
-inline REAL CMapFactory::MapX(REAL X)
-{
-	return X*(BGWIDTH/2)/PI+BGWIDTH/2;
-}
-
-inline REAL CMapFactory::MapX(DOUBLE X)
-{
-	return MapX((REAL)X);
-}
-
-inline REAL CMapFactory::MapY(REAL Y)
-{
-	return Y*BGHEIGHT/PI+BGHEIGHT/2;
-}
-
-inline REAL CMapFactory::MapY(DOUBLE Y)
-{
-	return MapY((REAL)Y);
-}

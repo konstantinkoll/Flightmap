@@ -51,7 +51,7 @@ BOOL CBackstageSidebar::Create(CWnd* pParentWnd, UINT nID, BOOL ShowCounts)
 		m_CountWidth = FMGetApp()->m_SmallBoldFont.GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
 
 	// Create
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
+	const CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, FMGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	return CFrontstageWnd::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_GROUP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
@@ -254,7 +254,7 @@ void CBackstageSidebar::AdjustLayout()
 		}
 
 		m_Items[a].Rect.left = 0;
-		m_Items[a].Rect.right = rect.Width();
+		m_Items[a].Rect.right = rect.right;
 	}
 
 	Invalidate();
@@ -311,7 +311,6 @@ BEGIN_MESSAGE_MAP(CBackstageSidebar, CFrontstageWnd)
 	ON_WM_GETDLGCODE()
 	ON_WM_KEYDOWN()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_WM_CONTEXTMENU()
 	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
@@ -463,9 +462,13 @@ void CBackstageSidebar::OnPaint()
 				{
 					CRect rectCount(rectItem.right-m_CountWidth+BORDER/2, rectItem.top-2, rectItem.right-BORDER/2-SHADOW/2, rectItem.bottom);
 
+					CFont* pOldFont;
 					const COLORREF clr = m_Items[a].Color;
+
 					if (clr!=(COLORREF)-1)
 					{
+						pOldFont = dc.SelectObject(&FMGetApp()->m_SmallBoldFont);
+
 						if (Themed)
 						{
 							g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -511,12 +514,26 @@ void CBackstageSidebar::OnPaint()
 					}
 					else
 					{
+						pOldFont = dc.SelectObject(&FMGetApp()->m_SmallFont);
+
 						rectCount.top += 5;
 
-						dc.SetTextColor(Highlight ? colSel : colNum);
+						if (!Highlight)
+						{
+							rectCount.OffsetRect(0, -1);
+							dc.SetTextColor(0x000000);
+
+							dc.DrawText(FormatCount(m_Items[a].Count), rectCount, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
+
+							rectCount.OffsetRect(0, 1);
+							dc.SetTextColor(colNum);
+						}
+						else
+						{
+							dc.SetTextColor(colSel);
+						}
 					}
 
-					CFont* pOldFont = dc.SelectObject(clr!=(COLORREF)-1 ? &FMGetApp()->m_SmallBoldFont : &FMGetApp()->m_SmallFont);
 					dc.DrawText(FormatCount(m_Items[a].Count), rectCount, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (clr!=(COLORREF)-1 ? DT_CENTER : DT_RIGHT));
 					dc.SelectObject(pOldFont);
 				}
@@ -785,10 +802,6 @@ void CBackstageSidebar::OnIdleUpdateCmdUI()
 	// Rearrange items
 	if (VisibleChanged)
 		AdjustLayout();
-}
-
-void CBackstageSidebar::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)
-{
 }
 
 void CBackstageSidebar::OnKillFocus(CWnd* /*pNewWnd*/)

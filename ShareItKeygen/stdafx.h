@@ -7,6 +7,8 @@
 
 #include "targetver.h"
 
+typedef unsigned int UINT;
+typedef char CHAR;
 #include "License.h"
 
 #include <stdio.h>

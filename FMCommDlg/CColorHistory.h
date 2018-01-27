@@ -32,7 +32,6 @@ protected:
 	void SetFocusItem(INT FocusItem);
 	void UpdateCursor();
 
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

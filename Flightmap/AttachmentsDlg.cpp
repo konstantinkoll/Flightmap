@@ -12,6 +12,8 @@
 AttachmentsDlg::AttachmentsDlg(CItinerary* pItinerary, CWnd* pParentWnd)
 	: FMDialog(IDD_ATTACHMENTS, pParentWnd)
 {
+	ASSERT(pItinerary);
+
 	p_Itinerary = pItinerary;
 }
 
@@ -23,7 +25,7 @@ void AttachmentsDlg::DoDataExchange(CDataExchange* pDX)
 BOOL AttachmentsDlg::InitDialog()
 {
 	// FileView
-	m_wndFileView.SetItinerary(p_Itinerary);
+	m_wndFileView.SetAttachments(p_Itinerary);
 
 	return TRUE;
 }

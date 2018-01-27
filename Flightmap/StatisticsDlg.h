@@ -6,6 +6,47 @@
 #include "CItinerary.h"
 
 
+// CClassesList
+//
+
+struct ClassItemData
+{
+	ItemData Hdr;
+	LPCWSTR DisplayName;
+	UINT Flights;
+	DOUBLE Distance;
+	INT Category;
+	INT iIcon;
+};
+
+class CClassesList sealed : public CFrontstageItemView
+{
+public:
+	CClassesList();
+
+	void SetClasses(UINT* pFlights, DOUBLE* pDistances);
+
+protected:
+	virtual void AdjustLayout();
+	virtual INT GetItemCategory(INT Index) const;
+	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
+
+private:
+	ClassItemData* GetClassItemData(INT Index) const;
+	void AddClass(UINT nID, UINT Flights, DOUBLE Distance);
+
+	static CString m_MaskFlightsSingular;
+	static CString m_MaskFlightsPlural;
+	static CString m_Names[6];
+	static CIcons m_SeatIcons;
+};
+
+inline ClassItemData* CClassesList::GetClassItemData(INT Index) const
+{
+	return (ClassItemData*)GetItemData(Index);
+}
+
+
 // StatisticsDlg
 //
 
@@ -29,12 +70,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CItinerary* p_Itinerary;
-	CImageList m_SeatIcons;
 	CMFCMaskedEdit m_wndFilterAirport;
 	CComboBox m_wndFilterCarrier;
 	CComboBox m_wndFilterEquipment;
 	CRatingCtrl m_wndFilterRating;
-	CExplorerList m_wndListClass;
+	CClassesList m_wndListClass;
 	CListCtrl m_wndListRoute;
 	CListCtrl m_wndListAirport;
 	CListCtrl m_wndListCarrier;

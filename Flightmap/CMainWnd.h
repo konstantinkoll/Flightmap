@@ -20,7 +20,6 @@ class CMainWnd : public CBackstageWnd
 {
 public:
 	CMainWnd();
-	virtual ~CMainWnd();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
@@ -36,23 +35,26 @@ protected:
 	void SetItinerary(CItinerary* pItinerary);
 	void Open(const CString& Path);
 	BOOL CloseFile();
-	CKitchen* GetKitchen(BOOL Limit, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	void ExportMap(const CString& Filename, GUID guidFileType, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	void ExportExcel(const CString& Filename);
-	void ExportCalendar(const CString& Filename);
-	BOOL ExportGoogleEarth(const CString& Filename, BOOL UseCount=FALSE, BOOL UseColors=TRUE, BOOL ClampHeight=FALSE, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
-	void ExportText(const CString& Filename);
-	void ExportMap(DWORD FilterIndex=3, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+
+	CKitchen* GetKitchen(BOOL Limit, BOOL Selected=FALSE, BOOL MergeMetro=FALSE) const;
+	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE) const;
+	void ExportCalendar(const CString& Path);
+	void ExportExcel(const CString& Path);
+	BOOL ExportGoogleEarth(const CString& Path, BOOL Selected=FALSE, BOOL MergeMetro=FALSE);
+	void ExportMap(const CString& Path, GUID guidFileType);
+	void ExportMap(DWORD FilterIndex=3);
+	void ExportText(const CString& Path);
+	void Export(const CString& Path, const CString& Extension);
 	void SaveAs(DWORD FilterIndex=1);
-	void Print(PRINTDLGEX pdex);
+	void Print(const PRINTDLGEX& pdex);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnRequestTooltipData(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg LRESULT OnDistanceSettingChanged(WPARAM wParam, LPARAM lParam);
+
+	afx_msg void OnDistanceSettingsChanged();
 
 	afx_msg void OnFileNew();
 	afx_msg void OnFileNewSample1();
@@ -64,7 +66,6 @@ protected:
 	afx_msg void OnFileSaveCSV();
 	afx_msg void OnFileSaveICS();
 	afx_msg void OnFileSaveTXT();
-	afx_msg void OnFileSaveOther();
 	afx_msg void OnFilePrint();
 	afx_msg void OnFilePrintQuick();
 	afx_msg void OnFileClose();
