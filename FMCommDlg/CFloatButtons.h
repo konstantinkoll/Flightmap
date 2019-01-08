@@ -84,6 +84,11 @@ private:
 	static INT m_Top;
 };
 
+inline void CButtonGroup::SetGroupAlert(BOOL Alert)
+{
+	m_Alert = Alert;
+}
+
 
 // CFloatButtons
 //
@@ -97,7 +102,7 @@ public:
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpcRect=NULL, LPCRECT lpClipRect=NULL);
 
 	BOOL Create(CWnd* pParentWnd, CIcons& LargeIcons, CIcons& SmallIcons, UINT ResID, UINT nID);
 	void BeginGroup(LPCWSTR Caption, BOOL Alert=FALSE);

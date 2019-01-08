@@ -36,15 +36,18 @@ protected:
 	virtual BOOL DrawNothing() const;
 	virtual void DrawNothing(CDC& dc, CRect rect, BOOL Themed) const;
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
-	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpRect=NULL, LPCRECT lpClipRect=NULL);
+	virtual void ScrollWindow(INT dx, INT dy, LPCRECT lpcRect=NULL, LPCRECT lpClipRect=NULL);
 
 	void EnsureVisible(const CRect& rectItem);
 	void ResetScrollArea();
 	void SetItemHeight(INT ItemHeight);
+	void GetLayoutRect(CRect& rectLayout);
 	BOOL HasHeader() const;
 	BOOL IsHeaderVisible() const;
+	UINT GetColumnCount() const;
 	BOOL AddHeaderColumn(BOOL Shadow, LPCWSTR Caption=L"", BOOL Right=FALSE);
 	BOOL AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right=FALSE);
+	void SetFixedColumnWidths(INT* pColumnOrder, INT* pColumnWidths);
 	void UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths);
 	void UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BOOL bShowHeader=TRUE, INT PreviewAttribute=-1);
 
@@ -102,6 +105,11 @@ inline BOOL CFrontstageScroller::HasHeader() const
 inline BOOL CFrontstageScroller::IsHeaderVisible() const
 {
 	return HasHeader() && !(m_pWndHeader->GetStyle() & HDS_HIDDEN);
+}
+
+inline UINT CFrontstageScroller::GetColumnCount() const
+{
+	return HasHeader() ? (UINT)m_pWndHeader->GetItemCount() : 0;
 }
 
 inline BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right)

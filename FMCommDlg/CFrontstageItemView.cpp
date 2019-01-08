@@ -532,6 +532,30 @@ UINT CFrontstageItemView::GetTileRows(UINT Rows, va_list vl)
 	return TileRows;
 }
 
+void CFrontstageItemView::DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Themed, INT* pColumnOrder, INT* pColumnWidth, INT PreviewAttribute)
+{
+	ASSERT(HasHeader());
+	ASSERT(pColumnOrder);
+	ASSERT(pColumnWidth);
+
+	rect.right = rect.left-ITEMCELLSPACER+ITEMCELLPADDINGY+1;
+
+	// Columns
+	const UINT ColumnCount = GetColumnCount();
+
+	for (UINT a=0; a<ColumnCount; a++)
+	{
+		const UINT Attr = pColumnOrder[a];
+
+		if (pColumnWidth[Attr] && ((INT)Attr!=PreviewAttribute))
+		{
+			rect.right = (rect.left=rect.right+ITEMCELLSPACER)+pColumnWidth[Attr]-ITEMCELLSPACER;
+
+			DrawItemCell(dc, rect, Index, Attr, Themed);
+		}
+	}
+}
+
 void CFrontstageItemView::DrawTile(CDC& dc, CRect& rect, COLORREF TextColor, UINT Rows, va_list& vl) const
 {
 	rect.left += m_IconSize+ITEMVIEWPADDING;
@@ -580,6 +604,10 @@ void CFrontstageItemView::DrawTile(CDC& dc, CRect rect, CImageList& ImageList, I
 	DrawTile(dc, rect, TextColor, Rows, vl);
 }
 
+void CFrontstageItemView::DrawItemCell(CDC& /*dc*/, CRect& /*rectCell*/, INT /*Index*/, UINT /*Attr*/, BOOL /*Themed*/)
+{
+}
+
 void CFrontstageItemView::DrawItem(CDC& /*dc*/, Graphics& /*g*/, LPCRECT /*rectItem*/, INT /*Index*/, BOOL /*Themed*/)
 {
 }
@@ -602,7 +630,9 @@ void CFrontstageItemView::DrawStage(CDC& dc, Graphics& g, const CRect& /*rect*/,
 			{
 				DrawItemBackground(dc, rectItem, Index, Themed);
 				DrawItem(dc, g, rectItem, Index, Themed);
-				DrawItemForeground(dc, rectItem, Index, Themed);
+
+				if (!HasHeader())
+					DrawItemForeground(dc, rectItem, Index, Themed);
 			}
 		}
 	}
@@ -731,11 +761,7 @@ void CFrontstageItemView::GetLayoutRect(CRect& rectLayout)
 	// Reset item categories
 	ResetItemCategories();
 
-	// Client area for layout
-	GetWindowRect(rectLayout);
-
-	if (HasBorder())
-		rectLayout.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
+	CFrontstageScroller::GetLayoutRect(rectLayout);
 }
 
 void CFrontstageItemView::AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth, INT Margin)
@@ -835,6 +861,41 @@ Restart:
 	for (UINT a=0; a<m_ItemCategories.m_ItemCount; a++)
 		if (m_ItemCategories[a].Rect.right)
 			m_ItemCategories[a].Rect.right = max(m_ScrollWidth, rectLayout.Width())-Margin;
+
+	CFrontstageScroller::AdjustLayout();
+}
+
+void CFrontstageItemView::AdjustLayoutList()
+{
+	ASSERT(HasHeader());
+
+	CRect rectLayout;
+	GetLayoutRect(rectLayout);
+
+	if (!rectLayout.Width())
+		return;
+
+	// Scroll area
+	m_ScrollWidth = rectLayout.Width()-GetSystemMetrics(SM_CXVSCROLL);
+
+	// Items
+	m_szScrollStep.cy = m_ItemHeight-1;
+	m_ScrollHeight = 2;
+
+	for (INT Index=0; Index<m_ItemCount; Index++)
+	{
+		ItemData* pData = GetItemData(Index);
+
+		if (pData->Valid)
+		{
+			pData->Row = Index;
+			pData->Rect.left= GetHeaderIndent()+1;
+			pData->Rect.right = m_ScrollWidth;
+			pData->Rect.bottom = (pData->Rect.top=m_ScrollHeight-1)+m_ItemHeight;
+
+			m_ScrollHeight = pData->Rect.bottom;
+		}
+	}
 
 	CFrontstageScroller::AdjustLayout();
 }

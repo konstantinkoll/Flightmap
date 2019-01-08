@@ -65,6 +65,7 @@ BOOL AddRouteDlg::InitDialog()
 {
 	// Route
 	m_wndRoute.SetCueBanner(CString((LPCSTR)IDS_CUEBANNER_ROUTE));
+	m_wndRoute.SetValidChars(_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,-/ "));
 
 	// Carrier
 	p_Itinerary->PrepareCarrierCtrl(m_wndCarrier);

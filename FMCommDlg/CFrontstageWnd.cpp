@@ -9,44 +9,59 @@
 // CFrontstageWnd
 //
 
-#define BORDERSIZE            2
-#define WHITEAREAHEIGHT     100
-
 CFrontstageWnd::CFrontstageWnd()
 	: CWnd()
 {
 	CONSTRUCTOR_TOOLTIP()
 }
 
+BOOL CFrontstageWnd::HasBorder(HWND hWnd)
+{
+	ASSERT(hWnd);
+
+	return ((GetWindowLong(hWnd, GWL_STYLE) & (WS_CHILD | WS_BORDER))==(WS_CHILD | WS_BORDER)) || (GetWindowLong(hWnd, GWL_EXSTYLE) & WS_EX_CLIENTEDGE);
+}
+
 
 // Cards
 
-void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed) const
+void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const
 {
-	ASSERT(lpRect);
-
-	dc.FillSolidRect(lpRect, Themed ? 0xF8F5F4 : GetSysColor(COLOR_3DFACE));
+	ASSERT(lpcRect);
 
 	if (Themed)
 	{
-		g.SetPixelOffsetMode(PixelOffsetModeHalf);
-		g.SetSmoothingMode(SmoothingModeNone);
+		const INT Height = lpcRect->bottom-lpcRect->top;
+		const INT Width = lpcRect->right-lpcRect->left;
 
-		LinearGradientBrush brush(Point(0, lpRect->top), Point(0, lpRect->top+WHITEAREAHEIGHT), Color(0xFFFFFFFF), Color(0xFFF4F5F8));
-		g.FillRectangle(&brush, Rect(lpRect->left, lpRect->top, lpRect->right-lpRect->left, WHITEAREAHEIGHT));
+		Bitmap* pImage = FMGetApp()->GetCachedResourceImage(IDB_BACKGROUND_CARDS);
+		ASSERT(pImage);
 
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
+		// Gradient
+		const INT GradientHeight = pImage->GetHeight();
+
+		ImageAttributes ImgAttr;
+		ImgAttr.SetWrapMode(WrapModeTile);
+
+		g.DrawImage(pImage, Rect(lpcRect->left, lpcRect->top, Width, GradientHeight), 0, 0, Width, GradientHeight, UnitPixel, &ImgAttr);
+
+		// Bottom
+		dc.FillSolidRect(lpcRect->left, lpcRect->top+GradientHeight, Width, Height-GradientHeight, 0xF8F5F4);
+	}
+	else
+	{
+		dc.FillSolidRect(lpcRect, GetSysColor(COLOR_3DFACE));
 	}
 }
 
-void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect) const
+void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed, BOOL Hot, BOOL Focused, BOOL Selected, COLORREF TextColor, BOOL ShowFocusRect) const
 {
 	// Shadow
 	GraphicsPath Path;
 
 	if (Themed)
 	{
-		CRect rectShadow(lpRect);
+		CRect rectShadow(lpcRect);
 		rectShadow.OffsetRect(1, 1);
 
 		CreateRoundRectangle(rectShadow, 3, Path);
@@ -60,7 +75,7 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 	// Background
 	if ((!Themed || !Hot) && !Selected)
 	{
-		CRect rect(lpRect);
+		CRect rect(lpcRect);
 		rect.DeflateRect(1, 1);
 
 		dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
@@ -76,11 +91,11 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpRect, BO
 		}
 		else
 		{
-			dc.Draw3dRect(lpRect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+			dc.Draw3dRect(lpcRect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 		}
 	}
 
-	DrawListItemBackground(dc, lpRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
+	DrawListItemBackground(dc, lpcRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
 }
 
 void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed) const
@@ -210,7 +225,6 @@ IMPLEMENT_TOOLTIP_NOWHEEL(CFrontstageWnd, CWnd)
 
 BEGIN_TOOLTIP_MAP(CFrontstageWnd, CWnd)
 	ON_WM_DESTROY()
-	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_MESSAGE(WM_NCPAINT, OnNcPaint)
 	ON_WM_ERASEBKGND()
@@ -224,24 +238,6 @@ void CFrontstageWnd::OnDestroy()
 	HideTooltip();
 
 	CWnd::OnDestroy();
-}
-
-void CFrontstageWnd::OnNcCalcSize(BOOL bCalcValidRect, NCCALCSIZE_PARAMS* lpncsp)
-{
-	if (HasBorder())
-	{
-		const INT cxEdge = GetSystemMetrics(SM_CXEDGE);
-		const INT cyEdge = GetSystemMetrics(SM_CYEDGE);
-
-		lpncsp->rgrc[0].left += cxEdge;
-		lpncsp->rgrc[0].right -= cxEdge;
-		lpncsp->rgrc[0].top += cyEdge;
-		lpncsp->rgrc[0].bottom -= cyEdge;
-	}
-	else
-	{
-		CWnd::OnNcCalcSize(bCalcValidRect, lpncsp);
-	}
 }
 
 LRESULT CFrontstageWnd::OnNcHitTest(CPoint point)

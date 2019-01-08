@@ -60,7 +60,6 @@ protected:
 
 	CRect GetItemRect(const CPoint& Item, BOOL Inflate=TRUE) const;
 	void EnsureVisible(const CPoint& Item);
-	void UpdateHeader();
 	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0');
 	void EditFlight(const CPoint& Item, INT SelectTab=-1);
 	INT PartAtPosition(const CPoint& point) const;

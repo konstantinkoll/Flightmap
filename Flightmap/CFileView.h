@@ -17,6 +17,8 @@ struct AttachmentItemData
 	AIRX_Attachment* pAttachment;
 };
 
+#define FILEVIEWCOLUMNS     4
+
 class CAttachmentList sealed : public CFrontstageItemView
 {
 public:
@@ -34,11 +36,14 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void ShowTooltip(const CPoint& point);
 	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
+	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustLayout();
 	virtual void FireSelectedItem() const;
+	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
-	void SortItems(UINT Attr=0, BOOL Descending=FALSE);
+	void SortItems();
 
 	RECT GetLabelRect(INT Index) const;
 	void DestroyEdit(BOOL Accept=FALSE);
@@ -60,9 +65,14 @@ private:
 	AIRX_Attachment* GetAttachment(INT Index) const;
 	UINT GetAttachmentIndex(INT Index) const;
 	void AddAttachment(UINT Index, AIRX_Attachment& Attachment);
+	void UpdateHeader();
 
-	static CString m_SubitemNames[4];
+	static CString m_SubitemNames[FILEVIEWCOLUMNS];
+	static UINT m_SortAttribute;
+	static BOOL m_SortDescending;
 	CEdit* m_pWndEdit;
+	INT m_ColumnOrder[FILEVIEWCOLUMNS];
+	INT m_ColumnWidth[FILEVIEWCOLUMNS];
 };
 
 inline AIRX_Attachment* CAttachmentList::GetAttachment(INT Index) const
@@ -75,14 +85,19 @@ inline UINT CAttachmentList::GetAttachmentIndex(INT Index) const
 	return ((AttachmentItemData*)GetItemData(Index))->Index;
 }
 
-inline void CAttachmentList::SortItems(UINT Attr, BOOL Descending)
+inline void CAttachmentList::SortItems()
 {
-	CFrontstageItemView::SortItems((PFNCOMPARE)CompareItems, HasHeader() ? Attr : 0, HasHeader() ? Descending : FALSE);
+	CFrontstageItemView::SortItems((PFNCOMPARE)CompareItems, HasHeader() ? m_SortAttribute : 0, HasHeader() ? m_SortDescending : FALSE);
 }
 
 inline BOOL CAttachmentList::IsEditing() const
 {
 	return m_pWndEdit!=NULL;
+}
+
+inline void CAttachmentList::UpdateHeader()
+{
+	CFrontstageItemView::UpdateHeader(m_ColumnOrder, m_ColumnWidth);
 }
 
 

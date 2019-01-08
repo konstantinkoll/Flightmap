@@ -85,9 +85,9 @@ IDB_UPDATEICONS_24      RCDATA                  "res\\UpdateIcons_24.png"
 IDB_UPDATEICONS_32      RCDATA                  "res\\UpdateIcons_32.png"
 IDB_UPDATEICONS_48      RCDATA                  "res\\UpdateIcons_48.png"
 IDB_UPDATEICONS_64      RCDATA                  "res\\UpdateIcons_64.png"
+IDB_BACKGROUND_CARDS    RCDATA                  "res\\Background_Cards.png"
 IDB_BACKGROUND_DARKLINEN RCDATA                  "res\\Background_DarkLinen.png"
 IDB_BACKGROUND_TOOLTIP  RCDATA                  "res\\Background_Tooltip.png"
-IDB_RESOLUTIONICONS     RCDATA                  "res\\ResolutionIcons.png"
 IDB_BLUEMARBLE_2048     RCDATA                  "res\\BlueMarble_2048.jpg"
 IDF_DINMITTELSCHRIFT    RCDATA                  "res\\DINMittelschrift.ttf"
 
@@ -181,7 +181,7 @@ CAPTION "IATA Flughafen-Code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
     DEFPUSHBUTTON   "OK",IDOK,75,288,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,132,288,50,14,WS_GROUP
     CONTROL         "Land/Gebiet",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -204,7 +204,7 @@ END
 
 IDD_REGISTER DIALOGEX 0, 0, 300, 41
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Unregistrierte Version"
+CAPTION "Unregistrierte Kopie"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     PUSHBUTTON      "&Kaufen",IDC_PURCHASE,186,20,50,14
@@ -356,18 +356,18 @@ BEGIN
     IDS_AIRPORT_COUNTRY     "Land"
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
-    IDS_REGISTER_CAPTION    "Dies ist eine unregistrierte Version von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile:"
+    IDS_REGISTER_CAPTION    "Dies ist eine unregistrierte Kopie von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile:"
     IDS_REGISTER_ITEM1      "Die von Flightmap erzeugten Karten haben keine pinken Balken mehr:"
     IDS_REGISTER_ITEM2      "Der Dateiexport in die Formate .csv, .ics, .kml oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt"
     IDS_REGISTER_ITEM3      "Statistiken sind nicht mehr auf 10 Flüge begrenzt"
-    IDS_REGISTER_ITEM4      "Auf Ausdrucken und in PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Version“"
+    IDS_REGISTER_ITEM4      "Auf Ausdrucken und in PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Kopie“"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_REGISTER_ITEM5      "Dieses Erinnerungsfenster erscheint nicht mehr"
     IDS_REGISTER_ITEM6      "Und zuletzt ermöglichen Sie es uns, Flightmap weiterzuentwickeln und noch besser zu machen!"
-    IDS_UNREGISTERED        "Unregistrierte Version"
+    IDS_UNREGISTERED        "Unregistrierte Kopie"
     IDS_REGISTERED          "Mit Lizenzschlüssel\nHochaufgelöste Karten bis 32 Megapixel"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_ABOUT               "Über Flightmap"
@@ -480,7 +480,7 @@ CAPTION "IATA airport code"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     COMBOBOX        IDC_COUNTRY,7,24,175,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
+    CONTROL         "",IDC_AIRPORTS,"CAirportList",WS_VSCROLL | WS_BORDER | WS_GROUP | WS_TABSTOP,7,74,175,199
     DEFPUSHBUTTON   "OK",IDOK,75,288,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,132,288,50,14,WS_GROUP
     CONTROL         "Territory",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,175,15
@@ -503,7 +503,7 @@ END
 
 IDD_REGISTER DIALOGEX 0, 0, 300, 41
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Unregistrierte Version"
+CAPTION "Unregistered copy"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     PUSHBUTTON      "&Purchase",IDC_PURCHASE,186,20,50,14
@@ -655,18 +655,18 @@ BEGIN
     IDS_AIRPORT_COUNTRY     "Country"
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
-    IDS_REGISTER_CAPTION    "This is an unregistered version of Flightmap. Registering gives you many benefits:"
+    IDS_REGISTER_CAPTION    "This is an unregistered copy of Flightmap. Registering gives you many benefits:"
     IDS_REGISTER_ITEM1      "Maps created by Flightmap will not defaced with magenta bars:"
     IDS_REGISTER_ITEM2      "Saving as .csv, .ics, .kml oder .txt is not limited to the first 10 flights"
     IDS_REGISTER_ITEM3      "Statistics aren't limited to 10 flights"
-    IDS_REGISTER_ITEM4      "You won't see the text “Unregistered version” on your printed itineraries and PDFs"
+    IDS_REGISTER_ITEM4      "You won't see the text “Unregistered copy” on your printed itineraries and PDFs"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_REGISTER_ITEM5      "This nag screen will be gone"
     IDS_REGISTER_ITEM6      "And one more thing: you'll help to make Flightmap even better!"
-    IDS_UNREGISTERED        "Unregistered version"
+    IDS_UNREGISTERED        "Unregistered copy"
     IDS_REGISTERED          "With license key\nHigh resolution maps up to 32 megapixel"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_ABOUT               "About Flightmap"

@@ -30,7 +30,7 @@ CFrontstageScroller::CFrontstageScroller(UINT Flags)
 
 INT CFrontstageScroller::GetHeaderIndent() const
 {
-	return BACKSTAGEBORDER-1;
+	return HasBorder() ? 0 : BACKSTAGEBORDER-1;
 }
 
 void CFrontstageScroller::GetHeaderContextMenu(CMenu& /*Menu*/)
@@ -47,6 +47,49 @@ BOOL CFrontstageScroller::AllowHeaderColumnTrack(UINT /*Attr*/) const
 	return FALSE;
 }
 
+void CFrontstageScroller::SetFixedColumnWidths(INT* pColumnOrder, INT* pColumnWidths)
+{
+	ASSERT(HasHeader());
+	ASSERT(pColumnOrder);
+	ASSERT(pColumnWidths);
+
+	// Column count
+	const UINT ColumnCount = GetColumnCount();
+	ASSERT(ColumnCount>0);
+
+	UINT cFlex = 0;
+	INT FixedWidth = 0;
+	for (UINT a=0; a<ColumnCount; a++)
+	{
+		pColumnOrder[a] = a;
+
+		if (!pColumnWidths[a])
+		{
+			cFlex++;
+		}
+		else
+		{
+			FixedWidth += pColumnWidths[a];
+		}
+	}
+
+	// Redistribute free space equally on flexible columns
+	if (cFlex)
+	{
+		CRect rectLayout;
+		GetLayoutRect(rectLayout);
+
+		if ((rectLayout.right-=rectLayout.left+GetHeaderIndent()+FixedWidth+GetSystemMetrics(SM_CXVSCROLL))>=0)
+		{
+			const INT ColumnWidth = rectLayout.right/cFlex;
+
+			for (UINT a=0; a<ColumnCount; a++)
+				if (!pColumnWidths[a])
+					rectLayout.right -= (pColumnWidths[a] = (cFlex--==1) ? rectLayout.right : ColumnWidth);
+		}
+	}
+}
+
 void CFrontstageScroller::UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* pColumnOrder, INT* pColumnWidths)
 {
 	ASSERT(HasHeader());
@@ -61,18 +104,18 @@ void CFrontstageScroller::UpdateHeaderColumnOrder(UINT Attr, INT Position, INT* 
 	else
 	{
 		// Column dropped, get order array from header
-		INT ColumnCount = m_pWndHeader->GetItemCount();
+		const UINT ColumnCount = GetColumnCount();
 		ASSERT(ColumnCount>0);
 
 		INT* pOrderArray = new INT[ColumnCount];
 		m_pWndHeader->GetOrderArray(pOrderArray, ColumnCount);
 
 		// Copy order array to context view settings, and insert dragged column
-		INT ReadIndex = 0;
-		INT WriteIndex = 0;
+		UINT ReadIndex = 0;
+		UINT WriteIndex = 0;
 
-		for (INT a=0; a<ColumnCount; a++)
-			if (a==Position)
+		for (UINT a=0; a<ColumnCount; a++)
+			if ((INT)a==Position)
 			{
 				pColumnOrder[WriteIndex++] = Attr;
 			}
@@ -113,7 +156,7 @@ void CFrontstageScroller::UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BO
 		SetRedraw(FALSE);
 
 		// Set column order (preview column is always first)
-		INT ColumnCount = m_pWndHeader->GetItemCount();
+		const UINT ColumnCount = GetColumnCount();
 		ASSERT(ColumnCount>0);
 
 		INT* pOrderArray = new INT[ColumnCount];
@@ -122,7 +165,7 @@ void CFrontstageScroller::UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BO
 		if (PreviewAttribute>=0)
 			pOrderArray[WriteIndex++] = PreviewAttribute;
 
-		for (INT a=0; a<ColumnCount; a++)
+		for (UINT a=0; a<ColumnCount; a++)
 			if (pColumnOrder[a]!=PreviewAttribute)
 				pOrderArray[WriteIndex++] = pColumnOrder[a];
 
@@ -130,7 +173,7 @@ void CFrontstageScroller::UpdateHeader(INT* pColumnOrder, INT* pColumnWidths, BO
 		delete pOrderArray;
 
 		// Set column properties
-		for (INT a=0; a<ColumnCount; a++)
+		for (UINT a=0; a<ColumnCount; a++)
 		{
 			HDITEM HeaderItem;
 			UpdateHeaderColumn((UINT)a, HeaderItem);
@@ -165,6 +208,15 @@ void CFrontstageScroller::ResetScrollArea()
 void CFrontstageScroller::SetItemHeight(INT ItemHeight)
 {
 	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
+}
+
+void CFrontstageScroller::GetLayoutRect(CRect& rectLayout)
+{
+	// Client area for layout
+	GetWindowRect(rectLayout);
+
+	if (HasBorder())
+		rectLayout.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
 }
 
 void CFrontstageScroller::AdjustScrollbars()
@@ -526,8 +578,11 @@ HBRUSH CFrontstageScroller::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hBrush;
 }
 
-void CFrontstageScroller::OnEnable(BOOL /*bEnable*/)
+void CFrontstageScroller::OnEnable(BOOL bEnable)
 {
+	if (m_pWndHeader)
+		m_pWndHeader->EnableWindow(bEnable);
+
 	Invalidate();
 }
 

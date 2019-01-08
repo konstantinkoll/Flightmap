@@ -21,7 +21,7 @@ BOOL CHoverButton::Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nID)
 {
 	m_DrawBorder = TRUE;
 
-	return CButton::Create(lpszCaption, WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
+	return CButton::Create(lpszCaption, WS_DISABLED | WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
 void CHoverButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)

@@ -18,7 +18,6 @@
 
 #define FLAGCOUNT          7
 #define LEFTMARGIN         (BACKSTAGEBORDER-1)
-#define MINCOLUMNWIDTH     50
 #define MAXAUTOWIDTH       400
 
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
@@ -402,7 +401,7 @@ void CDataGrid::EditFlight(const CPoint& Item, INT SelectTab)
 		else
 		{
 			p_Itinerary->m_Flights[Item.y].AttachmentCount = dlg.m_Flight.AttachmentCount;
-			memcpy(p_Itinerary->m_Flights[Item.y].Attachments, dlg.m_Flight.Attachments, AIRX_MaxAttachmentCount*sizeof(UINT));
+			memcpy(p_Itinerary->m_Flights[Item.y].Attachments, dlg.m_Flight.Attachments, AIRX_MAXATTACHMENTCOUNT*sizeof(UINT));
 		}
 }
 
@@ -636,7 +635,7 @@ INT CDataGrid::GetMaxAttributeWidth(UINT Attr) const
 	
 	dc.SelectObject(pOldFont);
 
-	return max(Width, MINCOLUMNWIDTH);
+	return max(Width, ITEMVIEWMINWIDTH);
 }
 
 void CDataGrid::AutosizeColumn(UINT Attr)
@@ -926,20 +925,18 @@ void CDataGrid::UpdateHeaderColumnOrder(UINT Attr, INT Position)
 {
 	CFrontstageScroller::UpdateHeaderColumnOrder(Attr, Position, theApp.m_ViewParameters.ColumnOrder, theApp.m_ViewParameters.ColumnWidth);
 
-	UpdateHeader();
 	AdjustLayout();
 }
 
 void CDataGrid::UpdateHeaderColumnWidth(UINT Attr, INT Width)
 {
-	if (Width<MINCOLUMNWIDTH)
-		Width = ((Attr==0) || (Attr==3)) ? MINCOLUMNWIDTH : 0;
+	if (Width<ITEMVIEWMINWIDTH)
+		Width = ((Attr==0) || (Attr==3)) ? ITEMVIEWMINWIDTH : 0;
 
 	if (Width!=theApp.m_ViewParameters.ColumnWidth[Attr])
 	{
 		theApp.m_ViewParameters.ColumnWidth[Attr] = Width;
 
-		UpdateHeader();
 		AdjustLayout();
 	}
 }
@@ -957,20 +954,19 @@ void CDataGrid::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 		}
 		else
 		{
-			if (HeaderItem.cxy<MINCOLUMNWIDTH)
-				HeaderItem.cxy = MINCOLUMNWIDTH;
+			if (HeaderItem.cxy<ITEMVIEWMINWIDTH)
+				HeaderItem.cxy = ITEMVIEWMINWIDTH;
 		}
-}
-
-void CDataGrid::UpdateHeader()
-{
-	m_ViewParameters = theApp.m_ViewParameters;
-
-	CFrontstageScroller::UpdateHeader(m_ViewParameters.ColumnOrder, m_ViewParameters.ColumnWidth);
 }
 
 void CDataGrid::AdjustLayout()
 {
+	// Header
+	m_ViewParameters = theApp.m_ViewParameters;
+
+	CFrontstageScroller::UpdateHeader(m_ViewParameters.ColumnOrder, m_ViewParameters.ColumnWidth);
+
+	// Item layout
 	m_ScrollHeight = (p_Itinerary->m_Flights.m_ItemCount+1)*m_ItemHeight-1;
 	m_ScrollWidth = LEFTMARGIN-1;
 
@@ -1115,8 +1111,6 @@ INT CDataGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Header
 	for (UINT a=0; a<FMAttributeCount; a++)
 		VERIFY(AddHeaderColumn(TRUE, FMAttributes[a].nNameID));
-
-	UpdateHeader();
 
 	// Time
 	SYSTEMTIME stLocal;
@@ -1847,7 +1841,6 @@ void CDataGrid::OnAutosizeAll()
 		if (m_ViewParameters.ColumnWidth[a])
 			AutosizeColumn(a);
 
-	UpdateHeader();
 	AdjustLayout();
 }
 
@@ -1857,7 +1850,6 @@ void CDataGrid::OnAutosize()
 	{
 		AutosizeColumn(m_HeaderItemClicked);
 
-		UpdateHeader();
 		AdjustLayout();
 	}
 }
@@ -1875,7 +1867,6 @@ void CDataGrid::OnChooseDetails()
 				break;
 			}
 
-		UpdateHeader();
 		AdjustLayout();
 	}
 }

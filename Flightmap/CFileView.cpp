@@ -10,7 +10,9 @@
 // CAttachmentList
 //
 
-CString CAttachmentList::m_SubitemNames[4];
+CString CAttachmentList::m_SubitemNames[FILEVIEWCOLUMNS];
+UINT CAttachmentList::m_SortAttribute = 0;
+BOOL CAttachmentList::m_SortDescending = FALSE;
 
 CAttachmentList::CAttachmentList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLELABELEDIT, sizeof(AttachmentItemData))
@@ -20,7 +22,7 @@ CAttachmentList::CAttachmentList()
 
 	// Subitem names
 	if (m_SubitemNames[0].IsEmpty())
-		for (UINT a=0; a<4; a++)
+		for (UINT a=0; a<FILEVIEWCOLUMNS; a++)
 			ENSURE(m_SubitemNames[a].LoadString(IDS_SUBITEM_NAME+a));
 
 	// Item
@@ -72,8 +74,8 @@ void CAttachmentList::ShowTooltip(const CPoint& point)
 	WCHAR strSize[256];
 	StrFormatByteSize(pAttachment->FileSize, strSize, 256);
 
-	WCHAR Hint[4096];
-	swprintf_s(Hint, 4096, L"%s: %s\n%s: %s\n%s: %s",
+	CString Hint;
+	Hint.Format(_T("%s: %s\n%s: %s\n%s: %s"),
 		m_SubitemNames[1], (LPCWSTR)FMTimeToString(pAttachment->Created),
 		m_SubitemNames[2], (LPCWSTR)FMTimeToString(pAttachment->Modified),
 		m_SubitemNames[3], strSize);
@@ -94,7 +96,7 @@ void CAttachmentList::ShowTooltip(const CPoint& point)
 		CString tmpStr;
 		tmpStr.Format(IDS_RESOLUTION, Width, Height);
 
-		wcscat_s(Hint, 4096, tmpStr);
+		Hint += tmpStr;
 
 		// Scaling
 		const DOUBLE ScaleX = 256.0/(DOUBLE)Width;
@@ -143,7 +145,8 @@ UseIcon:
 
 BOOL CAttachmentList::GetContextMenu(CMenu& Menu, INT Index)
 {
-	Menu.LoadMenu(Index>=0 ? IDM_FILEVIEW_ITEM : IDM_FILEVIEW_BACKGROUND);
+	if ((Index>=0) || !HasHeader())
+		Menu.LoadMenu(Index>=0 ? IDM_FILEVIEW_ITEM : IDM_FILEVIEW_BACKGROUND);
 
 	return (Index>=0);
 }
@@ -170,7 +173,7 @@ INT CAttachmentList::CompareItems(AttachmentItemData* pData1, AttachmentItemData
 		break;
 
 	case 3:
-		Result = pAttachment2->FileSize-pAttachment1->FileSize;
+		Result = pAttachment1->FileSize-pAttachment2->FileSize;
 		break;
 	}
 
@@ -210,20 +213,21 @@ void CAttachmentList::SetAttachments(CItinerary* pItinerary, AIRX_Flight* pFligh
 	p_Itinerary = pItinerary;
 
 	// Header
-	//if (!pFlight && !HasHeader())
-	//	for (UINT a=0; a<3; a++)
-	//		AddHeaderColumn(TRUE, m_SubitemNames[a], a>0);
+	if (!pFlight && !HasHeader())
+		for (UINT a=0; a<FILEVIEWCOLUMNS; a++)
+			AddHeaderColumn(TRUE, m_SubitemNames[a], a>0);
 
 	// Items
 	if (pFlight)
 	{
-		SetItemCount(AIRX_MaxAttachmentCount, FALSE);
+		SetItemCount(AIRX_MAXATTACHMENTCOUNT, FALSE);
 
 		for (UINT a=0; a<pFlight->AttachmentCount; a++)
 			AddAttachment(pFlight->Attachments[a], pItinerary->m_Attachments[pFlight->Attachments[a]]);
 	}
 	else
 	{
+		SetItemHeight(GetSystemMetrics(SM_CYSMICON), 1, ITEMCELLPADDINGY);
 		SetItemCount(pItinerary->m_Attachments.m_ItemCount, FALSE);
 
 		for (UINT a=0; a<pItinerary->m_Attachments.m_ItemCount; a++)
@@ -254,12 +258,51 @@ COLORREF CAttachmentList::GetItemTextColor(INT Index) const
 {
 	const AIRX_Attachment* pAttachment = GetAttachment(Index);
 
-	return (pAttachment->Flags & AIRX_Invalid) ? 0x2020FF : (pAttachment->Flags & AIRX_Valid) ? 0x208040 : (COLORREF)-1;
+	return (pAttachment->Flags & AIRX_INVALID) ? 0x2020FF : (pAttachment->Flags & AIRX_VALID) ? 0x208040 : (COLORREF)-1;
+}
+
+void CAttachmentList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+{
+	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
+	HeaderItem.fmt = HDF_STRING | (Attr>0 ? HDF_RIGHT : HDF_LEFT);
+
+	if (m_SortAttribute==Attr)
+		HeaderItem.fmt |= m_SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
+
+	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
+		HeaderItem.cxy = ITEMVIEWMINWIDTH;
+}
+
+void CAttachmentList::HeaderColumnClicked(UINT Attr)
+{
+	m_SortDescending = (m_SortAttribute==Attr) ? !m_SortDescending : (m_SortAttribute=Attr);
+
+	UpdateHeader();
+	SortItems();
+
+	AdjustLayout();
 }
 
 void CAttachmentList::AdjustLayout()
 {
-	AdjustLayoutColumns(2, BACKSTAGEBORDER);
+	if (HasHeader())
+	{
+		// Header
+		m_ColumnWidth[0] = 0;
+		m_ColumnWidth[3] = (m_ColumnWidth[1]=m_ColumnWidth[2]=theApp.m_DefaultFont.GetTextExtent(_T("00.00.0000 00:00ww")).cx+ITEMCELLSPACER)*2/3;
+
+		SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
+
+		UpdateHeader();
+
+		// Item layout
+		AdjustLayoutList();
+	}
+	else
+	{
+		// Item layout
+		AdjustLayoutColumns(2, BACKSTAGEBORDER);
+	}
 }
 
 void CAttachmentList::FireSelectedItem() const
@@ -267,27 +310,86 @@ void CAttachmentList::FireSelectedItem() const
 	GetOwner()->PostMessage(WM_COMMAND, (WPARAM)IDM_FILEVIEW_OPEN);
 }
 
-void CAttachmentList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+void CAttachmentList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)
 {
 	const AIRX_Attachment* pAttachment = GetAttachment(Index);
 	ASSERT(pAttachment->IconID!=-1);
 
-	WCHAR strSize[256];
-	StrFormatByteSize(pAttachment->FileSize, strSize, 256);
+	if (Attr==0)
+	{
+		// Icon
+		theApp.m_SystemImageListSmall.DrawEx(&dc, pAttachment->IconID, CPoint(rectCell.left, rectCell.top+(rectCell.Height()-m_IconSize)/2), CSize(m_IconSize, m_IconSize), CLR_NONE, CLR_NONE, ILD_TRANSPARENT);
 
-	DrawTile(dc, rectItem, theApp.m_SystemImageListExtraLarge, pAttachment->IconID,
-		ILD_TRANSPARENT,
-		GetDarkTextColor(dc, Index, Themed), 3,
-		pAttachment->Name, FMTimeToString(pAttachment->Modified), strSize);
+		rectCell.left += m_IconSize+ITEMCELLPADDINGX;
+
+		// Label
+		if (IsEditing() && (Index==m_EditItem))
+			return;
+	}
+
+	// Column
+	CString strCell;
+
+	switch (Attr)
+	{
+	case 0:
+		strCell = pAttachment->Name;
+		break;
+
+	case 1:
+	case 2:
+		strCell = FMTimeToString(Attr==1 ? pAttachment->Created : pAttachment->Modified);
+		break;
+
+	case 3:
+		WCHAR strSize[256];
+		StrFormatByteSize(pAttachment->FileSize, strSize, 256);
+
+		strCell = strSize;
+	}
+
+	dc.DrawText(strCell, rectCell, (Attr>0 ? DT_RIGHT : DT_LEFT) | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+}
+
+void CAttachmentList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+{
+	if (HasHeader())
+	{
+		// List view
+		DrawListItem(dc, rectItem, Index, Themed, m_ColumnOrder, m_ColumnWidth);
+	}
+	else
+	{
+		// Tile view
+		const AIRX_Attachment* pAttachment = GetAttachment(Index);
+		ASSERT(pAttachment->IconID!=-1);
+
+		WCHAR strSize[256];
+		StrFormatByteSize(pAttachment->FileSize, strSize, 256);
+
+		DrawTile(dc, rectItem, theApp.m_SystemImageListExtraLarge, pAttachment->IconID,
+			ILD_TRANSPARENT,
+			GetDarkTextColor(dc, Index, Themed), 3,
+			pAttachment->Name, FMTimeToString(pAttachment->Modified), strSize);
+	}
 }
 
 RECT CAttachmentList::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
 
-	rect.bottom = (rect.top+=(rect.bottom-rect.top-3*m_DefaultFontHeight)/2-2)+m_DefaultFontHeight+4;
-	rect.left += m_IconSize+2*ITEMVIEWPADDING-5;
-	rect.right -= ITEMVIEWPADDING-2;
+	if (HasHeader())
+	{
+		rect.bottom = (rect.top+=ITEMCELLPADDINGY-2)+m_DefaultFontHeight+4;
+		rect.right = rect.left+m_ColumnWidth[0];
+		rect.left += m_IconSize+2*ITEMCELLPADDINGX-6;
+	}
+	else
+	{
+		rect.bottom = (rect.top+=(rect.bottom-rect.top-3*m_DefaultFontHeight)/2-2)+m_DefaultFontHeight+4;
+		rect.left += m_IconSize+2*ITEMVIEWPADDING-5;
+		rect.right -= ITEMVIEWPADDING-2;
+	}
 
 	return rect;
 }
@@ -323,10 +425,9 @@ void CAttachmentList::EditLabel(INT Index)
 
 void CAttachmentList::DestroyEdit(BOOL Accept)
 {
-	ASSERT(p_Itinerary);
-
 	if (m_pWndEdit)
 	{
+		ASSERT(p_Itinerary);
 		const INT EditItem = m_EditItem;
 
 		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
@@ -498,25 +599,6 @@ void CFileView::Reload()
 	m_wndTaskbar.SendMessage(WM_IDLEUPDATECMDUI);
 }
 
-/*	CHeaderCtrl* pHeaderCtrl = m_wndExplorerList.GetHeaderCtrl();
-	if (pHeaderCtrl)
-	{
-		HDITEM Item;
-		ZeroMemory(&Item, sizeof(Item));
-		Item.mask = HDI_FORMAT;
-
-		for (INT a=0; a<4; a++)
-		{
-			pHeaderCtrl->GetItem(a, &Item);
-
-			Item.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
-			if (a==(INT)m_LastSortColumn)
-				Item.fmt |= m_LastSortDirection ? HDF_SORTDOWN : HDF_SORTUP;
-
-			pHeaderCtrl->SetItem(a, &Item);
-		}
-	}*/
-
 
 BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_WM_SIZE()
@@ -531,7 +613,6 @@ BEGIN_MESSAGE_MAP(CFileView, CFrontstageWnd)
 	ON_COMMAND(IDM_FILEVIEW_RENAME, OnRename)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILEVIEW_ADD, IDM_FILEVIEW_RENAME, OnUpdateCommands)
 END_MESSAGE_MAP()
-
 
 void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
@@ -686,7 +767,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_FILEVIEW_ADD:
 		if (p_Flight)
-			bEnable = (p_Flight->AttachmentCount<AIRX_MaxAttachmentCount);
+			bEnable = (p_Flight->AttachmentCount<AIRX_MAXATTACHMENTCOUNT);
 
 		break;
 

@@ -192,35 +192,27 @@ FMApplication::~FMApplication()
 }
 
 
-// FMApplication-Initialisierung
-
 BOOL FMApplication::InitInstance()
 {
-	// GDI+ initalisieren
-	GdiplusStartupInput gdiplusStartupInput;
-	GdiplusStartup(&m_GdiPlusToken, &gdiplusStartupInput, NULL);
+	// Initialize GDI+
+	GdiplusStartupInput StartupInput;
+	GdiplusStartup(&m_GdiPlusToken, &StartupInput, NULL);
 
-	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
-	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
-	// von visuellen Stilen angibt. Ansonsten treten beim Erstellen von Fenstern Fehler auf.
-	INITCOMMONCONTROLSEX InitCtrls;
-	InitCtrls.dwSize = sizeof(InitCtrls);
-	// Legen Sie dies fest, um alle allgemeinen Steuerelementklassen einzubeziehen,
-	// die Sie in Ihrer Anwendung verwenden möchten.
-	InitCtrls.dwICC = ICC_WIN95_CLASSES | ICC_DATE_CLASSES;
-	InitCommonControlsEx(&InitCtrls);
+	// Common controls
+	const INITCOMMONCONTROLSEX InitCtrls = { sizeof(InitCtrls), ICC_WIN95_CLASSES | ICC_DATE_CLASSES };
+	ENSURE(InitCommonControlsEx(&InitCtrls));
 
 	if (!CWinAppEx::InitInstance())
 		return FALSE;
 
-	// OLE initialisieren
+	// Initialize OLE
 	ENSURE(AfxOleInit());
 
 	// Rating bitmaps
 	for (UINT a=0; a<=MAXRATING; a++)
 		hRatingBitmaps[a] = LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_RATING0+a));
 
-	// Eingebettete Schrift
+	// Embedded font
 	hFontDinMittelschrift = LoadFontFromResource(IDF_DINMITTELSCHRIFT);
 
 	// Fonts
@@ -252,11 +244,11 @@ BOOL FMApplication::InitInstance()
 	// Registry
 	SetRegistryKey(_T(""));
 
-	// Zähler zurücksetzen
-	m_NagCounter = 3;
-
 	// Tooltip
 	m_wndTooltip.Create();
+
+	// Reset nag counter
+	m_NagCounter = 3;
 
 	return TRUE;
 }

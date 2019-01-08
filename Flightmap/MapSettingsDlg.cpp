@@ -7,10 +7,12 @@
 #include "MapSettingsDlg.h"
 
 
-// MapSettingsDlg
+// CResolutionList
 //
 
-const ResolutionPreset ResolutionPresets[] =
+CIcons CResolutionList::m_ResolutionPresetIcons;
+
+const ResolutionPreset CResolutionList::m_ResolutionPresets[RESOLUTIONPRESETCOUNT] =
 {
 	{ 400, 300, L"QSVGA", 4 },
 	{ 480, 320, L"iPhone 2G, 3G, 3GS", 3 },
@@ -30,12 +32,17 @@ const ResolutionPreset ResolutionPresets[] =
 	{ 1400, 1050, L"SXGA+", 4 },
 	{ 1600, 1200, L"UXGA", 4 },
 	{ 1680, 1050, L"WSXGA+", 4 },
+	{ 1792, 838, L"iPhone XR", 3 },
 	{ 1920, 1080, L"HDTV 1080", 5 },
 	{ 1920, 1080, L"iPhone 6+ – 8+", 3 },
 	{ 1920, 1200, L"WUXGA", 4 },
 	{ 2048, 1365, L"3 Megapixel 3:2", 0 },
 	{ 2048, 1536, L"3 Megapixel 4:3", 0 },
-	{ 2436, 1125, L"iPhone X", 3 },
+	{ 2224, 1668, L"iPad Pro 10.5\"", 3 },
+	{ 2388, 1668, L"iPad Pro 11\"", 3 },
+	{ 2436, 1125, L"iPhone X, Xs", 3 },
+	{ 2682, 1242, L"iPhone Xs Max", 3 },
+	{ 2732, 2048, L"iPad Pro 12.9\"", 3 },
 	{ 3072, 2048, L"6 Megapixel 3:2", 0 },
 	{ 3072, 2304, L"6 Megapixel 4:3", 0 },
 	{ 4096, 2730, L"12 Megapixel 3:2", 0 },
@@ -43,8 +50,111 @@ const ResolutionPreset ResolutionPresets[] =
 	{ 8192, 4096, L"", 1 }
 };
 
+CResolutionList::CResolutionList()
+	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM)
+{
+	WNDCLASS wndcls;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.hCursor = theApp.LoadStandardCursor(IDC_ARROW);
+	wndcls.lpszClassName = L"CResolutionList";
+
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CResolutionList", &wndcls)))
+	{
+		wndcls.hInstance = AfxGetInstanceHandle();
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+
+	// Item
+	SetItemHeight(m_ResolutionPresetIcons.Load(IDB_RESOLUTIONPRESETICONS_16), 1, ITEMCELLPADDINGY);
+}
+
+BOOL CResolutionList::SetResolutions(UINT Width, UINT Height)
+{
+	// Header
+	AddHeaderColumn(FALSE, IDS_COLUMN_RESOLUTION);
+	AddHeaderColumn(FALSE, IDS_COLUMN_APPLICATION);
+
+	// Items
+	SetItemCount(RESOLUTIONPRESETCOUNT, TRUE);
+	ValidateAllItems();
+
+	AdjustLayout();
+
+	// Find resolution
+	for (UINT a=0; a<RESOLUTIONPRESETCOUNT; a++)
+		if ((m_ResolutionPresets[a].Width==Width) && (m_ResolutionPresets[a].Height==Height))
+		{
+			SetFocusItem(a);
+
+			return TRUE;
+		}
+
+	return FALSE;
+}
+
+void CResolutionList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+{
+	HeaderItem.mask = HDI_WIDTH;
+
+	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
+		HeaderItem.cxy = ITEMVIEWMINWIDTH;
+}
+
+void CResolutionList::AdjustLayout()
+{
+	// Header
+	m_ColumnWidth[0] = m_IconSize+ITEMCELLPADDINGX+theApp.m_DefaultFont.GetTextExtent(_T("0000×0000")).cx+ITEMCELLSPACER;
+	m_ColumnWidth[1] = 0;
+
+	SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
+
+	UpdateHeader();
+
+	// Item layout
+	AdjustLayoutList();
+}
+
+void CResolutionList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)
+{
+	if (Attr==0)
+	{
+		// Icon
+		m_ResolutionPresetIcons.Draw(dc, rectCell.left, rectCell.top+(rectCell.Height()-m_IconSize)/2, m_ResolutionPresets[Index].IconID, FALSE, !IsWindowEnabled());
+
+		rectCell.left += m_IconSize+ITEMCELLPADDINGX;
+	}
+
+	// Column
+	CString strCell;
+
+	switch (Attr)
+	{
+	case 0:
+		strCell.Format(_T("%u×%u"), m_ResolutionPresets[Index].Width, m_ResolutionPresets[Index].Height);
+		break;
+
+	case 1:
+		strCell = m_ResolutionPresets[Index].Hint;
+		break;
+	}
+
+	dc.DrawText(strCell, rectCell, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+}
+
+void CResolutionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
+{
+	DrawListItem(dc, rectItem, Index, Themed, m_ColumnOrder, m_ColumnWidth);
+}
+
+
+// MapSettingsDlg
+//
+
 UINT MapSettingsDlg::m_LastTab = 0;
-CIcons MapSettingsDlg::m_ResolutionPresetIcons;
 
 MapSettingsDlg::MapSettingsDlg(CWnd* pParentWnd)
 	: FMTabbedDialog(IDS_MAPSETTINGS, pParentWnd, &m_LastTab)
@@ -121,12 +231,7 @@ void MapSettingsDlg::DoDataExchange(CDataExchange* pDX)
 		}
 		else
 		{
-			const INT Index = m_wndResolutionList.GetNextItem(-1, LVIS_SELECTED);
-			if (Index!=-1)
-			{
-				theApp.m_MapSettings.Width = ResolutionPresets[Index].Width;
-				theApp.m_MapSettings.Height = ResolutionPresets[Index].Height;
-			}
+			GetSelectedResolution(theApp.m_MapSettings.Width, theApp.m_MapSettings.Height);
 		}
 
 		// Tab 1
@@ -174,51 +279,7 @@ BOOL MapSettingsDlg::InitDialog()
 	tmpStr.Format(_T("%u"), theApp.m_MapSettings.Height);
 	m_wndEditHeight.SetWindowText(tmpStr);
 
-	m_wndResolutionList.SetFont(&theApp.m_DefaultFont);
-
-	m_ResolutionPresetIcons.Load(IDB_RESOLUTIONPRESETICONS_16);
-	m_ResolutionPresetIconsImageList.Attach(m_ResolutionPresetIcons.ExtractImageList());
-	m_wndResolutionList.SetImageList(&m_ResolutionPresetIconsImageList, LVSIL_SMALL);
-
-	m_wndResolutionList.AddColumn(0, CString((LPCSTR)IDS_COLUMN_RESOLUTION));
-	m_wndResolutionList.AddColumn(1, CString((LPCSTR)IDS_COLUMN_APPLICATION));
-
-	BOOL bUserDefined = TRUE;
-	static UINT puColumns[1] = { 1 };
-
-	LVITEM lvi;
-	ZeroMemory(&lvi, sizeof(lvi));
-
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS | LVIF_STATE;
-	lvi.cColumns = 1;
-	lvi.puColumns = puColumns;
-	lvi.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
-
-	for (UINT a=0; a<sizeof(ResolutionPresets)/sizeof(ResolutionPreset); a++)
-	{
-		tmpStr.Format(_T("%u×%u"), ResolutionPresets[a].Width, ResolutionPresets[a].Height);
-
-		lvi.iItem = a;
-		lvi.pszText = tmpStr.GetBuffer();
-		lvi.iImage = ResolutionPresets[a].iImage;
-
-		if ((ResolutionPresets[a].Width==theApp.m_MapSettings.Width) && (ResolutionPresets[a].Height==theApp.m_MapSettings.Height))
-		{
-			lvi.state = LVIS_SELECTED | LVIS_FOCUSED;
-			bUserDefined = FALSE;
-		}
-		else
-		{
-			lvi.state = 0;
-		}
-
-		m_wndResolutionList.SetItemText(m_wndResolutionList.InsertItem(&lvi), 1, ResolutionPresets[a].Hint);
-	}
-
-	m_wndResolutionList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-	m_wndResolutionList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-
-	((CButton*)GetDlgItem(IDC_USERDEFINEDRESOLUTION))->SetCheck(bUserDefined);
+	((CButton*)GetDlgItem(IDC_USERDEFINEDRESOLUTION))->SetCheck(!m_wndResolutionList.SetResolutions(theApp.m_MapSettings.Width, theApp.m_MapSettings.Height));
 	OnUserDefinedResolution();
 
 	// Tab 1

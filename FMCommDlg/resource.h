@@ -35,11 +35,11 @@
 #define IDB_UPDATEICONS_32              20022
 #define IDB_UPDATEICONS_48              20023
 #define IDB_UPDATEICONS_64              20024
-#define IDB_BACKGROUND_DARKLINEN        20025
-#define IDB_BACKGROUND_TOOLTIP          20026
-#define IDB_NRT_UNREGISTERED            20027
-#define IDB_NRT_REGISTERED              20028
-#define IDB_RESOLUTIONICONS             20029
+#define IDB_BACKGROUND_CARDS            20025
+#define IDB_BACKGROUND_DARKLINEN        20026
+#define IDB_BACKGROUND_TOOLTIP          20027
+#define IDB_NRT_UNREGISTERED            20028
+#define IDB_NRT_REGISTERED              20029
 #define IDB_BLUEMARBLE_1024             20090
 #define IDB_BLUEMARBLE_2048             20091
 #define IDB_BLUEMARBLE_8192             20092

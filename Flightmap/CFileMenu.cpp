@@ -259,6 +259,7 @@ void CFileMenu::OnFileAttachments()
 	ASSERT(p_Itinerary);
 
 	AttachmentsDlg(p_Itinerary, this).DoModal();
+	Update();
 }
 
 void CFileMenu::OnUpdateFileCommands(CCmdUI* pCmdUI)

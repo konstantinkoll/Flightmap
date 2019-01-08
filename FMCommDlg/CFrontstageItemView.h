@@ -86,6 +86,7 @@ protected:
 	virtual void DeleteSelectedItem() const;
 	virtual void AdjustScrollbars();
 	virtual BOOL DrawNothing() const;
+	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 
@@ -111,6 +112,7 @@ protected:
 	void EnsureVisible(INT Index);
 	void ResetDragLocation();
 	BOOL IsDragLocationValid() const;
+	void DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Themed, INT* pColumnOrder, INT* pColumnWidth, INT PreviewAttribute=-1);
 	void DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const;
 	void DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const;
 	void DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, BOOL Cached=TRUE);
@@ -124,6 +126,7 @@ protected:
 	void SetItemHeight(const CImageList& ImageList, INT Rows, INT Padding=ITEMVIEWPADDING);
 	void GetLayoutRect(CRect& rectLayout);
 	void AdjustLayoutGrid(const CSize& szItem, BOOL FullWidth=FALSE, INT Margin=ITEMVIEWMARGIN);
+	void AdjustLayoutList();
 	void AdjustLayoutColumns(INT Columns=1, INT Margin=ITEMVIEWMARGIN);
 	void AdjustLayoutSingleRow(INT Columns);
 

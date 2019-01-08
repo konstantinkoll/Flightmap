@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,0,0
- PRODUCTVERSION 2,4,0,0
+ FILEVERSION 2,4,1,0
+ PRODUCTVERSION 2,4,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.4.0"
+            VALUE "FileVersion", "2.4.1"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2019 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.4.0"
+            VALUE "ProductVersion", "2.4.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -310,7 +310,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Flüge",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,214,15
     LTEXT           "Route:",IDC_STATIC,7,26,50,8
-    EDITTEXT        IDC_ROUTE,61,24,160,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_ROUTE,61,24,160,13,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Fluglinie:",IDC_STATIC,7,43,50,8
     COMBOBOX        IDC_CARRIER,61,41,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Kommentar:",IDC_STATIC,7,60,50,8
@@ -405,7 +405,7 @@ BEGIN
     LTEXT           "Ausgegebene Meilen:",IDC_STATIC,14,146,80,8
     CONTROL         "X",IDC_TOTALMILESSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,146,110,8
     GROUPBOX        "Klassen",IDC_STATIC,7,166,210,164
-    CONTROL         "",IDC_LIST_CLASS,"CClassesList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,14,177,197,146
+    CONTROL         "",IDC_LIST_CLASS,"CClassesList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,14,177,197,146
     GROUPBOX        "Routen",IDC_STATIC,225,66,97,130
     CONTROL         "",IDC_LIST_ROUTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,77,83,111
     GROUPBOX        "Flughäfen",IDC_STATIC,331,66,262,130
@@ -423,7 +423,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Auflösung\nDie tatsächliche Größe kann abweichen.",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,173,25
-    CONTROL         "",IDC_RESOLUTIONPRESETS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,35,173,241
+    CONTROL         "",IDC_RESOLUTIONPRESETS,"CResolutionList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,7,35,173,241
     CONTROL         "&Benutzerdefinierte Auflösung verwenden:",IDC_USERDEFINEDRESOLUTION,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
     LTEXT           "Breite:",IDC_STATIC,7,301,30,8
@@ -470,7 +470,7 @@ BEGIN
     LTEXT           "Jahr:",IDC_STATIC,107,215,38,8
     EDITTEXT        IDC_FILTER_YEAR,107,225,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "Ergebnis sortieren",IDC_CATEGORY2,"CCategory",WS_GROUP,159,45,98,15
-    CONTROL         "",IDC_VIEWATTRIBUTES,"CSortList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,159,62,98,145
+    CONTROL         "",IDC_VIEWATTRIBUTES,"CSortList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,159,62,98,145
     LTEXT           "Sortierrichtung:",IDC_STATIC,159,215,98,8
     COMBOBOX        IDC_SORTDIRECTION,159,225,98,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,150,254,50,14,WS_GROUP
@@ -1447,7 +1447,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Flights",IDC_CATEGORY1,"CCategory",WS_GROUP,7,7,214,15
     LTEXT           "Route:",IDC_STATIC,7,26,50,8
-    EDITTEXT        IDC_ROUTE,61,24,160,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_ROUTE,61,24,160,13,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Carrier:",IDC_STATIC,7,43,50,8
     COMBOBOX        IDC_CARRIER,61,41,160,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LTEXT           "Comments:",IDC_STATIC,7,60,50,8
@@ -1531,7 +1531,7 @@ BEGIN
     LTEXT           "Total miles spent:",IDC_STATIC,14,146,80,8
     CONTROL         "X",IDC_TOTALMILESSPENT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,100,146,110,8
     GROUPBOX        "Classes",IDC_STATIC,7,166,210,164
-    CONTROL         "",IDC_LIST_CLASS,"CClassesList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,14,177,197,146
+    CONTROL         "",IDC_LIST_CLASS,"CClassesList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,14,177,197,146
     GROUPBOX        "Routes",IDC_STATIC,225,66,97,130
     CONTROL         "",IDC_LIST_ROUTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,232,77,83,111
     GROUPBOX        "Airports",IDC_STATIC,331,66,262,130
@@ -1580,7 +1580,7 @@ BEGIN
     LTEXT           "Year:",IDC_STATIC,107,215,38,8
     EDITTEXT        IDC_FILTER_YEAR,107,225,40,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "Sort result",IDC_CATEGORY2,"CCategory",WS_GROUP,159,45,98,15
-    CONTROL         "",IDC_VIEWATTRIBUTES,"CSortList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,159,62,98,145
+    CONTROL         "",IDC_VIEWATTRIBUTES,"CSortList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,159,62,98,145
     LTEXT           "Sort direction:",IDC_STATIC,159,215,98,8
     COMBOBOX        IDC_SORTDIRECTION,159,225,98,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,150,254,50,14,WS_GROUP
@@ -1592,7 +1592,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Properties of %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Properties\nThere properties will be stored within the file.",IDC_CATEGORY1,
+    CONTROL         "Properties\nThese properties will be stored within the file.",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,337,25
     LTEXT           "Title:",IDC_STATIC,7,37,55,8
     EDITTEXT        IDC_TITLE,65,35,279,14,ES_AUTOHSCROLL
@@ -1616,7 +1616,7 @@ BEGIN
     CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
     CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
-    CONTROL         "Flight paths",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "Routes",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
     CONTROL         "Draw frequent routes &wider",IDC_USECOUNT_WIDTH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
     CONTROL         "Use &colors",IDC_USECOLORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
     CONTROL         "&True flight levels",IDC_CLAMPHEIGHT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,218,173,10
@@ -1634,7 +1634,7 @@ BEGIN
     CONTROL         "&Merge metropolitan codes",IDC_METROPOLITAN_MERGE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,35,173,10
     CONTROL         "",IDC_METROPOLITAN_PREVIEW,"CPictureCtrl",WS_BORDER | WS_GROUP,7,50,173,117
-    CONTROL         "Categories",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
+    CONTROL         "Routes",IDC_CATEGORY2,"CCategory",WS_GROUP,7,175,173,15
     CONTROL         "&Ignore route directions",IDC_MERGEDIRECTIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,192,173,10
     CONTROL         "Count &award flights as regular flights",IDC_MERGEAWARDS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,205,173,10
@@ -1705,7 +1705,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Resolution\nThe true map size may vary.",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,173,25
-    CONTROL         "",IDC_RESOLUTIONPRESETS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,7,35,173,241
+    CONTROL         "",IDC_RESOLUTIONPRESETS,"CResolutionList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,7,35,173,241
     CONTROL         "&User-defined resolution:",IDC_USERDEFINEDRESOLUTION,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
     LTEXT           "Width:",IDC_STATIC,7,301,30,8
@@ -2160,8 +2160,8 @@ STRINGTABLE
 BEGIN
     IDS_PRINTED_REGISTERED  "Current as of %s, %s"
     IDS_METADATA_COMMENTS   "Sample itinerary"
-    IDS_METADATA_TITLE_ATLANTIC "Atlantic crossing"
-    IDS_METADATA_TITLE_PACIFIC "Pacific crossing"
+    IDS_METADATA_TITLE_ATLANTIC "Atlantic Crossing"
+    IDS_METADATA_TITLE_PACIFIC "Pacific Crossing"
     IDS_METADATA_KEYWORDS_ATLANTIC 
                             "Flightmap Sample Itinerary Atlantic Crossing"
     IDS_METADATA_KEYWORDS_PACIFIC 
@@ -2309,8 +2309,8 @@ STRINGTABLE
 BEGIN
     IDM_FILE_VIEWINFOLDER   "View the folder containing the itinerary with Windows Explorer.\nView in folder"
     IDM_FILE_NEW            "Create an empty itinerary.\nNew"
-    IDM_FILE_NEWSAMPLE1     "Open a sample itinerary crossing the Atlantic Ocean.\nAtlantic crossing"
-    IDM_FILE_NEWSAMPLE2     "Open a sample itinerary crossing the Pacific Ocean.\nPacific crossing"
+    IDM_FILE_NEWSAMPLE1     "Open a sample itinerary crossing the Atlantic Ocean.\nAtlantic Crossing"
+    IDM_FILE_NEWSAMPLE2     "Open a sample itinerary crossing the Pacific Ocean.\nPacific Crossing"
     IDM_FILE_OPEN           "Open an existing itinerary.\nOpen"
     IDM_FILE_CLOSE          "Close the current itinerary.\nClose"
     IDM_FILE_SAVE           "Save the itinerary.\nSave"

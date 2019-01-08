@@ -67,9 +67,9 @@ struct AIRX_Route
 #define AIRX_Crew                   'C'
 #define AIRX_Charter                'H'
 
-#define AIRX_MaxAttachmentCount     16
-#define AIRX_Valid                  1
-#define AIRX_Invalid                2
+#define AIRX_MAXATTACHMENTCOUNT     16
+#define AIRX_VALID                  1
+#define AIRX_INVALID                2
 
 struct AIRX_Flight
 {
@@ -95,7 +95,7 @@ struct AIRX_Flight
 	WCHAR Codeshares[64];
 	UINT FlightTime;
 	UINT AttachmentCount;
-	UINT Attachments[AIRX_MaxAttachmentCount];
+	UINT Attachments[AIRX_MAXATTACHMENTCOUNT];
 	UINT UpgradeVoucher;
 };
 

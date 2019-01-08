@@ -230,11 +230,6 @@ void CButtonGroup::AddText(LPCWSTR Text, BOOL Bullet)
 	m_Items.AddItem(Item);
 }
 
-void CButtonGroup::SetGroupAlert(BOOL Alert)
-{
-	m_Alert = Alert;
-}
-
 void CButtonGroup::SetText(UINT Index, LPCWSTR Text, BOOL Bullet)
 {
 	ASSERT(Index<m_Items.m_ItemCount);
@@ -564,6 +559,8 @@ void CFloatButtons::AdjustButtonGroups()
 
 void CFloatButtons::AdjustLayout()
 {
+	m_BackBufferL = m_BackBufferH = 0;
+
 	CRect rectWindow;
 	GetWindowRect(rectWindow);
 
@@ -589,23 +586,22 @@ Restart:
 		SIZE Size;
 		m_ButtonGroups[a]->GetPreferredSize(&Size, rectWindow.Width()-(BACKSTAGEBORDER-INNERBORDER));
 
-		if (FirstInRow!=a)
-			if (Left+Size.cx>rectWindow.Width())
-			{
-				// Extend single button group to full width
-				if (FirstInRow!=a-1)
-					AllMaxWidth = FALSE;
+		if ((FirstInRow!=a) && (Left+Size.cx>rectWindow.Width()))
+		{
+			// Extend single button group to full width
+			if (FirstInRow!=a-1)
+				AllMaxWidth = FALSE;
 
-				// All button groups in row must have equal height
-				for (UINT b=FirstInRow; b<a; b++)
-					m_ButtonGroups[b]->m_Rect.bottom = Row+MaxRowHeight;
+			// All button groups in row must have equal height
+			for (UINT b=FirstInRow; b<a; b++)
+				m_ButtonGroups[b]->m_Rect.bottom = Row+MaxRowHeight;
 
-				// Next row
-				Left = BACKSTAGEBORDER-INNERBORDER;
-				Row += MaxRowHeight+GROUPMARGIN;
-				FirstInRow = a;
-				MaxRowHeight = 0;
-			}
+			// Next row
+			Left = BACKSTAGEBORDER-INNERBORDER;
+			Row += MaxRowHeight+GROUPMARGIN;
+			FirstInRow = a;
+			MaxRowHeight = 0;
+		}
 
 		if (Size.cy>MaxRowHeight)
 			MaxRowHeight = Size.cy;
@@ -615,10 +611,11 @@ Restart:
 	}
 
 	m_ScrollHeight = Row+MaxRowHeight+(BACKSTAGEBORDER-INNERBORDER);
-	if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars))
+	if ((m_ScrollHeight>rectWindow.Height()) && !HasScrollbars)
 	{
 		HasScrollbars = TRUE;
 		rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
+
 		goto Restart;
 	}
 

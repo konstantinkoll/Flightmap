@@ -86,6 +86,8 @@ void SortMemory(const SortParameters& Parameters)
 {
 	if (Parameters.ItemCount>1)
 	{
+		assert(Parameters.pMemory);
+
 		for (INT a=Parameters.ItemCount/2-1; a>=0; a--)
 			Heap(a, Parameters.ItemCount, Parameters);
 
@@ -99,7 +101,6 @@ void SortMemory(const SortParameters& Parameters)
 
 void FMSortMemory(LPVOID pMemory, UINT ItemCount, SIZE_T szData, PFNCOMPARE zCompare, UINT Attr, BOOL Descending, BOOL Parameter1, BOOL Parameter2)
 {
-	assert(pMemory);
 	assert(szData>0);
 	assert(zCompare);
 

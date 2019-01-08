@@ -712,8 +712,8 @@ void CItinerary::OpenAIRX(const CString& Path)
 						Flight.Flags &= (AIRX_AwardFlight | AIRX_BusinessTrip | AIRX_LeisureTrip | AIRX_GroundTransportation | AIRX_Selected | AIRX_Cancelled | AIRX_Upgrade);
 
 						// Precaution for future increase of max. attachment count
-						if (Flight.AttachmentCount>AIRX_MaxAttachmentCount)
-							Flight.AttachmentCount = AIRX_MaxAttachmentCount;
+						if (Flight.AttachmentCount>AIRX_MAXATTACHMENTCOUNT)
+							Flight.AttachmentCount = AIRX_MAXATTACHMENTCOUNT;
 
 						AddFlight(Flight, &stLocal);
 					}
@@ -1279,7 +1279,7 @@ AIRX_Attachment* CItinerary::GetGPSPath(UINT Row)
 		{
 			ValidateAttachment(*pAttachment);
 
-			if (pAttachment->Flags & AIRX_Valid)
+			if (pAttachment->Flags & AIRX_VALID)
 				return pAttachment;
 		}
 	}
@@ -1355,7 +1355,7 @@ INT CItinerary::CompareItems(const AIRX_Flight* pFlight1, const AIRX_Flight* pFl
 BOOL CItinerary::AddAttachment(AIRX_Flight& Flight, const CString& Path)
 {
 	// Attachment count
-	if (Flight.AttachmentCount>=AIRX_MaxAttachmentCount)
+	if (Flight.AttachmentCount>=AIRX_MAXATTACHMENTCOUNT)
 	{
 		FMErrorBox(CWnd::GetActiveWindow(), IDS_ATTACHMENT_TOOMANY);
 
@@ -1485,23 +1485,23 @@ Bitmap* CItinerary::DecodePictureAttachment(const AIRX_Attachment& Attachment)
 void CItinerary::ValidateAttachment(AIRX_Attachment& Attachment, BOOL Force)
 {
 	// No check neccessary
-	if (!Force && (Attachment.Flags & (AIRX_Valid | AIRX_Invalid)))
+	if (!Force && (Attachment.Flags & (AIRX_VALID | AIRX_INVALID)))
 	{
-		if (Attachment.Flags & AIRX_Invalid)
-			Attachment.Flags &= ~AIRX_Valid;
+		if (Attachment.Flags & AIRX_INVALID)
+			Attachment.Flags &= ~AIRX_VALID;
 
 		return;
 	}
 
 	// Remove flags
-	Attachment.Flags &= ~(AIRX_Valid | AIRX_Invalid);
+	Attachment.Flags &= ~(AIRX_VALID | AIRX_INVALID);
 
 	// Check .gpx file
 	LPCWSTR pExtension = wcsrchr(Attachment.Name, L'.');
 	if (pExtension && (_wcsicmp(pExtension, L".gpx")==0))
 	{
 		CGPXFile* pGPXFile;
-		Attachment.Flags |= (pGPXFile=DecodeGPXAttachment(Attachment))!=NULL ? AIRX_Valid : AIRX_Invalid;
+		Attachment.Flags |= (pGPXFile=DecodeGPXAttachment(Attachment))!=NULL ? AIRX_VALID : AIRX_INVALID;
 
 		delete pGPXFile;
 	}
