@@ -64,6 +64,52 @@ BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID)
 	return TRUE;
 }
 
+void CGlobeView::UpdateViewOptions(BOOL Force)
+{
+	// Position
+	if (Force)
+	{
+		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = theApp.m_GlobeLatitude/1000.0f;
+		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = theApp.m_GlobeLongitude/1000.0f;
+		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = theApp.m_GlobeZoom;
+	}
+
+	// Textures and halo
+	if (m_RenderContext.hRC)
+	{
+		CWaitCursor WaitCursor;
+
+		theRenderer.MakeCurrent(m_RenderContext);
+
+		theRenderer.CreateTextureBlueMarble(m_nTextureBlueMarble);
+		theRenderer.CreateTextureClouds(m_nTextureClouds);
+		theRenderer.CreateTextureLocationIndicator(m_nTextureLocationIndicator);
+
+		// Reset halo model for change of background color
+		if (m_nHaloModel)
+		{
+			glDeleteLists(m_nHaloModel, 1);
+			m_nHaloModel = 0;
+		}
+
+		if (!Force)
+			Invalidate();
+	}
+}
+
+
+// Menus
+
+BOOL CGlobeView::GetContextMenu(CMenu& Menu, INT Index)
+{
+	Menu.LoadMenu(Index!=-1 ? IDM_GLOBEWND_ITEM : IDM_GLOBEWND);
+
+	return FALSE;
+}
+
+
+// Item data
+
 void CGlobeView::SetFlights(CKitchen* pKitchen)
 {
 	ASSERT(pKitchen);
@@ -152,38 +198,8 @@ void CGlobeView::SetFlights(CKitchen* pKitchen)
 	glEndList();
 }
 
-void CGlobeView::UpdateViewOptions(BOOL Force)
-{
-	// Position
-	if (Force)
-	{
-		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = theApp.m_GlobeLatitude/1000.0f;
-		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = theApp.m_GlobeLongitude/1000.0f;
-		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = theApp.m_GlobeZoom;
-	}
 
-	// Textures and halo
-	if (m_RenderContext.hRC)
-	{
-		CWaitCursor WaitCursor;
-
-		theRenderer.MakeCurrent(m_RenderContext);
-
-		theRenderer.CreateTextureBlueMarble(m_nTextureBlueMarble);
-		theRenderer.CreateTextureClouds(m_nTextureClouds);
-		theRenderer.CreateTextureLocationIndicator(m_nTextureLocationIndicator);
-
-		// Reset halo model for change of background color
-		if (m_nHaloModel)
-		{
-			glDeleteLists(m_nHaloModel, 1);
-			m_nHaloModel = 0;
-		}
-
-		if (!Force)
-			Invalidate();
-	}
-}
+// Item handling
 
 INT CGlobeView::ItemAtPosition(CPoint point) const
 {
@@ -216,6 +232,9 @@ void CGlobeView::ShowTooltip(const CPoint& point)
 	}
 }
 
+
+// Drawing
+
 void CGlobeView::GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL /*Themed*/) const
 {
 	ENSURE(strMessage.LoadString(IDS_NORENDERINGCONTEXT));
@@ -226,13 +245,6 @@ void CGlobeView::GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BO
 BOOL CGlobeView::DrawNothing() const
 {
 	return !m_RenderContext.hRC;
-}
-
-BOOL CGlobeView::GetContextMenu(CMenu& Menu, INT Index)
-{
-	Menu.LoadMenu(Index!=-1 ? IDM_GLOBEWND_ITEM : IDM_GLOBEWND);
-
-	return FALSE;
 }
 
 BOOL CGlobeView::CursorOnGlobe(const CPoint& point) const

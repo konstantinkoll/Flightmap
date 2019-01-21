@@ -133,6 +133,25 @@ CClassesList::CClassesList()
 	AddItemCategory(CString((LPCSTR)IDS_NONREVFLIGHTS));
 }
 
+
+// Layouts
+
+void CClassesList::AdjustLayout()
+{
+	AdjustLayoutColumns();
+}
+
+
+// Item categories
+
+INT CClassesList::GetItemCategory(INT Index) const
+{
+	return GetClassItemData(Index)->Category;
+}
+
+
+// Item data
+
 void CClassesList::AddClass(UINT nID, UINT Flights, DOUBLE Distance)
 {
 	ClassItemData Data;
@@ -164,15 +183,8 @@ void CClassesList::SetClasses(UINT* pFlights, DOUBLE* pDistances)
 	AdjustLayout();
 }
 
-void CClassesList::AdjustLayout()
-{
-	AdjustLayoutColumns();
-}
 
-INT CClassesList::GetItemCategory(INT Index) const
-{
-	return GetClassItemData(Index)->Category;
-}
+// Drawing
 
 void CClassesList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {

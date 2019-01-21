@@ -15,6 +15,90 @@ CFrontstageWnd::CFrontstageWnd()
 	CONSTRUCTOR_TOOLTIP()
 }
 
+
+// Menus
+
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, INT /*Index*/)
+{
+	return FALSE;
+}
+
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, LPCVOID /*Ptr*/)
+{
+	return FALSE;
+}
+
+BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, const CPoint& /*point*/)
+{
+	return FALSE;
+}
+
+void CFrontstageWnd::TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem, BOOL AlignRight) const
+{
+	if (IsMenu(Menu))
+	{
+		if (SetDefaultItem)
+			Menu.SetDefaultItem(0, TRUE);
+
+		CMenu MenuPopup;
+		if (MenuPopup.CreatePopupMenu())
+		{
+			MenuPopup.InsertMenu(0, MF_POPUP, (UINT_PTR)(HMENU)Menu);
+
+			Menu.TrackPopupMenu((AlignRight ? TPM_RIGHTALIGN : TPM_LEFTALIGN) | TPM_RIGHTBUTTON, pos.x, pos.y, pWndOwner, NULL);
+		}
+	}
+}
+
+
+// Item handling
+
+INT CFrontstageWnd::ItemAtPosition(CPoint /*point*/) const
+{
+	return -1;
+}
+
+CPoint CFrontstageWnd::PointAtPosition(CPoint /*point*/) const
+{
+	return CPoint(-1, -1);
+}
+
+LPCVOID CFrontstageWnd::PtrAtPosition(CPoint /*point*/) const
+{
+	return NULL;
+}
+
+void CFrontstageWnd::InvalidateItem(INT /*Index*/)
+{
+	Invalidate();
+}
+
+void CFrontstageWnd::InvalidatePoint(const CPoint& /*point*/)
+{
+	Invalidate();
+}
+
+void CFrontstageWnd::InvalidatePtr(LPCVOID /*Ptr*/)
+{
+	Invalidate();
+}
+
+void CFrontstageWnd::ShowTooltip(const CPoint& /*point*/)
+{
+}
+
+void CFrontstageWnd::UpdateHoverItem()
+{
+	if (!GetCapture())
+	{
+		CPoint point;
+		GetCursorPos(&point);
+		ScreenToClient(&point);
+
+		OnMouseMove(0, point);
+	}
+}
+
 BOOL CFrontstageWnd::HasBorder(HWND hWnd)
 {
 	ASSERT(hWnd);
@@ -23,7 +107,7 @@ BOOL CFrontstageWnd::HasBorder(HWND hWnd)
 }
 
 
-// Cards
+// Draw support
 
 void CFrontstageWnd::DrawCardBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, BOOL Themed) const
 {
@@ -98,31 +182,28 @@ void CFrontstageWnd::DrawCardForeground(CDC& dc, Graphics& g, LPCRECT lpcRect, B
 	DrawListItemBackground(dc, lpcRect, Themed, GetFocus()==this, Hot, Focused, Selected, TextColor, ShowFocusRect);
 }
 
-void CFrontstageWnd::DrawWindowEdge(Graphics& g, BOOL Themed) const
+void CFrontstageWnd::DrawWindowEdge(Graphics& g) const
 {
-	if (Themed)
+	CWnd* pRootWnd = GetAncestor(GA_ROOT);
+	ASSERT(pRootWnd);
+
+	if (!pRootWnd->IsZoomed())
 	{
-		CWnd* pRootWnd = GetAncestor(GA_ROOT);
-		ASSERT(pRootWnd);
+		CRect rectOutline;
+		pRootWnd->GetClientRect(rectOutline);
+		pRootWnd->ClientToScreen(rectOutline);
+		ScreenToClient(rectOutline);
 
-		if (!pRootWnd->IsZoomed())
-		{
-			CRect rectOutline;
-			pRootWnd->GetClientRect(rectOutline);
-			pRootWnd->ClientToScreen(rectOutline);
-			ScreenToClient(rectOutline);
+		rectOutline.InflateRect(1, 1);
 
-			rectOutline.InflateRect(1, 1);
+		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(FMGetApp()->m_SmoothingModeAntiAlias8x8);
 
-			g.SetPixelOffsetMode(PixelOffsetModeNone);
-			g.SetSmoothingMode(FMGetApp()->m_SmoothingModeAntiAlias8x8);
+		GraphicsPath path;
+		CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
 
-			GraphicsPath path;
-			CreateRoundRectangle(rectOutline, BACKSTAGERADIUS, path);
-
-			Pen pen(Color(0xFF000000));
-			g.DrawPath(&pen, &path);
-		}
+		Pen pen(Color(0xFF000000));
+		g.DrawPath(&pen, &path);
 	}
 }
 
@@ -132,91 +213,7 @@ void CFrontstageWnd::DrawWindowEdge(CDC& dc, BOOL Themed) const
 	{
 		Graphics g(dc);
 
-		DrawWindowEdge(g, Themed);
-	}
-}
-
-
-// Items
-
-INT CFrontstageWnd::ItemAtPosition(CPoint /*point*/) const
-{
-	return -1;
-}
-
-CPoint CFrontstageWnd::PointAtPosition(CPoint /*point*/) const
-{
-	return CPoint(-1, -1);
-}
-
-LPCVOID CFrontstageWnd::PtrAtPosition(CPoint /*point*/) const
-{
-	return NULL;
-}
-
-void CFrontstageWnd::InvalidateItem(INT /*Index*/)
-{
-	Invalidate();
-}
-
-void CFrontstageWnd::InvalidatePoint(const CPoint& /*point*/)
-{
-	Invalidate();
-}
-
-void CFrontstageWnd::InvalidatePtr(LPCVOID /*Ptr*/)
-{
-	Invalidate();
-}
-
-void CFrontstageWnd::ShowTooltip(const CPoint& /*point*/)
-{
-}
-
-void CFrontstageWnd::UpdateHoverItem()
-{
-	if (!GetCapture())
-	{
-		CPoint point;
-		GetCursorPos(&point);
-		ScreenToClient(&point);
-
-		OnMouseMove(0, point);
-	}
-}
-
-
-// Menus
-
-BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, INT /*Index*/)
-{
-	return FALSE;
-}
-
-BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, LPCVOID /*Ptr*/)
-{
-	return FALSE;
-}
-
-BOOL CFrontstageWnd::GetContextMenu(CMenu& /*Menu*/, const CPoint& /*point*/)
-{
-	return FALSE;
-}
-
-void CFrontstageWnd::TrackPopupMenu(CMenu& Menu, const CPoint& pos, CWnd* pWndOwner, BOOL SetDefaultItem, BOOL AlignRight) const
-{
-	if (IsMenu(Menu))
-	{
-		if (SetDefaultItem)
-			Menu.SetDefaultItem(0, TRUE);
-
-		CMenu MenuPopup;
-		if (MenuPopup.CreatePopupMenu())
-		{
-			MenuPopup.InsertMenu(0, MF_POPUP, (UINT_PTR)(HMENU)Menu);
-
-			Menu.TrackPopupMenu((AlignRight ? TPM_RIGHTALIGN : TPM_LEFTALIGN) | TPM_RIGHTBUTTON, pos.x, pos.y, pWndOwner, NULL);
-		}
+		DrawWindowEdge(g);
 	}
 }
 

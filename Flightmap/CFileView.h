@@ -30,50 +30,45 @@ public:
 	AIRX_Attachment* GetSelectedAttachment() const;
 	INT GetSelectedAttachmentIndex() const;
 	void EditLabel(INT Index);
-	BOOL IsEditing() const;
 
 protected:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void ShowTooltip(const CPoint& point);
-	virtual COLORREF GetItemTextColor(INT Index) const;
 	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
 	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustLayout();
+	virtual void ShowTooltip(const CPoint& point);
+	virtual COLORREF GetItemTextColor(INT Index) const;
 	virtual void FireSelectedItem() const;
 	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
+	virtual void DestroyEdit(BOOL Accept=FALSE);
 
 	void SortItems();
-
 	RECT GetLabelRect(INT Index) const;
-	void DestroyEdit(BOOL Accept=FALSE);
 
-	afx_msg void OnDestroy();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-
-	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
-
-	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
 	CItinerary* p_Itinerary;
 
 private:
-	static INT __stdcall CompareItems(AttachmentItemData* pData1, AttachmentItemData* pData2, const SortParameters& Parameters);
+	void UpdateHeader();
 	AIRX_Attachment* GetAttachment(INT Index) const;
 	UINT GetAttachmentIndex(INT Index) const;
 	void AddAttachment(UINT Index, AIRX_Attachment& Attachment);
-	void UpdateHeader();
+	static INT __stdcall CompareItems(AttachmentItemData* pData1, AttachmentItemData* pData2, const SortParameters& Parameters);
 
 	static CString m_SubitemNames[FILEVIEWCOLUMNS];
 	static UINT m_SortAttribute;
 	static BOOL m_SortDescending;
-	CEdit* m_pWndEdit;
 	INT m_ColumnOrder[FILEVIEWCOLUMNS];
 	INT m_ColumnWidth[FILEVIEWCOLUMNS];
 };
+
+inline void CAttachmentList::UpdateHeader()
+{
+	CFrontstageItemView::UpdateHeader(m_ColumnOrder, m_ColumnWidth);
+}
 
 inline AIRX_Attachment* CAttachmentList::GetAttachment(INT Index) const
 {
@@ -90,15 +85,6 @@ inline void CAttachmentList::SortItems()
 	CFrontstageItemView::SortItems((PFNCOMPARE)CompareItems, HasHeader() ? m_SortAttribute : 0, HasHeader() ? m_SortDescending : FALSE);
 }
 
-inline BOOL CAttachmentList::IsEditing() const
-{
-	return m_pWndEdit!=NULL;
-}
-
-inline void CAttachmentList::UpdateHeader()
-{
-	CFrontstageItemView::UpdateHeader(m_ColumnOrder, m_ColumnWidth);
-}
 
 
 // CFileView
@@ -130,10 +116,11 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-	CItinerary* p_Itinerary;
-	AIRX_Flight* p_Flight;
 	static CIcons m_LargeIcons;
 	static CIcons m_SmallIcons;
 	CTaskbar m_wndTaskbar;
+
+	CItinerary* p_Itinerary;
+	AIRX_Flight* p_Flight;
 	CAttachmentList m_wndAttachmentList;
 };

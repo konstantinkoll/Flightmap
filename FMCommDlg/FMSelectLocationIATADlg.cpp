@@ -41,37 +41,51 @@ CAirportList::CAirportList()
 	CFrontstageScroller::SetItemHeight(FMGetApp()->m_DefaultFont.GetFontHeight()+2*ITEMCELLPADDINGY);
 }
 
-void CAirportList::ShowTooltip(const CPoint& point)
+
+// Header
+
+void CAirportList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 {
-	ASSERT(m_HoverItem>=0);
+	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
+	HeaderItem.fmt = HDF_STRING | HDF_LEFT;
 
-	LPCAIRPORT lpcAirport = GetAirport(m_HoverItem);
+	if (m_SortAttribute==Attr)
+		HeaderItem.fmt |= m_SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
 
-	CString Hint;
-	FMTooltip::AppendAttribute(Hint, IDS_AIRPORT_NAME, lpcAirport->Name);
-	FMTooltip::AppendAttribute(Hint, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(lpcAirport->CountryID)->Name);
-	FMTooltip::AppendAttribute(Hint, IDS_AIRPORT_LOCATION, FMGeoCoordinatesToString(lpcAirport->Location, FALSE));
-
-	FMGetApp()->ShowTooltip(this, point, CString(lpcAirport->Name), Hint, NULL, FMIATACreateAirportMap(lpcAirport, 192, 192));
+	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
+		HeaderItem.cxy = ITEMVIEWMINWIDTH;
 }
 
-INT CAirportList::CompareItems(AirportItemData* pData1, AirportItemData* pData2, const SortParameters& Parameters)
+void CAirportList::HeaderColumnClicked(UINT Attr)
 {
-	INT Result = 0;
+	m_SortDescending = (m_SortAttribute==Attr) ? !m_SortDescending : FALSE;
+	m_SortAttribute = Attr;
 
-	switch (Parameters.Attr)
-	{
-	case 0:
-		Result = strcmp(pData1->lpcAirport->Code, pData2->lpcAirport->Code);
-		break;
+	UpdateHeader();
+	SortItems();
 
-	case 1:
-		Result = strcmp(pData1->lpcAirport->Name, pData2->lpcAirport->Name);
-		break;
-	}
-
-	return Parameters.Descending ? -Result : Result;
+	AdjustLayout();
 }
+
+
+// Layouts
+
+void CAirportList::AdjustLayout()
+{
+	// Header
+	m_ColumnWidth[0] = FMGetApp()->m_DefaultFont.GetTextExtent(m_SubitemName).cx+ITEMCELLSPACER;
+	m_ColumnWidth[1] = 0;
+
+	SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
+
+	UpdateHeader();
+
+	// Item layout
+	AdjustLayoutList();
+}
+
+
+// Item data
 
 void CAirportList::AddAirport(LPCAIRPORT lpcAirport)
 {
@@ -135,6 +149,44 @@ LPCAIRPORT CAirportList::GetSelectedAirport() const
 	return (Index<0) ? NULL : GetAirport(Index);
 }
 
+
+// Item sort
+
+INT CAirportList::CompareItems(AirportItemData* pData1, AirportItemData* pData2, const SortParameters& Parameters)
+{
+	INT Result = 0;
+
+	switch (Parameters.Attr)
+	{
+	case 0:
+		Result = strcmp(pData1->lpcAirport->Code, pData2->lpcAirport->Code);
+		break;
+
+	case 1:
+		Result = strcmp(pData1->lpcAirport->Name, pData2->lpcAirport->Name);
+		break;
+	}
+
+	return Parameters.Descending ? -Result : Result;
+}
+
+
+// Item handling
+
+void CAirportList::ShowTooltip(const CPoint& point)
+{
+	ASSERT(m_HoverItem>=0);
+
+	LPCAIRPORT lpcAirport = GetAirport(m_HoverItem);
+
+	CString Hint;
+	FMTooltip::AppendAttribute(Hint, IDS_AIRPORT_NAME, lpcAirport->Name);
+	FMTooltip::AppendAttribute(Hint, IDS_AIRPORT_COUNTRY, FMIATAGetCountry(lpcAirport->CountryID)->Name);
+	FMTooltip::AppendAttribute(Hint, IDS_AIRPORT_LOCATION, FMGeoCoordinatesToString(lpcAirport->Location, FALSE));
+
+	FMGetApp()->ShowTooltip(this, point, CString(lpcAirport->Name), Hint, NULL, FMIATACreateAirportMap(lpcAirport, 192, 192));
+}
+
 COLORREF CAirportList::GetItemTextColor(INT Index) const
 {
 	LPCAIRPORT lpcAirport = GetAirport(Index);
@@ -142,42 +194,8 @@ COLORREF CAirportList::GetItemTextColor(INT Index) const
 	return strcmp(lpcAirport->Code, lpcAirport->MetroCode) ? (COLORREF)-1 : 0x208040;
 }
 
-void CAirportList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
-{
-	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
-	HeaderItem.fmt = HDF_STRING | HDF_LEFT;
 
-	if (m_SortAttribute==Attr)
-		HeaderItem.fmt |= m_SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
-
-	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
-		HeaderItem.cxy = ITEMVIEWMINWIDTH;
-}
-
-void CAirportList::HeaderColumnClicked(UINT Attr)
-{
-	m_SortDescending = (m_SortAttribute==Attr) ? !m_SortDescending : FALSE;
-	m_SortAttribute = Attr;
-
-	UpdateHeader();
-	SortItems();
-
-	AdjustLayout();
-}
-
-void CAirportList::AdjustLayout()
-{
-	// Header
-	m_ColumnWidth[0] = FMGetApp()->m_DefaultFont.GetTextExtent(m_SubitemName).cx+ITEMCELLSPACER;
-	m_ColumnWidth[1] = 0;
-
-	SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
-
-	UpdateHeader();
-
-	// Item layout
-	AdjustLayoutList();
-}
+// Drawing
 
 void CAirportList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)
 {

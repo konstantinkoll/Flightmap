@@ -22,9 +22,9 @@ public:
 	void SetBitmap(CBitmap* pBitmap, const CString& DisplayName=_T(""));
 
 protected:
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void ShowTooltip(const CPoint& point);
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual BOOL DrawNothing() const;
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
 

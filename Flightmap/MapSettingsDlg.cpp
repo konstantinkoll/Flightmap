@@ -72,6 +72,37 @@ CResolutionList::CResolutionList()
 	SetItemHeight(m_ResolutionPresetIcons.Load(IDB_RESOLUTIONPRESETICONS_16), 1, ITEMCELLPADDINGY);
 }
 
+
+// Header
+
+void CResolutionList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
+{
+	HeaderItem.mask = HDI_WIDTH;
+
+	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
+		HeaderItem.cxy = ITEMVIEWMINWIDTH;
+}
+
+
+// Layouts
+
+void CResolutionList::AdjustLayout()
+{
+	// Header
+	m_ColumnWidth[0] = m_IconSize+ITEMCELLPADDINGX+theApp.m_DefaultFont.GetTextExtent(_T("0000×0000")).cx+ITEMCELLSPACER;
+	m_ColumnWidth[1] = 0;
+
+	SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
+
+	UpdateHeader();
+
+	// Item layout
+	AdjustLayoutList();
+}
+
+
+// Item data
+
 BOOL CResolutionList::SetResolutions(UINT Width, UINT Height)
 {
 	// Header
@@ -96,27 +127,8 @@ BOOL CResolutionList::SetResolutions(UINT Width, UINT Height)
 	return FALSE;
 }
 
-void CResolutionList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
-{
-	HeaderItem.mask = HDI_WIDTH;
 
-	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
-		HeaderItem.cxy = ITEMVIEWMINWIDTH;
-}
-
-void CResolutionList::AdjustLayout()
-{
-	// Header
-	m_ColumnWidth[0] = m_IconSize+ITEMCELLPADDINGX+theApp.m_DefaultFont.GetTextExtent(_T("0000×0000")).cx+ITEMCELLSPACER;
-	m_ColumnWidth[1] = 0;
-
-	SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
-
-	UpdateHeader();
-
-	// Item layout
-	AdjustLayoutList();
-}
+// Drawing
 
 void CResolutionList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)
 {

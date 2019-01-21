@@ -17,7 +17,6 @@ BOOL CAttachmentList::m_SortDescending = FALSE;
 CAttachmentList::CAttachmentList()
 	: CFrontstageItemView(FRONTSTAGE_ENABLESCROLLING | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLELABELEDIT, sizeof(AttachmentItemData))
 {
-	m_pWndEdit = NULL;
 	p_Itinerary = NULL;
 
 	// Subitem names
@@ -29,36 +28,178 @@ CAttachmentList::CAttachmentList()
 	SetItemHeight(theApp.m_SystemImageListExtraLarge, 3);
 }
 
-BOOL CAttachmentList::PreTranslateMessage(MSG* pMsg)
+
+// Header
+
+void CAttachmentList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
 {
-	switch (pMsg->message)
+	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
+	HeaderItem.fmt = HDF_STRING | (Attr>0 ? HDF_RIGHT : HDF_LEFT);
+
+	if (m_SortAttribute==Attr)
+		HeaderItem.fmt |= m_SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
+
+	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
+		HeaderItem.cxy = ITEMVIEWMINWIDTH;
+}
+
+void CAttachmentList::HeaderColumnClicked(UINT Attr)
+{
+	m_SortDescending = (m_SortAttribute==Attr) ? !m_SortDescending : (m_SortAttribute=Attr);
+
+	UpdateHeader();
+	SortItems();
+
+	AdjustLayout();
+}
+
+
+// Menus
+
+BOOL CAttachmentList::GetContextMenu(CMenu& Menu, INT Index)
+{
+	if ((Index>=0) || !HasHeader())
+		Menu.LoadMenu(Index>=0 ? IDM_FILEVIEW_ITEM : IDM_FILEVIEW_BACKGROUND);
+
+	return (Index>=0);
+}
+
+
+// Layouts
+
+void CAttachmentList::AdjustLayout()
+{
+	if (HasHeader())
 	{
-	case WM_KEYDOWN:
-		if (m_pWndEdit)
-			switch (pMsg->wParam)
-			{
-			case VK_EXECUTE:
-			case VK_RETURN:
-				DestroyEdit(TRUE);
-				return TRUE;
+		// Header
+		m_ColumnWidth[0] = 0;
+		m_ColumnWidth[3] = (m_ColumnWidth[1]=m_ColumnWidth[2]=theApp.m_DefaultFont.GetTextExtent(_T("00.00.0000 00:00ww")).cx+ITEMCELLSPACER)*2/3;
 
-			case VK_ESCAPE:
-				DestroyEdit(FALSE);
-				return TRUE;
-			}
+		SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
 
+		UpdateHeader();
+
+		// Item layout
+		AdjustLayoutList();
+	}
+	else
+	{
+		// Item layout
+		AdjustLayoutColumns(2, BACKSTAGEBORDER);
+	}
+}
+
+
+// Item data
+
+void CAttachmentList::AddAttachment(UINT Index, AIRX_Attachment& Attachment)
+{
+	// Icon
+	if (Attachment.IconID==-1)
+	{
+		CString tmpStr(Attachment.Name);
+		const INT Pos = tmpStr.ReverseFind(L'.');
+
+		const CString Ext = (Pos==-1) ? _T("*") : tmpStr.Mid(Pos);
+
+		SHFILEINFO ShellFileInfo;
+		Attachment.IconID = SUCCEEDED(SHGetFileInfo(Ext, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? ShellFileInfo.iIcon : 3;
+	}
+
+	// Item data
+	AttachmentItemData Data;
+
+	Data.Index = Index;
+	Data.pAttachment = &Attachment;
+
+	AddItem(&Data);
+}
+
+void CAttachmentList::SetAttachments(CItinerary* pItinerary, AIRX_Flight* pFlight)
+{
+	ASSERT(pItinerary);
+
+	DestroyEdit();
+	HideTooltip();
+
+	p_Itinerary = pItinerary;
+
+	// Header
+	if (!pFlight && !HasHeader())
+		for (UINT a=0; a<FILEVIEWCOLUMNS; a++)
+			AddHeaderColumn(TRUE, m_SubitemNames[a], a>0);
+
+	// Items
+	if (pFlight)
+	{
+		SetItemCount(AIRX_MAXATTACHMENTCOUNT, FALSE);
+
+		for (UINT a=0; a<pFlight->AttachmentCount; a++)
+			AddAttachment(pFlight->Attachments[a], pItinerary->m_Attachments[pFlight->Attachments[a]]);
+	}
+	else
+	{
+		SetItemHeight(GetSystemMetrics(SM_CYSMICON), 1, ITEMCELLPADDINGY);
+		SetItemCount(pItinerary->m_Attachments.m_ItemCount, FALSE);
+
+		for (UINT a=0; a<pItinerary->m_Attachments.m_ItemCount; a++)
+			AddAttachment(a, pItinerary->m_Attachments[a]);
+	}
+
+	LastItem();
+	SortItems();
+
+	AdjustLayout();
+}
+
+AIRX_Attachment* CAttachmentList::GetSelectedAttachment() const
+{
+	const INT Index = GetSelectedItem();
+
+	return (Index<0) ? NULL : GetAttachment(Index);
+}
+
+INT CAttachmentList::GetSelectedAttachmentIndex() const
+{
+	const INT Index = GetSelectedItem();
+
+	return (Index<0) ? -1 : GetAttachmentIndex(Index);
+}
+
+
+// Item sort
+
+INT CAttachmentList::CompareItems(AttachmentItemData* pData1, AttachmentItemData* pData2, const SortParameters& Parameters)
+{
+	const AIRX_Attachment* pAttachment1 = pData1->pAttachment;
+	const AIRX_Attachment* pAttachment2 = pData2->pAttachment;
+
+	INT Result = 0;
+
+	switch (Parameters.Attr)
+	{
+	case 0:
+		Result = wcscmp(pAttachment1->Name, pAttachment2->Name);
 		break;
 
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-		if (m_pWndEdit)
-			return TRUE;
+	case 1:
+		Result = CompareFileTime(&pAttachment1->Created, &pAttachment2->Created);
+		break;
 
+	case 2:
+		Result = CompareFileTime(&pAttachment1->Modified, &pAttachment2->Modified);
+		break;
+
+	case 3:
+		Result = pAttachment1->FileSize-pAttachment2->FileSize;
 		break;
 	}
 
-	return CFrontstageItemView::PreTranslateMessage(pMsg);
+	return Parameters.Descending ? -Result : Result;
 }
+
+
+// Item handling
 
 void CAttachmentList::ShowTooltip(const CPoint& point)
 {
@@ -143,117 +284,6 @@ UseIcon:
 	theApp.ShowTooltip(this, point, pAttachment->Name, Hint, hIcon, hBitmap);
 }
 
-BOOL CAttachmentList::GetContextMenu(CMenu& Menu, INT Index)
-{
-	if ((Index>=0) || !HasHeader())
-		Menu.LoadMenu(Index>=0 ? IDM_FILEVIEW_ITEM : IDM_FILEVIEW_BACKGROUND);
-
-	return (Index>=0);
-}
-
-INT CAttachmentList::CompareItems(AttachmentItemData* pData1, AttachmentItemData* pData2, const SortParameters& Parameters)
-{
-	const AIRX_Attachment* pAttachment1 = pData1->pAttachment;
-	const AIRX_Attachment* pAttachment2 = pData2->pAttachment;
-
-	INT Result = 0;
-
-	switch (Parameters.Attr)
-	{
-	case 0:
-		Result = wcscmp(pAttachment1->Name, pAttachment2->Name);
-		break;
-
-	case 1:
-		Result = CompareFileTime(&pAttachment1->Created, &pAttachment2->Created);
-		break;
-
-	case 2:
-		Result = CompareFileTime(&pAttachment1->Modified, &pAttachment2->Modified);
-		break;
-
-	case 3:
-		Result = pAttachment1->FileSize-pAttachment2->FileSize;
-		break;
-	}
-
-	return Parameters.Descending ? -Result : Result;
-}
-
-void CAttachmentList::AddAttachment(UINT Index, AIRX_Attachment& Attachment)
-{
-	// Icon
-	if (Attachment.IconID==-1)
-	{
-		CString tmpStr(Attachment.Name);
-		const INT Pos = tmpStr.ReverseFind(L'.');
-
-		const CString Ext = (Pos==-1) ? _T("*") : tmpStr.Mid(Pos);
-
-		SHFILEINFO ShellFileInfo;
-		Attachment.IconID = SUCCEEDED(SHGetFileInfo(Ext, 0, &ShellFileInfo, sizeof(ShellFileInfo), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? ShellFileInfo.iIcon : 3;
-	}
-
-	// Item data
-	AttachmentItemData Data;
-
-	Data.Index = Index;
-	Data.pAttachment = &Attachment;
-
-	AddItem(&Data);
-}
-
-void CAttachmentList::SetAttachments(CItinerary* pItinerary, AIRX_Flight* pFlight)
-{
-	ASSERT(pItinerary);
-
-	DestroyEdit();
-	HideTooltip();
-
-	p_Itinerary = pItinerary;
-
-	// Header
-	if (!pFlight && !HasHeader())
-		for (UINT a=0; a<FILEVIEWCOLUMNS; a++)
-			AddHeaderColumn(TRUE, m_SubitemNames[a], a>0);
-
-	// Items
-	if (pFlight)
-	{
-		SetItemCount(AIRX_MAXATTACHMENTCOUNT, FALSE);
-
-		for (UINT a=0; a<pFlight->AttachmentCount; a++)
-			AddAttachment(pFlight->Attachments[a], pItinerary->m_Attachments[pFlight->Attachments[a]]);
-	}
-	else
-	{
-		SetItemHeight(GetSystemMetrics(SM_CYSMICON), 1, ITEMCELLPADDINGY);
-		SetItemCount(pItinerary->m_Attachments.m_ItemCount, FALSE);
-
-		for (UINT a=0; a<pItinerary->m_Attachments.m_ItemCount; a++)
-			AddAttachment(a, pItinerary->m_Attachments[a]);
-	}
-
-	LastItem();
-	SortItems();
-
-	AdjustLayout();
-}
-
-AIRX_Attachment* CAttachmentList::GetSelectedAttachment() const
-{
-	const INT Index = GetSelectedItem();
-
-	return (Index<0) ? NULL : GetAttachment(Index);
-}
-
-INT CAttachmentList::GetSelectedAttachmentIndex() const
-{
-	const INT Index = GetSelectedItem();
-
-	return (Index<0) ? -1 : GetAttachmentIndex(Index);
-}
-
 COLORREF CAttachmentList::GetItemTextColor(INT Index) const
 {
 	const AIRX_Attachment* pAttachment = GetAttachment(Index);
@@ -261,54 +291,16 @@ COLORREF CAttachmentList::GetItemTextColor(INT Index) const
 	return (pAttachment->Flags & AIRX_INVALID) ? 0x2020FF : (pAttachment->Flags & AIRX_VALID) ? 0x208040 : (COLORREF)-1;
 }
 
-void CAttachmentList::UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const
-{
-	HeaderItem.mask = HDI_WIDTH | HDI_FORMAT;
-	HeaderItem.fmt = HDF_STRING | (Attr>0 ? HDF_RIGHT : HDF_LEFT);
 
-	if (m_SortAttribute==Attr)
-		HeaderItem.fmt |= m_SortDescending ? HDF_SORTDOWN : HDF_SORTUP;
-
-	if ((HeaderItem.cxy=m_ColumnWidth[Attr])<ITEMVIEWMINWIDTH)
-		HeaderItem.cxy = ITEMVIEWMINWIDTH;
-}
-
-void CAttachmentList::HeaderColumnClicked(UINT Attr)
-{
-	m_SortDescending = (m_SortAttribute==Attr) ? !m_SortDescending : (m_SortAttribute=Attr);
-
-	UpdateHeader();
-	SortItems();
-
-	AdjustLayout();
-}
-
-void CAttachmentList::AdjustLayout()
-{
-	if (HasHeader())
-	{
-		// Header
-		m_ColumnWidth[0] = 0;
-		m_ColumnWidth[3] = (m_ColumnWidth[1]=m_ColumnWidth[2]=theApp.m_DefaultFont.GetTextExtent(_T("00.00.0000 00:00ww")).cx+ITEMCELLSPACER)*2/3;
-
-		SetFixedColumnWidths(m_ColumnOrder, m_ColumnWidth);
-
-		UpdateHeader();
-
-		// Item layout
-		AdjustLayoutList();
-	}
-	else
-	{
-		// Item layout
-		AdjustLayoutColumns(2, BACKSTAGEBORDER);
-	}
-}
+// Selected item commands
 
 void CAttachmentList::FireSelectedItem() const
 {
 	GetOwner()->PostMessage(WM_COMMAND, (WPARAM)IDM_FILEVIEW_OPEN);
 }
+
+
+// Drawing
 
 void CAttachmentList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)
 {
@@ -374,6 +366,35 @@ void CAttachmentList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT I
 	}
 }
 
+
+// Label edit
+
+void CAttachmentList::DestroyEdit(BOOL Accept)
+{
+	if (IsEditing())
+	{
+		ASSERT(p_Itinerary);
+		const INT EditItem = m_EditItem;
+
+		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
+		CEdit* pVictim = m_pWndEdit;
+		m_pWndEdit = NULL;
+
+		// Get text
+		CString Name;
+		pVictim->GetWindowText(Name);
+
+		// Destroy window; this will trigger another DestroyEdit() call!
+		pVictim->DestroyWindow();
+		delete pVictim;
+
+		if (Accept && (EditItem>=0) && !Name.IsEmpty())
+			p_Itinerary->RenameAttachment(GetAttachmentIndex(EditItem), Name);
+	}
+
+	CFrontstageItemView::DestroyEdit(Accept);
+}
+
 RECT CAttachmentList::GetLabelRect(INT Index) const
 {
 	RECT rect = GetItemRect(Index);
@@ -423,53 +444,11 @@ void CAttachmentList::EditLabel(INT Index)
 	}
 }
 
-void CAttachmentList::DestroyEdit(BOOL Accept)
-{
-	if (m_pWndEdit)
-	{
-		ASSERT(p_Itinerary);
-		const INT EditItem = m_EditItem;
-
-		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
-		CEdit* pVictim = m_pWndEdit;
-		m_pWndEdit = NULL;
-
-		// Get text
-		CString Name;
-		pVictim->GetWindowText(Name);
-
-		// Destroy window; this will trigger another DestroyEdit() call!
-		pVictim->DestroyWindow();
-		delete pVictim;
-
-		if (Accept && (EditItem>=0) && !Name.IsEmpty())
-			p_Itinerary->RenameAttachment(GetAttachmentIndex(EditItem), Name);
-
-		// Tooltip
-		m_HoverItem = -1;
-		UpdateHoverItem();
-	}
-
-	m_EditItem = -1;
-}
 
 BEGIN_MESSAGE_MAP(CAttachmentList, CFrontstageItemView)
-	ON_WM_DESTROY()
 	ON_WM_MOUSEHOVER()
 	ON_WM_KEYDOWN()
-
-	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
-	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
-
-	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
-
-void CAttachmentList::OnDestroy()
-{
-	DestroyEdit();
-
-	CFrontstageItemView::OnDestroy();
-}
 
 void CAttachmentList::OnMouseHover(UINT nFlags, CPoint point)
 {
@@ -496,31 +475,6 @@ void CAttachmentList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		CFrontstageItemView::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
-}
-
-
-// Header notifications
-
-void CAttachmentList::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	OnDestroyEdit();
-
-	CFrontstageItemView::OnBeginDrag(pNMHDR, pResult);
-}
-
-void CAttachmentList::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	OnDestroyEdit();
-
-	CFrontstageItemView::OnBeginTrack(pNMHDR, pResult);
-}
-
-
-// Label edit
-
-void CAttachmentList::OnDestroyEdit()
-{
-	DestroyEdit(TRUE);
 }
 
 

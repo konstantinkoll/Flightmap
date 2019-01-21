@@ -28,6 +28,17 @@ BOOL CMapView::Create(CWnd* pParentWnd, UINT nID)
 	return CFrontstageScroller::Create(className, _T(""), WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP, CRect(0, 0, 0, 0), pParentWnd, nID);
 }
 
+
+// Bitmap
+
+void CMapView::SetBitmap(CBitmap* pBitmap, const CString& Title)
+{
+	p_BitmapOriginal = pBitmap;
+	m_Title = Title;
+
+	ScaleBitmap();
+}
+
 void CMapView::DeleteScaledBitmap()
 {
 	HideTooltip();
@@ -36,14 +47,6 @@ void CMapView::DeleteScaledBitmap()
 		delete m_pBitmapScaled;
 
 	m_pBitmapScaled = NULL;
-}
-
-void CMapView::SetBitmap(CBitmap* pBitmap, const CString& Title)
-{
-	p_BitmapOriginal = pBitmap;
-	m_Title = Title;
-
-	ScaleBitmap();
 }
 
 void CMapView::ScaleBitmap()
@@ -105,6 +108,19 @@ void CMapView::GetCardRect(const CRect& rectClient, CRect& rectCard) const
 	rectCard.bottom = PosY+m_ScrollHeight-(BORDER-CARDPADDING);
 }
 
+
+// Menus
+
+BOOL CMapView::GetContextMenu(CMenu& Menu, INT /*Index*/)
+{
+	Menu.LoadMenu(IDM_MAPWND);
+
+	return FALSE;
+}
+
+
+// Item handling
+
 INT CMapView::ItemAtPosition(CPoint point) const
 {
 	CRect rectCard;
@@ -142,12 +158,8 @@ void CMapView::ShowTooltip(const CPoint& point)
 	}
 }
 
-BOOL CMapView::GetContextMenu(CMenu& Menu, INT /*Index*/)
-{
-	Menu.LoadMenu(IDM_MAPWND);
 
-	return FALSE;
-}
+// Drawing
 
 BOOL CMapView::DrawNothing() const
 {
@@ -263,6 +275,7 @@ void CMapView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 		OnZoomOut();
 	}
 }
+
 
 void CMapView::OnZoomIn()
 {

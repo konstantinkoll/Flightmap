@@ -28,21 +28,21 @@ public:
 	LPCAIRPORT GetSelectedAirport() const;
 
 protected:
-	virtual void ShowTooltip(const CPoint& point);
-	virtual COLORREF GetItemTextColor(INT Index) const;
 	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
 	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustLayout();
+	virtual void ShowTooltip(const CPoint& point);
+	virtual COLORREF GetItemTextColor(INT Index) const;
 	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 
 	void SortItems();
 
 private:
-	static INT __stdcall CompareItems(AirportItemData* pData1, AirportItemData* pData2, const SortParameters& Parameters);
+	void UpdateHeader();
 	LPCAIRPORT GetAirport(INT Index) const;
 	void AddAirport(LPCAIRPORT lpcAirport);
-	void UpdateHeader();
+	static INT __stdcall CompareItems(AirportItemData* pData1, AirportItemData* pData2, const SortParameters& Parameters);
 
 	static CString m_SubitemName;
 	static UINT m_SortAttribute;

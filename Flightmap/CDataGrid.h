@@ -37,36 +37,37 @@ public:
 	CDataGrid();
 
 	BOOL Create(CItinerary* pItinerary, CWnd* pParentWnd, UINT nID);
+	UINT GetCurrentRow() const;
+	void EnsureVisible();
 	void SetItinerary(CItinerary* pItinerary);
 	BOOL HasSelection(BOOL CurrentLineIfNone=FALSE) const;
 	BOOL IsSelected(UINT Index) const;
-	UINT GetCurrentRow() const;
-	void EnsureVisible();
 
 protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual CPoint PointAtPosition(CPoint point) const;
-	virtual void InvalidatePoint(const CPoint& point);
-	virtual void ShowTooltip(const CPoint& point);
-	virtual BOOL GetContextMenu(CMenu& Menu, const CPoint& point);
 	virtual void GetHeaderContextMenu(CMenu& Menu);
 	virtual BOOL AllowHeaderColumnDrag(UINT Attr) const;
 	virtual BOOL AllowHeaderColumnTrack(UINT Attr) const;
 	virtual void UpdateHeaderColumnOrder(UINT Attr, INT Position);
 	virtual void UpdateHeaderColumnWidth(UINT Attr, INT Width);
 	virtual void UpdateHeaderColumn(UINT Attr, HDITEM& HeaderItem) const;
+	virtual BOOL GetContextMenu(CMenu& Menu, const CPoint& point);
 	virtual void AdjustLayout();
+	virtual CPoint PointAtPosition(CPoint point) const;
+	virtual void InvalidatePoint(const CPoint& point);
+	virtual void ShowTooltip(const CPoint& point);
 	virtual void DrawStage(CDC& dc, Graphics& g, const CRect& rect, const CRect& rectUpdate, BOOL Themed);
+	virtual void DestroyEdit(BOOL Accept=FALSE);
 
-	CRect GetItemRect(const CPoint& Item, BOOL Inflate=TRUE) const;
 	void EnsureVisible(const CPoint& Item);
-	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0');
-	void EditFlight(const CPoint& Item, INT SelectTab=-1);
+	CRect GetItemRect(const CPoint& Item, BOOL Inflate=TRUE) const;
 	INT PartAtPosition(const CPoint& point) const;
 	void InvalidateRow(UINT Row);
 	void SetFocusItem(const CPoint& FocusItem, BOOL ShiftSelect);
 	void SelectItem(UINT Index, BOOL Select=TRUE, BOOL InternalCall=FALSE);
+	void EditFlight(const CPoint& Item, INT SelectTab=-1);
 	void FindReplace(INT SelectTab=-1);
+	void EditCell(BOOL AllowCursor=FALSE, BOOL Delete=FALSE, WCHAR PushChar=L'\0');
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -81,7 +82,6 @@ protected:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 
 	afx_msg void OnCut();
@@ -103,11 +103,6 @@ protected:
 	afx_msg void OnAutosize();
 	afx_msg void OnChooseDetails();
 	afx_msg void OnUpdateDetailsCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
-
-	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
 	CItinerary* p_Itinerary;
@@ -122,23 +117,20 @@ protected:
 	FindReplaceSettings m_FindReplaceSettings;
 
 private:
+	INT GetMaxAttributeWidth(UINT Attr) const;
+	void AutosizeColumn(UINT Attr);
 	void DoDelete();
 	void DoCopy(BOOL Cut);
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected);
-	INT GetMaxAttributeWidth(UINT Attr) const;
-	void AutosizeColumn(UINT Attr);
 	void FinishEdit(LPCWSTR pStr, const CPoint& Item);
-	void DestroyEdit(BOOL Accept=FALSE);
-
-	CMFCMaskedEdit* m_pWndEdit;
 };
-
-inline void CDataGrid::EnsureVisible()
-{
-	EnsureVisible(m_FocusItem);
-}
 
 inline UINT CDataGrid::GetCurrentRow() const
 {
 	return (UINT)m_FocusItem.y;
+}
+
+inline void CDataGrid::EnsureVisible()
+{
+	EnsureVisible(m_FocusItem);
 }

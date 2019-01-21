@@ -32,6 +32,17 @@ CSortList::CSortList()
 	CFrontstageScroller::SetItemHeight(FMGetApp()->m_DialogFont.GetFontHeight()+2*ITEMCELLPADDINGY);
 }
 
+
+// Layouts
+
+void CSortList::AdjustLayout()
+{
+	AdjustLayoutColumns();
+}
+
+
+// Item data
+
 void CSortList::AddAttribute(UINT Attr, LPCWSTR Name)
 {
 	AttributeItemData Data;
@@ -61,10 +72,8 @@ INT CSortList::GetSelectedSortAttribute() const
 	return (Index<0) ? -1 : GetAttributeItemData(Index)->Attr;
 }
 
-void CSortList::AdjustLayout()
-{
-	AdjustLayoutColumns();
-}
+
+// Drawing
 
 void CSortList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
 {

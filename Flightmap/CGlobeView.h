@@ -40,13 +40,13 @@ public:
 	CGlobeView();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetFlights(CKitchen* pKitchen);
 	void UpdateViewOptions(BOOL Force=FALSE);
+	void SetFlights(CKitchen* pKitchen);
 
 protected:
+	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void ShowTooltip(const CPoint& point);
-	virtual BOOL GetContextMenu(CMenu& Menu, INT Index);
 	virtual void GetNothingMessage(CString& strMessage, COLORREF& clrMessage, BOOL Themed) const;
 	virtual BOOL DrawNothing() const;
 

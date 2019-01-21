@@ -18,6 +18,7 @@ CFrontstageScroller::CFrontstageScroller(UINT Flags)
 	m_HeaderHeight = m_ItemHeight = 0;
 	m_szScrollStep.cx = m_szScrollStep.cy = DEFAULTSCROLLSTEP;
 	m_pWndHeader = NULL;
+	m_pWndEdit = NULL;
 	m_HeaderShadow = FALSE;
 	m_HeaderItemClicked = -1;
 	m_IgnoreHeaderItemChange = TRUE;
@@ -27,6 +28,40 @@ CFrontstageScroller::CFrontstageScroller(UINT Flags)
 
 	ResetScrollArea();
 }
+
+BOOL CFrontstageScroller::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+		if (IsEditing())
+			switch (pMsg->wParam)
+			{
+			case VK_EXECUTE:
+			case VK_RETURN:
+				DestroyEdit(TRUE);
+				return TRUE;
+
+			case VK_ESCAPE:
+				DestroyEdit(FALSE);
+				return TRUE;
+			}
+
+		break;
+
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+		if (m_pWndEdit)
+			return TRUE;
+
+		break;
+	}
+
+	return CFrontstageWnd::PreTranslateMessage(pMsg);
+}
+
+
+// Header
 
 INT CFrontstageScroller::GetHeaderIndent() const
 {
@@ -45,6 +80,31 @@ BOOL CFrontstageScroller::AllowHeaderColumnDrag(UINT /*Attr*/) const
 BOOL CFrontstageScroller::AllowHeaderColumnTrack(UINT /*Attr*/) const
 {
 	return FALSE;
+}
+
+BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, LPCWSTR Caption, BOOL Right)
+{
+	ASSERT(Caption);
+
+	// Create header
+	if (!HasHeader())
+	{
+		m_pWndHeader = new CTooltipHeader();
+
+		if (!m_pWndHeader->Create(this, 1, m_HeaderShadow=Shadow))
+			return FALSE;
+	}
+
+	// Add item
+	HDITEM Item;
+	Item.mask = HDI_TEXT | HDI_FORMAT;
+	Item.pszText = (LPWSTR)Caption;
+	Item.fmt = HDF_STRING;
+
+	if (Right)
+		Item.fmt |= HDF_RIGHT;
+
+	return m_pWndHeader->InsertItem(m_pWndHeader->GetItemCount(), &Item)!=-1;
 }
 
 void CFrontstageScroller::SetFixedColumnWidths(INT* pColumnOrder, INT* pColumnWidths)
@@ -199,6 +259,9 @@ void CFrontstageScroller::HeaderColumnClicked(UINT /*Attr*/)
 {
 }
 
+
+// Scrolling
+
 void CFrontstageScroller::ResetScrollArea()
 {
 	m_ScrollWidth = m_ScrollHeight = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
@@ -208,93 +271,6 @@ void CFrontstageScroller::ResetScrollArea()
 void CFrontstageScroller::SetItemHeight(INT ItemHeight)
 {
 	m_szScrollStep.cy = (m_ItemHeight=ItemHeight)-1;
-}
-
-void CFrontstageScroller::GetLayoutRect(CRect& rectLayout)
-{
-	// Client area for layout
-	GetWindowRect(rectLayout);
-
-	if (HasBorder())
-		rectLayout.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
-}
-
-void CFrontstageScroller::AdjustScrollbars()
-{
-	// Dimensions
-	CRect rect;
-	GetWindowRect(rect);
-
-	if (HasBorder())
-		rect.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
-
-	BOOL HScroll = FALSE;
-	if (m_ScrollWidth>rect.Width())
-	{
-		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-		HScroll = TRUE;
-	}
-
-	if (m_ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
-		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
-
-	if ((m_ScrollWidth>rect.Width()) && !HScroll)
-		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-
-	// Set vertical bars
-	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
-	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
-
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(SCROLLINFO);
-	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
-	si.nPage = rect.Height()-m_HeaderHeight;
-	si.nMax = m_ScrollHeight-1;
-	si.nPos = m_VScrollPos;
-	SetScrollInfo(SB_VERT, &si);
-
-	// Set horizontal bars
-	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
-	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
-
-	si.nPage = rect.Width();
-	si.nMax = m_ScrollWidth-1;
-	si.nPos = m_HScrollPos;
-	SetScrollInfo(SB_HORZ, &si);
-}
-
-void CFrontstageScroller::AdjustLayout()
-{
-	// Get header layout
-	WINDOWPOS wp;
-	ZeroMemory(&wp, sizeof(wp));
-
-	if (HasHeader())
-	{
-		CRect rect;
-		GetWindowRect(rect);
-
-		HDLAYOUT HdLayout;
-		HdLayout.prc = &rect;
-		HdLayout.pwpos = &wp;
-		m_pWndHeader->Layout(&HdLayout);
-
-		wp.x = GetHeaderIndent();
-		wp.y = 0;
-		m_HeaderHeight = wp.cy;
-	}
-
-	// Scrolling
-	AdjustScrollbars();
-	Invalidate();
-
-	// Set header position
-	if (HasHeader())
-		m_pWndHeader->SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
-
-	// Update hover item
-	UpdateHoverItem();
 }
 
 void CFrontstageScroller::ScrollWindow(INT dx, INT dy, LPCRECT /*lpRect*/, LPCRECT /*lpClipRect*/)
@@ -390,6 +366,99 @@ void CFrontstageScroller::EnsureVisible(const CRect& rectItem)
 	}
 }
 
+void CFrontstageScroller::AdjustScrollbars()
+{
+	// Dimensions
+	CRect rect;
+	GetWindowRect(rect);
+
+	if (HasBorder())
+		rect.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
+
+	BOOL HScroll = FALSE;
+	if (m_ScrollWidth>rect.Width())
+	{
+		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
+		HScroll = TRUE;
+	}
+
+	if (m_ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
+		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
+
+	if ((m_ScrollWidth>rect.Width()) && !HScroll)
+		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
+
+	// Set vertical bars
+	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
+	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
+
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(SCROLLINFO);
+	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
+	si.nPage = rect.Height()-m_HeaderHeight;
+	si.nMax = m_ScrollHeight-1;
+	si.nPos = m_VScrollPos;
+	SetScrollInfo(SB_VERT, &si);
+
+	// Set horizontal bars
+	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
+	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
+
+	si.nPage = rect.Width();
+	si.nMax = m_ScrollWidth-1;
+	si.nPos = m_HScrollPos;
+	SetScrollInfo(SB_HORZ, &si);
+}
+
+
+// Layouts
+
+void CFrontstageScroller::GetLayoutRect(CRect& rectLayout)
+{
+	// Client area for layout
+	GetWindowRect(rectLayout);
+
+	if (HasBorder())
+		rectLayout.DeflateRect(GetSystemMetrics(SM_CXEDGE), GetSystemMetrics(SM_CYEDGE));
+}
+
+void CFrontstageScroller::AdjustLayout()
+{
+	// Get header layout
+	WINDOWPOS wp;
+	ZeroMemory(&wp, sizeof(wp));
+
+	if (HasHeader())
+	{
+		CRect rect;
+		GetWindowRect(rect);
+
+		HDLAYOUT HdLayout;
+		HdLayout.prc = &rect;
+		HdLayout.pwpos = &wp;
+		m_pWndHeader->Layout(&HdLayout);
+
+		wp.x = GetHeaderIndent();
+		wp.y = 0;
+		m_HeaderHeight = wp.cy;
+	}
+
+	// Scrolling
+	AdjustScrollbars();
+	Invalidate();
+
+	// Set header position
+	if (HasHeader())
+		m_pWndHeader->SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+
+	// Update hover item
+	UpdateHoverItem();
+}
+
+
+// Drawing
+
 void CFrontstageScroller::GetNothingMessage(CString& strMessage, COLORREF& /*clrMessage*/, BOOL /*Themed*/) const
 {
 	ENSURE(strMessage.LoadString(IDS_NOTHINGTODISPLAY));
@@ -432,29 +501,11 @@ void CFrontstageScroller::DrawStage(CDC& /*dc*/, Graphics& /*g*/, const CRect& /
 {
 }
 
-BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, LPCWSTR Caption, BOOL Right)
+
+// Label edit
+
+void CFrontstageScroller::DestroyEdit(BOOL /*Accept*/)
 {
-	ASSERT(Caption);
-
-	// Create header
-	if (!HasHeader())
-	{
-		m_pWndHeader = new CTooltipHeader();
-
-		if (!m_pWndHeader->Create(this, 1, m_HeaderShadow=Shadow))
-			return FALSE;
-	}
-
-	// Add item
-	HDITEM Item;
-	Item.mask = HDI_TEXT | HDI_FORMAT;
-	Item.pszText = (LPWSTR)Caption;
-	Item.fmt = HDF_STRING;
-
-	if (Right)
-		Item.fmt |= HDF_RIGHT;
-
-	return m_pWndHeader->InsertItem(m_pWndHeader->GetItemCount(), &Item)!=-1;
 }
 
 
@@ -479,10 +530,14 @@ BEGIN_MESSAGE_MAP(CFrontstageScroller, CFrontstageWnd)
 	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
+
+	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
 void CFrontstageScroller::OnDestroy()
 {
+	DestroyEdit();
+
 	if (m_pWndHeader)
 	{
 		m_pWndHeader->DestroyWindow();
@@ -799,6 +854,10 @@ void CFrontstageScroller::OnKillFocus(CWnd* /*pNewWnd*/)
 
 void CFrontstageScroller::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	// Destroy edit control
+	OnDestroyEdit();
+
+	// Header
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	*pResult = (pHdr->iItem<0) ? TRUE : !AllowHeaderColumnDrag((UINT)pHdr->iItem);
@@ -806,6 +865,10 @@ void CFrontstageScroller::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CFrontstageScroller::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	// Destroy edit control
+	OnDestroyEdit();
+
+	// Header
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->pitem->mask & HDI_WIDTH)
@@ -814,6 +877,7 @@ void CFrontstageScroller::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CFrontstageScroller::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	// Header
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_ORDER) && (pHdr->iItem>=0))
@@ -826,6 +890,7 @@ void CFrontstageScroller::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CFrontstageScroller::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	// Header
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (!m_IgnoreHeaderItemChange && (pHdr->pitem->mask & HDI_WIDTH) && (pHdr->iItem>=0))
@@ -838,10 +903,22 @@ void CFrontstageScroller::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CFrontstageScroller::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	// Destroy edit control
+	OnDestroyEdit();
+
+	// Header
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->iItem>=0)
 		HeaderColumnClicked((UINT)pHdr->iItem);
 
 	*pResult = FALSE;
+}
+
+
+// Label edit
+
+void CFrontstageScroller::OnDestroyEdit()
+{
+	DestroyEdit(TRUE);
 }
