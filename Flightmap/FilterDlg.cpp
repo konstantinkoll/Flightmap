@@ -65,6 +65,9 @@ void CSortList::SetAttributes()
 	AdjustLayout();
 }
 
+
+// Item selection
+
 INT CSortList::GetSelectedSortAttribute() const
 {
 	const INT Index = GetSelectedItem();

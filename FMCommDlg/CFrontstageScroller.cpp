@@ -602,14 +602,14 @@ void CFrontstageScroller::OnPaint()
 			Bitmap* pDivider = FMGetApp()->GetCachedResourceImage(IDB_DIVUP);
 
 			g.DrawImage(pDivider, (rect.Width()-(INT)pDivider->GetWidth())/2+m_HScrollPos+BACKSTAGEBORDER+CARDPADDING-1, m_HeaderHeight-(INT)pDivider->GetHeight());
-
-			if (m_HeaderShadow)
-				CTaskbar::DrawTaskbarShadow(g, rect);
 		}
 		else
 		{
 			dc.FillSolidRect(0, 0, rect.Width(), m_HeaderHeight, GetSysColor(COLOR_3DFACE));
 		}
+
+	if (Themed && DrawShadow())
+		CTaskbar::DrawTaskbarShadow(g, rect);
 
 	// Edge
 	DrawWindowEdge(g, Themed);

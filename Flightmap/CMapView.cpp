@@ -14,7 +14,7 @@
 #define BORDER     3*CARDPADDING
 
 CMapView::CMapView()
-	: CFrontstageScroller()
+	: CFrontstageScroller(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_DRAWSHADOW)
 {
 	p_BitmapOriginal = m_pBitmapScaled = NULL;
 

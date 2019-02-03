@@ -128,6 +128,23 @@ BOOL CResolutionList::SetResolutions(UINT Width, UINT Height)
 }
 
 
+// Item selection
+
+BOOL CResolutionList::GetSelectedResolution(UINT& Width, UINT& Height) const
+{
+	const INT Index = GetSelectedItem();
+	if (Index!=-1)
+	{
+		Width = m_ResolutionPresets[Index].Width;
+		Height = m_ResolutionPresets[Index].Height;
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 // Drawing
 
 void CResolutionList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL /*Themed*/)

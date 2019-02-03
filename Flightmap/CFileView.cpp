@@ -152,6 +152,9 @@ void CAttachmentList::SetAttachments(CItinerary* pItinerary, AIRX_Flight* pFligh
 	AdjustLayout();
 }
 
+
+// Item selection
+
 AIRX_Attachment* CAttachmentList::GetSelectedAttachment() const
 {
 	const INT Index = GetSelectedItem();

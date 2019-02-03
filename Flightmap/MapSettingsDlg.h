@@ -48,20 +48,6 @@ inline void CResolutionList::UpdateHeader()
 	CFrontstageItemView::UpdateHeader(m_ColumnOrder, m_ColumnWidth);
 }
 
-inline BOOL CResolutionList::GetSelectedResolution(UINT& Width, UINT& Height) const
-{
-	const INT Index = GetSelectedItem();
-	if (Index!=-1)
-	{
-		Width = m_ResolutionPresets[Index].Width;
-		Height = m_ResolutionPresets[Index].Height;
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 
 // MapSettingsDlg
 //

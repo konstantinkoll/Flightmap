@@ -13,6 +13,7 @@
 #define FRONTSTAGE_WHITEBACKGROUND       0x00000000
 #define FRONTSTAGE_COMPLEXBACKGROUND     0x00000001
 #define FRONTSTAGE_CARDBACKGROUND        0x00000003
+#define FRONTSTAGE_DRAWSHADOW            0x00000004
 
 #define DEFAULTSCROLLSTEP     150
 
@@ -44,6 +45,7 @@ protected:
 
 	BOOL HasHeader() const;
 	BOOL IsHeaderVisible() const;
+	BOOL DrawShadow() const;
 	UINT GetColumnCount() const;
 	BOOL AddHeaderColumn(BOOL Shadow, LPCWSTR Caption=L"", BOOL Right=FALSE);
 	BOOL AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right=FALSE);
@@ -141,4 +143,9 @@ inline UINT CFrontstageScroller::GetColumnCount() const
 inline BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right)
 {
 	return AddHeaderColumn(Shadow, CString((LPCSTR)nID), Right);
+}
+
+inline BOOL CFrontstageScroller::DrawShadow() const
+{
+	return m_HeaderShadow || (m_Flags & FRONTSTAGE_DRAWSHADOW);
 }

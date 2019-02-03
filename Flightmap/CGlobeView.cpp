@@ -32,7 +32,7 @@ const GLfloat CGlobeView::m_lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat CGlobeView::m_FogColor[] = { 0.65f, 0.75f, 0.95f, 1.0f };
 
 CGlobeView::CGlobeView()
-	: CFrontstageItemView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLESELECTION, sizeof(GlobeItemData), CSize(0, ARROWSIZE))
+	: CFrontstageItemView(FRONTSTAGE_CARDBACKGROUND | FRONTSTAGE_DRAWSHADOW | FRONTSTAGE_ENABLEFOCUSITEM | FRONTSTAGE_ENABLESELECTION, sizeof(GlobeItemData), CSize(0, ARROWSIZE))
 {
 	m_RenderContext.pDC = NULL;
 	m_RenderContext.hRC = NULL;
@@ -911,7 +911,7 @@ __forceinline void CGlobeView::RenderScene()
 		CalcAndDrawLabel(Themed);
 
 	// Taskbar shadow
-	if (Themed)
+	if (Themed && DrawShadow())
 	{
 		theRenderer.SetColor(0x000000, 0.094f);
 		glRecti(0, 0, m_RenderContext.Width, 1);
