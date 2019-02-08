@@ -80,7 +80,7 @@ protected:
 	virtual INT GetItemCategory(INT Index) const;
 	virtual INT ItemAtPosition(CPoint point) const;
 	virtual void InvalidateItem(INT Index);
-	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
 	virtual INT HandleNavigationKeys(UINT nChar, BOOL Control) const;
 	virtual BOOL IsItemSelected(INT Index) const;
 	virtual void SelectItem(INT Index, BOOL Select=TRUE);

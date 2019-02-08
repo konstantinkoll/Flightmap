@@ -50,7 +50,7 @@ inline ClassItemData* CClassesList::GetClassItemData(INT Index) const
 // StatisticsDlg
 //
 
-#define WM_UPDATESTATISTICS     WM_USER+101
+#define WM_UPDATESTATISTICS     WM_USER+102
 
 class StatisticsDlg : public CDialog
 {

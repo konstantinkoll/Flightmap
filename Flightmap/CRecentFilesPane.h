@@ -31,7 +31,7 @@ public:
 protected:
 	virtual void ShowTooltip(const CPoint& point);
 	virtual void AdjustLayout();
-	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
 	virtual void FireSelectedItem() const;
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);
 

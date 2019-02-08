@@ -27,35 +27,26 @@ CRatingCtrl::CRatingCtrl()
 			AfxThrowResourceException();
 	}
 
+	// Rating
 	m_Rating = 0;
 }
 
-void CRatingCtrl::SetRating(UCHAR Rating, BOOL Prepare)
+void CRatingCtrl::SetInitialRating(UCHAR Rating)
 {
 	ASSERT(Rating<=MAXRATING);
 
-	if (Prepare)
-	{
-		CRect rect;
-		GetWindowRect(rect);
-		GetParent()->ScreenToClient(rect);
+	// Resize window
+	CRect rect;
+	GetWindowRect(rect);
+	GetParent()->ScreenToClient(rect);
 
-		if (rect.Width()<RATINGBITMAPWIDTH+8)
-			SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RATINGBITMAPWIDTH+8), max(rect.Height(), RATINGBITMAPHEIGHT+4), SWP_NOACTIVATE | SWP_NOZORDER);
-	}
+	if (rect.Width()<RATINGBITMAPWIDTH+8)
+		SetWindowPos(NULL, rect.left, rect.top, max(rect.Height(), RATINGBITMAPWIDTH+8), max(rect.Height(), RATINGBITMAPHEIGHT+4), SWP_NOACTIVATE | SWP_NOZORDER);
 
+	// Set rating
 	m_Rating = Rating;
+
 	Invalidate();
-}
-
-UCHAR CRatingCtrl::GetRating() const
-{
-	return m_Rating;
-}
-
-void CRatingCtrl::SendChangeMessage() const
-{
-	GetOwner()->SendMessage(WM_RATINGCHANGED);
 }
 
 
@@ -63,6 +54,7 @@ BEGIN_MESSAGE_MAP(CRatingCtrl, CFrontstageWnd)
 	ON_WM_PAINT()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_RBUTTONDOWN()
 	ON_WM_SETCURSOR()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
@@ -96,6 +88,7 @@ void CRatingCtrl::OnPaint()
 
 	SelectObject(dcMem, hOldBitmap);
 
+	// Focus rectangle
 	if (GetFocus()==this)
 	{
 		dc.SetBkColor(0x000000);
@@ -143,26 +136,23 @@ void CRatingCtrl::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	}
 
 	if (m_Rating!=(UCHAR)Rating)
-	{
-		m_Rating = (UCHAR)Rating;
-		Invalidate();
-
-		SendChangeMessage();
-	}
+		SetRating((UCHAR)Rating);
 }
 
 void CRatingCtrl::OnLButtonDown(UINT /*Flags*/, CPoint point)
 {
 	if ((point.x>=0) && (point.x<RATINGBITMAPWIDTH+2))
 		if ((point.x<6) || ((point.x-2)%18<16))
-		{
-			m_Rating = (UCHAR)((point.x<6) ? 0 : 2*((point.x-2)/18)+((point.x-2)%18>8)+1);
-			Invalidate();
+			SetRating((UCHAR)((point.x<6) ? 0 : 2*((point.x-2)/18)+((point.x-2)%18>8)+1));
 
-			SendChangeMessage();
-		}
+	if (GetFocus()!=this)
+		SetFocus();
+}
 
-	SetFocus();
+void CRatingCtrl::OnRButtonDown(UINT /*Flags*/, CPoint /*point*/)
+{
+	if (GetFocus()!=this)
+		SetFocus();
 }
 
 BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
@@ -174,7 +164,8 @@ BOOL CRatingCtrl::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*
 	CRect rect;
 	GetClientRect(rect);
 
-	SetCursor(AfxGetApp()->LoadStandardCursor((point.x<0) || (point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RATINGBITMAPWIDTH+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
+	SetCursor(FMGetApp()->LoadStandardCursor((point.x<0) || (point.y<0) || (point.y>=rect.Height()) ? IDC_ARROW : point.x<6 ? IDC_HAND : ((point.x<RATINGBITMAPWIDTH+2) && ((point.x-2)%18<16)) ? IDC_HAND : IDC_ARROW));
+
 	return TRUE;
 }
 
@@ -190,5 +181,5 @@ void CRatingCtrl::OnKillFocus(CWnd* /*pNewWnd*/)
 
 UINT CRatingCtrl::OnGetDlgCode()
 {
-	return DLGC_WANTCHARS;
+	return DLGC_WANTARROWS | DLGC_WANTCHARS;
 }

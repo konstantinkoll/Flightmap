@@ -222,7 +222,7 @@ BOOL EditFlightDlg::InitDialog()
 	m_wndColorIndicator.SetColor(m_Flight.Color);
 
 	// Rating
-	m_wndRating.SetRating((m_Flight.Flags>>FMAttributes[21].DataParameter) & 0xF);
+	m_wndRating.SetInitialRating((m_Flight.Flags>>FMAttributes[21].DataParameter) & 0xF);
 
 	// Attachments
 	m_wndFileView.SetAttachments(p_Itinerary, &m_Flight);

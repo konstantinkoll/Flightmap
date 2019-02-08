@@ -45,6 +45,7 @@ protected:
 
 	BOOL HasHeader() const;
 	BOOL IsHeaderVisible() const;
+	COLORREF GetStageBackgroundColor(BOOL Themed) const;
 	BOOL DrawShadow() const;
 	UINT GetColumnCount() const;
 	BOOL AddHeaderColumn(BOOL Shadow, LPCWSTR Caption=L"", BOOL Right=FALSE);
@@ -135,6 +136,11 @@ inline void CFrontstageScroller::ShowHeader() const
 	m_pWndHeader->ModifyStyle(HDS_HIDDEN, 0);
 }
 
+inline BOOL CFrontstageScroller::DrawShadow() const
+{
+	return m_HeaderShadow || (m_Flags & FRONTSTAGE_DRAWSHADOW);
+}
+
 inline UINT CFrontstageScroller::GetColumnCount() const
 {
 	return HasHeader() ? (UINT)m_pWndHeader->GetItemCount() : 0;
@@ -143,9 +149,4 @@ inline UINT CFrontstageScroller::GetColumnCount() const
 inline BOOL CFrontstageScroller::AddHeaderColumn(BOOL Shadow, UINT nID, BOOL Right)
 {
 	return AddHeaderColumn(Shadow, CString((LPCSTR)nID), Right);
-}
-
-inline BOOL CFrontstageScroller::DrawShadow() const
-{
-	return m_HeaderShadow || (m_Flags & FRONTSTAGE_DRAWSHADOW);
 }

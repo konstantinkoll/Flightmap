@@ -19,7 +19,7 @@ static const GUID TrayIcon = { 0xBF5C8D89, 0x0E4B, 0x4C32, { 0xBA, 0x1D, 0x20, 0
 // FMUpdateDlg
 //
 
-#define WM_TRAYMENU     WM_USER+10
+#define WM_TRAYMENU     WM_USER+2
 #define MARGIN          4
 
 FMUpdateDlg::FMUpdateDlg(const CString& Version, const CString& MSN, DWORD Features, CWnd* pParentWnd)

@@ -448,7 +448,7 @@ void CFrontstageItemView::InvalidateItem(INT Index)
 	}
 }
 
-COLORREF CFrontstageItemView::GetItemTextColor(INT /*Index*/) const
+COLORREF CFrontstageItemView::GetItemTextColor(INT /*Index*/, BOOL /*Themed*/) const
 {
 	return (COLORREF)-1;
 }
@@ -782,13 +782,13 @@ void CFrontstageItemView::DrawItemBackground(CDC& dc, LPCRECT rectItem, INT Inde
 		{
 			DRAWCACHED(BITMAP_SELECTION, DrawListItemBackground(MemDC, CRect(0, 0, Width, Height), Themed, GetFocus()==this, m_HoverItem==Index, m_FocusItem==Index, Selected));
 
-			const COLORREF TextColor = GetItemTextColor(Index);
+			const COLORREF TextColor = GetItemTextColor(Index, Themed);
 			dc.SetTextColor(Selected ? 0xFFFFFF : TextColor!=(COLORREF)-1 ? TextColor : 0x000000);
 		}
 		else
 		{
 			DrawListItemBackground(dc, rectItem, Themed, GetFocus()==this,
-				m_HoverItem==Index, m_FocusItem==Index, Selected, IsWindowEnabled() ? GetItemTextColor(Index) : GetSysColor(COLOR_GRAYTEXT), m_ShowFocusRect);
+				m_HoverItem==Index, m_FocusItem==Index, Selected, IsWindowEnabled() ? GetItemTextColor(Index, Themed) : GetSysColor(COLOR_GRAYTEXT), m_ShowFocusRect);
 		}
 	}
 	else

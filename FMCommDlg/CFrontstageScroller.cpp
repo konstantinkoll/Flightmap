@@ -459,6 +459,11 @@ void CFrontstageScroller::AdjustLayout()
 
 // Drawing
 
+COLORREF CFrontstageScroller::GetStageBackgroundColor(BOOL Themed) const
+{
+	return IsWindowEnabled() ? Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW) : GetSysColor(COLOR_3DFACE);
+}
+
 void CFrontstageScroller::GetNothingMessage(CString& strMessage, COLORREF& /*clrMessage*/, BOOL /*Themed*/) const
 {
 	ENSURE(strMessage.LoadString(IDS_NOTHINGTODISPLAY));
@@ -576,7 +581,7 @@ void CFrontstageScroller::OnPaint()
 	}
 	else
 	{
-		dc.FillSolidRect(rect, IsWindowEnabled() ? Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW) : GetSysColor(COLOR_3DFACE));
+		dc.FillSolidRect(rect, GetStageBackgroundColor(Themed));
 	}
 
 	// Stage

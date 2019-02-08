@@ -187,7 +187,7 @@ void CAirportList::ShowTooltip(const CPoint& point)
 	FMGetApp()->ShowTooltip(this, point, CString(lpcAirport->Name), Hint, NULL, FMIATACreateAirportMap(lpcAirport, 192, 192));
 }
 
-COLORREF CAirportList::GetItemTextColor(INT Index) const
+COLORREF CAirportList::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 {
 	LPCAIRPORT lpcAirport = GetAirport(Index);
 

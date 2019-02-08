@@ -148,7 +148,7 @@ BOOL FilterDlg::InitDialog()
 	p_Itinerary->PrepareCarrierCtrl(m_wndFilterCarrier, FALSE);
 	p_Itinerary->PrepareEquipmentCtrl(m_wndFilterEquipment, FALSE);
 
-	m_wndFilterRating.SetRating(0);
+	m_wndFilterRating.SetInitialRating(0);
 
 	// Sorting
 	m_wndSortAttributes.SetAttributes();

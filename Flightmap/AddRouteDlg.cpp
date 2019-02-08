@@ -71,7 +71,7 @@ BOOL AddRouteDlg::InitDialog()
 	p_Itinerary->PrepareCarrierCtrl(m_wndCarrier);
 
 	// Rating
-	m_wndRating.SetRating(0);
+	m_wndRating.SetInitialRating(0);
 
 	return TRUE;
 }

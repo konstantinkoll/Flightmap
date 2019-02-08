@@ -36,7 +36,7 @@ protected:
 	virtual void HeaderColumnClicked(UINT Attr);
 	virtual void AdjustLayout();
 	virtual void ShowTooltip(const CPoint& point);
-	virtual COLORREF GetItemTextColor(INT Index) const;
+	virtual COLORREF GetItemTextColor(INT Index, BOOL Themed) const;
 	virtual void FireSelectedItem() const;
 	virtual void DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Attr, BOOL Themed);
 	virtual void DrawItem(CDC& dc, Graphics& g, LPCRECT rectItem, INT Index, BOOL Themed);

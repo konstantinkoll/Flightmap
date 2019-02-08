@@ -605,7 +605,7 @@ BOOL StatisticsDlg::OnInitDialog()
 	p_Itinerary->PrepareEquipmentCtrl(m_wndFilterEquipment, FALSE);
 	m_wndFilterCarrier.InsertString(0, _T(""));
 	m_wndFilterEquipment.InsertString(0, _T(""));
-	m_wndFilterRating.SetRating(0);
+	m_wndFilterRating.SetInitialRating(0);
 
 	// Route
 	Prepare(m_wndListRoute);

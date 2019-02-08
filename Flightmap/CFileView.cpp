@@ -287,7 +287,7 @@ UseIcon:
 	theApp.ShowTooltip(this, point, pAttachment->Name, Hint, hIcon, hBitmap);
 }
 
-COLORREF CAttachmentList::GetItemTextColor(INT Index) const
+COLORREF CAttachmentList::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 {
 	const AIRX_Attachment* pAttachment = GetAttachment(Index);
 

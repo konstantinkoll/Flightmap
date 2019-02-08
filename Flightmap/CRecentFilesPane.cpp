@@ -130,7 +130,7 @@ void CRecentFilesList::AdjustLayout()
 	AdjustLayoutColumns();
 }
 
-COLORREF CRecentFilesList::GetItemTextColor(INT Index) const
+COLORREF CRecentFilesList::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 {
 	return GetFileItemData(Index)->IsValid ? (COLORREF)-1 : 0x2020FF;
 }
