@@ -217,7 +217,7 @@ void CMapWnd::OnMapWndSaveAs()
 	{
 		CWaitCursor WaitCursor;
 	
-		CString Ext = dlg.GetFileExt();
+		const CString Ext = dlg.GetFileExt().MakeLower();
 
 		if (Ext==_T("bmp"))
 		{
