@@ -227,7 +227,7 @@ FMCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8796
+#define AirportCount_DE 8797
 FMAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3597,7 +3597,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{  60, "JNX", "", "Náxos", { -37.080556, 25.368056 } },
 	{  36, "JNZ", "", "Jinzhou", { -41.116944, 121.016944 } },
 	{  50, "JOE", "", "Joensuu", { -62.662778, 29.607500 } },
-	{  73, "JOG", "", "Jogjakarta", { 7.788056, 110.431667 } },
+	{  73, "JOG", "", "Jogjakarta (Adisucipto)", { 7.788056, 110.431667 } },
 	{  26, "JOI", "", "Joinville", { 26.224444, -48.797500 } },
 	{ 160, "JOK", "", "Yoshkar Ola", { -56.700556, 47.904722 } },
 	{ 153, "JOL", "", "Jolo", { -6.053611, 121.011111 } },
@@ -8548,6 +8548,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{  88, "YHU", "YMQ", "Montreal (St.-Hubert Airport)", { -45.517500, -73.416944 } },
 	{  88, "YHY", "", "Hay River", { -60.839722, -115.782778 } },
 	{  88, "YHZ", "", "Halifax", { -44.880833, -63.508611 } },
+	{  73, "YIA", "", "Jogjakarta (Kulon Progo)", { 7.907500, 110.054444 } },
 	{  88, "YIB", "", "Atikokan", { -48.773889, -91.638611 } },
 	{  88, "YIC", "", "Isachsen", { -78.783056, -103.550000 } },
 	{  88, "YIF", "", "Pakuashipi", { -51.211667, -58.658333 } },
