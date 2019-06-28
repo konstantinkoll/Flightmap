@@ -3115,7 +3115,7 @@ HUT     Hutchinson, USA;4;38*3'56"N, 97*51'38"W
 HUU     Huánuco, Peru;4;9*52'44"S, 76*12'17"W
 HUV     Hudiksvall, Sweden;4;61*46'6"N, 17*4'50"E
 HUX     Huatulco, Mexico;4;15*46'31"N, 96*15'45"W
-HUY     Humberside, United Kingdom;4;53*34'28"N, 0*21'3"E
+HUY     Humberside, United Kingdom;5;53*34'28"N, 0*21'3"W
 HUZ     Huizhow, China;4;23*4'59"N, 114*22'1"E
 HVA     Analalava, Madagascar;4;14*37'47"S, 47*45'50"E
 HVB     Hervey Bay, Australia;4;25*19'8"S, 152*52'49"E
