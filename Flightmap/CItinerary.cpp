@@ -587,7 +587,7 @@ FILETIME CItinerary::MakeTime(WORD wYear, WORD wMonth, WORD wDay, WORD wHour, WO
 	SystemTime.wDay = wDay;
 	SystemTime.wHour = wHour;
 	SystemTime.wMinute = wMinute;
-	SystemTime.wDayOfWeek = SystemTime.wMilliseconds = 0;
+	SystemTime.wSecond = SystemTime.wDayOfWeek = SystemTime.wMilliseconds = 0;
 
 	FILETIME FileTime;
 	SystemTimeToFileTime(&SystemTime, &FileTime);

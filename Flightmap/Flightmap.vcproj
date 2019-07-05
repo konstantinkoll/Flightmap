@@ -289,7 +289,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				Description="EXE wird signiert."
+				CommandLine="signtool.exe sign /f &quot;$(SolutionDir)Flightmap Application Integration.pfx&quot; &quot;$(OutDir)\$(ProjectName).exe&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -385,7 +386,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				Description="EXE wird signiert."
+				CommandLine="signtool.exe sign /f &quot;$(SolutionDir)Flightmap Application Integration.pfx&quot; &quot;$(OutDir)\$(ProjectName).exe&quot;"
 			/>
 		</Configuration>
 	</Configurations>
