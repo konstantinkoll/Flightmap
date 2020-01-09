@@ -189,6 +189,7 @@ void FMDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 	if (Themed)
 	{
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		for (UINT a=0; a<m_Buttons.m_ItemCount; a++)
 			if (m_Buttons[a]->IsWindowVisible())
@@ -207,6 +208,7 @@ void FMDialog::PaintOnBackground(CDC& dc, Graphics& g, const CRect& rectLayout)
 		if (Themed)
 		{
 			g.SetPixelOffsetMode(PixelOffsetModeHalf);
+			g.SetSmoothingMode(SmoothingModeNone);
 
 			LinearGradientBrush brush2(Point(rectLayout.left, 0), Point(rectLayout.right, 0), Color(0xFF045082), Color(0xFF1C7885));
 			g.FillRectangle(&brush2, rectLayout.left, rectLayout.top, rectLayout.Width(), m_UACHeight);

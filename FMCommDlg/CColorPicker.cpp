@@ -100,32 +100,32 @@ inline void CHueWheel::CreateBitmaps(HueWheelBitmaps* pBitmaps)
 		Graphics g(dc);
 		g.SetSmoothingMode(FMGetApp()->m_SmoothingModeAntiAlias8x8);
 
-		GraphicsPath Path;
-		Path.AddRectangle(Rect(-SHADOWSIZE, -SHADOWSIZE, pBitmaps->Size+SHADOWSIZE, pBitmaps->Size+SHADOWSIZE));
-		Path.AddArc(Radius-m_OuterRadius, Radius-m_OuterRadius, 2*m_OuterRadius, 2*m_OuterRadius, 0.0f, 360.0f);
-		Path.AddArc(Radius-m_InnerRadius, Radius-m_InnerRadius, 2*m_InnerRadius, 2*m_InnerRadius, 0.0f, 360.0f);
+		GraphicsPath path;
+		path.AddRectangle(Rect(-SHADOWSIZE, -SHADOWSIZE, pBitmaps->Size+SHADOWSIZE, pBitmaps->Size+SHADOWSIZE));
+		path.AddArc(Radius-m_OuterRadius, Radius-m_OuterRadius, 2*m_OuterRadius, 2*m_OuterRadius, 0.0f, 360.0f);
+		path.AddArc(Radius-m_InnerRadius, Radius-m_InnerRadius, 2*m_InnerRadius, 2*m_InnerRadius, 0.0f, 360.0f);
 
 		// Shadow
 		if (pBitmaps->WindowColor==(COLORREF)-1)
 		{
 			Matrix m;
 			m.Translate(SHADOWSIZE, SHADOWSIZE);
-			Path.Transform(&m);
+			path.Transform(&m);
 
 			m.Reset();
-			m.Translate(-1, -1);
+			m.Translate(-1.0f, -1.0f);
 
 			for (UINT a=0; a<SHADOWSIZE; a++)
 			{
 				SolidBrush brush(Color((BYTE)(a*a/2)<<24));
-				g.FillPath(&brush, &Path);
+				g.FillPath(&brush, &path);
 
-				Path.Transform(&m);
+				path.Transform(&m);
 			}
 		}
 
 		SolidBrush brush(Color(COLORREF2RGB(pBitmaps->WindowColor)));
-		g.FillPath(&brush, &Path);
+		g.FillPath(&brush, &path);
 
 		// 3D effect
 		if (pBitmaps->WindowColor==(COLORREF)-1)
@@ -133,29 +133,29 @@ inline void CHueWheel::CreateBitmaps(HueWheelBitmaps* pBitmaps)
 			Pen pen(Color(0x00000000));
 
 			// Inner bevel
-			Path.Reset();
-			Path.AddArc(Radius-m_InnerRadius+1.0f, Radius-m_InnerRadius+1.0f, 2.0f*m_InnerRadius-2.0f, 2.0f*m_InnerRadius-2.0f, 0.0f, 360.0f);
+			path.Reset();
+			path.AddArc(Radius-m_InnerRadius+1.0f, Radius-m_InnerRadius+1.0f, 2.0f*m_InnerRadius-2.0f, 2.0f*m_InnerRadius-2.0f, 0.0f, 360.0f);
 
 			LinearGradientBrush brush3(PointF(0, Radius-m_InnerRadius), PointF(0, Radius+m_InnerRadius), Color(0x0C000000), Color(0x00000000));
-			g.FillPath(&brush3, &Path);
+			g.FillPath(&brush3, &path);
 
 			// Top shadow
-			Path.Reset();
-			Path.AddArc(Radius-m_OuterRadius-1.0f, Radius-m_OuterRadius-0.5f, 2.0f*m_OuterRadius+1.0f, 2.0f*m_OuterRadius-1.0f, 180.0f, 180.0f);
+			path.Reset();
+			path.AddArc(Radius-m_OuterRadius-1.0f, Radius-m_OuterRadius-0.5f, 2.0f*m_OuterRadius+1.0f, 2.0f*m_OuterRadius-1.0f, 180.0f, 180.0f);
 
 			LinearGradientBrush brush1(PointF(0, Radius-m_OuterRadius), PointF(0, Radius), Color(0x10000000), Color(0x00000000));
 			pen.SetBrush(&brush1);
 
-			g.DrawPath(&pen, &Path);
+			g.DrawPath(&pen, &path);
 
 			// Bottom shadow
-			Path.Reset();
-			Path.AddArc(Radius-m_InnerRadius+0.5f, Radius-m_InnerRadius+0.5f, 2.0f*m_InnerRadius-1.0f, 2.0f*m_InnerRadius-1.0f, 0.0f, 180.0f);
+			path.Reset();
+			path.AddArc(Radius-m_InnerRadius+0.5f, Radius-m_InnerRadius+0.5f, 2.0f*m_InnerRadius-1.0f, 2.0f*m_InnerRadius-1.0f, 0.0f, 180.0f);
 
 			LinearGradientBrush brush2(PointF(0, Radius-1.0f), PointF(0, Radius+m_InnerRadius), Color(0x00000000), Color(0x10000000));
 			pen.SetBrush(&brush2);
 
-			g.DrawPath(&pen, &Path);
+			g.DrawPath(&pen, &path);
 		}
 
 		dc.SelectObject(hOldBitmap);
@@ -300,7 +300,6 @@ void CHueWheel::OnPaint()
 	const REAL y = (REAL)((m_Size-Width)/2.0f-Radius*cos(m_Hue*(2.0*PI/360.0)));
 
 	Graphics g(dc);
-	g.SetPixelOffsetMode(PixelOffsetModeNone);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	SolidBrush brush(Color(0x48000000));
@@ -511,36 +510,36 @@ inline void CGradationPyramid::CreateBitmaps(GradationPyramidBitmaps* pBitmaps)
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
 		g.SetSmoothingMode(FMGetApp()->m_SmoothingModeAntiAlias8x8);
 
-		GraphicsPath Path;
-		Path.AddRectangle(Rect(-SHADOWSIZE, -SHADOWSIZE, pBitmaps->Width+SHADOWSIZE+1, pBitmaps->Height+SHADOWSIZE+1));
+		GraphicsPath path;
+		path.AddRectangle(Rect(-SHADOWSIZE, -SHADOWSIZE, pBitmaps->Width+SHADOWSIZE+1, pBitmaps->Height+SHADOWSIZE+1));
 
 		PointF points[] = { PointF(pBitmaps->Width/2.0f, 0.0), PointF(0.0f, (REAL)pBitmaps->Height), PointF((REAL)pBitmaps->Width, (REAL)pBitmaps->Height) };
-		Path.AddPolygon(points, 3);
+		path.AddPolygon(points, 3);
 
 		// Shadow
 		if (pBitmaps->WindowColor==(COLORREF)-1)
 		{
 			Matrix m;
 			m.Translate(SHADOWSIZE, SHADOWSIZE);
-			Path.Transform(&m);
+			path.Transform(&m);
 
 			m.Reset();
-			m.Translate(-1, -1);
+			m.Translate(-1.0f, -1.0f);
 
 			for (UINT a=0; a<SHADOWSIZE; a++)
 			{
 				SolidBrush brush(Color((BYTE)(a*a/2)<<24));
-				g.FillPath(&brush, &Path);
+				g.FillPath(&brush, &path);
 
-				Path.Transform(&m);
+				path.Transform(&m);
 			}
 		}
 
 		SolidBrush brush(Color(COLORREF2RGB(pBitmaps->WindowColor)));
-		g.FillPath(&brush, &Path);
+		g.FillPath(&brush, &path);
 
 		Pen pen(Color(0x40000000), 0.5f);
-		g.DrawPath(&pen, &Path);
+		g.DrawPath(&pen, &path);
 
 		dc.SelectObject(hOldBitmap);
 	}
@@ -766,22 +765,22 @@ void CGradationPyramid::OnPaint()
 	PointF points[3];
 	GetCoordinates(points, m_FocusItem, Width*1.25f+1.0f);
 
-	GraphicsPath Path;
-	Path.AddLines(points, 3);
-	Path.CloseFigure();
+	GraphicsPath path;
+	path.AddLines(points, 3);
+	path.CloseFigure();
 
 	SolidBrush brush(Color(0x48000000));
-	g.FillPath(&brush, &Path);
+	g.FillPath(&brush, &path);
 
 	Matrix m;
 	m.Translate(1.0f, 1.0f);
-	Path.Transform(&m);
+	path.Transform(&m);
 
 	brush.SetColor(Color(0x18000000));
-	g.FillPath(&brush, &Path);
+	g.FillPath(&brush, &path);
 
-	Path.Transform(&m);
-	g.FillPath(&brush, &Path);
+	path.Transform(&m);
+	g.FillPath(&brush, &path);
 
 	// Draw top
 	HBITMAP hOldBitmap = (HBITMAP)dcMem.SelectObject(pBitmaps->hBitmapTop);
@@ -793,16 +792,16 @@ void CGradationPyramid::OnPaint()
 	// Draw marker
 	GetCoordinates(points, m_FocusItem);
 
-	Path.Reset();
-	Path.AddLines(points, 3);
-	Path.CloseFigure();
+	path.Reset();
+	path.AddLines(points, 3);
+	path.CloseFigure();
 
 	COLORREF clr = GetColor();
 	brush.SetColor(Color(COLORREF2RGB(clr)));
-	g.FillPath(&brush, &Path);
+	g.FillPath(&brush, &path);
 
 	Pen pen(Color(COLORREF2RGB(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW))), Width);
-	g.DrawPath(&pen, &Path);
+	g.DrawPath(&pen, &path);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 

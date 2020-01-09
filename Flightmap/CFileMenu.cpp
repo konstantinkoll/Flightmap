@@ -168,7 +168,7 @@ INT CFileMenu::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndFloatButtons.BeginGroup(IDS_FILEMENU_NEW);
 	m_wndFloatButtons.AddButton(IDM_FILE_NEW, 0);
-	m_wndFloatButtons.AddText(IDS_FILEMENU_TEMPLATES);
+	m_wndFloatButtons.AddText(IDS_FILEMENU_SAMPLES);
 	m_wndFloatButtons.AddButton(IDM_FILE_NEWSAMPLE1, 1, TRUE);
 	m_wndFloatButtons.AddButton(IDM_FILE_NEWSAMPLE2, 1, TRUE);
 

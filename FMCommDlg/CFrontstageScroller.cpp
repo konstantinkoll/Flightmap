@@ -581,6 +581,7 @@ void CFrontstageScroller::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&MemBitmap);
 
 	Graphics g(dc);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Background
 	const BOOL Themed = IsCtrlThemed();

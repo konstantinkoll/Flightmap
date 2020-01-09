@@ -127,7 +127,7 @@
 #define IDS_MAPDIMENSION_ORIGINAL       1076
 #define IDS_MAPDIMENSION_SCALED         1077
 #define IDS_FILEMENU_NEW                1100
-#define IDS_FILEMENU_TEMPLATES          1101
+#define IDS_FILEMENU_SAMPLES            1101
 #define IDS_FILEMENU_OPEN               1102
 #define IDS_FILEMENU_SAVE               1103
 #define IDS_FILEMENU_SAVEAS             1104

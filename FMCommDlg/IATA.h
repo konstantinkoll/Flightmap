@@ -12,7 +12,6 @@ struct FMGeoCoordinates
 
 struct FMCountry
 {
-	UINT ID;
 	CHAR Name[31];
 };
 

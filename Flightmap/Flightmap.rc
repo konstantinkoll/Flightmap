@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,15,0
- PRODUCTVERSION 2,4,15,0
+ FILEVERSION 2,4,16,0
+ PRODUCTVERSION 2,4,16,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.4.15"
+            VALUE "FileVersion", "2.4.16"
             VALUE "InternalName", "Flightmap"
-            VALUE "LegalCopyright", "© 2007-2019 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2007-2020 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.4.15"
+            VALUE "ProductVersion", "2.4.16"
         END
     END
     BLOCK "VarFileInfo"
@@ -1104,7 +1104,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_FILEMENU_NEW        "Neu"
-    IDS_FILEMENU_TEMPLATES  "Verfügbare Vorlagen:"
+    IDS_FILEMENU_SAMPLES    "Verfügbare Beispiele:"
     IDS_FILEMENU_OPEN       "Öffnen"
     IDS_FILEMENU_SAVE       "Speichern und Konvertieren"
 END
@@ -2231,7 +2231,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_FILEMENU_NEW        "New"
-    IDS_FILEMENU_TEMPLATES  "Available templates:"
+    IDS_FILEMENU_SAMPLES    "Available samples:"
     IDS_FILEMENU_OPEN       "Open"
     IDS_FILEMENU_SAVE       "Save and Convert"
 END

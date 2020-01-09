@@ -376,22 +376,22 @@ void CButtonGroup::Draw(CDC& dc, Graphics& g, INT VScrollPos, BOOL Themed) const
 		{
 			rect.DeflateRect(1, 1);
 
-			GraphicsPath Path;
-			CreateRoundRectangle(&rect, 4, Path);
+			GraphicsPath path;
+			CreateRoundRectangle(&rect, 4, path);
 
 			LinearGradientBrush brush(Point(0, rect.top-2), Point(0, rect.bottom+2), 0xFFFFF8D4, 0xFFFFFFFF);
-			g.FillPath(&brush, &Path);
+			g.FillPath(&brush, &path);
 
 			Pen pen(Color(0x80FFFFFF));
-			g.DrawPath(&pen, &Path);
+			g.DrawPath(&pen, &path);
 
 			rect.InflateRect(1, 1);
-			CreateRoundRectangle(&rect, 5, Path);
+			CreateRoundRectangle(&rect, 5, path);
 
 			brush.SetLinearColors(Color(0xFFF8C834), Color(0xFFFFFFFF));
 			pen.SetBrush(&brush);
 
-			g.DrawPath(&pen, &Path);
+			g.DrawPath(&pen, &path);
 		}
 		else
 		{
