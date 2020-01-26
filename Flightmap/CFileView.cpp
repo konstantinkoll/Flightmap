@@ -297,7 +297,7 @@ COLORREF CAttachmentList::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 
 // Selected item commands
 
-void CAttachmentList::FireSelectedItem() const
+void CAttachmentList::FireSelectedItem()
 {
 	GetOwner()->PostMessage(WM_COMMAND, (WPARAM)IDM_FILEVIEW_OPEN);
 }

@@ -135,11 +135,13 @@ void CFrontstageWnd::DrawGlasBackground(CDC& dc, Graphics& g, LPCRECT lpcRect, B
 		rect.DeflateRect(1, 1);
 
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);
+		g.SetSmoothingMode(SmoothingModeNone);
 
 		SolidBrush brush(Color(0xE4F8F9FC));
 		g.FillRectangle(&brush, rectBackground.left+1, rectBackground.top+1, rectBackground.Width()-2, rectBackground.Height()-2);
 
 		g.SetPixelOffsetMode(PixelOffsetModeNone);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		// Inner border
 		GraphicsPath pathInner;

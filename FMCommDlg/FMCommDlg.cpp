@@ -275,6 +275,8 @@ void DrawCategory(CDC& dc, CRect rect, LPCWSTR Caption, LPCWSTR Hint, BOOL Theme
 
 void DrawReflection(Graphics& g, LPCRECT lpcRect)
 {
+	g.SetPixelOffsetMode(PixelOffsetModeHalf);
+
 	GraphicsPath pathReflection;
 	CreateReflectionRectangle(lpcRect, 1, pathReflection);
 
@@ -402,7 +404,7 @@ void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL E
 				g.FillRectangle(&brush1, rect.left, rect.top, rect.Width(), rect.Height());
 
 				rect.DeflateRect(1, 1);
-				INT y = (rect.top+rect.bottom)/2;
+				const INT y = (rect.top+rect.bottom)/2;
 
 				LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, y), Color(0xFFEAF6FD), Color(0xFFD7EFFC));
 				g.FillRectangle(&brush2, rect.left, rect.top, rect.Width(), y-rect.top);
@@ -414,7 +416,7 @@ void DrawSubitemBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BOOL E
 			{
 				dc.FillSolidRect(rect, 0xF6E4C2);
 
-				INT y = (rect.top+rect.bottom)/2;
+				const INT y = (rect.top+rect.bottom)/2;
 
 				LinearGradientBrush brush2(Point(rect.left, y), Point(rect.left, rect.bottom), Color(0xFFA9D9F2), Color(0xFF90CBEB));
 				g.FillRectangle(&brush2, rect.left, y, rect.Width(), rect.bottom-y);
@@ -649,7 +651,11 @@ void DrawWhiteButtonBackground(CDC& dc, Graphics& g, CRect rect, BOOL Themed, BO
 	{
 		// Outer border
 		if (DrawBorder)
+		{
+			g.SetPixelOffsetMode(PixelOffsetModeNone);
+
 			DrawWhiteButtonBorder(g, rect, FALSE);
+		}
 
 		// Inner border
 		g.SetPixelOffsetMode(PixelOffsetModeHalf);

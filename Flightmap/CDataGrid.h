@@ -75,13 +75,13 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT Message);
 
 	afx_msg void OnCut();
@@ -122,7 +122,9 @@ private:
 	void DoDelete();
 	void DoCopy(BOOL Cut);
 	void DrawCell(CDC& dc, AIRX_Flight& Flight, UINT Attr, CRect& rectItem, BOOL Selected);
-	void FinishEdit(LPCWSTR pStr, const CPoint& Item);
+	void EndCellEdit(const CPoint& Item, LPCWSTR pStr=L"");
+
+	BOOL m_ButtonDownInWindow;
 };
 
 inline UINT CDataGrid::GetCurrentRow() const

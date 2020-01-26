@@ -125,10 +125,10 @@ void CFileMenu::AdjustLayout()
 	}
 
 	const INT Height = rect.bottom-HeaderHeight;
-	const INT MaxWidth = max(m_wndRecentFilesPane.GetMinWidth(Height), rect.Width()*2/5);
-	const INT RecentFilesWidth = min(MaxWidth, max(m_wndRecentFilesPane.GetMinWidth(Height), m_wndRecentFilesPane.GetPreferredWidth()));
+	const INT MaxWidth = max(m_wndRecentFilesPane.GetMinWidth(), rect.Width()*2/5);
+	const INT RecentFilesWidth = min(MaxWidth, max(m_wndRecentFilesPane.GetMinWidth(), m_wndRecentFilesPane.GetPreferredWidth()));
 
-	m_wndRecentFilesPane.SetMaxWidth(MaxWidth, Height);
+	m_wndRecentFilesPane.SetMaxWidth(MaxWidth);
 	m_wndRecentFilesPane.SetWindowPos(NULL, rect.right-RecentFilesWidth, HeaderHeight, RecentFilesWidth, Height, SWP_NOZORDER | SWP_NOACTIVATE);
 
 	m_wndFloatButtons.SetWindowPos(NULL, 0, HeaderHeight, rect.right-RecentFilesWidth, Height, SWP_NOZORDER | SWP_NOACTIVATE);

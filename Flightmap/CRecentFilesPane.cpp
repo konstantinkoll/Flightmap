@@ -135,7 +135,7 @@ COLORREF CRecentFilesList::GetItemTextColor(INT Index, BOOL /*Themed*/) const
 	return GetFileItemData(Index)->IsValid ? (COLORREF)-1 : 0x2020FF;
 }
 
-void CRecentFilesList::FireSelectedItem() const
+void CRecentFilesList::FireSelectedItem()
 {
 	GetOwner()->SendMessage(WM_COMMAND, IDM_FILE_RECENTPANE_OPEN);
 }

@@ -16,9 +16,9 @@
 // CDataGrid
 //
 
-#define FLAGCOUNT          7
-#define LEFTMARGIN         (BACKSTAGEBORDER-1)
-#define MAXAUTOWIDTH       400
+#define FLAGCOUNT        7
+#define LEFTMARGIN       (BACKSTAGEBORDER-1)
+#define MAXAUTOWIDTH     400
 
 static const UINT DisplayFlags[] = { 0, AIRX_AwardFlight, AIRX_GroundTransportation, AIRX_BusinessTrip, AIRX_LeisureTrip, AIRX_Upgrade, AIRX_Cancelled };
 
@@ -33,7 +33,7 @@ CDataGrid::CDataGrid()
 	m_ViewParameters = theApp.m_ViewParameters;
 
 	m_FindReplaceSettings = theApp.m_FindReplaceSettings;
-	m_FindReplaceSettings.FirstAction = FALSE;
+	m_FindReplaceSettings.FirstAction = m_ButtonDownInWindow = FALSE;
 }
 
 BOOL CDataGrid::Create(CItinerary* pItinerary, CWnd* pParentWnd, UINT nID)
@@ -593,7 +593,7 @@ void CDataGrid::DoDelete()
 	}
 	else
 	{
-		FinishEdit(L"", m_FocusItem);
+		EndCellEdit(m_FocusItem);
 	}
 }
 
@@ -899,60 +899,22 @@ void CDataGrid::DrawStage(CDC& dc, Graphics& /*g*/, const CRect& rect, const CRe
 
 // Cell edit
 
-void CDataGrid::DestroyEdit(BOOL Accept)
-{
-	if (IsEditing())
-	{
-		CPoint EditItem = m_FocusItem;
-
-		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
-		CEdit* pVictim = m_pWndEdit;
-		m_pWndEdit = NULL;
-
-		// Get text
-		WCHAR tmpBuf[256];
-		pVictim->GetWindowText(tmpBuf, 256);
-
-		// Destroy window; this will trigger another DestroyEdit() call!
-		pVictim->DestroyWindow();
-		delete pVictim;
-
-		if (Accept && IsPointValid(EditItem))
-		{
-			if (EditItem.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
-			{
-				if (tmpBuf[0]==L'\0')
-					return;
-
-				p_Itinerary->AddFlight();
-				EditItem.y = p_Itinerary->m_Flights.m_ItemCount-1;
-
-				AdjustLayout();
-			}
-
-			FinishEdit(tmpBuf, EditItem);
-		}
-	}
-
-	CFrontstageScroller::DestroyEdit(Accept);
-}
-
 void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar)
 {
 	ASSERT(IsPointValid(m_FocusItem));
 	ASSERT(m_FocusItem.y<=(INT)(p_Itinerary->m_Flights.m_ItemCount));
 
-	const CPoint Item = m_FocusItem;
+	const CPoint EditItem = m_FocusItem;
 
-	const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
+	const UINT Attr = m_ViewParameters.ColumnOrder[EditItem.x];
 	if (!FMAttributes[Attr].Editable)
 		return;
 
 	HideTooltip();
-	EnsureVisible(Item);
-	const BOOL NewLine = (Item.y>=(INT)p_Itinerary->m_Flights.m_ItemCount);
-	const LPVOID pData = NewLine ? NULL : (((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset);
-	Delete |= NewLine;
+	EnsureVisible(EditItem);
+
+	const BOOL NewLine = (EditItem.y>=(INT)p_Itinerary->m_Flights.m_ItemCount);
+	const LPVOID pData = NewLine ? NULL : (((LPBYTE)&p_Itinerary->m_Flights[EditItem.y])+FMAttributes[Attr].Offset);
 
 	// Special cell types
 	switch (FMAttributes[Attr].Type)
@@ -969,10 +931,10 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar)
 					AdjustLayout();
 				}
 
-				*((COLORREF*)(((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset)) = clr;
+				*((COLORREF*)(((LPBYTE)&p_Itinerary->m_Flights[EditItem.y])+FMAttributes[Attr].Offset)) = clr;
 
 				p_Itinerary->m_IsModified = TRUE;
-				InvalidatePoint(Item);
+				InvalidatePoint(EditItem);
 			}
 		}
 
@@ -1012,14 +974,14 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar)
 				*((DWORD*)pData) ^= AIRX_Cancelled;
 
 				p_Itinerary->m_IsModified = TRUE;
-				InvalidateRow(Item.y);
+				InvalidateRow(EditItem.y);
 
 			default:
 				return;
 			}
 
 		p_Itinerary->m_IsModified = TRUE;
-		InvalidatePoint(Item);
+		InvalidatePoint(EditItem);
 
 		return;
 
@@ -1030,13 +992,20 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar)
 			*((DWORD*)pData) |= (((PushChar-'0')*2)<<FMAttributes[Attr].DataParameter);
 
 			p_Itinerary->m_IsModified = TRUE;
-			InvalidatePoint(Item);
+			InvalidatePoint(EditItem);
 		}
 
 		return;
 	}
 
 	// Create edit control
+	m_pWndEdit = new CMFCMaskedEdit();
+	m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, GetItemRect(EditItem), this, 2);
+
+	PrepareEditCtrl((CMFCMaskedEdit*)m_pWndEdit, Attr);
+	m_EditAllowCursor = AllowCursor;
+
+	// Prepare window text
 	WCHAR tmpBuf[256];
 	if (PushChar)
 	{
@@ -1047,24 +1016,22 @@ void CDataGrid::EditCell(BOOL AllowCursor, BOOL Delete, WCHAR PushChar)
 	{
 		tmpBuf[0] = L'\0';
 
-		if (!Delete)
-			AttributeToString(p_Itinerary->m_Flights[Item.y], Attr, tmpBuf, 256);
+		if (!(Delete || NewLine))
+			AttributeToString(p_Itinerary->m_Flights[EditItem.y], Attr, tmpBuf, 256);
 	}
 
-	m_pWndEdit = new CMFCMaskedEdit();
-	m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, GetItemRect(Item), this, 2);
-
-	PrepareEditCtrl((CMFCMaskedEdit*)m_pWndEdit, Attr);
-	m_EditAllowCursor = AllowCursor;
-
 	m_pWndEdit->SetWindowText(tmpBuf);
-	m_pWndEdit->SetFont(&theApp.m_DefaultFont);
+
+	m_pWndEdit->SetFont(GetLabelFont());
 	m_pWndEdit->SetFocus();
 	m_pWndEdit->SetSel(PushChar ? -1 : 0, PushChar ? 0 : -1);
 }
 
-void CDataGrid::FinishEdit(LPCWSTR pStr, const CPoint& Item)
+void CDataGrid::EndCellEdit(const CPoint& Item, LPCWSTR pStr)
 {
+	ASSERT(IsPointValid(Item));
+	ASSERT(Item.y<=(INT)(p_Itinerary->m_Flights.m_ItemCount));
+
 	const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
 	StringToAttribute(pStr, p_Itinerary->m_Flights[Item.y], Attr);
 
@@ -1084,6 +1051,44 @@ void CDataGrid::FinishEdit(LPCWSTR pStr, const CPoint& Item)
 	}
 }
 
+void CDataGrid::DestroyEdit(BOOL Accept)
+{
+	if (IsEditing())
+	{
+		CPoint EditItem = m_FocusItem;
+
+		// Set m_pWndEdit to NULL to avoid recursive calls when the edit window loses focus
+		CEdit* pVictim = m_pWndEdit;
+		m_pWndEdit = NULL;
+
+		// Get value
+		CString Value;
+		pVictim->GetWindowText(Value);
+
+		// Destroy window; this will trigger another DestroyEdit() call!
+		pVictim->DestroyWindow();
+		delete pVictim;
+
+		if (Accept && IsPointValid(EditItem))
+		{
+			if (EditItem.y>=(INT)p_Itinerary->m_Flights.m_ItemCount)
+			{
+				if (Value.IsEmpty())
+					return;
+
+				p_Itinerary->AddFlight();
+				EditItem.y = p_Itinerary->m_Flights.m_ItemCount-1;
+
+				AdjustLayout();
+			}
+
+			EndCellEdit(EditItem, Value);
+		}
+	}
+
+	CFrontstageScroller::DestroyEdit(Accept);
+}
+
 
 BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageScroller)
 	ON_WM_CREATE()
@@ -1091,13 +1096,14 @@ BEGIN_MESSAGE_MAP(CDataGrid, CFrontstageScroller)
 	ON_WM_TIMER()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_KEYDOWN()
-	ON_WM_CHAR()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_RBUTTONUP()
+	ON_WM_KEYDOWN()
+	ON_WM_CHAR()
+
 	ON_WM_SETCURSOR()
 
 	ON_COMMAND(IDM_DATAGRID_CUT, OnCut)
@@ -1197,9 +1203,166 @@ void CDataGrid::OnMouseMove(UINT nFlags, CPoint point)
 
 void CDataGrid::OnMouseLeave()
 {
+	m_ButtonDownInWindow = FALSE;
 	m_HoverPart = -1;
 
 	CFrontstageScroller::OnMouseLeave();
+}
+
+void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	DestroyEdit(TRUE);
+
+	m_ButtonDownInWindow = TRUE;
+
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
+		if (nFlags & MK_CONTROL)
+		{
+			InvalidatePoint(m_FocusItem);
+			m_FocusItem = Item;
+			SelectItem(Item.y, !IsSelected(Item.y));
+		}
+		else
+			if (Item==m_FocusItem)
+			{
+				if (Item.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
+				{
+					const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
+					const UINT Part = PartAtPosition(point);
+					const LPVOID pData = (((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset);
+
+					switch (FMAttributes[Attr].Type)
+					{
+					case FMTypeFlags:
+						if (Part==0)
+						{
+							EditFlight(Item, 2);
+						}
+						else
+							if (Part!=-1)
+							{
+								*((DWORD*)pData) ^= DisplayFlags[Part];
+								p_Itinerary->m_IsModified = TRUE;
+
+								if (DisplayFlags[Part]==AIRX_Cancelled)
+								{
+									InvalidateRow(Item.y);
+								}
+								else
+								{
+									InvalidatePoint(Item);
+								}
+							}
+
+						break;
+
+					case FMTypeRating:
+						if (Part!=-1)
+						{
+							*((DWORD*)pData) &= ~(15<<FMAttributes[Attr].DataParameter);
+							*((DWORD*)pData) |= (Part<<FMAttributes[Attr].DataParameter);
+
+							p_Itinerary->m_IsModified = TRUE;
+							InvalidatePoint(Item);
+						}
+
+						break;
+
+					default:
+						EditCell();
+					}
+				}
+			}
+			else
+			{
+				SetFocusItem(Item, nFlags & MK_SHIFT);
+			}
+
+	CFrontstageScroller::OnLButtonDown(nFlags, point);
+}
+
+void CDataGrid::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	if (IsPointValid(PointAtPosition(point)))
+	{
+		if (GetFocus()!=this)
+			SetFocus();
+	}
+	else
+	{
+		if (!(nFlags & MK_CONTROL) && m_ButtonDownInWindow)
+			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+				SelectItem(a, FALSE);
+	}
+
+	m_ButtonDownInWindow = FALSE;
+}
+
+void CDataGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
+{
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
+		EditFlight(Item);
+}
+
+void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
+	{
+		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
+			if (!IsSelected(Item.y))
+			{
+				for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+					SelectItem(a, FALSE, TRUE);
+
+				Invalidate();
+			}
+			else
+			{
+				InvalidatePoint(m_FocusItem);
+				EnsureVisible(m_FocusItem=Item);
+				InvalidatePoint(m_FocusItem);
+			}
+	}
+	else
+	{
+		if (GetFocus()!=this)
+			SetFocus();
+	}
+}
+
+void CDataGrid::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	const CPoint Item = PointAtPosition(point);
+	if (IsPointValid(Item))
+	{
+		if (GetFocus()!=this)
+			SetFocus();
+
+		if (!IsSelected(Item.y))
+		{
+			EnsureVisible(m_FocusItem=Item);
+
+			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+				SelectItem(a, FALSE, TRUE);
+
+			Invalidate();
+		}
+	}
+	else
+		if (!(nFlags & MK_CONTROL))
+		{
+			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
+				SelectItem(a, FALSE, TRUE);
+
+			Invalidate();
+		}
+
+	GetParent()->UpdateWindow();
+
+	CFrontstageScroller::OnRButtonUp(nFlags, point);
 }
 
 void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -1230,7 +1393,7 @@ void CDataGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		else
 			if (m_FocusItem.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
 			{
-				FinishEdit(L"", m_FocusItem);
+				EndCellEdit(m_FocusItem);
 			}
 
 		return;
@@ -1339,158 +1502,6 @@ void CDataGrid::OnChar(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 		EditCell(FALSE, FALSE, (WCHAR)nChar);
 }
 
-void CDataGrid::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	DestroyEdit(TRUE);
-
-	const CPoint Item = PointAtPosition(point);
-	if (IsPointValid(Item))
-		if (nFlags & MK_CONTROL)
-		{
-			InvalidatePoint(m_FocusItem);
-			m_FocusItem = Item;
-			SelectItem(Item.y, !IsSelected(Item.y));
-		}
-		else
-			if (Item==m_FocusItem)
-			{
-				if (Item.y<(INT)p_Itinerary->m_Flights.m_ItemCount)
-				{
-					const UINT Attr = m_ViewParameters.ColumnOrder[Item.x];
-					const UINT Part = PartAtPosition(point);
-					const LPVOID pData = (((LPBYTE)&p_Itinerary->m_Flights[Item.y])+FMAttributes[Attr].Offset);
-
-					switch (FMAttributes[Attr].Type)
-					{
-					case FMTypeFlags:
-						if (Part==0)
-						{
-							EditFlight(Item, 2);
-						}
-						else
-							if (Part!=-1)
-							{
-								*((DWORD*)pData) ^= DisplayFlags[Part];
-								p_Itinerary->m_IsModified = TRUE;
-
-								if (DisplayFlags[Part]==AIRX_Cancelled)
-								{
-									InvalidateRow(Item.y);
-								}
-								else
-								{
-									InvalidatePoint(Item);
-								}
-							}
-
-						break;
-
-					case FMTypeRating:
-						if (Part!=-1)
-						{
-							*((DWORD*)pData) &= ~(15<<FMAttributes[Attr].DataParameter);
-							*((DWORD*)pData) |= (Part<<FMAttributes[Attr].DataParameter);
-
-							p_Itinerary->m_IsModified = TRUE;
-							InvalidatePoint(Item);
-						}
-
-						break;
-
-					default:
-						EditCell();
-					}
-				}
-			}
-			else
-			{
-				SetFocusItem(Item, nFlags & MK_SHIFT);
-			}
-
-	CFrontstageScroller::OnLButtonDown(nFlags, point);
-}
-
-void CDataGrid::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	if (IsPointValid(PointAtPosition(point)))
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-	}
-	else
-		if (!(nFlags & MK_CONTROL))
-		{
-			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-				SelectItem(a, FALSE);
-		}
-}
-
-void CDataGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
-{
-	const CPoint Item = PointAtPosition(point);
-	if (IsPointValid(Item))
-		EditFlight(Item);
-}
-
-void CDataGrid::OnRButtonDown(UINT nFlags, CPoint point)
-{
-	const CPoint Item = PointAtPosition(point);
-	if (IsPointValid(Item))
-	{
-		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
-			if (!IsSelected(Item.y))
-			{
-				for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-					SelectItem(a, FALSE, TRUE);
-
-				Invalidate();
-			}
-			else
-			{
-				InvalidatePoint(m_FocusItem);
-				EnsureVisible(m_FocusItem=Item);
-				InvalidatePoint(m_FocusItem);
-			}
-	}
-	else
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-	}
-}
-
-void CDataGrid::OnRButtonUp(UINT nFlags, CPoint point)
-{
-	const CPoint Item = PointAtPosition(point);
-	if (IsPointValid(Item))
-	{
-		if (GetFocus()!=this)
-			SetFocus();
-
-		if (!IsSelected(Item.y))
-		{
-			EnsureVisible(m_FocusItem=Item);
-
-			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-				SelectItem(a, FALSE, TRUE);
-
-			Invalidate();
-		}
-	}
-	else
-		if (!(nFlags & MK_CONTROL))
-		{
-			for (UINT a=0; a<p_Itinerary->m_Flights.m_ItemCount; a++)
-				SelectItem(a, FALSE, TRUE);
-
-			Invalidate();
-		}
-
-	GetParent()->UpdateWindow();
-
-	CFrontstageScroller::OnRButtonUp(nFlags, point);
-}
-
 BOOL CDataGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*Message*/)
 {
 	SetCursor(theApp.LoadStandardCursor(m_HoverPart==-1 ? IDC_ARROW : IDC_HAND));
@@ -1549,7 +1560,7 @@ void CDataGrid::OnPaste()
 				AdjustLayout();
 			}
 
-			FinishEdit((LPWSTR)pBuffer, m_FocusItem);
+			EndCellEdit(m_FocusItem, (LPWSTR)pBuffer);
 
 			GlobalUnlock(hClipBuffer);
 		}
