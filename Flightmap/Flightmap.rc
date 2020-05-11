@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,17,0
- PRODUCTVERSION 2,4,17,0
+ FILEVERSION 2,4,18,0
+ PRODUCTVERSION 2,4,18,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.4.17"
+            VALUE "FileVersion", "2.4.18"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2020 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.4.17"
+            VALUE "ProductVersion", "2.4.18"
         END
     END
     BLOCK "VarFileInfo"
