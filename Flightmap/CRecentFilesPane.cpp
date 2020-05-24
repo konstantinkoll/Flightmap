@@ -142,6 +142,8 @@ void CRecentFilesList::FireSelectedItem()
 
 void CRecentFilesList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const FileItemData* pData = GetFileItemData(Index);
 
 	if (pData->IsValid)

@@ -157,10 +157,10 @@ FMApplication::FMApplication(const GUID& AppID)
 
 	// System image lists
 	IImageList* pImageList;
-	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (void**)&pImageList)))
+	if (SUCCEEDED(SHGetImageList(SHIL_SMALL, IID_IImageList, (LPVOID*)&pImageList)))
 		m_SystemImageListSmall.Attach((HIMAGELIST)pImageList);
 
-	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&pImageList)))
+	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (LPVOID*)&pImageList)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)pImageList);
 
 	// Tooltip

@@ -80,6 +80,8 @@ INT CSortList::GetSelectedSortAttribute() const
 
 void CSortList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL /*Themed*/)
 {
+	ASSERT(rectItem);
+
 	const AttributeItemData* pData = GetAttributeItemData(Index);
 
 	CRect rect(rectItem);

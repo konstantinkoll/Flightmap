@@ -263,7 +263,7 @@ void CAttachmentList::ShowTooltip(const CPoint& point)
 		bmi.biBitCount = 24;
 
 		LPBYTE pbData = NULL;
-		hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (void**)&pbData, NULL, 0);
+		hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmi, DIB_RGB_COLORS, (LPVOID*)&pbData, NULL, 0);
 		HGDIOBJ hOldBitmap = dc.SelectObject(hBitmap);
 
 		// Draw
@@ -348,6 +348,8 @@ void CAttachmentList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Att
 
 void CAttachmentList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	if (HasHeader())
 	{
 		// List view

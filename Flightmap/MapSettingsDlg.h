@@ -16,7 +16,7 @@ struct ResolutionPreset
 {
 	UINT Width;
 	UINT Height;
-	WCHAR Hint[24];
+	WCHAR Hint[32];
 	INT IconID;
 };
 

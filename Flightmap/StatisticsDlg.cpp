@@ -188,6 +188,8 @@ void CClassesList::SetClasses(UINT* pFlights, DOUBLE* pDistances)
 
 void CClassesList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	const ClassItemData* pData = GetClassItemData(Index);
 
 	CString tmpStr;

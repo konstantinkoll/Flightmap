@@ -28,11 +28,11 @@ const ResolutionPreset CResolutionList::m_ResolutionPresets[RESOLUTIONPRESETCOUN
 	{ 1136, 640, L"iPhone 5, 5S, SE", 3 },
 	{ 1280, 720, L"HDTV 720", 5 },
 	{ 1280, 1024, L"SXGA", 4 },
-	{ 1334, 750, L"iPhone 6 – 8", 3 },
+	{ 1334, 750, L"iPhone 6 – 8, SE2", 3 },
 	{ 1400, 1050, L"SXGA+", 4 },
 	{ 1600, 1200, L"UXGA", 4 },
 	{ 1680, 1050, L"WSXGA+", 4 },
-	{ 1792, 838, L"iPhone XR", 3 },
+	{ 1792, 838, L"iPhone XR, 11", 3 },
 	{ 1920, 1080, L"HDTV 1080", 5 },
 	{ 1920, 1080, L"iPhone 6+ – 8+", 3 },
 	{ 1920, 1200, L"WUXGA", 4 },
@@ -40,8 +40,8 @@ const ResolutionPreset CResolutionList::m_ResolutionPresets[RESOLUTIONPRESETCOUN
 	{ 2048, 1536, L"3 Megapixel 4:3", 0 },
 	{ 2224, 1668, L"iPad Pro 10.5\"", 3 },
 	{ 2388, 1668, L"iPad Pro 11\"", 3 },
-	{ 2436, 1125, L"iPhone X, Xs", 3 },
-	{ 2682, 1242, L"iPhone Xs Max", 3 },
+	{ 2436, 1125, L"iPhone X, Xs, 11 Pro", 3 },
+	{ 2688, 1242, L"iPhone Xs Max, 11 Pro Max", 3 },
 	{ 2732, 2048, L"iPad Pro 12.9\"", 3 },
 	{ 3072, 2048, L"6 Megapixel 3:2", 0 },
 	{ 3072, 2304, L"6 Megapixel 4:3", 0 },
@@ -176,6 +176,8 @@ void CResolutionList::DrawItemCell(CDC& dc, CRect& rectCell, INT Index, UINT Att
 
 void CResolutionList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Index, BOOL Themed)
 {
+	ASSERT(rectItem);
+
 	DrawListItem(dc, rectItem, Index, Themed, m_ColumnOrder, m_ColumnWidth);
 }
 
