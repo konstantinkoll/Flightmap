@@ -73,7 +73,7 @@ inline void CAirportList::UpdateHeader()
 class FMSelectLocationIATADlg : public FMDialog
 {
 public:
-	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR pAirport=NULL, UINT nIDTemplate=IDD_SELECTLOCATIONIATA);
+	FMSelectLocationIATADlg(CWnd* pParentWnd=NULL, LPCSTR lpcAirport=NULL, UINT nIDTemplate=IDD_SELECTLOCATIONIATA);
 
 	LPCAIRPORT p_Airport;
 

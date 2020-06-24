@@ -139,6 +139,7 @@ protected:
 	COLORREF GetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetLightTextColor(CDC& dc, INT Index, BOOL Themed) const;
 	COLORREF SetDarkTextColor(CDC& dc, INT Index, BOOL Themed) const;
+	void DrawCountItem(CDC& dc, LPCRECT rectItem, INT Index, BOOL Themed, LPCWSTR Label, UINT Count);
 	void DrawListItem(CDC& dc, CRect rect, INT Index, BOOL Themed, INT* pColumnOrder, INT* pColumnWidth, INT PreviewAttribute=-1);
 	void DrawTile(CDC& dc, CRect rect, CIcons& Icons, INT IconID, COLORREF TextColor, UINT Rows, ...) const;
 	void DrawTile(CDC& dc, CRect rect, CImageList& ImageList, INT IconID, UINT nStyle, COLORREF TextColor, UINT Rows, ...) const;
@@ -193,6 +194,9 @@ private:
 	SIZE_T m_szData;
 	LPBYTE m_pItemData;
 	UINT m_ItemDataAllocated;
+
+	static INT m_MaxCountWidth;
+
 	CPoint m_DragPos;
 	BOOL m_ButtonDownInWindow;
 

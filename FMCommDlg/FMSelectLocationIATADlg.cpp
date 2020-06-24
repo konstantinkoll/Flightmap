@@ -229,7 +229,7 @@ void CAirportList::DrawItem(CDC& dc, Graphics& /*g*/, LPCRECT rectItem, INT Inde
 // FMSelectLocationIATADlg
 //
 
-FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirport, UINT nIDTemplate)
+FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR lpcAirport, UINT nIDTemplate)
 	: FMDialog(nIDTemplate, pParentWnd)
 {
 	m_LastCountrySelected = FMGetApp()->GetInt(_T("IATALastCountrySelected"), 0);
@@ -237,7 +237,7 @@ FMSelectLocationIATADlg::FMSelectLocationIATADlg(CWnd* pParentWnd, LPCSTR pAirpo
 	m_LastSortDirection = FMGetApp()->GetInt(_T("IATALastSortDirection"), FALSE);
 
 	p_Airport = NULL;
-	FMIATAGetAirportByCode(pAirport, p_Airport);
+	FMIATAGetAirportByCode(lpcAirport, p_Airport);
 }
 
 void FMSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
