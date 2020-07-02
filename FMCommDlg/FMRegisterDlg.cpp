@@ -163,8 +163,5 @@ void FMRegisterDlg::OnEnterLicenseKey(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void FMRegisterDlg::OnPurchase()
 {
-	CCmdUI cmd;
-	cmd.m_nID = IDM_BACKSTAGE_PURCHASE;
-
-	FMGetApp()->OnCmdMsg(IDM_BACKSTAGE_PURCHASE, CN_COMMAND, &cmd, NULL);
+	FMGetApp()->OnCmdMsg(IDM_BACKSTAGE_PURCHASE, CN_COMMAND, NULL, NULL);
 }

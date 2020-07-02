@@ -747,12 +747,12 @@ void CItinerary::OpenAIRX(const CString& Path)
 			}
 			else
 			{
-				FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
+				FMErrorBox(CWnd::GetActiveWindow(), IDS_ILLEGALFORMAT);
 			}
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
+			FMErrorBox(CWnd::GetActiveWindow(), IDS_ILLEGALFORMAT);
 		}
 
 		File.Close();
@@ -929,7 +929,7 @@ void CItinerary::OpenCSV(const CString& Path)
 		}
 		catch(CFileException ex)
 		{
-			FMErrorBox(CWnd::GetActiveWindow(), IDS_DRIVENOTREADY);
+			FMErrorBox(CWnd::GetActiveWindow(), IDS_ILLEGALFORMAT);
 		}
 
 		File.Close();
