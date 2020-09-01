@@ -76,8 +76,7 @@ FMApplication::FMApplication(const GUID& AppID)
 	}
 
 	// DWM
-	hModDwm = LoadLibrary(_T("DWMAPI.DLL"));
-	if (hModDwm)
+	if ((hModDwm=LoadLibrary(_T("DWMAPI.DLL")))!=NULL)
 	{
 		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModDwm, "DwmIsCompositionEnabled");
 		zDwmSetWindowAttribute = (PFNDWMSETWINDOWATTRIBUTE)GetProcAddress(hModDwm, "DwmSetWindowAttribute");
@@ -97,8 +96,7 @@ FMApplication::FMApplication(const GUID& AppID)
 	}
 
 	// Kernel
-	hModKernel = LoadLibrary(_T("KERNEL32.DLL"));
-	if (hModKernel)
+	if ((hModKernel=LoadLibrary(_T("KERNEL32.DLL")))!=NULL)
 	{
 		zRegisterApplicationRestart = (PFNREGISTERAPPLICATIONRESTART)GetProcAddress(hModKernel, "RegisterApplicationRestart");
 
@@ -116,8 +114,7 @@ FMApplication::FMApplication(const GUID& AppID)
 	}
 
 	// Shell
-	hModShell = LoadLibrary(_T("SHELL32.DLL"));
-	if (hModShell)
+	if ((hModShell=LoadLibrary(_T("SHELL32.DLL")))!=NULL)
 	{
 		zGetPropertyStoreForWindow = (PFNGETPROPERTYSTOREFORWINDOW)GetProcAddress(hModShell, "SHGetPropertyStoreForWindow");
 		zSetCurrentProcessExplicitAppUserModelID = (PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)GetProcAddress(hModShell, "SetCurrentProcessExplicitAppUserModelID");
@@ -137,8 +134,7 @@ FMApplication::FMApplication(const GUID& AppID)
 	}
 
 	// User
-	hModUser = LoadLibrary(_T("USER32.DLL"));
-	if (hModUser)
+	if ((hModUser=LoadLibrary(_T("USER32.DLL")))!=NULL)
 	{
 		zChangeWindowMessageFilter = (PFNCHANGEWINDOWMESSAGEFILTER)GetProcAddress(hModKernel, "ChangeWindowMessageFilter");
 
