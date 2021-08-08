@@ -516,21 +516,13 @@ CItinerary::CItinerary(const CString& Path)
 	ENSURE(m_DisplayName.LoadString(IDS_EMPTYITINERARY));
 
 	// Author
-	FMLicense License;
-	if (FMIsLicensed(&License))
+	HKEY hKey;
+	if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
 	{
-		MultiByteToWideChar(CP_ACP, 0, License.RegName, -1, m_Metadata.Author, 256);
-	}
-	else
-	{
-		HKEY hKey;
-		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ | KEY_WOW64_64KEY, &hKey)==ERROR_SUCCESS)
-		{
-			DWORD dwSize = 256;
-			RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &dwSize);
+		DWORD dwSize = 256;
+		RegQueryValueEx(hKey, L"RegisteredOwner", NULL, NULL, (LPBYTE)&m_Metadata.Author, &dwSize);
 
-			RegCloseKey(hKey);
-		}
+		RegCloseKey(hKey);
 	}
 
 	// File
@@ -1035,11 +1027,6 @@ void CItinerary::SaveAIRX(const CString& Path, UINT CurrentRow)
 
 
 // Editing itinerary
-
-UINT CItinerary::GetFlightCount(BOOL Limit) const
-{
-	return Limit && !FMIsLicensed() ? min(m_Flights.m_ItemCount, 10) : m_Flights.m_ItemCount;
-}
 
 void CItinerary::ResetFlight(AIRX_Flight& Flight)
 {

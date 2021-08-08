@@ -89,8 +89,8 @@ IDB_CLOUDS_4096         RCDATA                  "res\\Clouds_4096.jpg"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,25,0
- PRODUCTVERSION 2,4,25,0
+ FILEVERSION 2,4,26,0
+ PRODUCTVERSION 2,4,26,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -107,13 +107,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "Flightmap"
-            VALUE "FileVersion", "2.4.25"
+            VALUE "FileVersion", "2.4.26"
             VALUE "InternalName", "Flightmap"
             VALUE "LegalCopyright", "© 2007-2021 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "Flightmap.exe"
             VALUE "ProductName", "Flightmap"
-            VALUE "ProductVersion", "2.4.25"
+            VALUE "ProductVersion", "2.4.26"
         END
     END
     BLOCK "VarFileInfo"
@@ -617,23 +617,6 @@ BEGIN
                     "Button",BS_AUTORADIOBUTTON,7,277,173,10
 END
 
-IDD_ABOUT_LICENSE DIALOGEX 0, 0, 245, 225
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Lizenz"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Lizenz",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,231,15
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,180,231,38,WS_GROUP
-    LTEXT           "Name:",IDC_STATIC,7,180,45,8
-    CONTROL         "X",IDC_REGNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,181,183,8
-    LTEXT           "Kaufdatum:",IDC_STATIC,7,190,45,8
-    CONTROL         "X",IDC_PURCHASEDATE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,190,183,8
-    LTEXT           "Produkt:",IDC_STATIC,7,200,45,8
-    CONTROL         "X",IDC_PRODUCTID,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,200,183,8
-    LTEXT           "Menge:",IDC_STATIC,7,210,45,8
-    CONTROL         "X",IDC_QUANTITY,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,55,210,183,8
-END
-
 IDD_ABOUT_VIEWS DIALOGEX 0, 0, 245, 161
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ansicht"
@@ -829,14 +812,6 @@ BEGIN
         BOTTOMMARGIN, 287
     END
 
-    IDD_ABOUT_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 238
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 218
-    END
-
     IDD_ABOUT_VIEWS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1024,13 +999,11 @@ BEGIN
     IDS_CUEBANNER_DATETIME  " JJJJ-MM-TT SS:MM"
     IDS_CUEBANNER_TIME      " SS:MM"
     IDS_CUEBANNER_ROUTE     " z.B. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
-    IDS_PRINTED_UNREGISTERED 
-                            "Gedruckt mit einer nicht registrierten Version von Flightmap – http://flightmap.net/"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_PRINTED_REGISTERED  "Stand: %s, %s Uhr"
+    IDS_PRINTED             "Stand: %s, %s Uhr"
     IDS_METADATA_COMMENTS   "Beispiel-Flugplan"
     IDS_METADATA_TITLE_ATLANTIC "Atlantik-Überquerung"
     IDS_METADATA_TITLE_PACIFIC "Pazifik-Überquerung"
@@ -1762,23 +1735,6 @@ BEGIN
                     "SysLink",WS_GROUP | WS_TABSTOP,7,7,231,148
 END
 
-IDD_ABOUT_LICENSE DIALOGEX 0, 0, 245, 225
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "License"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "License",IDC_CATEGORY3,"CCategory",WS_GROUP,7,164,231,15
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,180,231,38,WS_GROUP
-    LTEXT           "Name:",IDC_STATIC,7,180,55,8
-    CONTROL         "X",IDC_REGNAME,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,181,173,8
-    LTEXT           "Purchase date:",IDC_STATIC,7,190,55,8
-    CONTROL         "X",IDC_PURCHASEDATE,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,190,173,8
-    LTEXT           "Product:",IDC_STATIC,7,200,55,8
-    CONTROL         "X",IDC_PRODUCTID,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,200,173,8
-    LTEXT           "Quantity:",IDC_STATIC,7,210,55,8
-    CONTROL         "X",IDC_QUANTITY,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | SS_ENDELLIPSIS | WS_GROUP,65,210,173,8
-END
-
 IDD_ABOUT_VIEWS DIALOGEX 0, 0, 245, 161
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "View"
@@ -1965,14 +1921,6 @@ BEGIN
         BOTTOMMARGIN, 249
     END
 
-    IDD_ABOUT_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 238
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 218
-    END
-
     IDD_ABOUT_VIEWS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2152,13 +2100,11 @@ BEGIN
     IDS_CUEBANNER_DATETIME  " YYYY-MM-DD HH:MM"
     IDS_CUEBANNER_TIME      " HH:MM"
     IDS_CUEBANNER_ROUTE     " e.g. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
-    IDS_PRINTED_UNREGISTERED 
-                            "Printed with an unregistered version of Flightmap—http://flightmap.net/"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_PRINTED_REGISTERED  "Current as of %s, %s"
+    IDS_PRINTED             "Current as of %s, %s"
     IDS_METADATA_COMMENTS   "Sample itinerary"
     IDS_METADATA_TITLE_ATLANTIC "Atlantic Crossing"
     IDS_METADATA_TITLE_PACIFIC "Pacific Crossing"

@@ -72,8 +72,6 @@ IDI_READY               ICON                    "res\\Ready.ico"
 
 IDB_DIVDOWN             RCDATA                  "res\\DivDown.png"
 IDB_DIVUP               RCDATA                  "res\\DivUp.png"
-IDB_NRT_UNREGISTERED    RCDATA                  "res\\NRT_Unregistered.png"
-IDB_NRT_REGISTERED      RCDATA                  "res\\NRT_Registered.png"
 IDB_SORTINDICATORS      RCDATA                  "res\\SortIndicators.png"
 IDB_FLIGHTMAP_64        RCDATA                  "res\\Flightmap_64.png"
 IDB_FLIGHTMAP_128       RCDATA                  "res\\Flightmap_128.png"
@@ -189,30 +187,6 @@ BEGIN
                     "CCategory",WS_GROUP,7,47,175,25
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 181
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Lizenzschlüssel eingeben"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Unser Partner MyCommerce sendet Ihnen eine EMail, an die die Datei „Flightmap.lic“ angehängt ist. Laden Sie diese Datei, oder kopieren Sie den Inhalt der Datei in das Textfeld.",IDC_INSTRUCTIONS,7,7,336,35
-    CONTROL         "Lizenzschlüssel",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
-    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
-    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,160,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,293,160,50,14,WS_GROUP
-END
-
-IDD_REGISTER DIALOGEX 0, 0, 300, 41
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Unregistrierte Kopie"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    PUSHBUTTON      "&Kaufen",IDC_PURCHASE,186,20,50,14
-    DEFPUSHBUTTON   "Fortsetzen",IDOK,243,20,50,14
-    CONTROL         "<a>&Lizenzschlüssel eingeben...</a>",IDC_ENTERLICENSEKEY,
-                    "SysLink",WS_TABSTOP,7,23,171,9
-END
-
 IDD_UPDATE DIALOGEX 0, 0, 220, 116
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update verfügbar"
@@ -263,22 +237,6 @@ BEGIN
         RIGHTMARGIN, 182
         TOPMARGIN, 7
         BOTTOMMARGIN, 302
-    END
-
-    IDD_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 174
-    END
-
-    IDD_REGISTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 293
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 34
     END
 
     IDD_UPDATE, DIALOG
@@ -333,14 +291,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://flightmap.net/purchase"
     IDS_UPDATEURL           "http://flightmap.net/download"
     IDS_ABOUTURL            "http://flightmap.net/about"
     IDS_ERROR               "Fehler"
-    IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!\nLizenzschlüssel von Flightmap 1.x können leider nicht weiterbenutzt werden."
-    IDS_LICFILEFILTER       "Lizenzdateien"
-    IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
-    IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von Flightmap!"
 END
 
 STRINGTABLE 
@@ -351,24 +304,14 @@ BEGIN
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
     IDS_UPDATENOTAVAILABLE  "Ihr Flightmap ist auf dem neuesten Stand."
-    IDS_CANNOTLOADLICENSE   "Die Lizenzdatei kann nicht eingelesen werden."
     IDS_AIRPORT_NAME        "Name"
     IDS_AIRPORT_COUNTRY     "Land"
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
-    IDS_REGISTER_CAPTION    "Dies ist eine unregistrierte Kopie von Flightmap. Ein Lizenzschlüssel bietet Ihnen viele Vorteile:"
-    IDS_REGISTER_ITEM1      "Die von Flightmap erzeugten Karten haben keine pinken Balken mehr:"
-    IDS_REGISTER_ITEM2      "Der Dateiexport in die Formate .csv, .ics, .kml oder .txt ist nicht mehr auf die ersten 10 Flüge begrenzt"
-    IDS_REGISTER_ITEM3      "Statistiken sind nicht mehr auf 10 Flüge begrenzt"
-    IDS_REGISTER_ITEM4      "Auf Ausdrucken und in PDF-Dateien erscheint nicht mehr der Text „Unregistrierte Kopie“"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_REGISTER_ITEM5      "Dieses Erinnerungsfenster erscheint nicht mehr"
-    IDS_REGISTER_ITEM6      "Und zuletzt ermöglichen Sie es uns, Flightmap weiterzuentwickeln und noch besser zu machen!"
-    IDS_UNREGISTERED        "Unregistrierte Kopie"
-    IDS_REGISTERED          "Mit Lizenzschlüssel\nHochaufgelöste Karten bis 32 Megapixel"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_ABOUT               "Über Flightmap"
 END
@@ -392,9 +335,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
-    IDM_BACKSTAGE_ENTERLICENSEKEY 
-                            "Öffnet ein Fenster zum Freischalten von Flightmap.\nLizenzschlüssel eingeben"
     IDM_BACKSTAGE_SUPPORT   "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
     IDM_BACKSTAGE_ABOUT     "Zeigt Informationen und globale Einstellungen an.\nÜber Flightmap"
 END
@@ -488,30 +428,6 @@ BEGIN
                     "CCategory",WS_GROUP,7,47,175,25
 END
 
-IDD_LICENSE DIALOGEX 0, 0, 350, 181
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Enter license key"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Our partner MyCommerce will send you an email that has the file “Flightmap.lic” attached to it. Open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_INSTRUCTIONS,7,7,336,35
-    CONTROL         "License",IDC_CATEGORY1,"CCategory",WS_GROUP,7,45,336,15
-    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,7,62,85,15,WS_GROUP
-    EDITTEXT        IDC_LICENSEKEY,7,83,336,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,160,50,14,WS_DISABLED | WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,293,160,50,14,WS_GROUP
-END
-
-IDD_REGISTER DIALOGEX 0, 0, 300, 41
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Unregistered copy"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    PUSHBUTTON      "&Purchase",IDC_PURCHASE,186,20,50,14
-    DEFPUSHBUTTON   "Continue",IDOK,243,20,50,14
-    CONTROL         "<a>&Enter license key...</a>",IDC_ENTERLICENSEKEY,
-                    "SysLink",WS_TABSTOP,7,23,171,9
-END
-
 IDD_UPDATE DIALOGEX 0, 0, 220, 108
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Update available"
@@ -562,22 +478,6 @@ BEGIN
         RIGHTMARGIN, 182
         TOPMARGIN, 7
         BOTTOMMARGIN, 302
-    END
-
-    IDD_LICENSE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 343
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 174
-    END
-
-    IDD_REGISTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 293
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 34
     END
 
     IDD_UPDATE, DIALOG
@@ -632,14 +532,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_PURCHASEURL         "http://flightmap.net/purchase"
     IDS_UPDATEURL           "http://flightmap.net/download"
     IDS_ABOUTURL            "http://flightmap.net/about"
     IDS_ERROR               "Error"
-    IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!\nLicense keys for Flightmap 1.x have expired."
-    IDS_LICFILEFILTER       "License files"
-    IDS_LICENSEVALID_CAPTION "License valid"
-    IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing Flightmap! We appreciate your business."
 END
 
 STRINGTABLE 
@@ -650,24 +545,14 @@ BEGIN
     IDS_XOFY_PLURAL         "%u of %u"
     IDS_UPDATE              "Update"
     IDS_UPDATENOTAVAILABLE  "Your Flightmap is up to date."
-    IDS_CANNOTLOADLICENSE   "There was an error while loading the license file."
     IDS_AIRPORT_NAME        "Name"
     IDS_AIRPORT_COUNTRY     "Country"
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
-    IDS_REGISTER_CAPTION    "This is an unregistered copy of Flightmap. Registering gives you many benefits:"
-    IDS_REGISTER_ITEM1      "Maps created by Flightmap will not defaced with magenta bars:"
-    IDS_REGISTER_ITEM2      "Saving as .csv, .ics, .kml oder .txt is not limited to the first 10 flights"
-    IDS_REGISTER_ITEM3      "Statistics aren't limited to 10 flights"
-    IDS_REGISTER_ITEM4      "You won't see the text “Unregistered copy” on your printed itineraries and PDFs"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_REGISTER_ITEM5      "This nag screen will be gone"
-    IDS_REGISTER_ITEM6      "And one more thing: you'll help to make Flightmap even better!"
-    IDS_UNREGISTERED        "Unregistered copy"
-    IDS_REGISTERED          "With license key\nHigh resolution maps up to 32 megapixel"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_ABOUT               "About Flightmap"
 END
@@ -691,9 +576,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_BACKSTAGE_PURCHASE  "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
-    IDM_BACKSTAGE_ENTERLICENSEKEY 
-                            "Opens a window to enter your license key.\nEnter license key"
     IDM_BACKSTAGE_SUPPORT   "Opens your standard mail software to contact customer support.\nContact support"
     IDM_BACKSTAGE_ABOUT     "Shows Flightmap information and settings.\nAbout Flightmap"
 END

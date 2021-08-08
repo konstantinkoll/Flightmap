@@ -38,7 +38,6 @@ FMApplication::FMApplication(const GUID& AppID)
 	// Messages
 	m_DistanceSettingChangedMsg = RegisterWindowMessageA("Flightmap.DistanceSettingChanged");
 	m_TaskbarButtonCreated = RegisterWindowMessage(_T("TaskbarButtonCreated"));
-	m_LicenseActivatedMsg = RegisterWindowMessage(_T("Flightmap.LicenseActivated"));
 	m_SetProgressMsg = RegisterWindowMessage(_T("Flightmap.SetProgress"));
 	m_WakeupMsg = RegisterWindowMessage(_T("Flightmap.NewWindow"));
 
@@ -298,20 +297,6 @@ void FMApplication::KillFrame(CWnd* pVictim)
 
 
 // Dialog wrapper
-
-BOOL FMApplication::ShowNagScreen(UINT Level, CWnd* pWndParent)
-{
-	if ((Level & NAG_EXPIRED) ? FMIsSharewareExpired() : !FMIsLicensed())
-		if ((Level & NAG_FORCE) || (++m_NagCounter)>=5)
-		{
-			FMRegisterDlg(pWndParent ? pWndParent : CWnd::GetForegroundWindow()).DoModal();
-			m_NagCounter = 0;
-
-			return TRUE;
-		}
-
-	return FALSE;
-}
 
 BOOL FMApplication::ChooseColor(COLORREF* pColor, CWnd* pParentWnd, BOOL AllowReset)
 {
@@ -679,12 +664,9 @@ void FMApplication::WriteUpdateCheckTime()
 	WriteGlobalInt(_T("LastUpdateCheckLow"), FileTime.dwLowDateTime);
 }
 
-CString FMApplication::GetLatestVersion(CString CurrentVersion)
+CString FMApplication::GetLatestVersion(const CString& CurrentVersion)
 {
 	CString VersionIni;
-
-	// License
-	CurrentVersion += FMIsLicensed() ? _T(" (licensed)") : FMIsSharewareExpired() ? _T(" (expired)") : _T(" (evaluation)");
 
 	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("Flightmap/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
@@ -888,21 +870,9 @@ void FMApplication::CheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 
 BEGIN_MESSAGE_MAP(FMApplication, CWinAppEx)
-	ON_COMMAND(IDM_BACKSTAGE_PURCHASE, OnBackstagePurchase)
-	ON_COMMAND(IDM_BACKSTAGE_ENTERLICENSEKEY, OnBackstageEnterLicenseKey)
 	ON_COMMAND(IDM_BACKSTAGE_SUPPORT, OnBackstageSupport)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_PURCHASE, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_BACKSTAGE_SUPPORT, IDM_BACKSTAGE_ABOUT, OnUpdateBackstageCommands)
 END_MESSAGE_MAP()
-
-void FMApplication::OnBackstagePurchase()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), CString((LPCSTR)IDS_PURCHASEURL), NULL, NULL, SW_SHOWNORMAL);
-}
-
-void FMApplication::OnBackstageEnterLicenseKey()
-{
-	FMLicenseDlg(m_pActiveWnd).DoModal();
-}
 
 void FMApplication::OnBackstageSupport()
 {
@@ -911,14 +881,5 @@ void FMApplication::OnBackstageSupport()
 
 void FMApplication::OnUpdateBackstageCommands(CCmdUI* pCmdUI)
 {
-	switch (pCmdUI->m_nID)
-	{
-	case IDM_BACKSTAGE_PURCHASE:
-	case IDM_BACKSTAGE_ENTERLICENSEKEY:
-		pCmdUI->Enable(!FMIsLicensed());
-		break;
-
-	default:
-		pCmdUI->Enable(TRUE);
-	}
+	pCmdUI->Enable(TRUE);
 }

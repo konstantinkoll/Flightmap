@@ -683,15 +683,6 @@ CBitmap* CMapFactory::RenderMap(CKitchen* pKitchen)
 		}
 	}
 
-	// Deface map if not licensed
-	if (!FMIsLicensed())
-	{
-		const CSize Size = pMapBitmap->GetBitmapDimension();
-
-		for (LONG Row=0; Row<Size.cy; Row+=48)
-			dcMap.FillSolidRect(0, Row, Size.cx, 16, 0xFF00FF);
-	}
-
 	// Clean up GDI
 	dcMap.SelectObject(pOldMapBitmap);
 	

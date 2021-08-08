@@ -35,7 +35,6 @@ protected:
 
 private:
 	BOOL ShowBackgroundOnTab(UINT Index) const;
-	void CheckLicenseKey();
 	void CheckInternetConnection();
 
 	Bitmap* p_AppLogo;

@@ -193,8 +193,7 @@ BOOL CFlightmapApp::InitInstance()
 	// Execute
 	CheckForUpdate();
 
-	if (OpenCommandLine(__argc==2 ? __wargv[1] : NULL))
-		ShowNagScreen(NAG_FORCE, m_pActiveWnd);
+	OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
 
 	m_AppInitialized = TRUE;
 
@@ -407,23 +406,16 @@ void CFlightmapApp::PrintPageHeader(CDC& dc, CRect& rect, const DOUBLE Spacer, c
 	dc.SetTextColor(0x404040);
 	dc.DrawText(di.lpszDocName, -1, rectTitle, DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_LEFT | DT_TOP);
 
+	SYSTEMTIME SystemTime;
+	GetLocalTime(&SystemTime);
+
+	WCHAR Date[256];
+	WCHAR Time[256];
+	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &SystemTime, NULL, Date, 256);
+	GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &SystemTime, NULL, Time, 256);
+
 	CString Subtitle;
-	if (FMIsLicensed())
-	{
-		SYSTEMTIME SystemTime;
-		GetLocalTime(&SystemTime);
-
-		WCHAR Date[256];
-		WCHAR Time[256];
-		GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &SystemTime, NULL, Date, 256);
-		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &SystemTime, NULL, Time, 256);
-
-		Subtitle.Format(IDS_PRINTED_REGISTERED, Date, Time);
-	}
-	else
-	{
-		ENSURE(Subtitle.LoadString(IDS_PRINTED_UNREGISTERED));
-	}
+	Subtitle.Format(IDS_PRINTED, Date, Time);
 
 	dc.SelectObject(&fntSubtitle);
 

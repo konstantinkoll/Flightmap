@@ -36,7 +36,7 @@ protected:
 	void Open(const CString& Path);
 	BOOL CloseFile();
 
-	CKitchen* GetKitchen(BOOL Limit, BOOL Selected=FALSE, BOOL MergeMetro=FALSE) const;
+	CKitchen* GetKitchen(BOOL Selected=FALSE, BOOL MergeMetro=FALSE) const;
 	CBitmap* GetMap(BOOL Selected=FALSE, BOOL MergeMetro=FALSE) const;
 	void ExportCalendar(const CString& Path);
 	void ExportExcel(const CString& Path);

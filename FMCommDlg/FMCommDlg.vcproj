@@ -475,19 +475,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FMLicenseDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FMMemorySort.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\FMMessageBoxDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FMRegisterDlg.cpp"
 				>
 			</File>
 			<File
@@ -697,19 +689,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FMLicenseDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FMMemorySort.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FMMessageBoxDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FMRegisterDlg.h"
 				>
 			</File>
 			<File
@@ -754,10 +738,6 @@
 			</File>
 			<File
 				RelativePath=".\ITaskbarList3.h"
-				>
-			</File>
-			<File
-				RelativePath=".\License.h"
 				>
 			</File>
 			<File
@@ -856,14 +836,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Minimize.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\NRT_Registered.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\NRT_Unregistered.png"
 				>
 			</File>
 			<File

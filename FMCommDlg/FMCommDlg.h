@@ -32,10 +32,8 @@
 #include "FMColorDlg.h"
 #include "FMDialog.h"
 #include "FMFont.h"
-#include "FMLicenseDlg.h"
 #include "FMMemorySort.h"
 #include "FMMessageBoxDlg.h"
-#include "FMRegisterDlg.h"
 #include "FMSelectLocationGPSDlg.h"
 #include "FMSelectLocationIATADlg.h"
 #include "FMTabbedDialog.h"
@@ -132,12 +130,6 @@ CString FMGeoCoordinatesToString(const FMGeoCoordinates& Coordinates, BOOL FillZ
 // Date and time
 
 CString FMTimeToString(const FILETIME& FileTime);
-
-
-// License
-
-BOOL FMIsLicensed(FMLicense* pLicense=NULL, BOOL Reload=FALSE);
-BOOL FMIsSharewareExpired();
 
 
 // MessageBox

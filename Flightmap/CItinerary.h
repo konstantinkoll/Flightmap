@@ -222,7 +222,7 @@ public:
 	LPCWSTR GetTitle() const;
 	void InsertDisplayName(CString& Caption) const;
 
-	UINT GetFlightCount(BOOL Limit=TRUE) const;
+	UINT GetFlightCount() const;
 	static void ResetFlight(AIRX_Flight& Flight);
 	void UpdateFlight(UINT Row, LPSYSTEMTIME pTime=NULL);
 	void AddFlight();
@@ -293,6 +293,11 @@ inline void CItinerary::InsertDisplayName(CString& Caption) const
 {
 	if (!m_DisplayName.IsEmpty())
 		Caption.Insert(0, m_DisplayName+_T(" - "));
+}
+
+inline UINT CItinerary::GetFlightCount() const
+{
+	return m_Flights.m_ItemCount;
 }
 
 inline void CItinerary::ResetFlight(UINT Row)

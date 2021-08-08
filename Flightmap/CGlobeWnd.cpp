@@ -79,10 +79,8 @@ INT CGlobeWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBEWND_GOOGLEEARTH, 5, TRUE);
 	m_wndTaskbar.AddButton(IDM_GLOBEWND_LIQUIDFOLDERS, 6, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 10, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 8, TRUE, TRUE);
 
 	// Globe view
 	if (!m_wndGlobeView.Create(this, 2))

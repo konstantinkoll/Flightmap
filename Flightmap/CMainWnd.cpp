@@ -207,7 +207,7 @@ BOOL CMainWnd::CloseFile()
 
 // Computation, export and printing
 
-CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro) const
+CKitchen* CMainWnd::GetKitchen(BOOL Selected, BOOL MergeMetro) const
 {
 	CKitchen* pKitchen = new CKitchen(m_pItinerary, MergeMetro);
 
@@ -215,7 +215,7 @@ CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro) const
 	{
 		Selected &= m_pWndDataGrid->HasSelection();
 
-		const UINT FlightCount = m_pItinerary->GetFlightCount(Limit);
+		const UINT FlightCount = m_pItinerary->GetFlightCount();
 
 		for (UINT a=0; a<FlightCount; a++)
 			if (!Selected || m_pWndDataGrid->IsSelected(a))
@@ -228,15 +228,13 @@ CKitchen* CMainWnd::GetKitchen(BOOL Limit, BOOL Selected, BOOL MergeMetro) const
 
 CBitmap* CMainWnd::GetMap(BOOL Selected, BOOL MergeMetro) const
 {
-	return CMapFactory(theApp.m_MapSettings).RenderMap(GetKitchen(FALSE, Selected, MergeMetro));
+	return CMapFactory(theApp.m_MapSettings).RenderMap(GetKitchen(Selected, MergeMetro));
 }
 
 
 void CMainWnd::ExportCalendar(const CString& Path)
 {
 	ASSERT(m_pItinerary);
-
-	theApp.ShowNagScreen(NAG_FORCE, this);
 
 	CCalendarFile File;
 	if (!File.Open(Path, m_pItinerary->m_Metadata.Comments, m_pItinerary->m_Metadata.Title))
@@ -265,8 +263,6 @@ void CMainWnd::ExportExcel(const CString& Path)
 {
 	ASSERT(m_pItinerary);
 
-	theApp.ShowNagScreen(NAG_FORCE, this);
-
 	CExcelFile File;
 	if (!File.Open(Path))
 	{
@@ -294,8 +290,6 @@ BOOL CMainWnd::ExportGoogleEarth(const CString& Path, BOOL Selected, BOOL MergeM
 {
 	ASSERT(m_pItinerary);
 
-	theApp.ShowNagScreen(NAG_FORCE, this);
-
 	CGoogleEarthFile File;
 	if (!File.Open(Path, m_pItinerary->m_DisplayName))
 	{
@@ -305,7 +299,7 @@ BOOL CMainWnd::ExportGoogleEarth(const CString& Path, BOOL Selected, BOOL MergeM
 	}
 	else
 	{
-		CKitchen* pKitchen = GetKitchen(TRUE, Selected, MergeMetro);
+		CKitchen* pKitchen = GetKitchen(Selected, MergeMetro);
 
 		try
 		{
@@ -349,8 +343,6 @@ void CMainWnd::ExportMap(DWORD FilterIndex)
 void CMainWnd::ExportText(const CString& Path)
 {
 	ASSERT(m_pItinerary);
-
-	theApp.ShowNagScreen(NAG_FORCE, this);
 
 	FILE* fStream;
 	if (_tfopen_s(&fStream, Path, _T("wt,ccs=UTF-8")))
@@ -637,10 +629,8 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_DATAGRID_FILTER, 3);
 	m_wndTaskbar.AddButton(IDM_DATAGRID_INSERTROW, 4);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 5, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 6, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 5, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 6, TRUE, TRUE);
 
 	UpdateWindowStatus();
 
@@ -866,8 +856,6 @@ void CMainWnd::OnMapOpen()
 {
 	ASSERT(m_pItinerary);
 
-	theApp.ShowNagScreen(NAG_EXPIRED, this);
-
 	CWaitCursor WaitCursor;
 
 	CBitmap* pBitmap = GetMap(TRUE, theApp.m_MapMergeMetro);
@@ -890,7 +878,7 @@ void CMainWnd::OnGlobeOpen()
 {
 	ASSERT(m_pItinerary);
 
-	CKitchen* pKitchen = GetKitchen(TRUE, TRUE, theApp.m_GlobeMergeMetro);
+	CKitchen* pKitchen = GetKitchen(TRUE, theApp.m_GlobeMergeMetro);
 
 	CGlobeWnd* pFrameWnd = new CGlobeWnd();
 	pFrameWnd->Create();
@@ -937,8 +925,6 @@ void CMainWnd::OnGoogleEarthSettings()
 void CMainWnd::OnStatisticsOpen()
 {
 	ASSERT(m_pItinerary);
-
-	theApp.ShowNagScreen(NAG_COUNTER, this);
 
 	StatisticsDlg(m_pItinerary, this).DoModal();
 }

@@ -169,10 +169,8 @@ INT CMapWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_MAPWND_PRINT, 3);
 	m_wndTaskbar.AddButton(IDM_MAPWND_COPY, 4);
 
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_PURCHASE, 5, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ENTERLICENSEKEY, 6, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_SUPPORT, 5, TRUE, TRUE);
+	m_wndTaskbar.AddButton(IDM_BACKSTAGE_ABOUT, 6, TRUE, TRUE);
 
 	// Map view
 	if (!m_wndMapView.Create(this, 2))

@@ -126,7 +126,6 @@ BOOL FMAboutDialog::InitSidebar(LPSIZE pszTabArea)
 		return FALSE;
 
 	AddTab(IDD_ABOUT_GENERAL, pszTabArea);
-	AddTab(IDD_ABOUT_LICENSE, pszTabArea);
 
 	return TRUE;
 }
@@ -175,34 +174,11 @@ BOOL FMAboutDialog::InitDialog()
 	rectWnd.top = rectLayout.top+2*BACKSTAGEBORDER+128+CaptionHeight+4;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
-	// License
-	CheckLicenseKey();
-
 	// Internet
 	CheckInternetConnection();
 	SetTimer(1, 1000, NULL);
 
 	return FMTabbedDialog::InitDialog();
-}
-
-void FMAboutDialog::CheckLicenseKey()
-{
-	FMLicense License;
-	if (FMIsLicensed(&License))
-	{
-		// Set license text
-		SetWindowTextA(GetDlgItem(IDC_REGNAME)->GetSafeHwnd(), License.RegName);
-		SetWindowTextA(GetDlgItem(IDC_PURCHASEDATE)->GetSafeHwnd(), License.PurchaseDate);
-		SetWindowTextA(GetDlgItem(IDC_PRODUCTID)->GetSafeHwnd(), License.ProductID);
-		SetWindowTextA(GetDlgItem(IDC_QUANTITY)->GetSafeHwnd(), License.Quantity);
-
-		// Remove button
-		GetDlgItem(IDC_ENTERLICENSEKEY)->EnableWindow(FALSE);
-		GetDlgItem(IDC_ENTERLICENSEKEY)->SetWindowPos(NULL, 0, 0, 0, 0, SWP_HIDEWINDOW);
-
-		m_BackBufferL = m_BackBufferH = 0;
-		Invalidate();
-	}
 }
 
 void FMAboutDialog::CheckInternetConnection()
@@ -219,7 +195,6 @@ BEGIN_MESSAGE_MAP(FMAboutDialog, FMTabbedDialog)
 	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
-	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
 
 void FMAboutDialog::OnDestroy()
@@ -260,10 +235,4 @@ void FMAboutDialog::OnEnableAutoUpdate()
 void FMAboutDialog::OnUpdateNow()
 {
 	FMGetApp()->CheckForUpdate(TRUE, this);
-}
-
-void FMAboutDialog::OnEnterLicenseKey()
-{
-	if (FMLicenseDlg(this).DoModal()==IDOK)
-		CheckLicenseKey();
 }

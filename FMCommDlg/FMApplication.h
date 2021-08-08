@@ -9,7 +9,6 @@
 #include "FMTooltip.h"
 #include "GLRenderer.h"
 #include "IATA.h"
-#include "License.h"
 #include <uxtheme.h>
 
 #define RATINGBITMAPWIDTH      88
@@ -58,6 +57,13 @@ struct ResourceCacheItem
 	UINT nID;
 };
 
+struct FMVersion
+{
+	UINT Major;
+	UINT Minor;
+	UINT Build;
+};
+
 
 // FMApplication
 //
@@ -77,7 +83,6 @@ public:
 	void AddFrame(CWnd* pFrame);
 	void KillFrame(CWnd* pVictim);
 
-	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL);
 	BOOL ChooseColor(COLORREF* pColor, CWnd* pParentWnd=NULL, BOOL AllowReset=TRUE);
 	void SendMail(const CString& Subject=_T("")) const;
 	static HRESULT SaveBitmap(CBitmap* pBitmap, const CString& FileName, const GUID& guidFileType, BOOL DeleteBitmap=TRUE);
@@ -131,7 +136,6 @@ public:
 	SmoothingMode m_SmoothingModeAntiAlias8x8;
 	UINT m_DistanceSettingChangedMsg;
 	UINT m_TaskbarButtonCreated;
-	UINT m_LicenseActivatedMsg;
 	UINT m_SetProgressMsg;
 	UINT m_WakeupMsg;
 	GUID m_AppID;
@@ -181,7 +185,7 @@ private:
 
 	BOOL IsUpdateCheckDue();
 	void WriteUpdateCheckTime();
-	static CString GetLatestVersion(CString CurrentVersion);
+	static CString GetLatestVersion(const CString& CurrentVersion);
 	static CString GetIniValue(CString Ini, const CString& Name);
 	static void ParseVersion(const CString& tmpStr, FMVersion* pVersion);
 	static BOOL IsVersionLater(const FMVersion& LatestVersion, const FMVersion& CurrentVersion);
