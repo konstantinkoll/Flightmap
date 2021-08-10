@@ -227,7 +227,7 @@ FMCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8806
+#define AirportCount_DE 8808
 FMAirport Airports_DE[AirportCount_DE] = {
 	{  53, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2030,6 +2030,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{  40, "DRS", "", "Dresden", { -51.132778, 13.767222 } },
 	{ 209, "DRT", "", "Del Rio", { -29.374167, -100.927222 } },
 	{ 209, "DRU", "", "Drummond", { -46.620833, -113.205000 } },
+	{ 114, "DRV", "", "Dharavandhoo", { -5.156667, 73.130556 } },
 	{  11, "DRW", "", "Darwin", { 12.414722, 130.876667 } },
 	{  62, "DSA", "", "Robin Hood Airport", { -53.474722, -1.004444 } },
 	{  87, "DSC", "", "Dschang", { -5.450000, 10.066944 } },
@@ -7238,6 +7239,7 @@ FMAirport Airports_DE[AirportCount_DE] = {
 	{   4, "SZA", "", "Soyo", { 6.141111, 12.371667 } },
 	{ 113, "SZB", "", "Kuala Lumpur (Subang)", { -3.131111, 101.548056 } },
 	{  38, "SZC", "", "Santa Cruz", { -10.266944, -85.600000 } },
+	{ 200, "SZF", "", "Samsun Çarsamba", { -41.265556, 36.548611 } },
 	{ 147, "SZG", "", "Salzburg", { -47.793333, 13.004444 } },
 	{  73, "SZH", "", "Senipah", { 0.950000, 117.150000 } },
 	{ 182, "SZK", "", "Skukuza", { 24.960833, 31.588611 } },
