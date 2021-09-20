@@ -268,7 +268,7 @@ ANG     Angoulême, France;4;45*43'46"N, 0*13'9"E
 ANH     Anuha Island, Solomons;4;8*58'59"S, 160*30'0"E
 ANI     Aniak, USA;4;61*34'54"N, 159*32'35"W
 ANJ     Zanaga, Congo;4;2*50'60"S, 13*49'1"E
-ANK     Ankara Etimesgut, Turkey;4;39*56'59"N, 32*41'19"E
+ANK     Ankara (Etimesgut Airforce Base), Turkey;4;39*56'59"N, 32*41'19"E
 ANL     Andulo, Angola;4;11*28'1"S, 16*42'0"E
 ANM     Antalaha, Madagascar;4;14*59'58"S, 50*19'13"E
 ANN     Annette, USA;4;55*2'33"N, 131*34'20"W
@@ -1344,7 +1344,7 @@ CKU     Cordova (Municipal Airport), USA;4;60*32'38"N, 145*43'36"W
 CKV     Clarksville, USA;4;36*37'19"N, 87*24'54"W
 CKX     Chicken, USA;4;64*4'17"N, 141*57'8"W
 CKY     Conakry, Guinea;4;9*34'37"N, 13*36'43"W
-CKZ     Canakkale, Turkey;4;40*8'16"N, 26*25'36"E
+CKZ     Çanakkale, Turkey;4;40*8'16"N, 26*25'36"E
 CLA     Comilla, Bangladesh;4;23*25'59"N, 91*10'59"E
 CLB     Castlebar, Ireland;4;53*50'54"N, 9*16'49"W
 CLC     Clear Lake/Lavon, USA
@@ -3695,7 +3695,7 @@ KCI     Kono, Indonesia
 KCK KCK Kansas City, USA
 KCL     Chignik (Lagoon Airport), USA;4;56*18'40"N, 158*32'9"W
 KCN     Chernofski Harbor, USA;4;53*23'57"N, 167*33'7"W
-KCO     Kocaeli (Cengiz Topel Airport), Turkey;5;40*55'1"N, 29*55'1"E
+KCO     Cengiz Topel Airport, Turkey;5;40*55'1"N, 29*55'1"E
 KCP     Kam'yanets'-Podil's'kyy, Ukraine;4;48*40'59"N, 26*37'1"E
 KCQ     Chignik, USA;4;56*18'41"N, 158*22'24"W
 KCR     Colorado Creek, USA;4;63*34'4"N, 155*59'21"W
