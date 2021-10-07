@@ -285,14 +285,16 @@ BEGIN
     EDITTEXT        IDC_UPGRADEVOUCHER,304,128,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "P&rämienflug",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,144,115,10
     CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,157,115,10
-    CONTROL         "Farbe",IDC_CATEGORY9,"CCategory",WS_GROUP,7,174,112,15
-    CONTROL         "",IDC_COLORINDICATOR,"CColorIndicator",WS_GROUP,7,191,16,14
-    PUSHBUTTON      "Farbe aus&wählen...",IDC_CHOOSECOLOR,29,191,90,14,WS_GROUP
-    CONTROL         "Sonstiges",IDC_CATEGORY10,"CCategory",WS_GROUP,131,174,228,15
-    LTEXT           "Bewertung:",IDC_STATIC,132,194,41,8
-    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,177,192,40,13
-    LTEXT           "Sitz:",IDC_STATIC,275,194,25,8
-    EDITTEXT        IDC_SEAT,304,192,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Sitz",IDC_CATEGORY9,"CCategory",WS_GROUP,7,174,112,15
+    LTEXT           "Sitz:",IDC_STATIC,8,194,20,8
+    EDITTEXT        IDC_SEAT,32,192,25,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    COMBOBOX        IDC_SEATTYPE,66,192,53,30,CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP
+    CONTROL         "Farbe",IDC_CATEGORY10,"CCategory",WS_GROUP,131,174,101,15
+    CONTROL         "",IDC_COLORINDICATOR,"CColorIndicator",WS_GROUP,131,191,16,14
+    PUSHBUTTON      "Farbe aus&wählen...",IDC_CHOOSECOLOR,153,191,79,14,WS_GROUP
+    CONTROL         "Bewertung",IDC_CATEGORY11,"CCategory",WS_GROUP,243,174,116,15
+    LTEXT           "Bewertung:",IDC_STATIC,244,194,50,8
+    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,295,192,40,13
 END
 
 IDD_EDITFLIGHT_ATTACHMENTS DIALOGEX 0, 0, 366, 218
@@ -423,7 +425,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Auflösung\nDie tatsächliche Größe kann abweichen.",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,173,25
-    CONTROL         "",IDC_RESOLUTIONPRESETS,"CResolutionList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,7,35,173,241
+    CONTROL         "",IDC_RESOLUTIONPRESETS,"CResolutionList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,35,173,241
     CONTROL         "&Benutzerdefinierte Auflösung verwenden:",IDC_USERDEFINEDRESOLUTION,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
     LTEXT           "Breite:",IDC_STATIC,7,301,30,8
@@ -999,11 +1001,11 @@ BEGIN
     IDS_CUEBANNER_DATETIME  " JJJJ-MM-TT SS:MM"
     IDS_CUEBANNER_TIME      " SS:MM"
     IDS_CUEBANNER_ROUTE     " z.B. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
+    IDS_PRINTED             "Stand: %s, %s Uhr"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_PRINTED             "Stand: %s, %s Uhr"
     IDS_METADATA_COMMENTS   "Beispiel-Flugplan"
     IDS_METADATA_TITLE_ATLANTIC "Atlantik-Überquerung"
     IDS_METADATA_TITLE_PACIFIC "Pazifik-Überquerung"
@@ -1021,11 +1023,11 @@ BEGIN
     IDS_FILESTATUS_PLURAL   "%u Dateien (%s)"
     IDS_DELETE_CAPTION      "Löschen"
     IDS_DELETE_FILE         "Soll die Datei wirklich gelöscht werden?"
+    IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETE_ALL          "Sollen wirklich alle angehängten Dateien gelöscht werden?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
     IDS_INCLUDESCREW        "Einschließlich Flüge als Crew (DCM)"
@@ -1041,11 +1043,11 @@ BEGIN
     IDS_FLIGHTS_SINGULAR    "%u Flug"
     IDS_FLIGHTS_PLURAL      "%u Flüge"
     IDS_RESOLUTION          "\nAuflösung: %u×%u"
+    IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nDurchschnitt: %.2lf"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nDurchschnitt: %.2lf"
     IDS_TOOLTIP_TIME        "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
     IDS_TOOLTIP_DISTANCE    "Kürzester Flug: %s\nLängster Flug: %s\nDurchschnitt: %s"
     IDS_TOOLTIP_DATETIME    "Erster Flug: %s\nLetzter Flug: %s"
@@ -1062,16 +1064,20 @@ BEGIN
     IDS_QUALITY_HIGH        "Hoch"
     IDS_QUALITY_ULTRA       "Ultra"
     IDS_GOOGLEEARTH         "Google Earth"
+    IDS_STATISTICS          "Statistik"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STATISTICS          "Statistik"
     IDS_MAPSETTINGS         "Karten-Einstellungen"
     IDS_COLUMN_RESOLUTION   "Auflösung"
     IDS_COLUMN_APPLICATION  "Einsatzgebiet"
     IDS_MAPDIMENSION_ORIGINAL "%ld×%ld Pixel (Original)"
     IDS_MAPDIMENSION_SCALED "%ld×%ld Pixel (skaliert auf %ld×%ld)"
+    IDS_SEATTYPE_WINDOW     "Fenster"
+    IDS_SEATTYPE_MIDDLE     "Mitte"
+    IDS_SEATTYPE_AISLE      "Gang"
+    IDS_SEATTYPE_JUMPSEAT   "Jumpseat"
 END
 
 STRINGTABLE 
@@ -1395,14 +1401,16 @@ BEGIN
     EDITTEXT        IDC_UPGRADEVOUCHER,304,128,55,13,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     CONTROL         "&Award flight",IDC_AWARDFLIGHT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,144,115,10
     CONTROL         "&Upgrade",IDC_UPGRADE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,244,157,115,10
-    CONTROL         "Color",IDC_CATEGORY9,"CCategory",WS_GROUP,7,174,112,15
-    CONTROL         "",IDC_COLORINDICATOR,"CColorIndicator",WS_GROUP,7,191,16,14
-    PUSHBUTTON      "C&hoose color...",IDC_CHOOSECOLOR,29,191,90,14,WS_GROUP
-    CONTROL         "Miscellaneous",IDC_CATEGORY10,"CCategory",WS_GROUP,131,174,228,15
-    LTEXT           "Rating:",IDC_STATIC,132,194,31,8
-    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,167,192,40,13
-    LTEXT           "Seat:",IDC_STATIC,275,194,25,8
-    EDITTEXT        IDC_SEAT,304,192,55,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Seat",IDC_CATEGORY9,"CCategory",WS_GROUP,7,174,112,15
+    LTEXT           "Seat:",IDC_STATIC,8,194,20,8
+    EDITTEXT        IDC_SEAT,32,192,25,13,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
+    COMBOBOX        IDC_SEATTYPE,66,192,53,30,CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP
+    CONTROL         "Color",IDC_CATEGORY10,"CCategory",WS_GROUP,131,174,101,15
+    CONTROL         "",IDC_COLORINDICATOR,"CColorIndicator",WS_GROUP,131,191,16,14
+    PUSHBUTTON      "C&hoose color...",IDC_CHOOSECOLOR,153,191,79,14,WS_GROUP
+    CONTROL         "Rating",IDC_CATEGORY11,"CCategory",WS_GROUP,243,174,116,15
+    LTEXT           "Rating:",IDC_STATIC,244,194,50,8
+    CONTROL         "",IDC_RATING,"CRatingCtrl",WS_BORDER | WS_GROUP | WS_TABSTOP,295,192,40,13
 END
 
 IDD_EDITFLIGHT_ATTACHMENTS DIALOGEX 0, 0, 366, 218
@@ -1678,7 +1686,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Resolution\nThe true map size may vary.",IDC_CATEGORY1,
                     "CCategory",WS_GROUP,7,7,173,25
-    CONTROL         "",IDC_RESOLUTIONPRESETS,"CResolutionList",WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL,7,35,173,241
+    CONTROL         "",IDC_RESOLUTIONPRESETS,"CResolutionList",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP,7,35,173,241
     CONTROL         "&User-defined resolution:",IDC_USERDEFINEDRESOLUTION,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,285,173,10
     LTEXT           "Width:",IDC_STATIC,7,301,30,8
@@ -2100,11 +2108,11 @@ BEGIN
     IDS_CUEBANNER_DATETIME  " YYYY-MM-DD HH:MM"
     IDS_CUEBANNER_TIME      " HH:MM"
     IDS_CUEBANNER_ROUTE     " e.g. DUS-FRA-JFK,EWR-SFO-MUC-DUS"
+    IDS_PRINTED             "Current as of %s, %s"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_PRINTED             "Current as of %s, %s"
     IDS_METADATA_COMMENTS   "Sample itinerary"
     IDS_METADATA_TITLE_ATLANTIC "Atlantic Crossing"
     IDS_METADATA_TITLE_PACIFIC "Pacific Crossing"
@@ -2122,11 +2130,11 @@ BEGIN
     IDS_FILESTATUS_PLURAL   "%u files (%s)"
     IDS_DELETE_CAPTION      "Delete"
     IDS_DELETE_FILE         "Are you sure you want to delete the file?"
+    IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETE_ALL          "Are you sure you want to delete all attached files?"
     IDS_REVENUEFLIGHTS      "Revenue"
     IDS_NONREVFLIGHTS       "Non-Revenue"
     IDS_INCLUDESCREW        "Includes flights as crew member (DCM)"
@@ -2142,11 +2150,11 @@ BEGIN
     IDS_FLIGHTS_SINGULAR    "%u flight"
     IDS_FLIGHTS_PLURAL      "%u flights"
     IDS_RESOLUTION          "\nResolution: %u×%u"
+    IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nAverage: %.2lf"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOOLTIP_UINT        "Minimum: %u\nMaximum: %u\nAverage: %.2lf"
     IDS_TOOLTIP_TIME        "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
     IDS_TOOLTIP_DISTANCE    "Shortest flight: %s\nLongest flight: %s\nAverage: %s"
     IDS_TOOLTIP_DATETIME    "First flight: %s\nLast flight: %s"
@@ -2162,16 +2170,20 @@ BEGIN
     IDS_QUALITY_HIGH        "High"
     IDS_QUALITY_ULTRA       "Ultra"
     IDS_GOOGLEEARTH         "Google Earth"
+    IDS_STATISTICS          "Statistics"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STATISTICS          "Statistics"
     IDS_MAPSETTINGS         "Map settings"
     IDS_COLUMN_RESOLUTION   "Resolution"
     IDS_COLUMN_APPLICATION  "Application"
     IDS_MAPDIMENSION_ORIGINAL "%ld×%ld pixels (original)"
     IDS_MAPDIMENSION_SCALED "%ld×%ld pixels (scaled to %ld×%ld)"
+    IDS_SEATTYPE_WINDOW     "Window"
+    IDS_SEATTYPE_MIDDLE     "Middle"
+    IDS_SEATTYPE_AISLE      "Aisle"
+    IDS_SEATTYPE_JUMPSEAT   "Jumpseat"
 END
 
 STRINGTABLE 

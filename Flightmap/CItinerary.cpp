@@ -599,11 +599,11 @@ void CItinerary::NewSampleAtlantic()
 	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_ATLANTIC, m_Metadata.Title, 256));
 	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_ATLANTIC, m_Metadata.Keywords, 256));
 
-	AddFlight("DUS", "FRA", L"Lufthansa", L"Boeing 737", "LH 803", AIRX_Economy, "9F", "", L"", 500, (COLORREF)-1, MakeTime(2007, 1, 25, 6, 15));
-	AddFlight("FRA", "JFK", L"Lufthansa", L"Airbus A340", "LH 400", AIRX_Crew, "F/D", "D-AIHD", L"Stuttgart", 2565, (COLORREF)-1, MakeTime(2007, 1, 25, 9, 35));
-	AddFlight("EWR", "SFO", L"Continental Airlines", L"Boeing 737", "CO 572", AIRX_Economy, "15F", "", L"", 0, 0xFFC0A0, MakeTime(2007, 1, 28, 11, 45));
-	AddFlight("SFO", "MUC", L"Lufthansa", L"Airbus A340", "LH 459", AIRX_Economy, "38H", "D-AIHB", L"Bremerhaven", 5864, (COLORREF)-1, MakeTime(2007, 2, 5, 21, 50));
-	AddFlight("MUC", "DUS", L"Lufthansa", L"Airbus A320", "LH 848", AIRX_Economy, "21A", "", L"", 500, (COLORREF)-1, MakeTime(2007, 2, 6, 19, 30));
+	AddFlight("DUS", "FRA", L"Lufthansa", L"Boeing 737", "LH 803", AIRX_Economy, "9F", AIRX_Window, "", L"", 500, (COLORREF)-1, MakeTime(2007, 1, 25, 6, 15));
+	AddFlight("FRA", "JFK", L"Lufthansa", L"Airbus A340", "LH 400", AIRX_Crew, "F/D", AIRX_Jumpseat, "D-AIHD", L"Stuttgart", 2565, (COLORREF)-1, MakeTime(2007, 1, 25, 9, 35));
+	AddFlight("EWR", "SFO", L"Continental Airlines", L"Boeing 737", "CO 572", AIRX_Economy, "15F", AIRX_Window, "", L"", 0, 0xFFC0A0, MakeTime(2007, 1, 28, 11, 45));
+	AddFlight("SFO", "MUC", L"Lufthansa", L"Airbus A340", "LH 459", AIRX_Economy, "38H", AIRX_Window, "D-AIHB", L"Bremerhaven", 5864, (COLORREF)-1, MakeTime(2007, 2, 5, 21, 50));
+	AddFlight("MUC", "DUS", L"Lufthansa", L"Airbus A320", "LH 848", AIRX_Economy, "21A", AIRX_Window, "", L"", 500, (COLORREF)-1, MakeTime(2007, 2, 6, 19, 30));
 }
 
 void CItinerary::NewSamplePacific()
@@ -618,12 +618,12 @@ void CItinerary::NewSamplePacific()
 	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_TITLE_PACIFIC, m_Metadata.Title, 256));
 	ENSURE(LoadString(AfxGetResourceHandle(), IDS_METADATA_KEYWORDS_PACIFIC, m_Metadata.Keywords, 256));
 
-	AddFlight("YVR", "DFW", L"American Airlines", L"Boeing 737", "AA 260", AIRX_Economy, "16A", "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 9, 12, 15));
-	AddFlight("DFW", "LAX", L"American Airlines", L"Boeing 737", "AA 2489", AIRX_Economy, "18D", "", L"", 1070, (COLORREF)-1, MakeTime(2012, 7, 9, 20, 35));
-	AddFlight("LAX", "MEL", L"Quantas", L"Airbus A380", "QF 94", AIRX_Economy, "75A", "VH-OQF", L"Charles Kingsford Smith", 6886, 0x0000FF, MakeTime(2012, 7, 9, 23, 30));
-	AddFlight("MEL", "LAX", L"Quantas", L"Airbus A380", "QF 93", AIRX_Economy, "88E", "VH-OQH", L"Reginald Ansett", 6886, 0x0000FF, MakeTime(2012, 7, 23, 9, 35));
-	AddFlight("LAX", "DFW", L"American Airlines", L"Boeing 737", "AA 2436", AIRX_Economy, "23F", "", L"", 1070, (COLORREF)-1, MakeTime(2012, 7, 23, 10, 45));
-	AddFlight("DFW", "YVR", L"American Airlines", L"Boeing 737", "AA 887", AIRX_Economy, "22B", "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 23, 18, 25));
+	AddFlight("YVR", "DFW", L"American Airlines", L"Boeing 737", "AA 260", AIRX_Economy, "16A", AIRX_Window, "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 9, 12, 15));
+	AddFlight("DFW", "LAX", L"American Airlines", L"Boeing 737", "AA 2489", AIRX_Economy, "18D", AIRX_Aisle, "", L"", 1070, (COLORREF)-1, MakeTime(2012, 7, 9, 20, 35));
+	AddFlight("LAX", "MEL", L"Quantas", L"Airbus A380", "QF 94", AIRX_Economy, "75A", AIRX_Window, "VH-OQF", L"Charles Kingsford Smith", 6886, 0x0000FF, MakeTime(2012, 7, 9, 23, 30));
+	AddFlight("MEL", "LAX", L"Quantas", L"Airbus A380", "QF 93", AIRX_Economy, "88E", AIRX_Middle, "VH-OQH", L"Reginald Ansett", 6886, 0x0000FF, MakeTime(2012, 7, 23, 9, 35));
+	AddFlight("LAX", "DFW", L"American Airlines", L"Boeing 737", "AA 2436", AIRX_Economy, "23F", AIRX_Window, "", L"", 1070, (COLORREF)-1, MakeTime(2012, 7, 23, 10, 45));
+	AddFlight("DFW", "YVR", L"American Airlines", L"Boeing 737", "AA 887", AIRX_Economy, "22B", AIRX_Middle, "", L"", 1522, (COLORREF)-1, MakeTime(2012, 7, 23, 18, 25));
 }
 
 
@@ -1111,7 +1111,7 @@ void CItinerary::AddFlight(CItinerary* pItinerary, UINT Row)
 	AddFlight(Flight);
 }
 
-void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, const FILETIME& Departure)
+void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, BYTE SeatType, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, const FILETIME& Departure)
 {
 	AIRX_Flight Flight;
 	ResetFlight(Flight);
@@ -1123,6 +1123,7 @@ void CItinerary::AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equi
 	strcpy_s(Flight.FlightNo, 8, FlightNo);
 	Flight.Class = Class;
 	strcpy_s(Flight.Seat, 4, Seat);
+	Flight.SeatType = SeatType;
 	strcpy_s(Flight.Registration, 16, Registration);
 	wcscpy_s(Flight.Name, 64, Name);
 	Flight.MilesAward = Flight.MilesStatus = Miles;

@@ -67,6 +67,13 @@ struct AIRX_Route
 #define AIRX_Crew                   'C'
 #define AIRX_Charter                'H'
 
+#define AIRX_Undefined              0
+#define AIRX_Window                 1
+#define AIRX_Middle                 2
+#define AIRX_Aisle                  3
+#define AIRX_Jumpseat               4
+
+#define AIRX_MAXSEATTYPE            4
 #define AIRX_MAXATTACHMENTCOUNT     16
 #define AIRX_VALID                  1
 #define AIRX_INVALID                2
@@ -91,7 +98,8 @@ struct AIRX_Flight
 	UINT MilesAward;
 	UINT MilesStatus;
 	UINT Fare;
-	BYTE Dummy[28];
+	BYTE SeatType;
+	BYTE Dummy[27];
 	WCHAR Codeshares[64];
 	UINT FlightTime;
 	UINT AttachmentCount;
@@ -267,7 +275,7 @@ protected:
 
 	void ResetFlight(UINT Row);
 	static void UpdateFlight(AIRX_Flight& Flight, LPSYSTEMTIME pTime=NULL);
-	void AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, const FILETIME& Departure);
+	void AddFlight(LPCSTR From, LPCSTR To, LPCWSTR Carrier, LPCWSTR Equipment, LPCSTR FlightNo, CHAR Class, LPCSTR Seat, BYTE SeatType, LPCSTR Registration, LPCWSTR Name, UINT Miles, COLORREF Color, const FILETIME& Departure);
 
 private:
 	void OpenAIRX(const CString& Path);

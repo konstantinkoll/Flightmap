@@ -63,9 +63,10 @@ void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_MaskedText(pDX, IDC_AWARDMILES, m_wndAwardMiles, 18, &m_Flight);
 	DDX_MaskedText(pDX, IDC_STATUSMILES, m_wndStatusMiles, 19, &m_Flight);
 	DDX_MaskedText(pDX, IDC_UPGRADEVOUCHER, m_wndUpgradeVoucher, 24, &m_Flight);
+	DDX_MaskedText(pDX, IDC_SEAT, m_wndSeat, 14, &m_Flight);
+	DDX_Control(pDX, IDC_SEATTYPE, m_wndSeatType);
 	DDX_Control(pDX, IDC_COLORINDICATOR, m_wndColorIndicator);
 	DDX_Control(pDX, IDC_RATING, m_wndRating);
-	DDX_MaskedText(pDX, IDC_SEAT, m_wndSeat, 14, &m_Flight);
 
 	// Tab 2
 	DDX_Control(pDX, IDC_FILEVIEW, m_wndFileView);
@@ -106,6 +107,8 @@ void EditFlightDlg::DoDataExchange(CDataExchange* pDX)
 
 		if (((CButton*)GetDlgItem(IDC_CANCELLED))->GetCheck())
 			m_Flight.Flags |= AIRX_Cancelled;
+
+		m_Flight.SeatType = (BYTE)(m_wndSeatType.GetCurSel()+1);
 	}
 }
 
@@ -217,6 +220,13 @@ BOOL EditFlightDlg::InitDialog()
 	((CButton*)GetDlgItem(IDC_AWARDFLIGHT))->SetCheck(m_Flight.Flags & AIRX_AwardFlight);
 	((CButton*)GetDlgItem(IDC_UPGRADE))->SetCheck(m_Flight.Flags & AIRX_Upgrade);
 	((CButton*)GetDlgItem(IDC_CANCELLED))->SetCheck(m_Flight.Flags & AIRX_Cancelled);
+
+	// Seat
+	for (UINT a=0; a<AIRX_MAXSEATTYPE; a++)
+		m_wndSeatType.AddString(CString((LPCSTR)(IDS_SEATTYPE_WINDOW+a)));
+
+	if (m_Flight.SeatType<=AIRX_MAXSEATTYPE)
+		m_wndSeatType.SetCurSel((INT)m_Flight.SeatType-1);
 
 	// Color
 	m_wndColorIndicator.SetColor(m_Flight.Color);

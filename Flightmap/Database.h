@@ -15,9 +15,10 @@ static const WCHAR Carriers[CARRIERCOUNT][30] = {
 	L"Air France",
 	L"Air India",
 	L"Air New Zealand",
-	L"Alitalia",
+	L"Alaska Airlines",
 	L"American Airlines",
 	L"ANA",
+	L"Anadolujet",
 	L"Asiana Airlines",
 	L"Austrian Airlines",
 	L"Avianca",
@@ -25,12 +26,12 @@ static const WCHAR Carriers[CARRIERCOUNT][30] = {
 	L"Brussels Airlines",
 	L"Cathay Pacific",
 	L"China Airlines",
-	L"China Eastern Airlines",
+	L"China Eastern",
 	L"Czech Airlines",
 	L"Copa Airlines",
 	L"Croatia Airlines",
 	L"Delta Air Lines",
-	L"EgyptAir",
+	L"Egypt Air",
 	L"Ethiopian Airlines",
 	L"EVA Air",
 	L"Finnair",
@@ -49,9 +50,8 @@ static const WCHAR Carriers[CARRIERCOUNT][30] = {
 	L"Royal Air Maroc",
 	L"Royal Jordanian",
 	L"S7 Airlines",
-	L"Saudia",
-	L"Scandinavian Airlines (SAS)",
-	L"Shenzhen Airlines",
+	L"Saudi Arabian Airlines",
+	L"SAS Scandinavian Airlines",
 	L"Singapore Airlines",
 	L"SriLankan Airlines",
 	L"Swiss",
@@ -61,7 +61,7 @@ static const WCHAR Carriers[CARRIERCOUNT][30] = {
 	L"Turkish Airlines",
 	L"United Airlines",
 	L"Vietnam Airlines",
-	L"XiamenAir"
+	L"Xiamen Airlines"
 };
 
 

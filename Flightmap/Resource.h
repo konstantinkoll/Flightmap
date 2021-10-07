@@ -125,6 +125,10 @@
 #define IDS_COLUMN_APPLICATION          1074
 #define IDS_MAPDIMENSION_ORIGINAL       1075
 #define IDS_MAPDIMENSION_SCALED         1076
+#define IDS_SEATTYPE_WINDOW             1077
+#define IDS_SEATTYPE_MIDDLE             1078
+#define IDS_SEATTYPE_AISLE              1079
+#define IDS_SEATTYPE_JUMPSEAT           1080
 #define IDS_FILEMENU_NEW                1100
 #define IDS_FILEMENU_SAMPLES            1101
 #define IDS_FILEMENU_OPEN               1102
@@ -198,7 +202,6 @@
 #define IDC_TOTALFLIGHTTIME             2209
 #define IDC_LONGESTFLIGHT               2210
 #define IDC_SHORTESTFLIGHT              2211
-#define IDC_TOTALMONEYSPENT             2312
 #define IDC_TOTALMILESEARNED            2213
 #define IDC_TOTALMILESSPENT             2214
 #define IDC_LIST_CLASS                  2215
@@ -211,6 +214,7 @@
 #define IDC_FILTER_MONTH                2302
 #define IDC_FILTER_YEAR                 2303
 #define IDC_SORTDIRECTION               2304
+#define IDC_TOTALMONEYSPENT             2312
 #define IDD_EDITFLIGHT_ROUTE            2400
 #define IDC_FROM_IATA                   2401
 #define IDC_FROM_SELECT                 2402
@@ -250,10 +254,11 @@
 #define IDC_UPGRADEVOUCHER              2520
 #define IDC_AWARDFLIGHT                 2521
 #define IDC_UPGRADE                     2522
-#define IDC_COLORINDICATOR              2523
-#define IDC_CHOOSECOLOR                 2524
-#define IDC_RATING                      2525
-#define IDC_SEAT                        2526
+#define IDC_SEAT                        2523
+#define IDC_SEATTYPE                    2524
+#define IDC_COLORINDICATOR              2525
+#define IDC_CHOOSECOLOR                 2526
+#define IDC_RATING                      2527
 #define IDD_EDITFLIGHT_ATTACHMENTS      2600
 #define IDC_FILEVIEW                    2601
 #define IDD_ADDROUTE                    2700
@@ -402,6 +407,7 @@
 #define IDA_ACCELERATOR_MAIN            5000
 #define IDA_ACCELERATOR_MAP             5001
 #define IDA_ACCELERATOR_GLOBE           5002
+#define IDC_COMBO1                      8056
 #define IDD_ABOUT_VIEWS                 21130
 #define IDC_MODELQUALITY                21131
 #define IDC_TEXTUREQUALITY              21132
@@ -416,7 +422,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8013
 #define _APS_NEXT_COMMAND_VALUE         32784
-#define _APS_NEXT_CONTROL_VALUE         8056
+#define _APS_NEXT_CONTROL_VALUE         8057
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

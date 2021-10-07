@@ -363,6 +363,15 @@ void CDataGrid::ShowTooltip(const CPoint& point)
 
 			break;
 
+		case 14:
+			if (pFlight->SeatType && (pFlight->SeatType<=AIRX_MAXSEATTYPE))
+			{
+				AttributeToString(*pFlight, Attr, tmpStr, 256);
+				theApp.ShowTooltip(this, point, tmpStr, CString((LPCSTR)(IDS_SEATTYPE_WINDOW+pFlight->SeatType-1)));
+
+				break;
+			}
+
 		default:
 			switch (FMAttributes[Attr].Type)
 			{
@@ -501,7 +510,7 @@ void CDataGrid::ShowTooltip(const CPoint& point)
 				}
 
 			default:
-				AttributeToString(p_Itinerary->m_Flights[m_HoverPoint.y], Attr, tmpStr, 256);
+				AttributeToString(*pFlight, Attr, tmpStr, 256);
 
 				if (tmpStr[0]!=L'\0')
 				{

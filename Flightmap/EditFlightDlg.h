@@ -59,6 +59,7 @@ protected:
 	CMFCMaskedEdit m_wndAwardMiles;
 	CMFCMaskedEdit m_wndStatusMiles;
 	CMFCMaskedEdit m_wndUpgradeVoucher;
+	CComboBox m_wndSeatType;
 	CColorIndicator m_wndColorIndicator;
 	CRatingCtrl m_wndRating;
 	CMFCMaskedEdit m_wndSeat;
